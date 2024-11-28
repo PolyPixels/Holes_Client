@@ -275,6 +275,10 @@ function setup() {
     players[data.id].holding = data.holding;
   });
 
+  socket.on("UPDATE_NODE", (data) => {
+    testMap.data[data.index] = data.val;
+  })
+
   const grid = 16;
   testMap = new Map(width / grid, height / grid, grid); // WIDTH, HEIGHT, GRID SIZE
 
@@ -315,5 +319,14 @@ function draw(){
         if(lastHolding.w != curPlayer.holding.w || lastHolding.a != curPlayer.holding.a || lastHolding.s != curPlayer.holding.s || lastHolding.d != curPlayer.holding.d){
             socket.emit("update_pos", curPlayer);
         }
+    }
+
+    if(mouseIsPressed){
+      let x = floor(mouseX/testMap.tileSize);
+      let y = floor(mouseY/testMap.tileSize);
+      let index = x + (y / testMap.WIDTH);
+      if(testMap.data[index] > 0) testMap.data[index] -= 0.01;
+      if(testMap.data[index] < 0.2 && testMap.data[index] !== -1) testMap.data[index] = 0;
+      socket.emit("update_node", {index: index, val: testMap.data[index]});
     }
 }
