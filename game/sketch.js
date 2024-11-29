@@ -227,6 +227,7 @@ var socket; //Connection to the server
 var curPlayer; //Your player
 var lastHolding;
 var players = {}; //other players
+var colisionIndex = []; //for debugging
 
 function setup() {
   createCanvas(800, 800);
@@ -325,6 +326,26 @@ function draw(){
       let x = floor(mouseX/testMap.tileSize);
       let y = floor(mouseY/testMap.tileSize);
       let index = x + (y / testMap.WIDTH);
+      if(testMap.data[index] > 0) testMap.data[index] -= 0.01;
+      if(testMap.data[index] < 0.2 && testMap.data[index] !== -1) testMap.data[index] = 0;
+      socket.emit("update_node", {index: index, val: testMap.data[index]});
+
+      index = (x + 1) + (y / testMap.WIDTH);
+      if(testMap.data[index] > 0) testMap.data[index] -= 0.01;
+      if(testMap.data[index] < 0.2 && testMap.data[index] !== -1) testMap.data[index] = 0;
+      socket.emit("update_node", {index: index, val: testMap.data[index]});
+
+      index = (x - 1) + (y / testMap.WIDTH);
+      if(testMap.data[index] > 0) testMap.data[index] -= 0.01;
+      if(testMap.data[index] < 0.2 && testMap.data[index] !== -1) testMap.data[index] = 0;
+      socket.emit("update_node", {index: index, val: testMap.data[index]});
+
+      index = x + ((y + 1) / testMap.WIDTH);
+      if(testMap.data[index] > 0) testMap.data[index] -= 0.01;
+      if(testMap.data[index] < 0.2 && testMap.data[index] !== -1) testMap.data[index] = 0;
+      socket.emit("update_node", {index: index, val: testMap.data[index]});
+
+      index = x + ((y - 1) / testMap.WIDTH);
       if(testMap.data[index] > 0) testMap.data[index] -= 0.01;
       if(testMap.data[index] < 0.2 && testMap.data[index] !== -1) testMap.data[index] = 0;
       socket.emit("update_node", {index: index, val: testMap.data[index]});
