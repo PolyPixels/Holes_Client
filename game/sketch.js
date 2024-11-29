@@ -35,23 +35,31 @@ function Map(w, h, grid) // FIXME: This whole thing could be way more performant
     rect(0,0,width,this.tileSize/2);
     rect(width-this.tileSize/2,0,this.tileSize/2,height);
     rect(0,height-this.tileSize/2,width,this.tileSize/2);
-    for (let x = 0; x < this.WIDTH-1; x++)
-    {
-      for (let y = 0; y < this.HEIGHT-1; y++)
-      {
-        let index = x + (y / this.WIDTH);
-        
+    for (let x = 0; x < this.WIDTH-1; x++){
+      for (let y = 0; y < this.HEIGHT-1; y++){
+        //holds the values at each corner
         let corners = [this.data[x+(y/this.WIDTH)],this.data[x+1+(y/this.WIDTH)],
                        this.data[x+1+((y+1)/this.WIDTH)],this.data[x+((y+1)/this.WIDTH)]];
         for(let i=0; i < 4; i++){
           if(corners[i] == -1) corners[i] = 1;
           corners[i] += 0.6;
         }
+        //holds the screen cordinates of each corner
         let scCorners = [this.cordToScreen(x,y),this.cordToScreen(x+1,y),
                          this.cordToScreen(x+1,y+1),this.cordToScreen(x,y+1)];
         let state = getState(corners[0],corners[1],corners[2],corners[3]);
         let amt = 0;
 
+        //Visual Representation of positions:
+        //                   
+        //  sc[0]--a--sc[1]  
+        //    |         |    
+        //    d         b    
+        //    |         |    
+        //  sc[3]--c--sc[2]  
+        //                   
+
+        //the side positions, adjsted based on the values at each corner
         let a = {x: 0, y: scCorners[0].y};
         amt = (1-corners[0])/(corners[1]-corners[0]);
         a.x = lerp(scCorners[0].x,scCorners[1].x,amt);
@@ -71,6 +79,8 @@ function Map(w, h, grid) // FIXME: This whole thing could be way more performant
         
         //strokeWeight(5);
         //stroke(100,50,0);
+
+        //draw the specific shape based on which corner values > 0
         switch(state){
           case 1:
             //line(c.x,c.y,d.x,d.y);
@@ -212,6 +222,7 @@ function Map(w, h, grid) // FIXME: This whole thing could be way more performant
   }
 }
 
+//converts corner values into a binary number? resulting in a uniqe int for each possible combination of corner vals
 function getState(c1,c2,c3,c4){
   let val = 0;
   if(c1 >= 1){val+=8}
@@ -227,7 +238,7 @@ var socket; //Connection to the server
 var curPlayer; //Your player
 var lastHolding;
 var players = {}; //other players
-var colisionIndex = []; //for debugging
+var collisionChecks = []; //for debugging
 
 function setup() {
   createCanvas(800, 800);
@@ -237,6 +248,9 @@ function setup() {
     element.addEventListener("contextmenu", (e) => e.preventDefault());
   }
   socket = io.connect("http://localhost:3000");
+
+  //all caps means it came from the server
+  //all lower means it came from the client
 
   socket.on("GIVE_MAP", (data) => {
     let keys = Object.keys(data);
@@ -253,12 +267,12 @@ function setup() {
   });
 
   socket.on("YOUR_ID", (data) => {
-    curPlayer = new Player(width/2, height/2, 100, data);
+    curPlayer = new Player(width/2, height/2, 100, data); //only create your player once your given your socket id
     socket.emit("new_player", curPlayer);
   });
 
   socket.on("UPDATE_ALL_POS", (data) => {
-    let keys = Object.keys(data);
+    let keys = Object.keys(data); //grabs keys to itterate through, easier to find players this way
     for(i = 0; i < keys.length; i++){
         if(keys[i] == curPlayer.id) socket.emit("update_pos", curPlayer);
         else{
@@ -326,9 +340,11 @@ function draw(){
         }
     }
 
-    if(mouseIsPressed){
+    if(mouseIsPressed){ //does the digging
       let x = floor(mouseX/testMap.tileSize);
       let y = floor(mouseY/testMap.tileSize);
+
+      //removes from 5 nodes in a "+" shape, made the digging feel much better
       let index = x + (y / testMap.WIDTH);
       if(testMap.data[index] > 0) testMap.data[index] -= 0.01;
       if(testMap.data[index] < 0.2 && testMap.data[index] !== -1) testMap.data[index] = 0;
