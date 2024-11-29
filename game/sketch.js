@@ -293,7 +293,7 @@ function setup() {
     players[data.id].hp = data.hp;
     players[data.id].holding = data.holding;
 
-    players[data.id].color = data.color
+    //players[data.id].color = data.color
   });
 
   socket.on("UPDATE_NODE", (data) => {
