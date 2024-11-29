@@ -301,7 +301,10 @@ function setup() {
   })
 
   socket.on("REMOVE_PLAYER", (data) => {
+    players[data] = []
+
     delete players[data];
+    console.log()
   });
 
   const grid = 16;
