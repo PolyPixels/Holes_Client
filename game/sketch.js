@@ -239,12 +239,18 @@ var curPlayer; //Your player
 var lastHolding;
 var players = {}; //other players
 var collisionChecks = []; //for debugging
-
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);  // Resize canvas when window size changes
+}
 function setup() {
-  createCanvas(800, 800);
+    let cnv = createCanvas(800, 800);
+  cnv.parent('canvas-container'); 
   background(220);
 
-  for (let element of document.getElementsByClassName("p5Canvas")) {
+
+  // Prevent right-click context menu on all p5.js canvases
+  const canvases = document.getElementsByClassName("p5Canvas");
+  for (let element of canvases) {
     element.addEventListener("contextmenu", (e) => e.preventDefault());
   }
   socket = io.connect("http://localhost:3000");
@@ -276,22 +282,45 @@ function setup() {
   });
 
   socket.on("UPDATE_ALL_POS", (data) => {
-    let keys = Object.keys(data); //grabs keys to itterate through, easier to find players this way
-    for(i = 0; i < keys.length; i++){
-        if(keys[i] == curPlayer.id) socket.emit("update_pos", curPlayer);
-        else{
-            players[keys[i]].pos.x = data[keys[i]].pos.x;
-            players[keys[i]].pos.y = data[keys[i]].pos.y;
-            players[keys[i]].hp = data[keys[i]].hp;
+    let keys = Object.keys(data); // Grabs keys to iterate through, easier to find players this way
+  
+    // First, check for missing players
+    for (let playerId in players) {
+      if (!data.hasOwnProperty(playerId)) {
+        // Player is missing from the data, remove or clean up as needed
+        delete players[playerId]; // You may want to emit a removal event for this player as well
+        console.log(`Player ${playerId} has been removed.`);
+      }
+    }
+  
+    // Now, update players' positions
+    for (let i = 0; i < keys.length; i++) {
+      const playerId = keys[i];
+      const playerData = data[playerId];
+  
+      if (playerId === curPlayer.id) {
+        socket.emit("update_pos", curPlayer);
+      } else {
+        if (players[playerId]) { // Check if the player exists in the game state
+          players[playerId].pos.x = playerData.pos.x;
+          players[playerId].pos.y = playerData.pos.y;
+          players[playerId].hp = playerData.hp;
         }
+      }
     }
   });
+  
 
   socket.on("UPDATE_POS", (data) => {
+    if(!data) return
+    if(!data.pos) return
+
+
     players[data.id].pos.x = data.pos.x;
     players[data.id].pos.y = data.pos.y;
     players[data.id].hp = data.hp;
     players[data.id].holding = data.holding;
+
 
     //players[data.id].color = data.color
   });
