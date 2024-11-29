@@ -280,6 +280,10 @@ function setup() {
     testMap.data[data.index] = data.val;
   })
 
+  socket.on("REMOVE_PLAYER", (data) => {
+    delete players[data];
+  });
+
   const grid = 16;
   testMap = new Map(width / grid, height / grid, grid); // WIDTH, HEIGHT, GRID SIZE
 
