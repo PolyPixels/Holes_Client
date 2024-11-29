@@ -258,16 +258,20 @@ function setup() {
   });
 
   socket.on("NEW_PLAYER", (data) => {
-    players[data.id] = new Player(data.pos.x, data.pos.y, data.hp, data.id);
+    players[data.id] = new Player(data.pos.x, data.pos.y, data.hp, data.id,data.color);
+
+    players[data.id].color = data.color
   });
 
   socket.on("OLD_PLAYERS", (data) => {
+    console.log(data)
     let keys = Object.keys(data);
-    for(i = 0; i < keys.length; i++) players[keys[i]] = new Player(data[keys[i]].pos.x, data[keys[i]].pos.y, data[keys[i]].hp, keys[i]);
+    for(i = 0; i < keys.length; i++) players[keys[i]] = new Player(data[keys[i]].pos.x, data[keys[i]].pos.y, data[keys[i]].hp, keys[i],data[keys[i]].color);
   });
 
   socket.on("YOUR_ID", (data) => {
-    curPlayer = new Player(width/2, height/2, 100, data); //only create your player once your given your socket id
+    console.log(data)
+    curPlayer = new Player(width/2, height/2, 100, data.id,data.color); //only create your player once your given your socket id
     socket.emit("new_player", curPlayer);
   });
 
@@ -288,6 +292,8 @@ function setup() {
     players[data.id].pos.y = data.pos.y;
     players[data.id].hp = data.hp;
     players[data.id].holding = data.holding;
+
+    players[data.id].color = data.color
   });
 
   socket.on("UPDATE_NODE", (data) => {
