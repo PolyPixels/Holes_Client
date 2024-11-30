@@ -361,34 +361,39 @@ function setup() {
   
   // Position the buttons and add functionality
   raceButtons.forEach((btn, index) => {
-    btn.position(width / 2 - 150, height / 2 + 50 + index * 60);
+    btn.position(width -300, height / 2 + 50 + index * 60);
     btn.mousePressed(() => selectRace(index)); // Trigger race selection on button press
     btn.hide(); // Initially hide buttons
   });
 
   // Create input field for user name
   nameInput = createInput('');
-  nameInput.position(width / 2 - 150, height / 2 + 250);
+  nameInput.position(width -300, height / 2 + 250);
   nameInput.input(checkName); // Check if name is entered
   nameInput.hide(); // Initially hide the input field
 
   // Create the "Go" button (initially disabled)
   goButton = createButton('Go');
-  goButton.position(width / 2 - 50, height / 2 + 350);
+  goButton.position(width  -300, height / 2 + 350);
   goButton.attribute('disabled', true); // Disable initially
-  goButton.mousePressed(() => {gameState = "playing"}); // Trigger the start game function
+  goButton.mousePressed(() => {
+    gameState = "playing"
+    socket.emit("update_player_data", {name:curPlayer.name, race:curPlayer.race})
+  }); // Trigger the start game function
   goButton.hide(); // Initially hide the Go button
 
   // Data is very obvious, -1 is unbreakable, 0 is nothing, >0 is block
 }
 function selectRace(raceIndex) {
   raceSelected = true; // Set race selected flag to true
+  curPlayer.race = raceIndex
   console.log('Race selected: ' + raceButtons[raceIndex].html());
 }
 
 // Function to check if a name is entered
 function checkName() {
   console.log(nameInput.value())
+  curPlayer.name = nameInput.value()
   if (nameInput.value().length > 0) {
     nameEntered = true; // Set name entered flag to true
   } else {
