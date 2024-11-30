@@ -1,7 +1,7 @@
 const BASE_HEALTH = 100;
 const BASE_SPEED = 1;
 class Player {
-    constructor(x, y, health = BASE_HEALTH, id, color,race=0, name = "player " +Math.random(0,1000)) {
+    constructor(x, y, health = BASE_HEALTH, id, color,race, name ) {
         this.id = id; // socket ID
         this.pos = createVector(x, y);
         this.hp = health;

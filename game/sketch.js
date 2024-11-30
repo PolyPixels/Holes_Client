@@ -276,7 +276,7 @@ function setup() {
   });
 
   socket.on("NEW_PLAYER", (data) => {
-    players[data.id] = new Player(data.pos.x, data.pos.y, data.hp, data.id,data.color);
+    players[data.id] = new Player(data.pos.x, data.pos.y, data.hp, data.id,data.color,data.race,data.name);
 
     players[data.id].color = data.color
   });
@@ -284,13 +284,13 @@ function setup() {
   socket.on("OLD_PLAYERS", (data) => {
     console.log(data)
     let keys = Object.keys(data);
-    for(i = 0; i < keys.length; i++) players[keys[i]] = new Player(data[keys[i]].pos.x, data[keys[i]].pos.y, data[keys[i]].hp, keys[i],data[keys[i]].color);
+    for(i = 0; i < keys.length; i++) players[keys[i]] = new Player(data[keys[i]].pos.x, data[keys[i]].pos.y, data[keys[i]].hp, keys[i],data[keys[i]].color,data[keys[i]].race,data[keys[i]].name);
   });
 
   socket.on("YOUR_ID", (data) => {
     console.log(data)
     curPlayer = new Player(width/2, height/2, 100, data.id,data.color); //only create your player once your given your socket id
-    socket.emit("new_player", curPlayer);
+ 
   });
 
   socket.on("UPDATE_ALL_POS", (data) => {
@@ -377,8 +377,10 @@ function setup() {
   goButton.position(width  -300, height / 2 + 350);
   goButton.attribute('disabled', true); // Disable initially
   goButton.mousePressed(() => {
+
+    socket.emit("new_player", curPlayer);
     gameState = "playing"
-    socket.emit("update_player_data", {name:curPlayer.name, race:curPlayer.race})
+    
   }); // Trigger the start game function
   goButton.hide(); // Initially hide the Go button
 
