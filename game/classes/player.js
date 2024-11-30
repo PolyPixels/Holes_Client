@@ -1,13 +1,14 @@
 const BASE_HEALTH = 100;
 const BASE_SPEED = 1;
 class Player {
-    constructor(x, y, health = BASE_HEALTH, id, color) {
+    constructor(x, y, health = BASE_HEALTH, id, color,race=0, name = "player " +Math.random(0,1000)) {
         this.id = id; // socket ID
         this.pos = createVector(x, y);
         this.hp = health;
         this.mhp = BASE_HEALTH;
         this.holding = { w: false, a: false, s: false, d: false }; // Movement keys state
-
+        this.race = race
+        this.name = name
         // Set color with default fallback
         if (!color) {
             console.log("color error");
@@ -62,6 +63,9 @@ class Player {
 
     render() {
         push();
+        fill(255)
+        textSize(10); // Optional: Set text size for readability
+        text(this.name, this.pos.x, this.pos.y -25); 
         fill(this.color.r,this.color.g,this.color.b);
         circle(this.pos.x, this.pos.y, 32); // TODO: Replace with character image
         pop();

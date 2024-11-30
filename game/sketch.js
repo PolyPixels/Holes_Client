@@ -28,6 +28,8 @@ function Map(w, h, grid) // FIXME: This whole thing could be way more performant
   
   this.render = function()
   {
+
+
     fill("#3B1725");
     noStroke();
     
@@ -79,6 +81,14 @@ function Map(w, h, grid) // FIXME: This whole thing could be way more performant
         
         //strokeWeight(5);
         //stroke(100,50,0);
+        push();
+        
+        fill(255); // Set the text color to white
+        textSize(16); // Optional: Set text size for readability
+        text('Players: ' + (Object.keys(players).length +1), 100, 50); // Display the number of players
+        pop();
+        
+        
 
         //draw the specific shape based on which corner values > 0
         switch(state){
@@ -232,6 +242,8 @@ function getState(c1,c2,c3,c4){
   return val;
 }
 
+
+let gameState ="initial"
 //TODO: Move map to server side
 let testMap; // Create a map object
 var socket; //Connection to the server
@@ -342,11 +354,90 @@ function setup() {
   // FIXME: Do not draw the debug
   //testMap.DebugDraw();
 
+  // Create race selection buttons for Gnome, Skizard, Aylah
+  raceButtons.push(createButton('Gnome'));
+  raceButtons.push(createButton('Skizard'));
+  raceButtons.push(createButton('Aylah'));
+  
+  // Position the buttons and add functionality
+  raceButtons.forEach((btn, index) => {
+    btn.position(width / 2 - 150, height / 2 + 50 + index * 60);
+    btn.mousePressed(() => selectRace(index)); // Trigger race selection on button press
+    btn.hide(); // Initially hide buttons
+  });
+
+  // Create input field for user name
+  nameInput = createInput('');
+  nameInput.position(width / 2 - 150, height / 2 + 250);
+  nameInput.input(checkName); // Check if name is entered
+  nameInput.hide(); // Initially hide the input field
+
+  // Create the "Go" button (initially disabled)
+  goButton = createButton('Go');
+  goButton.position(width / 2 - 50, height / 2 + 350);
+  goButton.attribute('disabled', true); // Disable initially
+  goButton.mousePressed(() => {gameState = "playing"}); // Trigger the start game function
+  goButton.hide(); // Initially hide the Go button
+
   // Data is very obvious, -1 is unbreakable, 0 is nothing, >0 is block
 }
+function selectRace(raceIndex) {
+  raceSelected = true; // Set race selected flag to true
+  console.log('Race selected: ' + raceButtons[raceIndex].html());
+}
 
+// Function to check if a name is entered
+function checkName() {
+  console.log(nameInput.value())
+  if (nameInput.value().length > 0) {
+    nameEntered = true; // Set name entered flag to true
+  } else {
+    nameEntered = false; // Set name entered flag to false
+  }
+}
+let raceSelected = false; // Flag to track if a race is selected
+let nameEntered = false; // Flag to track if a name is entered
+let raceButtons = [];
+let goButton;
+let nameInput;
 function draw(){
     background("#71413B");
+
+    if(gameState == "initial") {
+      nameInput.show();
+      goButton.show();
+        // Position the buttons and add functionality
+  raceButtons.forEach((btn, index) => {
+    btn.position(width / 2 - 150, height / 2 + 50 + index * 60);
+    btn.mousePressed(() => selectRace(index)); // Trigger race selection on button press
+    btn.show(); // Initially hide buttons
+  });
+      // picking user
+      push()
+      
+      fill(255)
+      textSize(40); // Optional: Set text size for readability
+      text("Pick A Race", width-500, height -500); 
+
+      pop()
+          // Check if both race and name are selected/entered to enable the "Go" button
+          if (raceSelected && nameEntered) {
+            goButton.removeAttribute('disabled');
+          } else {
+            goButton.attribute('disabled', true);
+          }
+    }else {
+      // normal game 
+      nameInput.hide();
+      goButton.hide();
+      // Position the buttons and add functionality
+  raceButtons.forEach((btn, index) => {
+    btn.position(width / 2 - 150, height / 2 + 50 + index * 60);
+    btn.mousePressed(() => selectRace(index)); // Trigger race selection on button press
+    btn.hide(); // Initially hide buttons
+  });
+
+
     if(testMap.data.length > 0) testMap.render();
     //if(testMap.data.length > 0) testMap.DebugDraw();
 
@@ -408,4 +499,5 @@ function draw(){
       if(testMap.data[index] < 0.2 && testMap.data[index] !== -1) testMap.data[index] = 0;
       socket.emit("update_node", {index: index, val: testMap.data[index]});
     }
+  }
 }
