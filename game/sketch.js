@@ -41,14 +41,14 @@ function Map(w, h, grid) // FIXME: This whole thing could be way more performant
       for (let y = 0; y < this.HEIGHT-1; y++){
         //holds the values at each corner
         let corners = [this.data[x+(y/this.WIDTH)],this.data[x+1+(y/this.WIDTH)],
-                       this.data[x+1+((y+1)/this.WIDTH)],this.data[x+((y+1)/this.WIDTH)]];
+                      this.data[x+1+((y+1)/this.WIDTH)],this.data[x+((y+1)/this.WIDTH)]];
         for(let i=0; i < 4; i++){
           if(corners[i] == -1) corners[i] = 1;
           corners[i] += 0.6;
         }
         //holds the screen cordinates of each corner
         let scCorners = [this.cordToScreen(x,y),this.cordToScreen(x+1,y),
-                         this.cordToScreen(x+1,y+1),this.cordToScreen(x,y+1)];
+                        this.cordToScreen(x+1,y+1),this.cordToScreen(x,y+1)];
         let state = getState(corners[0],corners[1],corners[2],corners[3]);
         let amt = 0;
 
@@ -243,22 +243,25 @@ function getState(c1,c2,c3,c4){
 }
 
 
-let gameState ="initial"
 //TODO: Move map to server side
+
+let gameState ="initial"
 let testMap; // Create a map object
 var socket; //Connection to the server
 var curPlayer; //Your player
 var lastHolding;
-var players = {}; //other players
+var players = {}; //other players WHY IS THIS AN OBJECT  ?? ??
+var traps = []
+var projectiles = []
 var collisionChecks = []; //for debugging
+
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);  // Resize canvas when window size changes
 }
 function setup() {
-    let cnv = createCanvas(800, 800);
+  let cnv = createCanvas(800, 800);
   cnv.parent('canvas-container'); 
   background(220);
-
 
   // Prevent right-click context menu on all p5.js canvases
   const canvases = document.getElementsByClassName("p5Canvas");
@@ -281,11 +284,33 @@ function setup() {
     players[data.id].color = data.color
   });
 
-  socket.on("OLD_PLAYERS", (data) => {
-    console.log(data)
-    let keys = Object.keys(data);
-    for(i = 0; i < keys.length; i++) players[keys[i]] = new Player(data[keys[i]].pos.x, data[keys[i]].pos.y, data[keys[i]].hp, keys[i],data[keys[i]].color,data[keys[i]].race,data[keys[i]].name);
-  });
+  socket.on("OLD_DATA", (data) => {
+    console.log(data);
+    let keys = Object.keys(data.players);  // Ensure we're getting an array of player IDs
+
+    console.log(keys);
+    for (let i = 0; i < keys.length; i++) {
+        console.log(players[keys[i]], "player");
+        const playerData = data.players[keys[i]];
+
+        // Ensure that playerData has the correct properties for the Player constructor
+        players[keys[i]] = new Player(
+            playerData.pos.x, 
+            playerData.pos.y, 
+            playerData.hp, 
+            keys[i], 
+            playerData.color, 
+            playerData.race, 
+            playerData.name
+        );
+    }
+
+    // Handle traps
+    for (let i = 0; i < data.traps.length; i++) {
+        let nt = data.traps[i];
+        traps.push(new Trap(nt.x, nt.y, 10, socket.id, nt.color, nt.ownerName));
+    }
+});
 
   socket.on("YOUR_ID", (data) => {
     console.log(data)
@@ -348,6 +373,18 @@ function setup() {
     console.log()
   });
 
+  socket.on("spawn_trap", (data) => {
+    console.log(data, "handle")
+    let newT = new Trap(data.x,data.y,10,socket.id,data.color,data.ownerName)
+    traps.push(newT)
+  })
+
+
+  socket.on("use_trap", (data) => {
+    //hit a player 
+    //does damage add damager to the player
+  })
+
   const grid = 16;
   testMap = new Map(width / grid, height / grid, grid); // WIDTH, HEIGHT, GRID SIZE
 
@@ -391,6 +428,29 @@ function selectRace(raceIndex) {
   curPlayer.race = raceIndex
   console.log('Race selected: ' + raceButtons[raceIndex].html());
 }
+
+
+        function keyReleased() {
+            if (keyCode === 32 && !keyReleasedFlag) { // Check if the spacebar is released
+                console.log("Trap created");
+        
+                // Create a new trap at the player's position
+                let newT = new Trap(curPlayer.pos.x, curPlayer.pos.y, 10, curPlayer.id, curPlayer.color, curPlayer.ownerName);
+                traps.push(newT);
+        
+                // Emit the trap creation to the server
+                socket.emit("spawn_trap", { x: curPlayer.pos.x, y: curPlayer.pos.y, ownerName: curPlayer.name, color: curPlayer.color });
+        
+                // Set the flag to true so the trap is created only once on key release
+                keyReleasedFlag = true;
+            }
+        }
+        
+        function keyPressed() {
+            if (keyCode === 32) { // Check if spacebar is pressed
+                keyReleasedFlag = false; // Reset the flag when the key is pressed
+            }
+        }
 
 // Function to check if a name is entered
 function checkName() {
@@ -459,6 +519,13 @@ function draw(){
         players[keys[i]].update();
     }
 
+    for(i = 0; i < traps.length; i++) {
+        traps[i].render(); 
+        traps[i].update();
+
+        console.log(traps[i])
+    }
+
     if(curPlayer){
         lastHolding = curPlayer.holding; //copy to compare to later
 
@@ -469,8 +536,8 @@ function draw(){
         if(keyIsDown(87)) curPlayer.holding.w = true; //w
         if(keyIsDown(65)) curPlayer.holding.a = true; //a
         if(keyIsDown(83)) curPlayer.holding.s = true; //s
-        if(keyIsDown(68)) curPlayer.holding.d = true; //d
-
+        if(keyIsDown(68)) curPlayer.holding.d = true; //d 
+   
         if(lastHolding.w != curPlayer.holding.w || lastHolding.a != curPlayer.holding.a || lastHolding.s != curPlayer.holding.s || lastHolding.d != curPlayer.holding.d){
             socket.emit("update_pos", curPlayer);
         }

@@ -1,4 +1,4 @@
-const BASE_HEALTH = 10;
+
 class Trap {
     constructor(x, y, health = BASE_HEALTH, id, color, ownerName ) {
         this.id = id; // socket ID
@@ -40,10 +40,10 @@ class Trap {
         }
     }
 
-    render() {
-        push();
-        fill(255)
-        rect(this.pos.x, this.pos.y, 32); 
-        pop();
+        render() {
+            push();
+            fill(255)
+            rect(this.pos.x, this.pos.y, 16); 
+            pop();
     }
 }

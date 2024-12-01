@@ -1,5 +1,5 @@
 const BASE_HEALTH = 100;
-const BASE_SPEED = 1;
+const BASE_SPEED = 5;
 class Player {
     constructor(x, y, health = BASE_HEALTH, id, color,race, name ) {
         this.id = id; // socket ID
@@ -68,6 +68,16 @@ class Player {
         text(this.name, this.pos.x, this.pos.y -25); 
         fill(this.color.r,this.color.g,this.color.b);
         circle(this.pos.x, this.pos.y, 32); // TODO: Replace with character image
+        pop();
+        this.renderHealthBar()
+    }
+
+    renderHealthBar() {
+        push();
+        fill(255,0,0)
+        textSize(8); // Optional: Set text size for readability
+        text(this.hp, this.pos.x, this.pos.y +25); 
+        rect(this.pos.x, this.pos.y+ 25, 5); // TODO: Replace with character image
         pop();
     }
 }
