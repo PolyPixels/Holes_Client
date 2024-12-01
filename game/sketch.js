@@ -42,7 +42,7 @@ function Map(w, h, grid) // FIXME: This whole thing could be way more performant
                        this.data[x+1+((y+1)/this.WIDTH)],this.data[x+((y+1)/this.WIDTH)]];
         for(let i=0; i < 4; i++){
           if(corners[i] == -1) corners[i] = 1;
-          corners[i] += 0.6;
+          corners[i] += 0.7;
         }
         //holds the screen cordinates of each corner
         let scCorners = [this.cordToScreen(x,y),this.cordToScreen(x+1,y),
@@ -81,6 +81,7 @@ function Map(w, h, grid) // FIXME: This whole thing could be way more performant
         //stroke(100,50,0);
 
         //draw the specific shape based on which corner values > 0
+        fill("#3B1725");
         switch(state){
           case 1:
             //line(c.x,c.y,d.x,d.y);
@@ -89,6 +90,7 @@ function Map(w, h, grid) // FIXME: This whole thing could be way more performant
             vertex(c.x,c.y);
             vertex(d.x,d.y);
             endShape();
+            circle(scCorners[3].x, scCorners[3].y, (corners[3]-0.6)*this.tileSize);  //TODO: revisit small nodes rendering werid
             break;
           case 2:
             //line(b.x,b.y,c.x,c.y);
@@ -97,6 +99,7 @@ function Map(w, h, grid) // FIXME: This whole thing could be way more performant
             vertex(b.x,b.y);
             vertex(c.x,c.y);
             endShape();
+            circle(scCorners[2].x, scCorners[2].y, (corners[2]-0.6)*this.tileSize);  //TODO: revisit small nodes rendering werid
             break;
           case 3:
             //line(b.x,b.y,d.x,d.y);
@@ -114,6 +117,7 @@ function Map(w, h, grid) // FIXME: This whole thing could be way more performant
             vertex(b.x,b.y);
             vertex(a.x,a.y);
             endShape();
+            circle(scCorners[1].x, scCorners[1].y, (corners[1]-0.6)*this.tileSize);  //TODO: revisit small nodes rendering werid
             break;
           case 5:
             //line(a.x,a.y,d.x,d.y);
@@ -153,6 +157,7 @@ function Map(w, h, grid) // FIXME: This whole thing could be way more performant
             vertex(a.x,a.y);
             vertex(d.x,d.y);
             endShape();
+            circle(scCorners[0].x, scCorners[0].y, (corners[0]-0.6)*this.tileSize);  //TODO: revisit small nodes rendering werid
             break;
           case 9:
             //line(a.x,a.y,c.x,c.y);
@@ -345,29 +350,26 @@ function draw(){
       let y = floor(mouseY/testMap.tileSize);
 
       //removes from 5 nodes in a "+" shape, made the digging feel much better
-      let index = x + (y / testMap.WIDTH);
-      if(testMap.data[index] > 0) testMap.data[index] -= 0.01;
-      if(testMap.data[index] < 0.2 && testMap.data[index] !== -1) testMap.data[index] = 0;
-      socket.emit("update_node", {index: index, val: testMap.data[index]});
-
-      index = (x + 1) + (y / testMap.WIDTH);
-      if(testMap.data[index] > 0) testMap.data[index] -= 0.01;
-      if(testMap.data[index] < 0.2 && testMap.data[index] !== -1) testMap.data[index] = 0;
-      socket.emit("update_node", {index: index, val: testMap.data[index]});
-
-      index = (x - 1) + (y / testMap.WIDTH);
-      if(testMap.data[index] > 0) testMap.data[index] -= 0.01;
-      if(testMap.data[index] < 0.2 && testMap.data[index] !== -1) testMap.data[index] = 0;
-      socket.emit("update_node", {index: index, val: testMap.data[index]});
-
-      index = x + ((y + 1) / testMap.WIDTH);
-      if(testMap.data[index] > 0) testMap.data[index] -= 0.01;
-      if(testMap.data[index] < 0.2 && testMap.data[index] !== -1) testMap.data[index] = 0;
-      socket.emit("update_node", {index: index, val: testMap.data[index]});
-
-      index = x + ((y - 1) / testMap.WIDTH);
-      if(testMap.data[index] > 0) testMap.data[index] -= 0.01;
-      if(testMap.data[index] < 0.2 && testMap.data[index] !== -1) testMap.data[index] = 0;
-      socket.emit("update_node", {index: index, val: testMap.data[index]});
+      dig(x + 1, y);
+      dig(x - 1, y);
+      dig(x, y + 1);
+      dig(x, y - 1);
+      dig(x, y);
     }
+}
+
+function dig(x,y){
+  let index = x + (y / testMap.WIDTH);
+  if(testMap.data[index] > 0) testMap.data[index] -= 0.01;
+  if(testMap.data[index] < 0.3 && testMap.data[index] !== -1) testMap.data[index] = 0;
+  if(testMap.data[(x+1+(y/testMap.WIDTH))] <= 0.4){
+    if(testMap.data[(x-1+(y/testMap.WIDTH))] <= 0.4){
+      if(testMap.data[(x+((y+1)/testMap.WIDTH))] <= 0.4){
+        if(testMap.data[(x+((y+1)/testMap.WIDTH))] <= 0.4){
+          testMap.data[index] = 0;
+        }
+      }
+    }
+  }
+  socket.emit("update_node", {index: index, val: testMap.data[index]});
 }
