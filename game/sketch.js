@@ -261,8 +261,9 @@ var projectiles = []
 var collisionChecks = []; //for debugging
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);  // Resize canvas when window size changes
+  resizeCanvas(innerWidth-10, innerHeight-8);  // Resize canvas when window size changes
 }
+
 function setup() {
   let cnv = createCanvas(800, 800);
   cnv.parent('canvas-container'); 
@@ -476,38 +477,42 @@ function draw(){
     background("#71413B");
 
     if(gameState == "initial") {
+      nameInput.position(width/2-150, height/2 + 250);
       nameInput.show();
+      goButton.position(width/2-150, height/2 + 280);
       goButton.show();
-        // Position the buttons and add functionality
-  raceButtons.forEach((btn, index) => {
-    btn.position(width / 2 - 150, height / 2 + 50 + index * 60);
-    btn.mousePressed(() => selectRace(index)); // Trigger race selection on button press
-    btn.show(); // Initially hide buttons
-  });
+
+      // Position the buttons and add functionality
+      raceButtons.forEach((btn, index) => {
+        btn.position(width / 2 - 150, height / 2 + 50 + index * 60);
+        btn.mousePressed(() => selectRace(index)); // Trigger race selection on button press
+        btn.show(); // Initially hide buttons
+      });
+
       // picking user
-      push()
-      
+      push();
       fill(255)
       textSize(40); // Optional: Set text size for readability
-      text("Pick A Race", width-500, height -500); 
+      textAlign(CENTER,CENTER);
+      text("Pick A Race", width/2, height/3);
+      pop();
 
-      pop()
-          // Check if both race and name are selected/entered to enable the "Go" button
-          if (raceSelected && nameEntered) {
-            goButton.removeAttribute('disabled');
-          } else {
-            goButton.attribute('disabled', true);
-          }
+      // Check if both race and name are selected/entered to enable the "Go" button
+      if (raceSelected && nameEntered) {
+        goButton.removeAttribute('disabled');
+      } else {
+        goButton.attribute('disabled', true);
+      }
     }else {
       // normal game 
       nameInput.hide();
       goButton.hide();
       // Position the buttons and add functionality
-  raceButtons.forEach((btn, index) => {
-    btn.position(width / 2 - 150, height / 2 + 50 + index * 60);
-    btn.mousePressed(() => selectRace(index)); // Trigger race selection on button press
-    btn.hide(); // Initially hide buttons
-  });
+      raceButtons.forEach((btn, index) => {
+        btn.position(width / 2 - 150, height / 2 + 50 + index * 60);
+        btn.mousePressed(() => selectRace(index)); // Trigger race selection on button press
+        btn.hide(); // Initially hide buttons
+      });
 
 
     if(testMap.data.length > 0) testMap.render();
