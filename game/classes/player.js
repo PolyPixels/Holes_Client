@@ -1,65 +1,83 @@
 const BASE_HEALTH = 100;
-const BASE_SPEED = 1;
-
+const BASE_SPEED = 5;
 class Player {
-    constructor(x, y, health, id) {
-        this.id = id; //socket id
+    constructor(x, y, health = BASE_HEALTH, id, color,race, name ) {
+        this.id = id; // socket ID
         this.pos = createVector(x, y);
         this.hp = health;
         this.mhp = BASE_HEALTH;
-        this.holding = {w: false, a: false, s: false, d: false}; //using this to reduce lag
+        this.holding = { w: false, a: false, s: false, d: false }; // Movement keys state
+        this.race = race
+        this.name = name
+        // Set color with default fallback
+        if (!color) {
+            console.log("color error");
+            this.color = {r:255,g:5,b:5}
+        } else {
+            this.color ={r:color.r, g:color.g, b:color.b}
+        }
     }
 
-    update(){  //move the player based on this.holding
+    checkCollisions(xOffset, yOffset, tileSize) {
+        let x = floor(this.pos.x / tileSize) + xOffset;
+        let y = floor(this.pos.y / tileSize) + yOffset;
+        return {
+            x: (x + 0.5) * tileSize,
+            y: (y + 0.5) * tileSize,
+            val: testMap.data[x + (y / testMap.HEIGHT)]
+        };
+    }
+
+    update() {
         let oldPos = this.pos.copy();
-        collisionChecks = [];
-        if(this.holding.w) {
+        let collisionChecks = [];
+
+        if (this.holding.w) {
             this.pos.y += -BASE_SPEED;
-            let x = floor(this.pos.x/testMap.tileSize);
-            let y = floor(this.pos.y/testMap.tileSize)-1;
-            collisionChecks.push({x: (x+0.5+0)*testMap.tileSize, y: (y+0.5)*testMap.tileSize, val: testMap.data[(x+0) + (y/ testMap.HEIGHT)]});
-            collisionChecks.push({x: (x+0.5+1)*testMap.tileSize, y: (y+0.5)*testMap.tileSize, val: testMap.data[(x+1) + (y/ testMap.HEIGHT)]});
-            collisionChecks.push({x: (x+0.5-1)*testMap.tileSize, y: (y+0.5)*testMap.tileSize, val: testMap.data[(x-1) + (y/ testMap.HEIGHT)]});
+            collisionChecks.push(this.checkCollisions(0, -1, testMap.tileSize));
         }
-        if(this.holding.a){
+        if (this.holding.a) {
             this.pos.x += -BASE_SPEED;
-            let x = floor(this.pos.x/testMap.tileSize)-1;
-            let y = floor(this.pos.y/testMap.tileSize);
-            collisionChecks.push({x: (x+0.5)*testMap.tileSize, y: (y+0.5+0)*testMap.tileSize, val: testMap.data[x + ((y+0)/ testMap.HEIGHT)]});
-            collisionChecks.push({x: (x+0.5)*testMap.tileSize, y: (y+0.5+1)*testMap.tileSize, val: testMap.data[x + ((y+1)/ testMap.HEIGHT)]});
-            collisionChecks.push({x: (x+0.5)*testMap.tileSize, y: (y+0.5-1)*testMap.tileSize, val: testMap.data[x + ((y-1)/ testMap.HEIGHT)]});
+            collisionChecks.push(this.checkCollisions(-1, 0, testMap.tileSize));
         }
-        if(this.holding.s){
-            this.pos.y +=  BASE_SPEED;
-            let x = floor(this.pos.x/testMap.tileSize);
-            let y = floor(this.pos.y/testMap.tileSize)+1;
-            collisionChecks.push({x: (x+0.5+0)*testMap.tileSize, y: (y+0.5)*testMap.tileSize, val: testMap.data[(x+0) + (y/ testMap.HEIGHT)]});
-            collisionChecks.push({x: (x+0.5+1)*testMap.tileSize, y: (y+0.5)*testMap.tileSize, val: testMap.data[(x+1) + (y/ testMap.HEIGHT)]});
-            collisionChecks.push({x: (x+0.5-1)*testMap.tileSize, y: (y+0.5)*testMap.tileSize, val: testMap.data[(x-1) + (y/ testMap.HEIGHT)]});
+        if (this.holding.s) {
+            this.pos.y += BASE_SPEED;
+            collisionChecks.push(this.checkCollisions(0, 1, testMap.tileSize));
         }
-        if(this.holding.d) {
-            this.pos.x +=  BASE_SPEED;
-            let x = floor(this.pos.x/testMap.tileSize)+1;
-            let y = floor(this.pos.y/testMap.tileSize);
-            collisionChecks.push({x: (x+0.5)*testMap.tileSize, y: (y+0.5+0)*testMap.tileSize, val: testMap.data[x + ((y+0)/ testMap.HEIGHT)]});
-            collisionChecks.push({x: (x+0.5)*testMap.tileSize, y: (y+0.5+1)*testMap.tileSize, val: testMap.data[x + ((y+1)/ testMap.HEIGHT)]});
-            collisionChecks.push({x: (x+0.5)*testMap.tileSize, y: (y+0.5-1)*testMap.tileSize, val: testMap.data[x + ((y-1)/ testMap.HEIGHT)]});
+        if (this.holding.d) {
+            this.pos.x += BASE_SPEED;
+            collisionChecks.push(this.checkCollisions(1, 0, testMap.tileSize));
         }
 
-        //checking collisions here
-        for(let i=0; i<collisionChecks.length; i++){
-            if(collisionChecks[i].val == -1) this.pos = oldPos;
-            if(collisionChecks[i].val > 0){
-                //-------------------------Tweak this 16 when charater image gets put in VV
-                if(this.pos.dist(createVector(collisionChecks[i].x, collisionChecks[i].y)) < 16+(collisionChecks[i].val*testMap.tileSize/2)) this.pos = oldPos;
+        // Handle collisions
+        for (let i = 0; i < collisionChecks.length; i++) {
+            let check = collisionChecks[i];
+            if (check.val == -1) this.pos = oldPos;
+            if (check.val > 0) {
+                if (this.pos.dist(createVector(check.x, check.y)) < 16 + (check.val * testMap.tileSize / 2)) {
+                    this.pos = oldPos;
+                }
             }
         }
     }
 
-    render(){
+    render() {
         push();
-        fill(255,0,0, 100);
-        circle(this.pos.x, this.pos.y, 32); //TODO: replace with image
+        fill(255)
+        textSize(10); // Optional: Set text size for readability
+        text(this.name, this.pos.x, this.pos.y -25); 
+        fill(this.color.r,this.color.g,this.color.b);
+        circle(this.pos.x, this.pos.y, 32); // TODO: Replace with character image
+        pop();
+        this.renderHealthBar()
+    }
+
+    renderHealthBar() {
+        push();
+        fill(255,0,0)
+        textSize(8); // Optional: Set text size for readability
+        text(this.hp, this.pos.x, this.pos.y +25); 
+        rect(this.pos.x, this.pos.y+ 25, 5); // TODO: Replace with character image
         pop();
     }
 }
