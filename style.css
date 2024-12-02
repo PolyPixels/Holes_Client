@@ -33,7 +33,22 @@ canvas {
   border: 2px solid #ddd; /* Light border to make it pop */
 }
 
-/* Hover effect for interactive elements, such as buttons, inside the canvas container */
+/* Simple Button styling */
+.b {
+  font-family: arial;
+  font-weight: bold;
+  color: #FFFFFF !important;
+  font-size: 20px;
+  text-shadow: 0px 0px 0px #BF6017;
+  box-shadow: 0px 0px 0px #BEE2F9;
+  padding: 10px 25px;
+  border-radius: 10px;
+  border: 2px solid #FFFFFF;
+  background: #9E5915;
+  background: linear-gradient(to top, #9E5915, #522E12);
+}
+
+/* Simple Button hover styling */
 .b:hover {
   color: #FFFFFF !important;
   background: #BA6919;
