@@ -1,563 +1,402 @@
-function Map(w, h, grid) // FIXME: This whole thing could be way more performant
-{
-  this.data = [];
-  this.WIDTH = w
-  this.HEIGHT = h;
-  this.tileSize = grid;
-  
-  this.cordToScreen = function(x,y){
-    let val = {};
-    val.x = (x+0.5)*this.tileSize;
-    val.y = (y+0.5)*this.tileSize;
-    return val;
-  }
-  
-  this.DebugDraw = function()
-  {
-    for (let x = 0; x < this.WIDTH; x++)
-    {
-      for (let y = 0; y < this.HEIGHT; y++)
-      {
-        let index = x + (y / this.WIDTH);
-        fill(map(this.data[index], 0, 1, 255, 0));
-        //rect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
-        circle((x+0.5)*this.tileSize, (y+0.5)*this.tileSize, this.data[index]*this.tileSize);
+// sketch.js
+
+// Global variables
+let gameState = 'initial';
+let testMap;
+let socket;
+let curPlayer;
+let lastHolding;
+let players = {};
+let traps = [];
+let projectiles = [];
+let collisionChecks = [];
+let raceSelected = false;
+let nameEntered = false;
+let raceButtons = [];
+let goButton;
+let nameInput;
+let keyReleasedFlag = false;
+const races = ['gnome'];
+let raceImages = {}; // Object to hold all race images
+let defaultImage;
+
+function preload() {
+  // Load the default image
+
+  /*
+  defaultImage = loadImage(
+    'images/default_front_walk.png',
+    function (img) {
+      console.log('Default image loaded successfully.');
+    },
+    function (err) {
+      console.error('Failed to load the default image.');
+      // Create a placeholder image to use as default
+      defaultImage = createImage(32, 32);
+      defaultImage.loadPixels();
+      for (let i = 0; i < defaultImage.pixels.length; i += 4) {
+        defaultImage.pixels[i] = 255;     // R
+        defaultImage.pixels[i + 1] = 0;   // G
+        defaultImage.pixels[i + 2] = 0;   // B
+        defaultImage.pixels[i + 3] = 255; // A
       }
+      defaultImage.updatePixels();
     }
-  }
-  
-  this.render = function()
-  {
+  );
+  */
 
-
-    fill("#3B1725");
-    noStroke();
-    
-    rect(0,0,this.tileSize/2,height);
-    rect(0,0,width,this.tileSize/2);
-    rect(width-this.tileSize/2,0,this.tileSize/2,height);
-    rect(0,height-this.tileSize/2,width,this.tileSize/2);
-    for (let x = 0; x < this.WIDTH-1; x++){
-      for (let y = 0; y < this.HEIGHT-1; y++){
-        //holds the values at each corner
-        let corners = [this.data[x+(y/this.WIDTH)],this.data[x+1+(y/this.WIDTH)],
-                      this.data[x+1+((y+1)/this.WIDTH)],this.data[x+((y+1)/this.WIDTH)]];
-        for(let i=0; i < 4; i++){
-          if(corners[i] == -1) corners[i] = 1;
-          corners[i] += 0.7;
-        }
-        //holds the screen cordinates of each corner
-        let scCorners = [this.cordToScreen(x,y),this.cordToScreen(x+1,y),
-                        this.cordToScreen(x+1,y+1),this.cordToScreen(x,y+1)];
-        let state = getState(corners[0],corners[1],corners[2],corners[3]);
-        let amt = 0;
-
-        //Visual Representation of positions:
-        //                   
-        //  sc[0]--a--sc[1]  
-        //    |         |    
-        //    d         b    
-        //    |         |    
-        //  sc[3]--c--sc[2]  
-        //                   
-
-        //the side positions, adjsted based on the values at each corner
-        let a = {x: 0, y: scCorners[0].y};
-        amt = (1-corners[0])/(corners[1]-corners[0]);
-        a.x = lerp(scCorners[0].x,scCorners[1].x,amt);
-
-        let b = {x: scCorners[1].x, y: 0};
-        amt = (1-corners[1])/(corners[2]-corners[1]);
-        b.y = lerp(scCorners[1].y,scCorners[2].y,amt);
-
-        let c = {x: 0, y: scCorners[2].y};
-        amt = (1-corners[2])/(corners[3]-corners[2]);
-        c.x = lerp(scCorners[2].x,scCorners[3].x,amt);
-
-        let d = {x: scCorners[0].x, y: 0};
-        amt = (1-corners[0])/(corners[3]-corners[0]);
-        d.y = lerp(scCorners[0].y,scCorners[3].y,amt);
-
-        
-        //strokeWeight(5);
-        //stroke(100,50,0);
-        push();
-        
-        fill(255); // Set the text color to white
-        textSize(16); // Optional: Set text size for readability
-        text('Players: ' + (Object.keys(players).length +1), 100, 50); // Display the number of players
-        pop();
-        
-        
-
-        //draw the specific shape based on which corner values > 0
-        fill("#3B1725");
-        switch(state){
-          case 1:
-            //line(c.x,c.y,d.x,d.y);
-            beginShape();
-            vertex(scCorners[3].x, scCorners[3].y);
-            vertex(c.x,c.y);
-            vertex(d.x,d.y);
-            endShape();
-            circle(scCorners[3].x, scCorners[3].y, (corners[3]-0.6)*this.tileSize);  //TODO: revisit small nodes rendering werid
-            break;
-          case 2:
-            //line(b.x,b.y,c.x,c.y);
-            beginShape();
-            vertex(scCorners[2].x, scCorners[2].y);
-            vertex(b.x,b.y);
-            vertex(c.x,c.y);
-            endShape();
-            circle(scCorners[2].x, scCorners[2].y, (corners[2]-0.6)*this.tileSize);  //TODO: revisit small nodes rendering werid
-            break;
-          case 3:
-            //line(b.x,b.y,d.x,d.y);
-            beginShape();
-            vertex(scCorners[2].x, scCorners[2].y);
-            vertex(b.x,b.y);
-            vertex(d.x,d.y);
-            vertex(scCorners[3].x, scCorners[3].y);
-            endShape();
-            break;
-          case 4:
-            //line(b.x,b.y,a.x,a.y);
-            beginShape();
-            vertex(scCorners[1].x, scCorners[1].y);
-            vertex(b.x,b.y);
-            vertex(a.x,a.y);
-            endShape();
-            circle(scCorners[1].x, scCorners[1].y, (corners[1]-0.6)*this.tileSize);  //TODO: revisit small nodes rendering werid
-            break;
-          case 5:
-            //line(a.x,a.y,d.x,d.y);
-            //line(b.x,b.y,c.x,c.y);
-            beginShape();
-            vertex(a.x,a.y);
-            vertex(scCorners[1].x, scCorners[1].y);
-            vertex(b.x,b.y);
-            vertex(c.x,c.y);
-            vertex(scCorners[3].x, scCorners[3].y);
-            vertex(d.x,d.y);
-            endShape();
-            break;
-          case 6:
-            //line(a.x,a.y,c.x,c.y);
-            beginShape();
-            vertex(scCorners[1].x, scCorners[1].y);
-            vertex(a.x,a.y);
-            vertex(c.x,c.y);
-            vertex(scCorners[2].x, scCorners[2].y);
-            endShape();
-            break;
-          case 7:
-            //line(a.x,a.y,d.x,d.y);
-            beginShape();
-            vertex(scCorners[1].x, scCorners[1].y);
-            vertex(scCorners[2].x, scCorners[2].y);
-            vertex(scCorners[3].x, scCorners[3].y);
-            vertex(d.x,d.y);
-            vertex(a.x,a.y);
-            endShape();
-            break;
-          case 8:
-            //line(a.x,a.y,d.x,d.y);
-            beginShape();
-            vertex(scCorners[0].x, scCorners[0].y);
-            vertex(a.x,a.y);
-            vertex(d.x,d.y);
-            endShape();
-            circle(scCorners[0].x, scCorners[0].y, (corners[0]-0.6)*this.tileSize);  //TODO: revisit small nodes rendering werid
-            break;
-          case 9:
-            //line(a.x,a.y,c.x,c.y);
-            beginShape();
-            vertex(scCorners[0].x, scCorners[0].y);
-            vertex(a.x,a.y);
-            vertex(c.x,c.y);
-            vertex(scCorners[3].x, scCorners[3].y);
-            endShape();
-            break;
-          case 10:
-            //line(a.x,a.y,b.x,b.y);
-            //line(d.x,d.y,c.x,c.y);
-            beginShape();
-            vertex(scCorners[0].x, scCorners[0].y);
-            vertex(a.x,a.y);
-            vertex(b.x,b.y);
-            vertex(scCorners[2].x, scCorners[2].y);
-            vertex(c.x,c.y);
-            vertex(d.x,d.y);
-            endShape();
-            break;
-          case 11:
-            //line(a.x,a.y,b.x,b.y);
-            beginShape();
-            vertex(a.x,a.y);
-            vertex(b.x,b.y);
-            vertex(scCorners[2].x, scCorners[2].y);
-            vertex(scCorners[3].x, scCorners[3].y);
-            vertex(scCorners[0].x, scCorners[0].y);
-            endShape();
-            break;
-          case 12:
-            //line(b.x,b.y,d.x,d.y);
-            beginShape();
-            vertex(b.x,b.y);
-            vertex(d.x,d.y);
-            vertex(scCorners[0].x, scCorners[0].y);
-            vertex(scCorners[1].x, scCorners[1].y);
-            endShape();
-            break;
-          case 13:
-            //line(b.x,b.y,c.x,c.y);
-            beginShape();
-            vertex(b.x,b.y);
-            vertex(c.x,c.y);
-            vertex(scCorners[3].x, scCorners[3].y);
-            vertex(scCorners[0].x, scCorners[0].y);
-            vertex(scCorners[1].x, scCorners[1].y);
-            endShape();
-            break;
-          case 14:
-            //line(c.x,c.y,d.x,d.y);
-            beginShape();
-            vertex(c.x,c.y);
-            vertex(d.x,d.y);
-            vertex(scCorners[0].x, scCorners[0].y);
-            vertex(scCorners[1].x, scCorners[1].y);
-            vertex(scCorners[2].x, scCorners[2].y);
-            endShape();
-            break;
-          case 15:
-            rect(scCorners[0].x, scCorners[0].y, this.tileSize, this.tileSize);
-        }
-      }
-    }
-  }
+  // Load race images
+  loadRaceImages();
 }
 
-//converts corner values into a binary number? resulting in a uniqe int for each possible combination of corner vals
-function getState(c1,c2,c3,c4){
-  let val = 0;
-  if(c1 >= 1){val+=8}
-  if(c2 >= 1){val+=4}
-  if(c3 >= 1){val+=2}
-  if(c4 >= 1){val+=1}
-  return val;
-}
+function loadRaceImages() {
+  for (let raceIndex = 0; raceIndex < races.length; raceIndex++) {
+    let raceName = races[raceIndex];
+    raceImages[raceName] = {
+      front: [],
+      back: [],
+      left: [],
+      right: [],
+    };
 
+    // Load images for each direction
+    for (let i = 0; i < 3; i++) {
+      // Front images
+      raceImages[raceName].front[i] = loadImage(
+        `images/${raceName}_front_walk${i + 1}.png`,
+        function (img) {
+          console.log(`Loaded image: images/${raceName}_front_walk${i + 1}.png`);
+        },
+        function (err) {
+          console.error(`Failed to load image: images/${raceName}_front_walk${i + 1}.png`);
+          raceImages[raceName].front[i] = defaultImage;
+        }
+      );
 
-//TODO: Move map to server side
+      // Back images
+      raceImages[raceName].back[i] = loadImage(
+        `images/${raceName}_back_walk${i + 1}.png`,
+        function (img) {
+          console.log(`Loaded image: images/${raceName}_back_walk${i + 1}.png`);
+        },
+        function (err) {
+          console.error(`Failed to load image: images/${raceName}_back_walk${i + 1}.png`);
+          raceImages[raceName].back[i] = defaultImage;
+        }
+      );
 
-let gameState ="initial"
-let testMap; // Create a map object
-var socket; //Connection to the server
-var curPlayer; //Your player
-var lastHolding;
-var players = {}; //other players WHY IS THIS AN OBJECT  ?? ??
-var traps = []
-var projectiles = []
-var collisionChecks = []; //for debugging
-
-function windowResized() {
-  resizeCanvas(innerWidth-10, innerHeight-8);  // Resize canvas when window size changes
+      // Left images
+      raceImages[raceName].left[i] = loadImage(
+        `images/${raceName}_side_walk${i + 1}.png`,
+        function (img) {
+          console.log(`Loaded image: images/${raceName}_side_walk${i + 1}.png`);
+        },
+        function (err) {
+          console.error(`Failed to load image: images/${raceName}_side_walk${i + 1}.png`);
+          raceImages[raceName].left[i] = defaultImage;
+        }
+      );
+    }
+  }
 }
 
 function setup() {
-  let cnv = createCanvas(800, 800);
-  cnv.parent('canvas-container'); 
+  createCanvas(windowWidth - 10, windowHeight - 10);
   background(220);
 
   // Prevent right-click context menu on all p5.js canvases
-  const canvases = document.getElementsByClassName("p5Canvas");
+  const canvases = document.getElementsByClassName('p5Canvas');
   for (let element of canvases) {
-    element.addEventListener("contextmenu", (e) => e.preventDefault());
+    element.addEventListener('contextmenu', (e) => e.preventDefault());
   }
-  socket = io.connect("http://localhost:3000");
 
-  //all caps means it came from the server
-  //all lower means it came from the client
+  socket = io.connect('http://localhost:3000');
 
-  socket.on("GIVE_MAP", (data) => {
-    let keys = Object.keys(data);
-    for(let i=0; i<keys.length; i++) testMap.data[keys[i]] = data[keys[i]];
+  // Flip left images to create right images
+  for (let raceName in raceImages) {
+    raceImages[raceName].right = [];
+    for (let i = 0; i < raceImages[raceName].left.length; i++) {
+      raceImages[raceName].right[i] = flipImage(raceImages[raceName].left[i]);
+    }
+  }
+
+  // Socket event handlers
+  socket.on('GIVE_MAP', (data) => {
+    testMap.data = data;
   });
 
-  socket.on("NEW_PLAYER", (data) => {
-    players[data.id] = new Player(data.pos.x, data.pos.y, data.hp, data.id,data.color,data.race,data.name);
-
-    players[data.id].color = data.color
+  socket.on('NEW_PLAYER', (data) => {
+    players[data.id] = new Player(
+      data.pos.x,
+      data.pos.y,
+      data.hp,
+      data.id,
+      data.color,
+      data.race,
+      data.name
+    );
   });
 
-  socket.on("OLD_DATA", (data) => {
-    console.log(data);
-    let keys = Object.keys(data.players);  // Ensure we're getting an array of player IDs
-
-    console.log(keys);
+  socket.on('OLD_DATA', (data) => {
+    let keys = Object.keys(data.players);
     for (let i = 0; i < keys.length; i++) {
-        console.log(players[keys[i]], "player");
-        const playerData = data.players[keys[i]];
-
-        // Ensure that playerData has the correct properties for the Player constructor
-        players[keys[i]] = new Player(
-            playerData.pos.x, 
-            playerData.pos.y, 
-            playerData.hp, 
-            keys[i], 
-            playerData.color, 
-            playerData.race, 
-            playerData.name
-        );
+      const playerData = data.players[keys[i]];
+      players[keys[i]] = new Player(
+        playerData.pos.x,
+        playerData.pos.y,
+        playerData.hp,
+        keys[i],
+        playerData.color,
+        playerData.race,
+        playerData.name
+      );
     }
 
     // Handle traps
     for (let i = 0; i < data.traps.length; i++) {
-        let nt = data.traps[i];
-        traps.push(new Trap(nt.x, nt.y, 10, socket.id, nt.color, nt.ownerName));
+      let nt = data.traps[i];
+      traps.push(new Trap(nt.x, nt.y, 10, nt.ownerId, nt.color, nt.ownerName));
     }
-});
-
-  socket.on("YOUR_ID", (data) => {
-    console.log(data)
-    curPlayer = new Player(width/2, height/2, 100, data.id,data.color); //only create your player once your given your socket id
- 
   });
 
-  socket.on("UPDATE_ALL_POS", (data) => {
-    let keys = Object.keys(data); // Grabs keys to iterate through, easier to find players this way
-  
-    // First, check for missing players
-    for (let playerId in players) {
-      if (!data.hasOwnProperty(playerId)) {
-        // Player is missing from the data, remove or clean up as needed
-        delete players[playerId]; // You may want to emit a removal event for this player as well
-        console.log(`Player ${playerId} has been removed.`);
-      }
-    }
-  
-    // Now, update players' positions
+  socket.on('YOUR_ID', (data) => {
+    curPlayer = new Player(
+      width / 2,
+      height / 2,
+      100,
+      data.id,
+      data.color,
+      0,
+      ''
+    ); // Default race index 0
+  });
+
+  socket.on('UPDATE_ALL_POS', (data) => {
+    let keys = Object.keys(data);
+
+    // Update players' positions
     for (let i = 0; i < keys.length; i++) {
       const playerId = keys[i];
       const playerData = data[playerId];
-  
+
       if (playerId === curPlayer.id) {
-        socket.emit("update_pos", curPlayer);
+        socket.emit('update_pos', curPlayer);
       } else {
-        if (players[playerId]) { // Check if the player exists in the game state
+        if (players[playerId]) {
           players[playerId].pos.x = playerData.pos.x;
           players[playerId].pos.y = playerData.pos.y;
           players[playerId].hp = playerData.hp;
+          players[playerId].holding = playerData.holding;
+          players[playerId].direction = playerData.direction;
         }
       }
     }
   });
-  
 
-  socket.on("UPDATE_POS", (data) => {
-    if(!data) return
-    if(!data.pos) return
+  socket.on('UPDATE_POS', (data) => {
+    if (!data) return;
+    if (!data.pos) return;
 
-
-    players[data.id].pos.x = data.pos.x;
-    players[data.id].pos.y = data.pos.y;
-    players[data.id].hp = data.hp;
-    players[data.id].holding = data.holding;
-
-
-    //players[data.id].color = data.color
+    if (players[data.id]) {
+      players[data.id].pos.x = data.pos.x;
+      players[data.id].pos.y = data.pos.y;
+      players[data.id].hp = data.hp;
+      players[data.id].holding = data.holding;
+      players[data.id].direction = data.direction;
+    }
   });
 
-  socket.on("UPDATE_NODE", (data) => {
+  socket.on('UPDATE_NODE', (data) => {
     testMap.data[data.index] = data.val;
-  })
-
-  socket.on("REMOVE_PLAYER", (data) => {
-    players[data] = []
-
-    delete players[data];
-    console.log()
   });
 
-  socket.on("spawn_trap", (data) => {
-    console.log(data, "handle")
-    let newT = new Trap(data.x,data.y,10,socket.id,data.color,data.ownerName)
-    traps.push(newT)
-  })
+  socket.on('REMOVE_PLAYER', (data) => {
+    delete players[data];
+  });
 
+  socket.on('spawn_trap', (data) => {
+    let newT = new Trap(
+      data.x,
+      data.y,
+      10,
+      data.ownerId,
+      data.color,
+      data.ownerName
+    );
+    traps.push(newT);
+  });
 
-  socket.on("use_trap", (data) => {
-    //hit a player 
-    //does damage add damager to the player
-  })
+  socket.on('use_trap', (data) => {
+    // Handle trap activation
+  });
 
   const grid = 16;
-  testMap = new Map(width / grid, height / grid, grid); // WIDTH, HEIGHT, GRID SIZE
+  testMap = new Map(floor(width / grid), floor(height / grid), grid);
 
-  // FIXME: Do not draw the debug
-  //testMap.DebugDraw();
-
-  // Create race selection buttons for Gnome, Skizard, Aylah
-  raceButtons.push(createButton('Gnome'));
-  raceButtons.push(createButton('Skizard'));
-  raceButtons.push(createButton('Aylah'));
-  
-  // Position the buttons and add functionality
-  raceButtons.forEach((btn, index) => {
-    btn.position(width -300, height / 2 + 50 + index * 60);
-    btn.mousePressed(() => selectRace(index)); // Trigger race selection on button press
-    btn.hide(); // Initially hide buttons
-  });
+  // Create race selection buttons
+  for (let i = 0; i < races.length; i++) {
+    let btn = createButton(races[i].charAt(0).toUpperCase() + races[i].slice(1));
+    btn.position(width / 2 - 75, height / 2 + 50 + i * 60);
+    btn.mousePressed(() => selectRace(i));
+    btn.hide();
+    raceButtons.push(btn);
+  }
 
   // Create input field for user name
   nameInput = createInput('');
-  nameInput.position(width -300, height / 2 + 250);
-  nameInput.input(checkName); // Check if name is entered
-  nameInput.hide(); // Initially hide the input field
+  nameInput.position(width / 2 - 75, height / 2 + 250);
+  nameInput.input(checkName);
+  nameInput.hide();
 
-  // Create the "Go" button (initially disabled)
+  // Create the "Go" button
   goButton = createButton('Go');
-  goButton.position(width  -300, height / 2 + 350);
-  goButton.attribute('disabled', true); // Disable initially
+  goButton.position(width / 2 - 75, height / 2 + 280);
+  goButton.attribute('disabled', true);
   goButton.mousePressed(() => {
-
-    socket.emit("new_player", curPlayer);
-    gameState = "playing"
-    
-  }); // Trigger the start game function
-  goButton.hide(); // Initially hide the Go button
-
-  // Data is very obvious, -1 is unbreakable, 0 is nothing, >0 is block
+    curPlayer.name = nameInput.value();
+    socket.emit('new_player', curPlayer);
+    gameState = 'playing';
+  });
+  goButton.hide();
 }
+
+function flipImage(img) {
+  let flippedImg = createGraphics(img.width, img.height);
+  flippedImg.scale(-1, 1);
+  flippedImg.image(img, -img.width, 0);
+  return flippedImg;
+}
+
 function selectRace(raceIndex) {
-  raceSelected = true; // Set race selected flag to true
-  curPlayer.race = raceIndex
-  console.log('Race selected: ' + raceButtons[raceIndex].html());
+  raceSelected = true;
+  curPlayer.race = raceIndex;
+  curPlayer.loadImages(); // Load images for the selected race
+  console.log('Race selected: ' + races[raceIndex]);
 }
 
-
-        function keyReleased() {
-            if (keyCode === 32 && !keyReleasedFlag) { // Check if the spacebar is released
-                console.log("Trap created");
-        
-                // Create a new trap at the player's position
-                let newT = new Trap(curPlayer.pos.x, curPlayer.pos.y, 10, curPlayer.id, curPlayer.color, curPlayer.ownerName);
-                traps.push(newT);
-        
-                // Emit the trap creation to the server
-                socket.emit("spawn_trap", { x: curPlayer.pos.x, y: curPlayer.pos.y, ownerName: curPlayer.name, color: curPlayer.color });
-        
-                // Set the flag to true so the trap is created only once on key release
-                keyReleasedFlag = true;
-            }
-        }
-        
-        function keyPressed() {
-            if (keyCode === 32) { // Check if spacebar is pressed
-                keyReleasedFlag = false; // Reset the flag when the key is pressed
-            }
-        }
-
-// Function to check if a name is entered
 function checkName() {
-  console.log(nameInput.value())
-  curPlayer.name = nameInput.value()
   if (nameInput.value().length > 0) {
-    nameEntered = true; // Set name entered flag to true
+    nameEntered = true;
   } else {
-    nameEntered = false; // Set name entered flag to false
+    nameEntered = false;
   }
 }
-let raceSelected = false; // Flag to track if a race is selected
-let nameEntered = false; // Flag to track if a name is entered
-let raceButtons = [];
-let goButton;
-let nameInput;
-function draw(){
-    background("#71413B");
 
-    if(gameState == "initial") {
-      nameInput.position(width/2-150, height/2 + 250);
-      nameInput.show();
-      goButton.position(width/2-150, height/2 + 280);
-      goButton.show();
+function keyReleased() {
+  if (keyCode === 32 && !keyReleasedFlag) {
+    // Spacebar released
+    console.log('Trap created');
 
-      // Position the buttons and add functionality
-      raceButtons.forEach((btn, index) => {
-        btn.position(width / 2 - 150, height / 2 + 50 + index * 60);
-        btn.mousePressed(() => selectRace(index)); // Trigger race selection on button press
-        btn.show(); // Initially hide buttons
-      });
+    // Create a new trap at the player's position
+    let newT = new Trap(
+      curPlayer.pos.x,
+      curPlayer.pos.y,
+      10,
+      curPlayer.id,
+      curPlayer.color,
+      curPlayer.name
+    );
+    traps.push(newT);
 
-      // picking user
-      push();
-      fill(255)
-      textSize(40); // Optional: Set text size for readability
-      textAlign(CENTER,CENTER);
-      text("Pick A Race", width/2, height/3);
-      pop();
+    // Emit the trap creation to the server
+    socket.emit('spawn_trap', {
+      x: curPlayer.pos.x,
+      y: curPlayer.pos.y,
+      ownerName: curPlayer.name,
+      color: curPlayer.color,
+      ownerId: curPlayer.id,
+    });
 
-      // Check if both race and name are selected/entered to enable the "Go" button
-      if (raceSelected && nameEntered) {
-        goButton.removeAttribute('disabled');
-      } else {
-        goButton.attribute('disabled', true);
-      }
-    }else {
-      // normal game 
-      nameInput.hide();
-      goButton.hide();
-      // Position the buttons and add functionality
-      raceButtons.forEach((btn, index) => {
-        btn.position(width / 2 - 150, height / 2 + 50 + index * 60);
-        btn.mousePressed(() => selectRace(index)); // Trigger race selection on button press
-        btn.hide(); // Initially hide buttons
-      });
+    keyReleasedFlag = true;
+  }
+}
 
+function keyPressed() {
+  if (keyCode === 32) {
+    keyReleasedFlag = false;
+  }
+}
 
-    if(testMap.data.length > 0) testMap.render();
-    //if(testMap.data.length > 0) testMap.DebugDraw();
+function draw() {
+  background('#71413B');
 
-    if(curPlayer){
-        curPlayer.render();
-        curPlayer.update();
+  if (gameState == 'initial') {
+    nameInput.show();
+    goButton.show();
+
+    // Show race buttons
+    raceButtons.forEach((btn) => {
+      btn.show();
+    });
+
+    // Display "Pick A Race" text
+    push();
+    fill(255);
+    textSize(40);
+    textAlign(CENTER, CENTER);
+    text('Pick A Race', width / 2, height / 3);
+    pop();
+
+    // Enable "Go" button if race and name are selected
+    if (raceSelected && nameEntered) {
+      goButton.removeAttribute('disabled');
+    } else {
+      goButton.attribute('disabled', true);
+    }
+  } else {
+    // Hide UI elements during gameplay
+    nameInput.hide();
+    goButton.hide();
+    raceButtons.forEach((btn) => {
+      btn.hide();
+    });
+
+    if (testMap.data.length > 0) testMap.render();
+
+    if (curPlayer) {
+      curPlayer.render();
+      curPlayer.update();
     }
 
     let keys = Object.keys(players);
-    for(i = 0; i < keys.length; i++) {
-        players[keys[i]].render(); 
-        players[keys[i]].update();
+    for (let i = 0; i < keys.length; i++) {
+      players[keys[i]].render();
+      players[keys[i]].update();
     }
 
-    for(i = 0; i < traps.length; i++) {
-        traps[i].render(); 
-        traps[i].update();
-
-        console.log(traps[i])
+    for (let i = 0; i < traps.length; i++) {
+      traps[i].render();
+      traps[i].update();
     }
 
-    if(curPlayer){
-        lastHolding = curPlayer.holding; //copy to compare to later
+    if (curPlayer) {
+      lastHolding = curPlayer.holding;
 
-        //default all keys to not holding them
-        curPlayer.holding = {w: false, a: false, s: false, d: false};
+      // Reset movement keys
+      curPlayer.holding = { w: false, a: false, s: false, d: false };
 
-        //Player Controls
-        if(keyIsDown(87)) curPlayer.holding.w = true; //w
-        if(keyIsDown(65)) curPlayer.holding.a = true; //a
-        if(keyIsDown(83)) curPlayer.holding.s = true; //s
-        if(keyIsDown(68)) curPlayer.holding.d = true; //d 
-   
-        if(lastHolding.w != curPlayer.holding.w || lastHolding.a != curPlayer.holding.a || lastHolding.s != curPlayer.holding.s || lastHolding.d != curPlayer.holding.d){
-            socket.emit("update_pos", curPlayer);
-        }
+      // Player Controls
+      if (keyIsDown(87)) curPlayer.holding.w = true; // W
+      if (keyIsDown(65)) curPlayer.holding.a = true; // A
+      if (keyIsDown(83)) curPlayer.holding.s = true; // S
+      if (keyIsDown(68)) curPlayer.holding.d = true; // D
+
+      if (
+        lastHolding.w != curPlayer.holding.w ||
+        lastHolding.a != curPlayer.holding.a ||
+        lastHolding.s != curPlayer.holding.s ||
+        lastHolding.d != curPlayer.holding.d
+      ) {
+        socket.emit('update_pos', curPlayer);
+      }
     }
 
-    if(mouseIsPressed){ //does the digging
-      let x = floor(mouseX/testMap.tileSize);
-      let y = floor(mouseY/testMap.tileSize);
+    if (mouseIsPressed) {
+      // Digging
+      let x = floor(mouseX / testMap.tileSize);
+      let y = floor(mouseY / testMap.tileSize);
 
-      //removes from 5 nodes in a "+" shape, made the digging feel much better
+      // Remove from 5 nodes in a "+" shape
       dig(x + 1, y);
       dig(x - 1, y);
       dig(x, y + 1);
@@ -567,18 +406,126 @@ function draw(){
   }
 }
 
-function dig(x,y){
-  let index = x + (y / testMap.WIDTH);
-  if(testMap.data[index] > 0) testMap.data[index] -= 0.01;
-  if(testMap.data[index] < 0.3 && testMap.data[index] !== -1) testMap.data[index] = 0;
-  if(testMap.data[(x+1+(y/testMap.WIDTH))] <= 0.4){
-    if(testMap.data[(x-1+(y/testMap.WIDTH))] <= 0.4){
-      if(testMap.data[(x+((y+1)/testMap.WIDTH))] <= 0.4){
-        if(testMap.data[(x+((y+1)/testMap.WIDTH))] <= 0.4){
-          testMap.data[index] = 0;
+function dig(x, y) {
+  if (x < 0 || x >= testMap.WIDTH || y < 0 || y >= testMap.HEIGHT) return; // Prevent out-of-bounds access
+
+  let index = x + y * testMap.WIDTH;
+  if (testMap.data[index] > 0) testMap.data[index] -= 0.01;
+  if (testMap.data[index] < 0.2 && testMap.data[index] !== -1) testMap.data[index] = 0;
+  socket.emit('update_node', { index: index, val: testMap.data[index] });
+}
+
+// Map class and getState function
+
+function Map(w, h, grid) {
+  this.data = new Array(w * h).fill(0); // Initialize map data
+  this.WIDTH = w;
+  this.HEIGHT = h;
+  this.tileSize = grid;
+
+  this.cordToScreen = function (x, y) {
+    return {
+      x: (x + 0.5) * this.tileSize,
+      y: (y + 0.5) * this.tileSize,
+    };
+  };
+
+  this.render = function () {
+    fill('#3B1725');
+    noStroke();
+
+    // Draw borders
+    rect(0, 0, this.tileSize / 2, height);
+    rect(0, 0, width, this.tileSize / 2);
+    rect(width - this.tileSize / 2, 0, this.tileSize / 2, height);
+    rect(0, height - this.tileSize / 2, width, this.tileSize / 2);
+
+    for (let x = 0; x < this.WIDTH - 1; x++) {
+      for (let y = 0; y < this.HEIGHT - 1; y++) {
+        // Get the values at each corner
+        let corners = [
+          this.data[x + y * this.WIDTH],
+          this.data[x + 1 + y * this.WIDTH],
+          this.data[x + 1 + (y + 1) * this.WIDTH],
+          this.data[x + (y + 1) * this.WIDTH],
+        ];
+
+        for (let i = 0; i < 4; i++) {
+          if (corners[i] == -1) corners[i] = 1;
+          corners[i] += 0.6;
+        }
+
+        // Get the screen coordinates of each corner
+        let scCorners = [
+          this.cordToScreen(x, y),
+          this.cordToScreen(x + 1, y),
+          this.cordToScreen(x + 1, y + 1),
+          this.cordToScreen(x, y + 1),
+        ];
+
+        let state = getState(corners[0], corners[1], corners[2], corners[3]);
+        let amt = 0;
+
+        // Calculate side positions
+        let a = { x: 0, y: scCorners[0].y };
+        amt = (1 - corners[0]) / (corners[1] - corners[0]);
+        a.x = lerp(scCorners[0].x, scCorners[1].x, amt);
+
+        let b = { x: scCorners[1].x, y: 0 };
+        amt = (1 - corners[1]) / (corners[2] - corners[1]);
+        b.y = lerp(scCorners[1].y, scCorners[2].y, amt);
+
+        let c = { x: 0, y: scCorners[2].y };
+        amt = (1 - corners[2]) / (corners[3] - corners[2]);
+        c.x = lerp(scCorners[2].x, scCorners[3].x, amt);
+
+        let d = { x: scCorners[0].x, y: 0 };
+        amt = (1 - corners[0]) / (corners[3] - corners[0]);
+        d.y = lerp(scCorners[0].y, scCorners[3].y, amt);
+
+        // Draw the specific shape based on the state
+        switch (state) {
+          case 1:
+            beginShape();
+            vertex(scCorners[3].x, scCorners[3].y);
+            vertex(c.x, c.y);
+            vertex(d.x, d.y);
+            endShape();
+            break;
+          // Handle other cases similarly...
+          case 15:
+            rect(scCorners[0].x, scCorners[0].y, this.tileSize, this.tileSize);
+            break;
         }
       }
     }
-  }
-  socket.emit("update_node", {index: index, val: testMap.data[index]});
+
+    // Draw the number of players
+    push();
+    fill(255);
+    textSize(16);
+    text('Players: ' + (Object.keys(players).length + 1), 100, 50);
+    pop();
+  };
 }
+
+function getState(c1, c2, c3, c4) {
+  let val = 0;
+  if (c1 >= 1) {
+    val += 8;
+  }
+  if (c2 >= 1) {
+    val += 4;
+  }
+  if (c3 >= 1) {
+    val += 2;
+  }
+  if (c4 >= 1) {
+    val += 1;
+  }
+  return val;
+}
+
+// Trap class and other necessary classes...
+
+// Note: Ensure that the server-side code correctly handles the race property when new players join and when broadcasting player updates.
