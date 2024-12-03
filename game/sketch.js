@@ -10,7 +10,7 @@ var collisionChecks = []; //for debugging
 var camera = {x: 0, y: 0};
 
 function windowResized() {
-    resizeCanvas(innerWidth - 10, innerHeight - 8); // Resize canvas when window size changes
+    resizeCanvas(innerWidth - 10, innerHeight - 8); // Resizes canvas when window size changes
 }
 
 function setup() {
@@ -71,11 +71,17 @@ function setup() {
 
     socket.on("YOUR_ID", (data) => {
         //console.log(data);
-        testMap.getChunk(0,0);
         curPlayer = new Player(0, 0, 100, data.id, data.color); //only create your player once your given your socket id
         camera.x = curPlayer.pos.x;
         camera.y = curPlayer.pos.y;
 
+        //load in some chunks for easy start
+        let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+        for(let yOff = -2; yOff < 3; yOff++){
+            for(let xOff = -2; xOff < 3; xOff++){
+                testMap.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
+            }
+        }
     });
 
     socket.on("UPDATE_ALL_POS", (data) => {
@@ -153,6 +159,7 @@ function setup() {
         testMap.chunks[data.x+","+data.y] = new Chunk(data.x, data.y);
         let keys = Object.keys(data.data);
         for(let i=0; i<keys.length; i++) testMap.chunks[data.x+","+data.y].data[keys[i]] = data.data[keys[i]];
+        testMap.chunkBools[data.x+","+data.y] = true;
     });
 
     testMap = new Map();
@@ -328,32 +335,40 @@ function draw() {
 
         if (mouseIsPressed) {
             //does the digging
-            let x = floor(mouseX / testMap.tileSize);
-            let y = floor(mouseY / testMap.tileSize);
+            let x = floor((mouseX + camera.x - (width / 2)) / TILESIZE);
+            let y = floor((mouseY + camera.y - (height / 2)) / TILESIZE);
 
             //removes from 5 nodes in a "+" shape, made the digging feel much better
-            // dig(x + 1, y);
-            // dig(x - 1, y);
-            // dig(x, y + 1);
-            // dig(x, y - 1);
-            // dig(x, y);
+            dig(x + 1, y);
+            dig(x - 1, y);
+            dig(x, y + 1);
+            dig(x, y - 1);
+            dig(x, y);
         }
     }
 }
 
 function dig(x, y) {
-  let index = x + y / testMap.WIDTH;
-  if (testMap.data[index] > 0) testMap.data[index] -= 0.01;
-  if (testMap.data[index] < 0.3 && testMap.data[index] !== -1)
-    testMap.data[index] = 0;
-  if (testMap.data[x + 1 + y / testMap.WIDTH] <= 0.4) {
-    if (testMap.data[x - 1 + y / testMap.WIDTH] <= 0.4) {
-      if (testMap.data[x + (y + 1) / testMap.WIDTH] <= 0.4) {
-        if (testMap.data[x + (y + 1) / testMap.WIDTH] <= 0.4) {
-          testMap.data[index] = 0;
-        }
-      }
+    let chunkPos = testMap.globalToChunk(x,y);
+    if(testMap.chunks[chunkPos.x+","+chunkPos.y] == undefined) return;
+
+    x = x-(chunkPos.x*CHUNKSIZE);
+    y = y-(chunkPos.y*CHUNKSIZE);
+    let index = x + (y / CHUNKSIZE);
+
+    if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 0) testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] -= 0.01;
+    if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] < 0.3 && testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] !== -1){
+        testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] = 0;
     }
-  }
-  socket.emit("update_node", { index: index, val: testMap.data[index] });
+    
+    // if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[x + 1 + y / CHUNKSIZE] <= 0.4) {
+    //     if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[x - 1 + y / CHUNKSIZE] <= 0.4) {
+    //         if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[x + (y + 1) / CHUNKSIZE] <= 0.4) {
+    //             if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[x + (y + 1) / CHUNKSIZE] <= 0.4) {
+    //                 testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] = 0;
+    //             }
+    //         }
+    //     }
+    // }
+    socket.emit("update_node", {chunkPos: (chunkPos.x+","+chunkPos.y), index: index, val: testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] });
 }

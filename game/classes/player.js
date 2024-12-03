@@ -1,5 +1,5 @@
 const BASE_HEALTH = 100;
-const BASE_SPEED = 5;
+const BASE_SPEED = 10;
 class Player {
     constructor(x, y, health = BASE_HEALTH, id, color,race, name ) {
         this.id = id; // socket ID
@@ -19,15 +19,19 @@ class Player {
     }
 
     checkCollisions(xOffset, yOffset, tileSize) {
-        let x = floor(this.pos.x / tileSize) + xOffset;
-        let y = floor(this.pos.y / tileSize) + yOffset;
-        /*
+        let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
+
+        let x = floor(this.pos.x / tileSize) - (chunkPos.x*CHUNKSIZE) + xOffset;
+        let y = floor(this.pos.y / tileSize) - (chunkPos.y*CHUNKSIZE) + yOffset;
+        
         return {
             x: (x + 0.5) * tileSize,
             y: (y + 0.5) * tileSize,
-            val: testMap.data[x + (y / testMap.HEIGHT)]
+            cx: chunkPos.x,
+            cy: chunkPos.y,
+            val: testMap.chunks[chunkPos.x+","+chunkPos.y].data[x + (y / testMap.HEIGHT)]
         };
-        */
+        
     }
 
     update() {
@@ -54,12 +58,15 @@ class Player {
         // Handle collisions
         for (let i = 0; i < collisionChecks.length; i++) {
             let check = collisionChecks[i];
-            // if (check.val == -1) this.pos = oldPos;
-            // if (check.val > 0) {
-            //     if (this.pos.dist(createVector(check.x, check.y)) < 16 + (check.val * TILESIZE / 2)) {
-            //         this.pos = oldPos;
-            //     }
-            // }
+            if (check.val == -1) this.pos = oldPos;
+            if (check.val > 0) {
+                let posInChunk = this.pos.copy();
+                posInChunk.x = posInChunk.x-(check.cx*CHUNKSIZE);
+                posInChunk.y = posInChunk.y-(check.cy*CHUNKSIZE);
+                if (posInChunk.dist(createVector(check.x, check.y)) < 16 + (check.val * TILESIZE / 2)) {
+                    this.pos = oldPos;
+                }
+            }
         }
     }
 

@@ -1,19 +1,41 @@
 const TILESIZE = 16;
+const CHUNKSIZE = 50; //how many nodes in 1 direction
 
 class Map{
     constructor(){
         this.chunks = {}; //referance with a string "x,y"     {ex. chunks["0,0"]}
+        this.chunkBools = {}; //same referance, just used so you dont ask for the same chunk tons of times undefined if never asked for, false if asked, true if loaded
     }
 
     getChunk(x,y){
-        if(this.chunks[x+","+y] == undefined){
+        if(this.chunkBools[x+","+y] == undefined && this.chunks[x+","+y] == undefined){
             socket.emit("get_chunk", (x+","+y));
+            this.chunkBools[x+","+y] = false;
         }
-        return this.chunks[x+","+y];
+        if(this.chunkBools[x+","+y] = true) return this.chunks[x+","+y];
+    }
+
+    globalToChunk(x,y){
+        let pos = {};
+        pos.x = floor(x/(CHUNKSIZE*TILESIZE));
+        pos.y = floor(y/(CHUNKSIZE*TILESIZE));
+        return pos;
     }
 
     render(){
-        if(this.chunks["0,0"] != undefined) this.chunks["0,0"].render();
+        let chunkPos = this.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+        for(let yOff = -2; yOff < 3; yOff++){
+            for(let xOff = -2; xOff < 3; xOff++){
+                let chunk = this.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
+                if(chunk != undefined && yOff != -2 && yOff != 2 && xOff != -2 && xOff != 2) chunk.render();
+                // push();
+                // noFill();
+                // stroke(255,0,0);
+                // strokeWeight(2);
+                // rect(((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.x+(width/2), ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.y+(height/2), CHUNKSIZE*TILESIZE, CHUNKSIZE*TILESIZE);
+                // pop();
+            }
+        }
 
         push();
         fill(255); // Set the text color to white
@@ -26,25 +48,22 @@ class Map{
 class Chunk{
     constructor(x,y){
         this.data = []; // Data is very obvious, -1 is unbreakable, 0 is nothing, >0 is block
-        this.size = {};
-        this.size.x = 800 / TILESIZE;
-        this.size.y = 800 / TILESIZE;
         this.cx = x; //chunk pos x
         this.cy = y; //chunk pos y
     }
 
     cordToScreen(x,y){
         let val = {};
-        val.x = (x+0.5)*TILESIZE + (this.cx*this.size.x*TILESIZE)-camera.x+(width/2);
-        val.y = (y+0.5)*TILESIZE + (this.cy*this.size.y*TILESIZE)-camera.y+(height/2);
+        val.x = (x)*TILESIZE + (this.cx*CHUNKSIZE*TILESIZE)-camera.x+(width/2);
+        val.y = (y)*TILESIZE + (this.cy*CHUNKSIZE*TILESIZE)-camera.y+(height/2);
         return val;
     }
   
     DebugDraw(){
         push();
-        for (let x = 0; x < this.size.x; x++){
-            for (let y = 0; y < this.size.y; y++){
-                let index = x + (y / this.size.x);
+        for (let x = 0; x < CHUNKSIZE; x++){
+            for (let y = 0; y < CHUNKSIZE; y++){
+                let index = x + (y / CHUNKSIZE);
                 let pos = this.cordToScreen(x,y);
                 fill(map(this.data[index], 0, 1, 255, 0));
                 circle(pos.x, pos.y, this.data[index]*TILESIZE);
@@ -56,11 +75,23 @@ class Chunk{
     render(){
         fill("#3B1725");
         noStroke();
-        for (let x = 0; x < this.size.x-1; x++){
-            for (let y = 0; y < this.size.y-1; y++){
+        for (let x = 0; x < CHUNKSIZE; x++){
+            for (let y = 0; y < CHUNKSIZE; y++){
                 //holds the values at each corner
-                let corners = [this.data[x+(y/this.size.x)],this.data[x+1+(y/this.size.x)],
-                               this.data[x+1+((y+1)/this.size.x)],this.data[x+((y+1)/this.size.x)]];
+                let corners = [this.data[x+(y/CHUNKSIZE)],this.data[x+1+(y/CHUNKSIZE)],
+                               this.data[x+1+((y+1)/CHUNKSIZE)],this.data[x+((y+1)/CHUNKSIZE)]];
+                if(x == CHUNKSIZE-1){
+                    if(testMap.chunks[(this.cx+1)+","+this.cy] != undefined){
+                        corners[1] = testMap.chunks[(this.cx+1)+","+this.cy].data[(y/CHUNKSIZE)];
+                        corners[2] = testMap.chunks[(this.cx+1)+","+this.cy].data[((y+1)/CHUNKSIZE)];
+                    }
+                }
+                if(y == CHUNKSIZE-1){
+                    if(testMap.chunks[this.cx+","+(this.cy+1)] != undefined){
+                        corners[2] = testMap.chunks[this.cx+","+(this.cy+1)].data[x+1];
+                        corners[3] = testMap.chunks[this.cx+","+(this.cy+1)].data[x];
+                    }
+                }
                 for(let i=0; i < 4; i++){
                     if(corners[i] == -1) corners[i] = 1;
                     corners[i] += 0.7;
