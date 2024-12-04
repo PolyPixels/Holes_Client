@@ -99,7 +99,7 @@ class Player {
     }
 
     // Draw the character's image
-    image(imageToRender, this.pos.x - 16, this.pos.y - 16, 32, 32); // Adjust size as needed
+    image(this.direction =="left" ? flipImage(imageToRender) :  imageToRender, this.pos.x - 32, this.pos.y - 32, 64, 64); // Adjust size as needed
 
     this.renderHealthBar(); // Render health bar
     pop();
@@ -111,12 +111,12 @@ class Player {
     noStroke();
 
     // Draw health bar background
-    rect(this.pos.x - 16, this.pos.y + 20, 32, 6);
+    rect(this.pos.x - 32, this.pos.y + 20, 32, 6);
 
     // Draw health bar foreground (based on current health)
     fill(0, 255, 0); // Green for health
     let healthWidth = map(this.hp, 0, this.mhp, 0, 32);
-    rect(this.pos.x - 16, this.pos.y + 20, healthWidth, 6);
+    rect(this.pos.x - 32, this.pos.y + 20, healthWidth, 6);
 
     pop();
   }
