@@ -62,36 +62,36 @@ function preload() {
       for (let i = 0; i < 3; i++) {
         // Front images
         raceImages[raceName].front[i] = loadImage(
-          `images/${raceName}_front_walk${i + 1}.png`,
+          `images/${raceName}/${raceName}_front_walk${i + 1}.png`,
           function (img) {
-            console.log(`Loaded image: images/${raceName}_front_walk${i + 1}.png`);
+            console.log(`Loaded image: images/${raceName}/${raceName}_front_walk${i + 1}.png`);
           },
           function (err) {
-            console.error(`Failed to load image: images/${raceName}_front_walk${i + 1}.png`);
+            console.error(`Failed to load image: images/${raceName}/${raceName}_front_walk${i + 1}.png`);
             raceImages[raceName].front[i] = defaultImage;
           }
         );
   
         // Back images
         raceImages[raceName].back[i] = loadImage(
-          `images/${raceName}_back_walk${i + 1}.png`,
+          `images/${raceName}/${raceName}_back_walk${i + 1}.png`,
           function (img) {
-            console.log(`Loaded image: images/${raceName}_back_walk${i + 1}.png`);
+            console.log(`Loaded image: images/${raceName}/${raceName}_back_walk${i + 1}.png`);
           },
           function (err) {
-            console.error(`Failed to load image: images/${raceName}_back_walk${i + 1}.png`);
+            console.error(`Failed to load image: images/${raceName}/${raceName}_back_walk${i + 1}.png`);
             raceImages[raceName].back[i] = defaultImage;
           }
         );
   
         // Left images
         raceImages[raceName].left[i] = loadImage(
-          `images/${raceName}_side_walk${i + 1}.png`,
+          `images/${raceName}/${raceName}_side_walk${i + 1}.png`,
           function (img) {
-            console.log(`Loaded image: images/${raceName}_side_walk${i + 1}.png`);
+            console.log(`Loaded image: images/${raceName}/${raceName}_side_walk${i + 1}.png`);
           },
           function (err) {
-            console.error(`Failed to load image: images/${raceName}_side_walk${i + 1}.png`);
+            console.error(`Failed to load image: images/${raceName}/${raceName}_side_walk${i + 1}.png`);
             raceImages[raceName].left[i] = defaultImage;
           }
         );
