@@ -28,12 +28,14 @@ class Map{
             for(let xOff = -2; xOff < 3; xOff++){
                 let chunk = this.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
                 if(chunk != undefined && yOff != -2 && yOff != 2 && xOff != -2 && xOff != 2) chunk.render();
-                // push();
-                // noFill();
-                // stroke(255,0,0);
-                // strokeWeight(2);
-                // rect(((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.x+(width/2), ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.y+(height/2), CHUNKSIZE*TILESIZE, CHUNKSIZE*TILESIZE);
-                // pop();
+                if(Debuging){
+                    push();
+                    noFill();
+                    stroke(255,0,0);
+                    strokeWeight(2);
+                    rect(((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.x+(width/2), ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.y+(height/2), CHUNKSIZE*TILESIZE, CHUNKSIZE*TILESIZE);
+                    pop();
+                }
             }
         }
 

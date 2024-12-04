@@ -8,6 +8,7 @@ var traps = [];
 var projectiles = [];
 var collisionChecks = []; //for debugging
 var camera = {x: 0, y: 0};
+var Debuging = false;
 
 function windowResized() {
     resizeCanvas(innerWidth - 10, innerHeight - 8); // Resizes canvas when window size changes
@@ -356,7 +357,7 @@ function dig(x, y) {
     y = y-(chunkPos.y*CHUNKSIZE);
     let index = x + (y / CHUNKSIZE);
 
-    if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 0) testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] -= 0.01;
+    if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 0) testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] -= 0.02;
     if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] < 0.3 && testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] !== -1){
         testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] = 0;
     }

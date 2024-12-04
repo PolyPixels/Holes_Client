@@ -18,18 +18,25 @@ class Player {
         }
     }
 
-    checkCollisions(xOffset, yOffset, tileSize) {
-        let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
-
-        let x = floor(this.pos.x / tileSize) - (chunkPos.x*CHUNKSIZE) + xOffset;
-        let y = floor(this.pos.y / tileSize) - (chunkPos.y*CHUNKSIZE) + yOffset;
+    checkCollisions(xOffset, yOffset) {
+        let chunkPos = testMap.globalToChunk(this.pos.x+(xOffset*TILESIZE), this.pos.y+(yOffset*TILESIZE));
+        
+        let x = floor(this.pos.x / TILESIZE) - (chunkPos.x*CHUNKSIZE) + xOffset;
+        let y = floor(this.pos.y / TILESIZE) - (chunkPos.y*CHUNKSIZE) + yOffset;
+        if(Debuging){
+            push();
+            fill(255);
+            circle(((x+(chunkPos.x*CHUNKSIZE))*TILESIZE)-camera.x+(width/2),((y+(chunkPos.y*CHUNKSIZE))*TILESIZE)-camera.y+(height/2), 10);
+            pop();
+        }
+        
         
         return {
-            x: (x + 0.5) * tileSize,
-            y: (y + 0.5) * tileSize,
+            x: (x + 0.5) * TILESIZE,
+            y: (y + 0.5) * TILESIZE,
             cx: chunkPos.x,
             cy: chunkPos.y,
-            val: testMap.chunks[chunkPos.x+","+chunkPos.y].data[x + (y / testMap.HEIGHT)]
+            val: testMap.chunks[chunkPos.x+","+chunkPos.y].data[x + (y / CHUNKSIZE)]
         };
         
     }
@@ -40,19 +47,27 @@ class Player {
 
         if (this.holding.w) {
             this.pos.y += -BASE_SPEED;
-            collisionChecks.push(this.checkCollisions(0, -1, TILESIZE));
+            collisionChecks.push(this.checkCollisions( 1, -1));
+            collisionChecks.push(this.checkCollisions( 0, -1));
+            collisionChecks.push(this.checkCollisions(-1, -1));
         }
         if (this.holding.a) {
             this.pos.x += -BASE_SPEED;
-            collisionChecks.push(this.checkCollisions(-1, 0, TILESIZE));
+            collisionChecks.push(this.checkCollisions(-1,  1));
+            collisionChecks.push(this.checkCollisions(-1,  0));
+            collisionChecks.push(this.checkCollisions(-1, -1));
         }
         if (this.holding.s) {
             this.pos.y += BASE_SPEED;
-            collisionChecks.push(this.checkCollisions(0, 1, TILESIZE));
+            collisionChecks.push(this.checkCollisions( 1, 1));
+            collisionChecks.push(this.checkCollisions( 0, 1));
+            collisionChecks.push(this.checkCollisions(-1, 1));
         }
         if (this.holding.d) {
             this.pos.x += BASE_SPEED;
-            collisionChecks.push(this.checkCollisions(1, 0, TILESIZE));
+            collisionChecks.push(this.checkCollisions(1,  1));
+            collisionChecks.push(this.checkCollisions(1,  0));
+            collisionChecks.push(this.checkCollisions(1, -1));
         }
 
         // Handle collisions
@@ -60,10 +75,7 @@ class Player {
             let check = collisionChecks[i];
             if (check.val == -1) this.pos = oldPos;
             if (check.val > 0) {
-                let posInChunk = this.pos.copy();
-                posInChunk.x = posInChunk.x-(check.cx*CHUNKSIZE);
-                posInChunk.y = posInChunk.y-(check.cy*CHUNKSIZE);
-                if (posInChunk.dist(createVector(check.x, check.y)) < 16 + (check.val * TILESIZE / 2)) {
+                if (this.pos.dist(createVector(check.x+(check.cx*CHUNKSIZE*TILESIZE), check.y+(check.cy*CHUNKSIZE*TILESIZE))) < 16 + (check.val * TILESIZE / 2)) {
                     this.pos = oldPos;
                 }
             }
