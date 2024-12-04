@@ -17,7 +17,7 @@ class Player {
         // Animation properties
         this.currentFrame = 0; // Current frame for animation
         this.direction = 'down'; // Default direction
-        this.frameCount = 3; // Number of frames per direction
+        this.frameCount = 4; // Number of frames per direction
     }
 
     checkCollisions(xOffset, yOffset) {
@@ -86,6 +86,13 @@ class Player {
                 }
             }
         }
+
+        // Update the current frame for animation
+        if (this.holding.w || this.holding.a || this.holding.s || this.holding.d) {
+            this.currentFrame = (this.currentFrame + (1/7)) % this.frameCount;
+        } else {
+            this.currentFrame = 0; // Reset to standing frame when not moving
+        }
     }
 
   render() {
@@ -99,18 +106,17 @@ class Player {
     // Select the correct image based on the direction and frame
     let imageToRender;
     if (this.direction === 'up') {
-      imageToRender = raceImages[raceName].back[this.currentFrame]
+      imageToRender = raceImages[raceName].back[floor(this.currentFrame)]
     } else if (this.direction === 'down') {
-      imageToRender = raceImages[raceName].front[this.currentFrame]
+      imageToRender = raceImages[raceName].front[floor(this.currentFrame)]
     } else if (this.direction === 'left') {
-      imageToRender = raceImages[raceName].left[this.currentFrame]
+      imageToRender = raceImages[raceName].left[floor(this.currentFrame)]
     } else if (this.direction === 'right') {
-      //rotate
-      imageToRender = raceImages[raceName].left[this.currentFrame]
+      imageToRender = raceImages[raceName].right[floor(this.currentFrame)]
     }
 
     // Draw the character's image
-    image(this.direction =="left" ? flipImage(imageToRender) :  imageToRender, this.pos.x - 32, this.pos.y - 32, 64, 64); // Adjust size as needed
+    image(imageToRender, this.pos.x - 2*TILESIZE, this.pos.y - 2*TILESIZE, 4*TILESIZE, 4*TILESIZE, 0, 0, 29, 29); // Adjust size as needed
 
     this.renderHealthBar(); // Render health bar
     pop();
@@ -118,17 +124,17 @@ class Player {
 
   renderHealthBar() {
     push();
-    translate(-camera.x+(width/2), -camera.y+(height/2));
+    //translate(-camera.x+(width/2), -camera.y+(height/2));
     fill(255, 0, 0);
     noStroke();
 
     // Draw health bar background
-    rect(this.pos.x - 32, this.pos.y + 20, 32, 6);
+    rect(this.pos.x - 16, this.pos.y + 20, 32, 6);
 
     // Draw health bar foreground (based on current health)
     fill(0, 255, 0); // Green for health
     let healthWidth = map(this.hp, 0, this.mhp, 0, 32);
-    rect(this.pos.x - 32, this.pos.y + 20, healthWidth, 6);
+    rect(this.pos.x - 16, this.pos.y + 20, healthWidth, 6);
 
     pop();
   }
