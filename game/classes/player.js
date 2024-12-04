@@ -4,86 +4,93 @@ const BASE_HEALTH = 100;
 const BASE_SPEED = 5;
 
 class Player {
-  constructor(x, y, health = BASE_HEALTH, id, color, race = 0, name = '') {
-    this.id = id; // Socket ID
-    this.pos = createVector(x, y);
-    this.hp = health;
-    this.mhp = BASE_HEALTH;
-    this.holding = { w: false, a: false, s: false, d: false }; // Movement keys state
-    this.race = race; // Race index
-    this.name = name;
-    this.color = color || { r: 255, g: 5, b: 5 };
+    constructor(x, y, health = BASE_HEALTH, id, color,race, name ) {
+        this.id = id; // socket ID
+        this.pos = createVector(x, y);
+        this.hp = health;
+        this.mhp = BASE_HEALTH;
+        this.holding = { w: false, a: false, s: false, d: false }; // Movement keys state
+        this.race = race; // Race index
+        this.name = name;
+        this.color = color || { r: 255, g: 5, b: 5 };
 
-    // Animation properties
-    this.currentFrame = 0; // Current frame for animation
-    this.direction = 'down'; // Default direction
-    this.frameCount = 3; // Number of frames per direction
-
-  }
-
-
-
-  update() {
-    if(!this.direction) {
-      this.direction = "down"
+        // Animation properties
+        this.currentFrame = 0; // Current frame for animation
+        this.direction = 'down'; // Default direction
+        this.frameCount = 3; // Number of frames per direction
     }
 
-    let oldPos = this.pos.copy();
-    let collisionChecks = [];
-
-    if (this.holding.w) {
-      this.pos.y -= BASE_SPEED;
-      this.direction = 'up';
-      collisionChecks.push(this.checkCollisions(0, -1, testMap.tileSize));
-    }
-    if (this.holding.a) {
-      this.pos.x -= BASE_SPEED;
-      this.direction = 'left';
-      collisionChecks.push(this.checkCollisions(-1, 0, testMap.tileSize));
-    }
-    if (this.holding.s) {
-      this.pos.y += BASE_SPEED;
-      this.direction = 'down';
-      collisionChecks.push(this.checkCollisions(0, 1, testMap.tileSize));
-    }
-    if (this.holding.d) {
-      this.pos.x += BASE_SPEED;
-      this.direction = 'right';
-      collisionChecks.push(this.checkCollisions(1, 0, testMap.tileSize));
-    }
-
-    // Handle collisions
-    for (let check of collisionChecks) {
-      if (
-        check.val == -1 ||
-        this.pos.dist(createVector(check.x, check.y)) <
-          16 + (check.val * testMap.tileSize) / 2
-      ) {
-        this.pos = oldPos; // Reset to old position on collision
-        break;
-      }
+    checkCollisions(xOffset, yOffset) {
+        let chunkPos = testMap.globalToChunk(this.pos.x+(xOffset*TILESIZE), this.pos.y+(yOffset*TILESIZE));
+        
+        let x = floor(this.pos.x / TILESIZE) - (chunkPos.x*CHUNKSIZE) + xOffset;
+        let y = floor(this.pos.y / TILESIZE) - (chunkPos.y*CHUNKSIZE) + yOffset;
+        if(Debuging){
+            push();
+            fill(255);
+            circle(((x+(chunkPos.x*CHUNKSIZE))*TILESIZE)-camera.x+(width/2),((y+(chunkPos.y*CHUNKSIZE))*TILESIZE)-camera.y+(height/2), 10);
+            pop();
+        }
+        
+        
+        return {
+            x: (x + 0.5) * TILESIZE,
+            y: (y + 0.5) * TILESIZE,
+            cx: chunkPos.x,
+            cy: chunkPos.y,
+            val: testMap.chunks[chunkPos.x+","+chunkPos.y].data[x + (y / CHUNKSIZE)]
+        };
+        
     }
 
-    // Update the current frame for animation
-    if (this.holding.w || this.holding.a || this.holding.s || this.holding.d) {
-      this.currentFrame = (this.currentFrame + 1) % this.frameCount;
-    } else {
-      this.currentFrame = 0; // Reset to standing frame when not moving
-    }
-  }
+    update() {
+        let oldPos = this.pos.copy();
+        let collisionChecks = [];
 
-  checkCollisions(xOffset, yOffset, tileSize) {
-    let x = floor(this.pos.x / tileSize) + xOffset;
-    let y = floor(this.pos.y / tileSize) + yOffset;
-    return {
-      x: (x + 0.5) * tileSize,
-      y: (y + 0.5) * tileSize,
-      val: testMap.data[x + y * testMap.WIDTH],
-    };
-  }
+        if (this.holding.w) {
+            this.pos.y += -BASE_SPEED;
+            this.direction = 'up';
+            collisionChecks.push(this.checkCollisions( 1, -1));
+            collisionChecks.push(this.checkCollisions( 0, -1));
+            collisionChecks.push(this.checkCollisions(-1, -1));
+        }
+        if (this.holding.a) {
+            this.pos.x += -BASE_SPEED;
+            this.direction = 'left';
+            collisionChecks.push(this.checkCollisions(-1,  1));
+            collisionChecks.push(this.checkCollisions(-1,  0));
+            collisionChecks.push(this.checkCollisions(-1, -1));
+        }
+        if (this.holding.s) {
+            this.pos.y += BASE_SPEED;
+            this.direction = 'down';
+            collisionChecks.push(this.checkCollisions( 1, 1));
+            collisionChecks.push(this.checkCollisions( 0, 1));
+            collisionChecks.push(this.checkCollisions(-1, 1));
+        }
+        if (this.holding.d) {
+            this.pos.x += BASE_SPEED;
+            this.direction = 'right';
+            collisionChecks.push(this.checkCollisions(1,  1));
+            collisionChecks.push(this.checkCollisions(1,  0));
+            collisionChecks.push(this.checkCollisions(1, -1));
+        }
+
+        // Handle collisions
+        for (let i = 0; i < collisionChecks.length; i++) {
+            let check = collisionChecks[i];
+            if (check.val == -1) this.pos = oldPos;
+            if (check.val > 0) {
+                if (this.pos.dist(createVector(check.x+(check.cx*CHUNKSIZE*TILESIZE), check.y+(check.cy*CHUNKSIZE*TILESIZE))) < 16 + (check.val * TILESIZE / 2)) {
+                    this.pos = oldPos;
+                }
+            }
+        }
+    }
 
   render() {
     push();
+    translate(-camera.x+(width/2), -camera.y+(height/2));
     fill(255);
     textSize(10);
     textAlign(CENTER);
@@ -111,6 +118,7 @@ class Player {
 
   renderHealthBar() {
     push();
+    translate(-camera.x+(width/2), -camera.y+(height/2));
     fill(255, 0, 0);
     noStroke();
 
