@@ -128,7 +128,7 @@ function setup() {
     });
 
     socket.on("UPDATE_NODE", (data) => {
-        testMap.data[data.index] = data.val;
+        testMap.chunks[data.chunkPos].data[data.index] = data.val;
     });
 
     socket.on("REMOVE_PLAYER", (data) => {

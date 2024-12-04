@@ -1,4 +1,4 @@
-const TILESIZE = 16;
+var TILESIZE = 16;
 const CHUNKSIZE = 50; //how many nodes in 1 direction
 
 class Map{
