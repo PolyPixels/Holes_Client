@@ -88,14 +88,14 @@ class Player {
     // Select the correct image based on the direction and frame
     let imageToRender;
     if (this.direction === 'up') {
-      imageToRender = raceImages[raceName].back[i]
+      imageToRender = raceImages[raceName].back[this.currentFrame]
     } else if (this.direction === 'down') {
-      imageToRender = raceImages[raceName].front[i]
+      imageToRender = raceImages[raceName].front[this.currentFrame]
     } else if (this.direction === 'left') {
-      imageToRender = raceImages[raceName].left[i]
+      imageToRender = raceImages[raceName].left[this.currentFrame]
     } else if (this.direction === 'right') {
       //rotate
-      imageToRender = raceImages[raceName].left[i]
+      imageToRender = raceImages[raceName].left[this.currentFrame]
     }
 
     // Draw the character's image
