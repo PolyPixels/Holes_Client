@@ -24,6 +24,10 @@ class Player {
 
 
   update() {
+    if(!this.direction) {
+      this.direction = "down"
+    }
+
     let oldPos = this.pos.copy();
     let collisionChecks = [];
 

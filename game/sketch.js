@@ -202,7 +202,6 @@ function setup() {
       players[data.id].pos.y = data.pos.y;
       players[data.id].hp = data.hp;
       players[data.id].holding = data.holding;
-      players[data.id].direction = data.direction;
     }
   });
 
