@@ -2,6 +2,7 @@
 
 const BASE_HEALTH = 100;
 const BASE_SPEED = 5;
+
 class Player {
   constructor(x, y, health = BASE_HEALTH, id, color, race = 0, name = '') {
     this.id = id; // Socket ID
@@ -18,18 +19,9 @@ class Player {
     this.direction = 'down'; // Default direction
     this.frameCount = 3; // Number of frames per direction
 
-    // Load images for the player's race
-    this.loadImages();
   }
 
-  loadImages() {
-    const raceName = races[this.race];
 
-    this.frontImages = raceImages[raceName].front;
-    this.backImages = raceImages[raceName].back;
-    this.leftImages = raceImages[raceName].left;
-    this.rightImages = raceImages[raceName].right;
-  }
 
   update() {
     let oldPos = this.pos.copy();
@@ -96,13 +88,13 @@ class Player {
     // Select the correct image based on the direction and frame
     let imageToRender;
     if (this.direction === 'up') {
-      imageToRender = this.backImages[this.currentFrame];
+      imageToRender = raceImages[raceName].back[i]
     } else if (this.direction === 'down') {
-      imageToRender = this.frontImages[this.currentFrame];
+      imageToRender = raceImages[raceName].front[i]
     } else if (this.direction === 'left') {
-      imageToRender = this.leftImages[this.currentFrame];
+      imageToRender = raceImages[raceName].left[i]
     } else if (this.direction === 'right') {
-      imageToRender = this.rightImages[this.currentFrame];
+      imageToRender = raceImages[raceName].right[i]
     }
 
     // Draw the character's image
