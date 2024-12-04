@@ -84,7 +84,7 @@ class Player {
     textSize(10);
     textAlign(CENTER);
     text(this.name, this.pos.x, this.pos.y - 25); // Display player's name above the character
-
+    let raceName = races[this.race]
     // Select the correct image based on the direction and frame
     let imageToRender;
     if (this.direction === 'up') {

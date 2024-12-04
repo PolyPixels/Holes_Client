@@ -17,7 +17,7 @@ let goButton;
 let nameInput;
 let keyReleasedFlag = false;
 const races = ['gnome'];
-let raceImages = {}; // Object to hold all race images
+const raceImages = {}; // Object to hold all race images
 let defaultImage;
 
 function preload() {
@@ -270,7 +270,6 @@ function flipImage(img) {
 function selectRace(raceIndex) {
   raceSelected = true;
   curPlayer.race = raceIndex;
-  curPlayer.loadImages(); // Load images for the selected race
   console.log('Race selected: ' + races[raceIndex]);
 }
 
