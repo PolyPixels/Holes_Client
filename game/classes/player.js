@@ -94,7 +94,8 @@ class Player {
     } else if (this.direction === 'left') {
       imageToRender = raceImages[raceName].left[i]
     } else if (this.direction === 'right') {
-      imageToRender = raceImages[raceName].right[i]
+      //rotate
+      imageToRender = raceImages[raceName].left[i]
     }
 
     // Draw the character's image
