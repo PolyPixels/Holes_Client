@@ -373,11 +373,13 @@ function draw() {
       btn.hide();
     });
 
-    if (testMap.data.length > 0) testMap.render();
+    if (Object.keys(testMap.chunks).length > 0) testMap.render();
 
     if (curPlayer) {
-      curPlayer.render();
-      curPlayer.update();
+        camera.x = curPlayer.pos.x;
+        camera.y = curPlayer.pos.y;
+        curPlayer.render();
+        curPlayer.update();
     }
 
     let keys = Object.keys(players);

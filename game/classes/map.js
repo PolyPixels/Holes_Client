@@ -101,6 +101,13 @@ class Chunk{
                 //holds the screen cordinates of each corner
                 let scCorners = [this.cordToScreen(x,y),this.cordToScreen(x+1,y),
                                  this.cordToScreen(x+1,y+1),this.cordToScreen(x,y+1)];
+                
+                //an attempt to reduce banding effects
+                scCorners[0].x -= 1.5; scCorners[0].y -= 1.5;
+                scCorners[1].x += 1.5; scCorners[1].y -= 1.5;
+                scCorners[2].x += 1.5; scCorners[2].y += 1.5;
+                scCorners[3].x -= 1.5; scCorners[3].y += 1.5;
+                
                 let state = getState(corners[0],corners[1],corners[2],corners[3]);
                 let amt = 0;
 
