@@ -22,7 +22,7 @@ class Player {
 
     checkCollisions(xOffset, yOffset) {
         let chunkPos = testMap.globalToChunk(this.pos.x+(xOffset*TILESIZE), this.pos.y+(yOffset*TILESIZE));
-        
+
         let x = floor(this.pos.x / TILESIZE) - (chunkPos.x*CHUNKSIZE) + xOffset;
         let y = floor(this.pos.y / TILESIZE) - (chunkPos.y*CHUNKSIZE) + yOffset;
         if(Debuging){
@@ -44,6 +44,10 @@ class Player {
     }
 
     update() {
+        //dont update players not in your chunks
+        let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
+        if(testMap.chunks[chunkPos.x+","+chunkPos.y] == undefined) return;
+        
         let oldPos = this.pos.copy();
         let collisionChecks = [];
 
@@ -96,6 +100,10 @@ class Player {
     }
 
   render() {
+    //dont render players not in your chunks
+    let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
+    if(testMap.chunks[chunkPos.x+","+chunkPos.y] == undefined) return;
+
     push();
     translate(-camera.x+(width/2), -camera.y+(height/2));
     fill(255);

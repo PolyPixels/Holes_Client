@@ -137,6 +137,7 @@ function setup() {
   let cnv = createCanvas(innerWidth-10, innerHeight-8);
   cnv.parent('canvas-container'); 
   background(220);
+  angleMode(DEGREES);
 
     // Prevent right-click context menu on all p5.js canvases
     const canvases = document.getElementsByClassName("p5Canvas");
@@ -197,8 +198,8 @@ function setup() {
 
   socket.on('YOUR_ID', (data) => {
     curPlayer = new Player(
-      0,
-      0,
+      random(-200*TILESIZE, 200*TILESIZE),
+      random(-200*TILESIZE, 200*TILESIZE),
       100,
       data.id,
       data.color,
@@ -253,7 +254,7 @@ function setup() {
   });
 
     socket.on("UPDATE_NODE", (data) => {
-        testMap.chunks[data.chunkPos].data[data.index] = data.val;
+        if(testMap.chunks[data.chunkPos] != undefined) testMap.chunks[data.chunkPos].data[data.index] = data.val;
     });
 
   socket.on('REMOVE_PLAYER', (data) => {
@@ -309,6 +310,13 @@ function setup() {
     curPlayer.name = nameInput.value();
     socket.emit('new_player', curPlayer);
     gameState = 'playing';
+
+    //empty out a small area around the player
+    for(let y = -5; y < 5; y++){
+        for(let x = -5; x < 5; x++){
+            dig(curPlayer.pos.x+(x*TILESIZE), curPlayer.pos.y+(y*TILESIZE), 1);
+        }
+    }
   });
   goButton.hide();
 }
@@ -444,28 +452,43 @@ function draw() {
 
         if (mouseIsPressed) {
             //does the digging
-            let x = floor((mouseX + camera.x - (width / 2)) / TILESIZE);
-            let y = floor((mouseY + camera.y - (height / 2)) / TILESIZE);
+            let x = (mouseX + camera.x - (width / 2));
+            let y = (mouseY + camera.y - (height / 2));
 
-            //removes from 5 nodes in a "+" shape, made the digging feel much better
-            dig(x + 1, y);
-            dig(x - 1, y);
-            dig(x, y + 1);
-            dig(x, y - 1);
-            dig(x, y);
+            let ray = createVector(x-curPlayer.pos.x, y-curPlayer.pos.y);
+            let digSpot = cast(curPlayer.pos.x, curPlayer.pos.y, ray.heading());
+            if(digSpot != undefined) dig(((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE), 0.02);
+            
+            digSpot = cast(curPlayer.pos.x+(16*round(cos(ray.copy().rotate(90).heading()))), 
+            curPlayer.pos.y+(16*round(sin(ray.copy().rotate(90).heading()))), ray.heading());
+            if(digSpot != undefined) dig(((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE), 0.02);
+            
+            digSpot = cast(curPlayer.pos.x-(16*round(cos(ray.copy().rotate(90).heading()))), 
+                           curPlayer.pos.y-(16*round(sin(ray.copy().rotate(90).heading()))), ray.heading());
+            if(digSpot != undefined) dig(((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE), 0.02);
         }
     }
 }
 
-function dig(x, y) {
-    let chunkPos = testMap.globalToChunk(x,y);
+function dig(x, y, amt) {
+    x = floor(x / TILESIZE);
+    y = floor(y / TILESIZE);
+    
+    let chunkPos = testMap.globalToChunk(x*TILESIZE,y*TILESIZE);
     if(testMap.chunks[chunkPos.x+","+chunkPos.y] == undefined) return;
-
+    
     x = x-(chunkPos.x*CHUNKSIZE);
     y = y-(chunkPos.y*CHUNKSIZE);
     let index = x + (y / CHUNKSIZE);
 
-    if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 0) testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] -= 0.02;
+    if(Debuging){
+        push();
+        fill(255);
+        circle(((chunkPos.x*CHUNKSIZE+x)*TILESIZE) - camera.x + (width/2), ((chunkPos.y*CHUNKSIZE+y)*TILESIZE) - camera.y + (height/2), TILESIZE/2);
+        pop();
+    }
+
+    if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 0) testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] -= amt;
     if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] < 0.3 && testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] !== -1){
         testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] = 0;
     }
@@ -480,4 +503,50 @@ function dig(x, y) {
     //     }
     // }
     socket.emit("update_node", {chunkPos: (chunkPos.x+","+chunkPos.y), index: index, val: testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] });
+}
+
+
+function cast(x,y, angle){
+    let chunkPos = testMap.globalToChunk(x,y);
+    if(testMap.chunks[chunkPos.x+","+chunkPos.y] == undefined) return;
+    
+    x = floor(x / TILESIZE);
+    y = floor(y / TILESIZE);
+
+    x = x-(chunkPos.x*CHUNKSIZE);
+    y = y-(chunkPos.y*CHUNKSIZE);
+    let index = x + (y / CHUNKSIZE);
+    if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 0) return {x: x, y: y};
+
+    let playerToMouse = curPlayer.pos.dist(createVector((mouseX + camera.x - (width / 2)), (mouseY + camera.y - (height / 2))));
+    let playerToTile = curPlayer.pos.dist(createVector(((chunkPos.x*CHUNKSIZE+x)*TILESIZE), ((chunkPos.y*CHUNKSIZE+y)*TILESIZE)));
+
+    while(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] == 0){
+        x += cos(angle);
+        y += sin(angle);
+
+        //reset when ray goes to the next chunk
+        if(x >= CHUNKSIZE){
+            x = x - CHUNKSIZE;
+            chunkPos.x += 1;
+        }
+        if(x < 0){
+            x = x + CHUNKSIZE;
+            chunkPos.x -= 1;
+        }
+        if(y >= CHUNKSIZE){
+            y = y - CHUNKSIZE;
+            chunkPos.y += 1;
+        }
+        if(y < 0){
+            y = y + CHUNKSIZE;
+            chunkPos.y -= 1;
+        }
+
+        index = floor(x) + (floor(y) / CHUNKSIZE);
+
+        playerToTile = curPlayer.pos.dist(createVector(((chunkPos.x*CHUNKSIZE+x)*TILESIZE), ((chunkPos.y*CHUNKSIZE+y)*TILESIZE)));
+        if(playerToTile > playerToMouse) return;
+    }
+    return {cx: chunkPos.x, cy: chunkPos.y, x: floor(x), y: floor(y)};
 }
