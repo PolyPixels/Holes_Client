@@ -34,6 +34,10 @@ class Map{
                     stroke(255,0,0);
                     strokeWeight(2);
                     rect(((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.x+(width/2), ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.y+(height/2), CHUNKSIZE*TILESIZE, CHUNKSIZE*TILESIZE);
+                    fill(255);
+                    noStroke();
+                    textSize(15);
+                    text((chunkPos.x + xOff)+","+(chunkPos.y + yOff), ((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.x+(width/2)+5, ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.y+(height/2)+20);
                     pop();
                 }
             }
@@ -107,7 +111,7 @@ class Chunk{
                 scCorners[1].x += 1.5; scCorners[1].y -= 1.5;
                 scCorners[2].x += 1.5; scCorners[2].y += 1.5;
                 scCorners[3].x -= 1.5; scCorners[3].y += 1.5;
-                
+
                 let state = getState(corners[0],corners[1],corners[2],corners[3]);
                 let amt = 0;
 
