@@ -42,7 +42,8 @@ class Trap {
 
         render() {
             push();
-            fill(255)
+            fill(255);
+            translate(-camera.x+(width/2), -camera.y+(height/2));
             rect(this.pos.x, this.pos.y, 16); 
             pop();
     }

@@ -411,11 +411,14 @@ function draw() {
       btn.hide();
     });
 
+    if(curPlayer){
+        camera.x = curPlayer.pos.x;
+        camera.y = curPlayer.pos.y;
+    }
+
     if (Object.keys(testMap.chunks).length > 0) testMap.render();
 
     if (curPlayer) {
-        camera.x = curPlayer.pos.x;
-        camera.y = curPlayer.pos.y;
         curPlayer.render();
         curPlayer.update();
     }
