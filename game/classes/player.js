@@ -3,6 +3,9 @@
 const BASE_HEALTH = 100;
 const BASE_SPEED = 5;
 
+var curPlayer; //Your player
+var players = {}; //other players
+
 class Player {
     constructor(x, y, health = BASE_HEALTH, id, color,race, name ) {
         this.id = id; // socket ID
@@ -99,51 +102,51 @@ class Player {
         }
     }
 
-  render() {
-    //dont render players not in your chunks
-    let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
-    if(testMap.chunks[chunkPos.x+","+chunkPos.y] == undefined) return;
+    render() {
+        //dont render players not in your chunks
+        let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
+        if(testMap.chunks[chunkPos.x+","+chunkPos.y] == undefined) return;
 
-    push();
-    translate(-camera.x+(width/2), -camera.y+(height/2));
-    fill(255);
-    textSize(10);
-    textAlign(CENTER);
-    text(this.name, this.pos.x, this.pos.y - 25); // Display player's name above the character
-    let raceName = races[this.race]
-    // Select the correct image based on the direction and frame
-    let imageToRender;
-    if (this.direction === 'up') {
-      imageToRender = raceImages[raceName].back[floor(this.currentFrame)]
-    } else if (this.direction === 'down') {
-      imageToRender = raceImages[raceName].front[floor(this.currentFrame)]
-    } else if (this.direction === 'left') {
-      imageToRender = raceImages[raceName].left[floor(this.currentFrame)]
-    } else if (this.direction === 'right') {
-      imageToRender = raceImages[raceName].right[floor(this.currentFrame)]
+        push();
+        translate(-camera.x+(width/2), -camera.y+(height/2));
+        fill(255);
+        textSize(10);
+        textAlign(CENTER);
+        text(this.name, this.pos.x, this.pos.y - 25); // Display player's name above the character
+        let raceName = races[this.race]
+        // Select the correct image based on the direction and frame
+        let imageToRender;
+        if (this.direction === 'up') {
+            imageToRender = raceImages[raceName].back[floor(this.currentFrame)]
+        } else if (this.direction === 'down') {
+            imageToRender = raceImages[raceName].front[floor(this.currentFrame)]
+        } else if (this.direction === 'left') {
+            imageToRender = raceImages[raceName].left[floor(this.currentFrame)]
+        } else if (this.direction === 'right') {
+            imageToRender = raceImages[raceName].right[floor(this.currentFrame)]
+        }
+
+        // Draw the character's image
+        image(imageToRender, this.pos.x - 2*TILESIZE, this.pos.y - 2*TILESIZE, 4*TILESIZE, 4*TILESIZE, 0, 0, 29, 29); // Adjust size as needed
+
+        this.renderHealthBar(); // Render health bar
+        pop();
     }
 
-    // Draw the character's image
-    image(imageToRender, this.pos.x - 2*TILESIZE, this.pos.y - 2*TILESIZE, 4*TILESIZE, 4*TILESIZE, 0, 0, 29, 29); // Adjust size as needed
+    renderHealthBar() {
+        push();
+        //translate(-camera.x+(width/2), -camera.y+(height/2));
+        fill(255, 0, 0);
+        noStroke();
 
-    this.renderHealthBar(); // Render health bar
-    pop();
-  }
+        // Draw health bar background
+        rect(this.pos.x - 16, this.pos.y + 20, 32, 6);
 
-  renderHealthBar() {
-    push();
-    //translate(-camera.x+(width/2), -camera.y+(height/2));
-    fill(255, 0, 0);
-    noStroke();
+        // Draw health bar foreground (based on current health)
+        fill(0, 255, 0); // Green for health
+        let healthWidth = map(this.hp, 0, this.mhp, 0, 32);
+        rect(this.pos.x - 16, this.pos.y + 20, healthWidth, 6);
 
-    // Draw health bar background
-    rect(this.pos.x - 16, this.pos.y + 20, 32, 6);
-
-    // Draw health bar foreground (based on current health)
-    fill(0, 255, 0); // Green for health
-    let healthWidth = map(this.hp, 0, this.mhp, 0, 32);
-    rect(this.pos.x - 16, this.pos.y + 20, healthWidth, 6);
-
-    pop();
-  }
+        pop();
+    }
 }
