@@ -12,6 +12,7 @@ var keyReleasedFlag = false;
 const races = ['gnome', 'aylah'];
 var camera = {x: 0, y: 0};
 var Debuging = false;
+var dirtInv = 0;
 
 function windowResized() {
     resizeCanvas(innerWidth-10, innerHeight-8);  // Resize canvas when window size changes
@@ -72,6 +73,7 @@ function setup() {
                 dig(curPlayer.pos.x+(x*TILESIZE), curPlayer.pos.y+(y*TILESIZE), 1);
             }
         }
+        dirtInv = 0; //set back to 0 after filling it with ^^^ that code
     });
     goButton.hide();
 }
@@ -209,32 +211,52 @@ function draw() {
             ) socket.emit("update_pos", curPlayer);
         }
 
+        push();
+        fill(255);
+        textSize(20);
+        text("Dirt:", 10, height-10);
+        stroke(0);
+        fill(0);
+        rect(50, height-30, 200, 20);
+        fill(255,255,0);
+        rect(50, height-30, 200*(dirtInv/150), 20);
+        pop();
+
         if (mouseIsPressed) {
             //does the digging
             let x = (mouseX + camera.x - (width / 2));
             let y = (mouseY + camera.y - (height / 2));
 
             let amount = 0;
-            if(mouseButton == LEFT) amount = 0.02;   //remove dirt
-            if(mouseButton == RIGHT) amount = -0.02; //add dirt
-            let ray = createVector(x-curPlayer.pos.x, y-curPlayer.pos.y);
-            let digSpot = cast(curPlayer.pos.x, curPlayer.pos.y, ray.heading());
-            if(digSpot != undefined) dig(((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE), amount);
-            
-            //2 extra digs to make a better path for walking
-            digSpot = cast(
-                curPlayer.pos.x+(16*round(cos(ray.copy().rotate(90).heading()))), 
-                curPlayer.pos.y+(16*round(sin(ray.copy().rotate(90).heading()))), ray.heading()
-            );
-            if(digSpot != undefined) dig(((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE), amount);
-            
-            digSpot = cast(
-                curPlayer.pos.x-(16*round(cos(ray.copy().rotate(90).heading()))), 
-                curPlayer.pos.y-(16*round(sin(ray.copy().rotate(90).heading()))), ray.heading()
-            );
-            if(digSpot != undefined) dig(((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE), amount);
+            if(mouseButton == LEFT){ //remove dirt
+                if(dirtInv < 150-0.04) playerDig(x, y, 0.04);
+            }
+            if(mouseButton == RIGHT){ //add dirt
+                if(dirtInv > 0.04) playerDig(x, y, -0.04);
+            }
         }
     }
+}
+
+function playerDig(x,y, amount){
+    let ray = createVector(x-curPlayer.pos.x, y-curPlayer.pos.y);
+    let digSpot = cast(curPlayer.pos.x, curPlayer.pos.y, ray.heading(), (amount < 0));
+    if(digSpot != undefined) dig(((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE), amount);
+    
+    //2 extra digs to make a better path for walking
+    digSpot = cast(
+        curPlayer.pos.x+(16*round(cos(ray.copy().rotate(90).heading()))), 
+        curPlayer.pos.y+(16*round(sin(ray.copy().rotate(90).heading()))), ray.heading(),
+        (amount < 0)
+    );
+    if(digSpot != undefined) dig(((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE), amount);
+    
+    digSpot = cast(
+        curPlayer.pos.x-(16*round(cos(ray.copy().rotate(90).heading()))), 
+        curPlayer.pos.y-(16*round(sin(ray.copy().rotate(90).heading()))), ray.heading(),
+        (amount < 0)
+    );
+    if(digSpot != undefined) dig(((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE), amount);
 }
 
 function dig(x, y, amt) {
@@ -255,19 +277,27 @@ function dig(x, y, amt) {
         pop();
     }
 
-    if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 0) testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] -= amt;
-    if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] < 0.3 && testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] !== -1){
-        testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] = 0;
+    if(amt > 0){
+        dirtInv += amt;
+        if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 0) testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] -= amt;
+        if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] < 0.3 && testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] !== -1){
+            testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] = 0;
+        }
     }
-    if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 1.3){
-        testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] = 1.3;
+    else{
+        dirtInv += amt;
+        if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] < 1.3 && testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] !== -1) testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] -= amt;
+        if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 1.3){
+            dirtInv -= testMap.chunks[chunkPos.x+","+chunkPos.y].data[index]-1.3;
+            testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] = 1.3;
+        }
     }
 
     socket.emit("update_node", {chunkPos: (chunkPos.x+","+chunkPos.y), index: index, val: testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] });
 }
 
 
-function cast(x,y, angle){
+function cast(x,y, angle, placeBool){
     let chunkPos = testMap.globalToChunk(x,y);
     if(testMap.chunks[chunkPos.x+","+chunkPos.y] == undefined) return;
     
@@ -305,8 +335,13 @@ function cast(x,y, angle){
           }
           
         index = floor(x) + (floor(y) / CHUNKSIZE);
-        if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 1){
-
+        
+        if(placeBool){
+            if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] >= 1.3){
+                x -= 1*cos(angle);
+                y -= 1*sin(angle);
+                return {cx: chunkPos.x, cy: chunkPos.y, x: floor(x), y: floor(y)};
+            }
         }
           
         playerToTile = curPlayer.pos.dist(createVector(((chunkPos.x*CHUNKSIZE+x)*TILESIZE), ((chunkPos.y*CHUNKSIZE+y)*TILESIZE)));

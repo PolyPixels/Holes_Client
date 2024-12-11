@@ -284,7 +284,7 @@ class Chunk{
                         endShape();
                         break;
                     case 15:
-                        rect(scCorners[0].x, scCorners[0].y, TILESIZE, TILESIZE);
+                        rect(scCorners[0].x, scCorners[0].y, TILESIZE+1, TILESIZE+1);
                 }
             }
         }
