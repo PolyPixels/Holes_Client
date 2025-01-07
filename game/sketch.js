@@ -1,34 +1,36 @@
-let gameState ="initial";
-let testMap; // Create a map object
+/*******************************************************
+ * Globals (unchanged)
+ *******************************************************/
+let gameState = "initial";
+let testMap; // your Map object
 var lastHolding;
 var projectiles = [];
-var collisionChecks = []; //for debugging
+var collisionChecks = [];
 var raceSelected = false;
 var nameEntered = false;
-var raceButtons = [];
+var raceButtons = []; // now storing "card" divs instead of p5 buttons
 var goButton;
 var nameInput;
 var keyReleasedFlag = false;
-const races = ['gnome', 'aylah'];
-var camera = {x: 0, y: 0};
+const races = ["gnome", "aylah"];
+var camera = { x: 0, y: 0 };
 var Debuging = false;
 var dirtInv = 0;
 
-function windowResized() {
-    resizeCanvas(innerWidth-10, innerHeight-8);  // Resize canvas when window size changes
-}
+let raceContainer, raceTitle
 
 function setup() {
-    let cnv = createCanvas(innerWidth-10, innerHeight-8);
-    cnv.parent('canvas-container'); 
+    let cnv = createCanvas(innerWidth - 10, innerHeight - 8);
+    cnv.parent("canvas-container");
     background(220);
     angleMode(DEGREES);
 
-    // Prevent right-click context menu on all p5.js canvases
+    // Prevent right-click context menu on p5.js canvases
     const canvases = document.getElementsByClassName("p5Canvas");
     for (let element of canvases) {
         element.addEventListener("contextmenu", (e) => e.preventDefault());
     }
+
     socket = io.connect("http://localhost:3000");
 
     // Flip right images to create left images
@@ -40,42 +42,295 @@ function setup() {
     }
 
     socketSetup();
-
     testMap = new Map();
 
-    // Create race selection buttons
-    for (let i = 0; i < races.length; i++) {
-        let btn = createButton(races[i].charAt(0).toUpperCase() + races[i].slice(1));
-        btn.position(width / 2 - 75, height / 2 + 50 + i * 60);
-        btn.mousePressed(() => selectRace(i));
-        btn.hide();
-        raceButtons.push(btn);
-    }
+    // ---------------------------------------------------
+    //  Create Title (centered, larger font)
+    // ---------------------------------------------------
+    raceTitle = createDiv("Select Your Race");
+    raceTitle.id("raceTitle");
+    raceTitle.style("position", "absolute");
+    raceTitle.style("top", "40px");
+    raceTitle.style("left", "50%");
+    raceTitle.style("transform", "translateX(-50%)");
+    raceTitle.style("font-size", "36px");
+    raceTitle.style("font-weight", "bold");
+    raceTitle.style("color", "#fff");
+    raceTitle.style("text-shadow", "1px 1px 2px #000");
+    raceTitle.style("padding", "10px 20px");
+    raceTitle.style("background-color", "rgba(0, 0, 0, 0.3)");
+    raceTitle.style("border-radius", "10px");
+    raceTitle.style("text-align", "center");
 
-    // Create input field for user name
-    nameInput = createInput('');
-    nameInput.position(width / 2 - 75, height / 2 + 250);
-    nameInput.input(checkName);
+    // ---------------------------------------------------
+    //  Create a container for race selection cards (centered)
+    // ---------------------------------------------------
+     raceContainer = createDiv();
+    raceContainer.id("raceContainer");
+    raceContainer.style("position", "absolute");
+    raceContainer.style("top", "120px");
+    raceContainer.style("left", "50%");
+    raceContainer.style("transform", "translateX(-50%)");
+    raceContainer.style("display", "flex");
+    raceContainer.style("flex-wrap", "wrap");
+    raceContainer.style("justify-content", "center");
+    raceContainer.style("align-items", "center");
+    raceContainer.style("gap", "30px");
+    raceContainer.style("background-color", "rgba(0, 0, 0, 0.3)");
+    raceContainer.style("padding", "20px");
+    raceContainer.style("border-radius", "10px");
+
+    // ---------------------------------------------------
+    //  Create cards for each race
+    // ---------------------------------------------------
+    races.forEach((raceName, i) => {
+        let card = createDiv();
+        card.class("raceCard");
+        card.style("display", "flex");
+        card.style("flex-direction", "column");
+        card.style("align-items", "center");
+        card.style("width", "150px");
+        card.style("background-color", "#404040");
+        card.style("border", "3px solid #fff");
+        card.style("border-radius", "10px");
+        card.style("padding", "15px");
+        card.style("cursor", "pointer");
+        card.style("transition", "transform 0.2s, background-color 0.2s, box-shadow 0.2s");
+        card.selected = false; // custom property
+
+        // Create an image element for the race
+        let raceImgPath = `images/${raceName}/${raceName}_front_stand.png`;
+        let raceImg = createImg(raceImgPath, `${raceName} image`);
+        raceImg.style("max-width", "100%");
+        raceImg.style("height", "auto");
+        raceImg.parent(card);
+
+        // Race label
+        let raceLbl = createP(raceName);
+        raceLbl.style("color", "#fff");
+        raceLbl.style("font-size", "18px");
+        raceLbl.style("font-weight", "bold");
+        raceLbl.style("margin", "10px 0 0 0");
+        raceLbl.style("text-align", "center");
+        raceLbl.parent(card);
+
+        // Hover effect
+        card.mouseOver(() => {
+            card.style("background-color", "#525252");
+            card.style("transform", "scale(1.03)");
+            card.style("box-shadow", "0 8px 16px rgba(0,0,0,0.3)");
+        });
+        card.mouseOut(() => {
+            card.style("transform", "scale(1)");
+            card.style("box-shadow", "none");
+            if (card.selected) {
+                card.style("background-color", "#4CAF50");
+            } else {
+                card.style("background-color", "#404040");
+            }
+        });
+
+        // On click: deselect all other cards, select this one
+        card.mousePressed(() => {
+            raceButtons.forEach((c) => {
+                c.selected = false;
+                c.style("background-color", "#404040");
+            });
+            card.selected = true;
+            card.style("background-color", "#4CAF50");
+            raceSelected = true;
+            curPlayer.race = i;
+            console.log("Race selected:", races[i]);
+        });
+
+        // Hide initially (shown only in certain states)
+        card.hide();
+        card.parent(raceContainer);
+        raceButtons.push(card);
+    });
+
+    // ---------------------------------------------------
+    //   Name Input Field (centered, larger)
+    // ---------------------------------------------------
+    nameInput = createInput("");
     nameInput.hide();
+    // Position near center: the numbers are just an example
+    nameInput.position(width / 2 - 110, height / 2 + 150);
 
-    // Create the "Go" button
-    goButton = createButton('Go');
-    goButton.position(width / 2 - 75, height / 2 + 280);
-    goButton.attribute('disabled', true);
+    // Additional styling for name input
+    nameInput.style("font-size", "20px");
+    nameInput.style("border", "3px solid #ccc");
+    nameInput.style("border-radius", "8px");
+    nameInput.style("padding", "10px");
+    nameInput.style("width", "220px");
+    nameInput.style("outline", "none");
+    nameInput.style("transition", "border 0.2s");
+    nameInput.input(() => {
+        checkName();
+    });
+    nameInput.mouseOver(() => {
+        nameInput.style("border", "3px solid #4CAF50");
+    });
+    nameInput.mouseOut(() => {
+        nameInput.style("border", "3px solid #ccc");
+    });
+
+    // ---------------------------------------------------
+    //   "Go" Button (centered, larger)
+    // ---------------------------------------------------
+    goButton = createButton("Go");
+    goButton.hide();
+    // Position near center: the numbers are just an example
+    goButton.position(width / 2 + 130, height / 2 + 150);
+    goButton.attribute("disabled", true);
+
+    // Styling for goButton
+    goButton.style("font-size", "20px");
+    goButton.style("background-color", "#2196F3");
+    goButton.style("color", "#fff");
+    goButton.style("border", "none");
+    goButton.style("border-radius", "8px");
+    goButton.style("padding", "10px 20px");
+    goButton.style("cursor", "pointer");
+    goButton.style("transition", "background-color 0.2s, transform 0.2s");
+
+    goButton.mouseOver(() => {
+        goButton.style("background-color", "#1e88e5");
+        goButton.style("transform", "scale(1.05)");
+    });
+    goButton.mouseOut(() => {
+        goButton.style("background-color", "#2196F3");
+        goButton.style("transform", "scale(1)");
+    });
+
     goButton.mousePressed(() => {
         curPlayer.name = nameInput.value();
-        socket.emit('new_player', curPlayer);
-        gameState = 'playing';
+        socket.emit("new_player", curPlayer);
+        gameState = "playing";
 
-        //empty out a small area around the player
-        for(let y = -5; y < 5; y++){
-            for(let x = -5; x < 5; x++){
-                dig(curPlayer.pos.x+(x*TILESIZE), curPlayer.pos.y+(y*TILESIZE), 1);
+        // Clear a small area around the player
+        for (let y = -5; y < 5; y++) {
+            for (let x = -5; x < 5; x++) {
+                dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1);
             }
         }
-        dirtInv = 0; //set back to 0 after filling it with ^^^ that code
+        dirtInv = 0;
     });
-    goButton.hide();
+}
+
+
+
+function draw() {
+    background("#71413B");
+
+    if (gameState === "initial") {
+        nameInput.show();
+        goButton.show();
+
+        // Show race cards (instead of old text buttons)
+        raceButtons.forEach((card) => {
+            card.show();
+        });
+        // "Go" button enable/disable
+        if (raceSelected && nameEntered) {
+            goButton.removeAttribute("disabled");
+        } else {
+            goButton.attribute("disabled", true);
+        }
+    } else {
+        // Hide UI elements during gameplay
+        nameInput.hide();
+        goButton.hide();
+        raceButtons.forEach((card) => {
+            card.hide();
+        });
+        raceContainer.style("display", "none"); // Hide the container
+        // If using raceTitle, hide it as well
+        if (raceTitle) raceTitle.style("display", "none");
+        // ---- (Your original gameplay code) ----
+        if (curPlayer) {
+            camera.x = curPlayer.pos.x;
+            camera.y = curPlayer.pos.y;
+        }
+
+        if (Object.keys(testMap.chunks).length > 0) {
+            testMap.render();
+        }
+
+        if (curPlayer) {
+            curPlayer.render();
+            curPlayer.update();
+        }
+
+        let keys = Object.keys(players);
+        for (let i = 0; i < keys.length; i++) {
+            players[keys[i]].render();
+            players[keys[i]].update();
+        }
+
+        for (let i = 0; i < traps.length; i++) {
+            traps[i].render();
+            traps[i].update();
+        }
+
+        if (curPlayer) {
+            lastHolding = curPlayer.holding;
+
+            // default all keys to false
+            curPlayer.holding = { w: false, a: false, s: false, d: false };
+
+            // Player controls
+            if (keyIsDown(87)) curPlayer.holding.w = true; // W
+            if (keyIsDown(65)) curPlayer.holding.a = true; // A
+            if (keyIsDown(83)) curPlayer.holding.s = true; // S
+            if (keyIsDown(68)) curPlayer.holding.d = true; // D
+
+            if (
+                lastHolding.w !== curPlayer.holding.w ||
+                lastHolding.a !== curPlayer.holding.a ||
+                lastHolding.s !== curPlayer.holding.s ||
+                lastHolding.d !== curPlayer.holding.d
+            ) {
+                socket.emit("update_pos", curPlayer);
+            }
+        }
+
+        // Dirt Inventory
+        push();
+        fill(255);
+        textSize(20);
+        text("Dirt:", 10, height - 10);
+        stroke(0);
+        fill(0);
+        rect(50, height - 30, 200, 20);
+        fill(255, 255, 0);
+        rect(50, height - 30, 200 * (dirtInv / 150), 20);
+        pop();
+
+        // Digging logic
+        if (mouseIsPressed) {
+            let x = mouseX + camera.x - width / 2;
+            let y = mouseY + camera.y - height / 2;
+
+            if (mouseButton === LEFT) {
+                if (dirtInv < 150 - 0.04) playerDig(x, y, 0.04);
+            }
+            if (mouseButton === RIGHT) {
+                if (dirtInv > 0.04) playerDig(x, y, -0.04);
+            }
+        }
+    }
+}
+
+/*******************************************************
+ * checkName() - same as your code
+ *******************************************************/
+function checkName() {
+    if (nameInput.value().length > 0) {
+        nameEntered = true;
+    } else {
+        nameEntered = false;
+    }
 }
 
 function flipImage(img) {
@@ -83,20 +338,6 @@ function flipImage(img) {
     flippedImg.scale(-1, 1);
     flippedImg.image(img, -img.width, 0);
     return flippedImg;
-}
-
-function selectRace(raceIndex) {
-    raceSelected = true;
-    curPlayer.race = raceIndex;
-    console.log('Race selected: ' + races[raceIndex]);
-}
-
-function checkName() {
-    if (nameInput.value().length > 0) {
-        nameEntered = true;
-    } else {
-        nameEntered = false;
-    }
 }
 
 function keyReleased() {
@@ -131,110 +372,6 @@ function keyReleased() {
 function keyPressed() {
     if (keyCode === 32) {
         keyReleasedFlag = false;
-    }
-}
-
-function draw() {
-    background('#71413B');
-
-    if (gameState == 'initial') {
-        nameInput.show();
-        goButton.show();
-
-        // Show race buttons
-        raceButtons.forEach((btn) => {
-            btn.show();
-        });
-
-        // Display "Pick A Race" text
-        push();
-        fill(255);
-        textSize(40);
-        textAlign(CENTER, CENTER);
-        text('Pick A Race', width / 2, height / 3);
-        pop();
-
-        // Enable "Go" button if race and name are selected
-        if (raceSelected && nameEntered) {
-            goButton.removeAttribute('disabled');
-        } else {
-            goButton.attribute('disabled', true);
-        }
-    }
-    else {
-        // Hide UI elements during gameplay
-        nameInput.hide();
-        goButton.hide();
-        raceButtons.forEach((btn) => {
-            btn.hide();
-        });
-
-        if(curPlayer){
-            camera.x = curPlayer.pos.x;
-            camera.y = curPlayer.pos.y;
-        }
-
-        if (Object.keys(testMap.chunks).length > 0) testMap.render();
-
-        if (curPlayer) {
-            curPlayer.render();
-            curPlayer.update();
-        }
-
-        let keys = Object.keys(players);
-        for (let i = 0; i < keys.length; i++) {
-        players[keys[i]].render();
-        players[keys[i]].update();
-        }
-
-        for (let i = 0; i < traps.length; i++) {
-        traps[i].render();
-        traps[i].update();
-        }
-
-        if (curPlayer) {
-            lastHolding = curPlayer.holding; //copy to compare to later
-
-            //default all keys to not holding them
-            curPlayer.holding = { w: false, a: false, s: false, d: false };
-
-            //Player Controls
-            if (keyIsDown(87)) curPlayer.holding.w = true; //w
-            if (keyIsDown(65)) curPlayer.holding.a = true; //a
-            if (keyIsDown(83)) curPlayer.holding.s = true; //s
-            if (keyIsDown(68)) curPlayer.holding.d = true; //d
-
-            if (lastHolding.w != curPlayer.holding.w ||
-                lastHolding.a != curPlayer.holding.a ||
-                lastHolding.s != curPlayer.holding.s ||
-                lastHolding.d != curPlayer.holding.d
-            ) socket.emit("update_pos", curPlayer);
-        }
-
-        push();
-        fill(255);
-        textSize(20);
-        text("Dirt:", 10, height-10);
-        stroke(0);
-        fill(0);
-        rect(50, height-30, 200, 20);
-        fill(255,255,0);
-        rect(50, height-30, 200*(dirtInv/150), 20);
-        pop();
-
-        if (mouseIsPressed) {
-            //does the digging
-            let x = (mouseX + camera.x - (width / 2));
-            let y = (mouseY + camera.y - (height / 2));
-
-            let amount = 0;
-            if(mouseButton == LEFT){ //remove dirt
-                if(dirtInv < 150-0.04) playerDig(x, y, 0.04);
-            }
-            if(mouseButton == RIGHT){ //add dirt
-                if(dirtInv > 0.04) playerDig(x, y, -0.04);
-            }
-        }
     }
 }
 

@@ -34,6 +34,7 @@ class Trap {
             let check = collisionChecks[i];
             if (check.val == -1) this.pos = oldPos;
             if (check.val > 0) {
+                console.log("trap collison")
                 if (this.pos.dist(createVector(check.x, check.y)) < 16 + (check.val * testMap.tileSize / 2)) {
                     this.pos = oldPos;
                 }
