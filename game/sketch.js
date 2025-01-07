@@ -107,7 +107,7 @@ function setup() {
 
         // Race label
         let raceLbl = createP(raceName);
-        raceLbl.style("color", "#fff");
+        raceLbl.style("color", "#fff")
         raceLbl.style("font-size", "18px");
         raceLbl.style("font-weight", "bold");
         raceLbl.style("margin", "10px 0 0 0");
