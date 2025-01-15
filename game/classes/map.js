@@ -56,6 +56,7 @@ class Chunk{
         this.data = []; // Data is very obvious, -1 is unbreakable, 0 is nothing, >0 is block
         this.cx = x; //chunk pos x
         this.cy = y; //chunk pos y
+        this.objects = []; // list of objects (might need sorting if we make chunks bigger or have tons of objects in a chunk)
     }
 
     cordToScreen(x,y){
@@ -288,7 +289,87 @@ class Chunk{
                 }
             }
         }
+
+        for(let i = 0; i < this.objects.length; i++){
+            this.objects[i].render();
+        }
     }
+}
+
+class Placeable{
+    constructor(x,y,rot){
+        this.pos = createVector(x,y);
+        this.rot = rot;
+        this.openBool = true;
+    }
+
+    render(){
+        push();
+        translate(-camera.x+(width/2)+this.pos.x, -camera.y+(height/2)+this.pos.y);
+        rotate(this.rot);
+        fill(100, 100, 200);
+        stroke(0);
+        rect(-10, -10, 20, 20);
+        circle(0,0,5);
+        pop();
+    }
+
+    ghostRender(){
+        push();
+        translate(-camera.x+(width/2)+this.pos.x, -camera.y+(height/2)+this.pos.y);
+        rotate(this.rot);
+        
+        this.openBool = true;
+        let collisionChecks = [];
+        collisionChecks.push(this.checkCollisions( 0, 0));
+        collisionChecks.push(this.checkCollisions( 1, 0));
+        collisionChecks.push(this.checkCollisions( 0, 1));
+        collisionChecks.push(this.checkCollisions( 1, 1));
+        for (let i = 0; i < collisionChecks.length; i++) {
+            let check = collisionChecks[i];
+            if (check.val == -1) this.openBool = false;
+            if (check.val > 0) {
+                if (this.pos.dist(createVector(check.x+(check.cx*CHUNKSIZE*TILESIZE), check.y+(check.cy*CHUNKSIZE*TILESIZE))) < 16 + (check.val * TILESIZE / 2)) {
+                    this.openBool = false;
+                }
+            }
+        }
+
+        if(this.openBool) fill(100, 200, 100, 100); //green
+        else fill(200, 100, 100, 100); //red
+        
+        stroke(0);
+        rect(-10, -10, 20, 20);
+        circle(0,0,5);
+        pop();
+    }
+
+    checkCollisions(xOffset, yOffset) {
+        let chunkPos = testMap.globalToChunk(this.pos.x+(xOffset*TILESIZE), this.pos.y+(yOffset*TILESIZE));
+
+        let x = floor(this.pos.x / TILESIZE) - (chunkPos.x*CHUNKSIZE) + xOffset;
+        let y = floor(this.pos.y / TILESIZE) - (chunkPos.y*CHUNKSIZE) + yOffset;
+        if(Debuging){
+            push();
+            rotate(-this.rot);
+            translate(camera.x-(width/2)-this.pos.x, camera.y-(height/2)-this.pos.y);
+            fill(255);
+            circle(((x+(chunkPos.x*CHUNKSIZE))*TILESIZE)-camera.x+(width/2),((y+(chunkPos.y*CHUNKSIZE))*TILESIZE)-camera.y+(height/2), 10);
+            pop();
+        }
+        
+        
+        return {
+            x: (x + 0.5) * TILESIZE,
+            y: (y + 0.5) * TILESIZE,
+            cx: chunkPos.x,
+            cy: chunkPos.y,
+            val: testMap.chunks[chunkPos.x+","+chunkPos.y].data[x + (y / CHUNKSIZE)]
+        };
+        
+    }
+
+
 }
 
 //converts corner values into a binary number? resulting in a uniqe int for each possible combination of corner vals

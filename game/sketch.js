@@ -16,6 +16,8 @@ const races = ["gnome", "aylah"];
 var camera = { x: 0, y: 0 };
 var Debuging = false;
 var dirtInv = 0;
+var buildMode = false;
+var ghostBuild;
 
 let raceContainer, raceTitle
 
@@ -43,6 +45,7 @@ function setup() {
 
     socketSetup();
     testMap = new Map();
+    ghostBuild = new Placeable(0,0,0);
 
     // ---------------------------------------------------
     //  Create Title (centered, larger font)
@@ -260,6 +263,12 @@ function draw() {
         if (curPlayer) {
             curPlayer.render();
             curPlayer.update();
+            if(buildMode){
+                ghostBuild.pos.x = mouseX + camera.x - width / 2;
+                ghostBuild.pos.y = mouseY + camera.y - height / 2;
+                ghostBuild.rot = ghostBuild.pos.copy().sub(curPlayer.pos).heading();
+                ghostBuild.ghostRender();
+            }
         }
 
         let keys = Object.keys(players);
@@ -313,10 +322,23 @@ function draw() {
             let y = mouseY + camera.y - height / 2;
 
             if (mouseButton === LEFT) {
-                if (dirtInv < 150 - 0.04) playerDig(x, y, 0.04);
+                if(!buildMode){
+                    if (dirtInv < 150 - 0.04) playerDig(x, y, 0.04);
+                }
+                else{
+                    if(ghostBuild.openBool){
+                        let chunkPos = testMap.globalToChunk(x,y);
+                        testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(new Placeable(x,y,createVector(x,y).sub(curPlayer.pos).heading()));
+                    }
+                }
             }
             if (mouseButton === RIGHT) {
-                if (dirtInv > 0.04) playerDig(x, y, -0.04);
+                if(!buildMode){
+                    if (dirtInv > 0.04) playerDig(x, y, -0.04);
+                }
+                else{
+                    buildMode = false;
+                }
             }
         }
     }
@@ -366,6 +388,10 @@ function keyReleased() {
         });
 
         keyReleasedFlag = true;
+    }
+
+    if (keyCode === 82){
+        buildMode = !buildMode;
     }
 }
 
