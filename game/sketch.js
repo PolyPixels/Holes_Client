@@ -14,7 +14,7 @@ var nameInput;
 var keyReleasedFlag = false;
 const races = ["gnome", "aylah"];
 var camera = { x: 0, y: 0 };
-var Debuging = false;
+var Debuging = true;
 var dirtInv = 0;
 var buildMode = false;
 var ghostBuild;
@@ -328,7 +328,9 @@ function draw() {
                 else{
                     if(ghostBuild.openBool){
                         let chunkPos = testMap.globalToChunk(x,y);
-                        testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(new Placeable(x,y,createVector(x,y).sub(curPlayer.pos).heading()));
+                        let temp = new Placeable(x,y,createVector(x,y).sub(curPlayer.pos).heading());
+                        testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(temp);
+                        socket.emit("new_object", {cx: chunkPos.x, cy: chunkPos.y, pos: {x: temp.pos.x, y: temp.pos.y}, rot: temp.rot});
                     }
                 }
             }

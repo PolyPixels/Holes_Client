@@ -120,6 +120,12 @@ function socketSetup(){
         traps.push(newT);
     });
 
+    socket.on("NEW_OBJECT", (data) => {
+        let chunk = testMap.chunks[data.cx+","+data.cy];
+        let temp = new Placeable(data.pos.x, data.pos.y, data.rot);
+        chunk.objects.push(temp);
+    })
+
     socket.on("use_trap", (data) => {
         //hit a player
         //does damage add damager to the player
@@ -130,5 +136,7 @@ function socketSetup(){
         let keys = Object.keys(data.data);
         for(let i=0; i<keys.length; i++) testMap.chunks[data.x+","+data.y].data[keys[i]] = data.data[keys[i]];
         testMap.chunkBools[data.x+","+data.y] = true;
+        console.log(data.objects);
+        for(let i=0; i<data.objects.length; i++) testMap.chunks[data.x+","+data.y].objects.push(new Placeable(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot));
     });
 }
