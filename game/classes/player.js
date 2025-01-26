@@ -59,7 +59,6 @@ class Player {
             this.direction = 'up';
             collisionChecks.push(this.checkCollisions( 1, -1));
             collisionChecks.push(this.checkCollisions( 0, -1));
-            collisionChecks.push(this.checkCollisions(-1, -1));
         }
         if (this.holding.a) {
             this.pos.x += -BASE_SPEED;
@@ -73,7 +72,6 @@ class Player {
             this.direction = 'down';
             collisionChecks.push(this.checkCollisions( 1, 1));
             collisionChecks.push(this.checkCollisions( 0, 1));
-            collisionChecks.push(this.checkCollisions(-1, 1));
         }
         if (this.holding.d) {
             this.pos.x += BASE_SPEED;
@@ -84,6 +82,16 @@ class Player {
         }
 
         // Handle collisions
+        let chunk = testMap.chunks[chunkPos.x+","+chunkPos.y];
+        for(let j = 0; j < chunk.objects.length; j++){
+            let d = chunk.objects[j].pos.dist(this.pos);
+            if(d > 0){
+                if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + 29){
+                    this.pos = oldPos;
+                }
+            }
+        }
+
         for (let i = 0; i < collisionChecks.length; i++) {
             let check = collisionChecks[i];
             if (check.val == -1) this.pos = oldPos;

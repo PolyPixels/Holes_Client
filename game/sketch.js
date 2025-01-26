@@ -267,7 +267,7 @@ function draw() {
                 ghostBuild.pos.x = mouseX + camera.x - width / 2;
                 ghostBuild.pos.y = mouseY + camera.y - height / 2;
                 ghostBuild.rot = ghostBuild.pos.copy().sub(curPlayer.pos).heading();
-                ghostBuild.ghostRender();
+                ghostBuild.ghostRender(createVector(ghostBuild.pos.x,ghostBuild.pos.y).dist(curPlayer.pos) < 200);
             }
         }
 
@@ -339,7 +339,13 @@ function draw() {
                     if (dirtInv > 0.04) playerDig(x, y, -0.04);
                 }
                 else{
-                    buildMode = false;
+                    let chunkPos = testMap.globalToChunk(x,y);
+                    let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
+                    for(let i = chunk.objects.length-1; i >= 0; i--){
+                        if(createVector(x,y).dist(chunk.objects[i].pos) < (chunk.objects[i].size.w+chunk.objects[i].size.h)/2){
+                            chunk.objects.splice(i,1);
+                        }
+                    }
                 }
             }
         }
@@ -392,7 +398,7 @@ function keyReleased() {
         keyReleasedFlag = true;
     }
 
-    if (keyCode === 82){
+    if (keyCode === 82){ //r
         buildMode = !buildMode;
     }
 }

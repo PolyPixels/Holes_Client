@@ -291,7 +291,7 @@ class Chunk{
         }
 
         for(let i = 0; i < this.objects.length; i++){
-            this.objects[i].render();
+            this.objects[i].render("none", 255);
         }
     }
 }
@@ -301,47 +301,60 @@ class Placeable{
         this.pos = createVector(x,y);
         this.rot = rot;
         this.openBool = true;
+        this.size = {w: 40, h: 40};
     }
 
-    render(){
+    render(tint, alpha){
         push();
         translate(-camera.x+(width/2)+this.pos.x, -camera.y+(height/2)+this.pos.y);
         rotate(this.rot);
-        fill(100, 100, 200);
+        fill(100, 100, 200, alpha);
+        if(tint == "green") fill(100, 200, 100, alpha);
+        if(tint == "red") fill(200, 100, 100, alpha);
         stroke(0);
-        rect(-10, -10, 20, 20);
+        rect(-this.size.w/2, -this.size.h/2, this.size.w, this.size.h);
         circle(0,0,5);
         pop();
     }
 
-    ghostRender(){
+    ghostRender(ob){
         push();
         translate(-camera.x+(width/2)+this.pos.x, -camera.y+(height/2)+this.pos.y);
         rotate(this.rot);
         
-        this.openBool = true;
-        let collisionChecks = [];
-        collisionChecks.push(this.checkCollisions( 0, 0));
-        collisionChecks.push(this.checkCollisions( 1, 0));
-        collisionChecks.push(this.checkCollisions( 0, 1));
-        collisionChecks.push(this.checkCollisions( 1, 1));
-        for (let i = 0; i < collisionChecks.length; i++) {
-            let check = collisionChecks[i];
-            if (check.val == -1) this.openBool = false;
-            if (check.val > 0) {
-                if (this.pos.dist(createVector(check.x+(check.cx*CHUNKSIZE*TILESIZE), check.y+(check.cy*CHUNKSIZE*TILESIZE))) < 16 + (check.val * TILESIZE / 2)) {
+        this.openBool = ob;
+
+        let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
+        let chunk = testMap.chunks[chunkPos.x+","+chunkPos.y];
+        for(let j = 0; j < chunk.objects.length; j++){
+            let d = chunk.objects[j].pos.dist(this.pos);
+            if(d > 0){
+                if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + (this.size.w+this.size.h)/2){
                     this.openBool = false;
                 }
             }
         }
 
-        if(this.openBool) fill(100, 200, 100, 100); //green
-        else fill(200, 100, 100, 100); //red
-        
-        stroke(0);
-        rect(-10, -10, 20, 20);
-        circle(0,0,5);
+        if(this.openBool){
+            let collisionChecks = [];
+            collisionChecks.push(this.checkCollisions( 0,                           0));
+            collisionChecks.push(this.checkCollisions( floor(this.size.w/TILESIZE), 0));
+            collisionChecks.push(this.checkCollisions( 0,                           floor(this.size.h/TILESIZE)));
+            collisionChecks.push(this.checkCollisions( floor(this.size.w/TILESIZE), floor(this.size.h/TILESIZE)));
+            for (let i = 0; i < collisionChecks.length; i++) {
+                let check = collisionChecks[i];
+                if (check.val == -1) this.openBool = false;
+                if (check.val > 0) {
+                    if (this.pos.dist(createVector(check.x+(check.cx*CHUNKSIZE*TILESIZE), check.y+(check.cy*CHUNKSIZE*TILESIZE))) < ((this.size.w+this.size.h)/2)-5 + (check.val * TILESIZE / 2)) {
+                        this.openBool = false;
+                    }
+                }
+            }
+        }
         pop();
+
+        if(this.openBool) this.render("green", 100); //green
+        else this.render("red", 100); //red
     }
 
     checkCollisions(xOffset, yOffset) {
