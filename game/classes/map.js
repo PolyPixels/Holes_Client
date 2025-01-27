@@ -301,7 +301,8 @@ class Placeable{
         this.pos = createVector(x,y);
         this.rot = rot;
         this.openBool = true;
-        this.size = {w: 40, h: 40};
+        this.size = {w: 40, h: 80};
+        this.z = 0;
     }
 
     render(tint, alpha){
@@ -327,27 +328,41 @@ class Placeable{
         let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
         let chunk = testMap.chunks[chunkPos.x+","+chunkPos.y];
         for(let j = 0; j < chunk.objects.length; j++){
-            let d = chunk.objects[j].pos.dist(this.pos);
-            if(d > 0){
-                if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + (this.size.w+this.size.h)/2){
-                    this.openBool = false;
+            if(this.z == chunk.objects[j].z){
+                let d = chunk.objects[j].pos.dist(this.pos);
+                if(d > 0){
+                    if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + (this.size.w+this.size.h)/2){
+                        this.openBool = false;
+                    }
                 }
             }
         }
 
         if(this.openBool){
             let collisionChecks = [];
-            collisionChecks.push(this.checkCollisions( 0,                           0));
-            collisionChecks.push(this.checkCollisions( floor(this.size.w/TILESIZE), 0));
-            collisionChecks.push(this.checkCollisions( 0,                           floor(this.size.h/TILESIZE)));
-            collisionChecks.push(this.checkCollisions( floor(this.size.w/TILESIZE), floor(this.size.h/TILESIZE)));
+            collisionChecks.push(this.checkCollisions(
+                round(((-1*cos(this.rot)*(this.size.w/2))-(-0.9*sin(this.rot)*(this.size.h/2)))/TILESIZE),
+                round(((-1*sin(this.rot)*(this.size.w/2))+(-0.9*cos(this.rot)*(this.size.h/2)))/TILESIZE)
+            ));
+            collisionChecks.push(this.checkCollisions(
+                round(((1*cos(this.rot)*(this.size.w/2))-(-1*sin(this.rot)*(this.size.h/2)))/TILESIZE),
+                round(((1*sin(this.rot)*(this.size.w/2))+(-1*cos(this.rot)*(this.size.h/2)))/TILESIZE)
+            ));
+            collisionChecks.push(this.checkCollisions(
+                round(((1*cos(this.rot)*(this.size.w/2))-(1*sin(this.rot)*(this.size.h/2)))/TILESIZE),
+                round(((1*sin(this.rot)*(this.size.w/2))+(1*cos(this.rot)*(this.size.h/2)))/TILESIZE)
+            ));
+            collisionChecks.push(this.checkCollisions(
+                round(((-1*cos(this.rot)*(this.size.w/2))-(1.1*sin(this.rot)*(this.size.h/2)))/TILESIZE),
+                round(((-1*sin(this.rot)*(this.size.w/2))+(1.1*cos(this.rot)*(this.size.h/2)))/TILESIZE)
+            ));
             for (let i = 0; i < collisionChecks.length; i++) {
                 let check = collisionChecks[i];
                 if (check.val == -1) this.openBool = false;
                 if (check.val > 0) {
-                    if (this.pos.dist(createVector(check.x+(check.cx*CHUNKSIZE*TILESIZE), check.y+(check.cy*CHUNKSIZE*TILESIZE))) < ((this.size.w+this.size.h)/2)-5 + (check.val * TILESIZE / 2)) {
-                        this.openBool = false;
-                    }
+                    this.openBool = false;
+                    //if (this.pos.dist(createVector(check.x+(check.cx*CHUNKSIZE*TILESIZE), check.y+(check.cy*CHUNKSIZE*TILESIZE))) < ((this.size.w+this.size.h)/2)-5 + (check.val * TILESIZE / 2)) {
+                    //}
                 }
             }
         }
