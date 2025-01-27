@@ -325,9 +325,30 @@ function draw() {
                 else{
                     if(ghostBuild.openBool){
                         let chunkPos = testMap.globalToChunk(x,y);
-                        let temp = new Trap(x,y,ghostBuild.rot, 10, curPlayer.id, ghostBuild.color, curPlayer.name);
-                        //console.log(temp);
+                        let temp;
+                        if(ghostBuild.type == "trap"){
+                            temp = new Trap(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.hp, curPlayer.id, ghostBuild.color, curPlayer.name);
+                        }
+                        else if(ghostBuild.type == "wall"){
+                            temp = new Wall(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color);
+                        }
+                        else if(ghostBuild.type == "door"){
+                            temp = new Door(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color);
+                        }
+                        else if(ghostBuild.type == "floor"){
+                            temp = new Floor(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color);
+                        }
+                        else if(ghostBuild.type == "rug"){
+                            temp = new Rug(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color);
+                        }
+                        else if(ghostBuild.type == "cup"){
+                            temp = new Cup(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color);
+                        }
+                        else{
+                            temp = new Placeable(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot);
+                        }
                         testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(temp);
+                        testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
                         socket.emit("new_object", {cx: chunkPos.x, cy: chunkPos.y, type: temp.type, pos: {x: temp.pos.x, y: temp.pos.y}, rot: temp.rot, id: temp.id, hp: temp.hp, name: temp.name, color: temp.color});
                     }
                 }
@@ -372,33 +393,37 @@ function flipImage(img) {
 function keyReleased() {
     if (keyCode === 32 && !keyReleasedFlag) {
         // Spacebar released
-        console.log('Trap created');
-
-        // Create a new trap at the player's position
-        let newT = new Trap(
-            curPlayer.pos.x,
-            curPlayer.pos.y,
-            10,
-            curPlayer.id,
-            curPlayer.color,
-            curPlayer.name
-        );
-        traps.push(newT);
-
-        // Emit the trap creation to the server
-        socket.emit('spawn_trap', {
-            x: curPlayer.pos.x,
-            y: curPlayer.pos.y,
-            ownerName: curPlayer.name,
-            color: curPlayer.color,
-            ownerId: curPlayer.id,
-        });
+        
 
         keyReleasedFlag = true;
     }
 
     if (keyCode === 82){ //r
         buildMode = !buildMode;
+    }
+
+    if (keyCode === 49){ //1
+        ghostBuild = new Wall(0,0,0, {r: 100, g: 200, b: 0});
+    }
+
+    if (keyCode === 50){ //2
+        ghostBuild = new Floor(0,0,0, {r: 150, g: 150, b: 0});
+    }
+
+    if (keyCode === 51){ //3
+        ghostBuild = new Door(0,0,0, {r: 80, g: 180, b: 0});
+    }
+
+    if (keyCode === 52){ //4
+        ghostBuild = new Rug(0,0,0, {r: 50, g: 150, b: 0});
+    }
+
+    if (keyCode === 53){ //5
+        ghostBuild = new Cup(0,0,0, {r: 255, g: 255, b: 255});
+    }
+
+    if (keyCode === 54){ //6
+        ghostBuild = new Trap(0,0,0, {r: 255, g: 255, b: 255});
     }
 }
 

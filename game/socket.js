@@ -35,12 +35,6 @@ function socketSetup(){
                 playerData.name
             );
         }
-
-        // Handle traps
-        for (let i = 0; i < data.traps.length; i++) {
-            let nt = data.traps[i];
-            traps.push(new Trap(nt.x, nt.y, 10, nt.ownerId, nt.color, nt.ownerName));
-        }
     });
 
     socket.on('YOUR_ID', (data) => {
@@ -110,11 +104,30 @@ function socketSetup(){
 
     socket.on("NEW_OBJECT", (data) => {
         let chunk = testMap.chunks[data.cx+","+data.cy];
-        let temp = new Placeable(data.pos.x, data.pos.y, data.rot);
+        let temp;
         if(data.type == "trap"){
             temp = new Trap(data.pos.x, data.pos.y, data.rot, data.hp, data.ownerId, data.color, data.ownerName);
         }
+        else if(data.type == "wall"){
+            temp = new Wall(data.pos.x, data.pos.y, data.rot, data.color);
+        }
+        else if(data.type == "door"){
+            temp = new Door(data.pos.x, data.pos.y, data.rot, data.color);
+        }
+        else if(data.type == "floor"){
+            temp = new Floor(data.pos.x, data.pos.y, data.rot, data.color);
+        }
+        else if(data.type == "rug"){
+            temp = new Rug(data.pos.x, data.pos.y, data.rot, data.color);
+        }
+        else if(data.type == "cup"){
+            temp = new Cup(data.pos.x, data.pos.y, data.rot, data.color);
+        }
+        else{
+            temp = new Placeable(data.pos.x, data.pos.y, data.rot);
+        }
         chunk.objects.push(temp);
+        chunk.objects.sort((a,b) => a.z - b.z);
     });
 
     socket.on("DELETE_OBJ", (data) => {
@@ -134,12 +147,30 @@ function socketSetup(){
         testMap.chunkBools[data.x+","+data.y] = true;
         //console.log(data.objects);
         for(let i=0; i<data.objects.length; i++){
+            let temp;
             if(data.objects[i].type == "trap"){
-                testMap.chunks[data.x+","+data.y].objects.push(new Trap(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].hp, data.objects[i].id, data.objects[i].color, data.objects[i].name));
+                temp = new Trap(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].hp, data.objects[i].ownerId, data.objects[i].color, data.objects[i].ownerName);
+            }
+            else if(data.objects[i].type == "wall"){
+                temp = new Wall(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color);
+            }
+            else if(data.objects[i].type == "door"){
+                temp = new Door(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color);
+            }
+            else if(data.objects[i].type == "floor"){
+                temp = new Floor(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color);
+            }
+            else if(data.objects[i].type == "rug"){
+                temp = new Rug(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color);
+            }
+            else if(data.objects[i].type == "cup"){
+                temp = new Cup(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color);
             }
             else{
-                testMap.chunks[data.x+","+data.y].objects.push(new Placeable(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].size.w, data.objects[i].size.h, data.objects[i].z));
+                temp = new Placeable(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot);
             }
+            testMap.chunks[data.x+","+data.y].objects.push(temp);
+            testMap.chunks[data.x+","+data.y].objects.sort((a,b) => a.z - b.z);
         }
     });
 }
