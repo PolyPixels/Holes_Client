@@ -63,9 +63,9 @@ class Player {
         if (this.holding.a) {
             this.pos.x += -BASE_SPEED;
             this.direction = 'left';
-            collisionChecks.push(this.checkCollisions(-1,  1));
-            collisionChecks.push(this.checkCollisions(-1,  0));
-            collisionChecks.push(this.checkCollisions(-1, -1));
+            collisionChecks.push(this.checkCollisions( 0,  1));
+            collisionChecks.push(this.checkCollisions( 0,  0));
+            collisionChecks.push(this.checkCollisions( 0, -1));
         }
         if (this.holding.s) {
             this.pos.y += BASE_SPEED;
@@ -84,10 +84,12 @@ class Player {
         // Handle collisions
         let chunk = testMap.chunks[chunkPos.x+","+chunkPos.y];
         for(let j = 0; j < chunk.objects.length; j++){
-            let d = chunk.objects[j].pos.dist(this.pos);
-            if(d > 0){
-                if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + 29){
-                    this.pos = oldPos;
+            if(chunk.objects[j].z == 2){
+                let d = chunk.objects[j].pos.dist(this.pos);
+                if(d > 0){
+                    if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + 29){
+                        this.pos = oldPos;
+                    }
                 }
             }
         }

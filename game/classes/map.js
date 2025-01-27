@@ -22,6 +22,12 @@ class Map{
         return pos;
     }
 
+    update(){
+        let chunkPos = this.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+        let chunk = this.getChunk(chunkPos.x,chunkPos.y);
+        if(chunk) chunk.update();
+    }
+
     render(){
         let chunkPos = this.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
         for(let yOff = -2; yOff < 3; yOff++){
@@ -64,6 +70,17 @@ class Chunk{
         val.x = (x)*TILESIZE + (this.cx*CHUNKSIZE*TILESIZE)-camera.x+(width/2);
         val.y = (y)*TILESIZE + (this.cy*CHUNKSIZE*TILESIZE)-camera.y+(height/2);
         return val;
+    }
+
+    update(){
+        for(let i = this.objects.length-1; i >= 0; i--){
+            if(this.objects[i].type == "trap"){
+                this.objects[i].update();
+            }
+            if(this.objects[i].deleteTag){
+                this.objects.splice(i, 1);
+            }
+        }
     }
   
     DebugDraw(){
@@ -297,21 +314,28 @@ class Chunk{
 }
 
 class Placeable{
-    constructor(x,y,rot){
+    constructor(x,y,rot,w,h,z){
         this.pos = createVector(x,y);
         this.rot = rot;
         this.openBool = true;
-        this.size = {w: 40, h: 80};
-        this.z = 0;
+        this.size = {w: w, h: h};
+        this.deleteTag = false;
+        this.z = z;
+        /*
+        3=decorations (ex. mugs, plates, flowers, papers)
+        2=walls,doors,tables,chairs,chests
+        1=rugs,traps
+        0=floors
+        */
     }
 
-    render(tint, alpha){
+    render(t, alpha){
         push();
         translate(-camera.x+(width/2)+this.pos.x, -camera.y+(height/2)+this.pos.y);
         rotate(this.rot);
         fill(100, 100, 200, alpha);
-        if(tint == "green") fill(100, 200, 100, alpha);
-        if(tint == "red") fill(200, 100, 100, alpha);
+        if(t == "green") fill(100, 200, 100, alpha);
+        if(t == "red") fill(200, 100, 100, alpha);
         stroke(0);
         rect(-this.size.w/2, -this.size.h/2, this.size.w, this.size.h);
         circle(0,0,5);
@@ -330,10 +354,8 @@ class Placeable{
         for(let j = 0; j < chunk.objects.length; j++){
             if(this.z == chunk.objects[j].z){
                 let d = chunk.objects[j].pos.dist(this.pos);
-                if(d > 0){
-                    if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + (this.size.w+this.size.h)/2){
-                        this.openBool = false;
-                    }
+                if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + (this.size.w+this.size.h)/2){
+                    this.openBool = false;
                 }
             }
         }
@@ -408,4 +430,15 @@ function getState(c1,c2,c3,c4){
     if(c3 >= 1) val+=2
     if(c4 >= 1) val+=1
     return val;
+}
+
+function cleanChunk(cx,cy){
+    let chunk = testMap.chunks[cx+","+cy];
+    for (let x = 0; x < CHUNKSIZE; x++){
+        for (let y = 0; y < CHUNKSIZE; y++){
+            let index = x + (y / CHUNKSIZE);
+            chunk.data[index] = 0; 
+            socket.emit("update_node", {chunkPos: (cx+","+cy), index: index, val: 0});
+        }
+    }
 }

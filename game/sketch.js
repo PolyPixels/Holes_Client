@@ -18,6 +18,7 @@ var Debuging = true;
 var dirtInv = 0;
 var buildMode = false;
 var ghostBuild;
+var DIGSPEED = 0.04;
 
 let raceContainer, raceTitle
 
@@ -45,7 +46,7 @@ function setup() {
 
     socketSetup();
     testMap = new Map();
-    ghostBuild = new Placeable(0,0,0);
+    ghostBuild = new Trap(0,0,0,10,0,{r:255,g:255,b:255}, " ");
 
     // ---------------------------------------------------
     //  Create Title (centered, larger font)
@@ -258,6 +259,7 @@ function draw() {
 
         if (Object.keys(testMap.chunks).length > 0) {
             testMap.render();
+            testMap.update();
         }
 
         if (curPlayer) {
@@ -275,11 +277,6 @@ function draw() {
         for (let i = 0; i < keys.length; i++) {
             players[keys[i]].render();
             players[keys[i]].update();
-        }
-
-        for (let i = 0; i < traps.length; i++) {
-            traps[i].render();
-            traps[i].update();
         }
 
         if (curPlayer) {
@@ -323,26 +320,28 @@ function draw() {
 
             if (mouseButton === LEFT) {
                 if(!buildMode){
-                    if (dirtInv < 150 - 0.04) playerDig(x, y, 0.04);
+                    if (dirtInv < 150 - DIGSPEED) playerDig(x, y, DIGSPEED);
                 }
                 else{
                     if(ghostBuild.openBool){
                         let chunkPos = testMap.globalToChunk(x,y);
-                        let temp = new Placeable(x,y,createVector(x,y).sub(curPlayer.pos).heading());
+                        let temp = new Trap(x,y,ghostBuild.rot, 10, curPlayer.id, ghostBuild.color, curPlayer.name);
+                        //console.log(temp);
                         testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(temp);
-                        socket.emit("new_object", {cx: chunkPos.x, cy: chunkPos.y, pos: {x: temp.pos.x, y: temp.pos.y}, rot: temp.rot});
+                        socket.emit("new_object", {cx: chunkPos.x, cy: chunkPos.y, type: temp.type, pos: {x: temp.pos.x, y: temp.pos.y}, rot: temp.rot, id: temp.id, hp: temp.hp, name: temp.name, color: temp.color});
                     }
                 }
             }
             if (mouseButton === RIGHT) {
                 if(!buildMode){
-                    if (dirtInv > 0.04) playerDig(x, y, -0.04);
+                    if (dirtInv > DIGSPEED) playerDig(x, y, -DIGSPEED);
                 }
                 else{
                     let chunkPos = testMap.globalToChunk(x,y);
                     let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
-                    for(let i = chunk.objects.length-1; i >= 0; i--){
+                    for(let i = 0; i < chunk.objects.length; i++){
                         if(createVector(x,y).dist(chunk.objects[i].pos) < (chunk.objects[i].size.w+chunk.objects[i].size.h)/2){
+                            socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, type: chunk.objects[i].type, pos: {x: chunk.objects[i].pos.x, y: chunk.objects[i].pos.y}, z: chunk.objects[i].z});
                             chunk.objects.splice(i,1);
                         }
                     }

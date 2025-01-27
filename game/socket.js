@@ -108,28 +108,24 @@ function socketSetup(){
         delete players[data];
     });
 
-    socket.on('spawn_trap', (data) => {
-        let newT = new Trap(
-            data.x,
-            data.y,
-            10,
-            data.ownerId,
-            data.color,
-            data.ownerName
-        );
-        traps.push(newT);
-    });
-
     socket.on("NEW_OBJECT", (data) => {
         let chunk = testMap.chunks[data.cx+","+data.cy];
         let temp = new Placeable(data.pos.x, data.pos.y, data.rot);
+        if(data.type == "trap"){
+            temp = new Trap(data.pos.x, data.pos.y, data.rot, data.hp, data.ownerId, data.color, data.ownerName);
+        }
         chunk.objects.push(temp);
-    })
-
-    socket.on("use_trap", (data) => {
-        //hit a player
-        //does damage add damager to the player
     });
+
+    socket.on("DELETE_OBJ", (data) => {
+        console.log(data);
+        let chunk = testMap.chunks[data.cx+","+data.cy];
+        for(let i = chunk.objects.length-1; i >= 0; i--){
+            if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.type == chunk.objects[i].type){
+                chunk.objects[i].deleteTag = true;
+            }
+        }
+    })
 
     socket.on("GIVE_CHUNK", (data) => {
         testMap.chunks[data.x+","+data.y] = new Chunk(data.x, data.y);
@@ -137,6 +133,13 @@ function socketSetup(){
         for(let i=0; i<keys.length; i++) testMap.chunks[data.x+","+data.y].data[keys[i]] = data.data[keys[i]];
         testMap.chunkBools[data.x+","+data.y] = true;
         //console.log(data.objects);
-        for(let i=0; i<data.objects.length; i++) testMap.chunks[data.x+","+data.y].objects.push(new Placeable(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot));
+        for(let i=0; i<data.objects.length; i++){
+            if(data.objects[i].type == "trap"){
+                testMap.chunks[data.x+","+data.y].objects.push(new Trap(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].hp, data.objects[i].id, data.objects[i].color, data.objects[i].name));
+            }
+            else{
+                testMap.chunks[data.x+","+data.y].objects.push(new Placeable(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].size.w, data.objects[i].size.h, data.objects[i].z));
+            }
+        }
     });
 }

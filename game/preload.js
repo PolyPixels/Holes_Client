@@ -1,5 +1,6 @@
 const raceImages = {}; // Object to hold all race images
 var defaultImage;
+var trapImg;
 
 function preload() {
     // Load the default image
@@ -7,6 +8,8 @@ function preload() {
 
     // Load race images
     loadRaceImages();
+
+    trapImg = loadImage('images/structures/beartrap1.png');
 }
 
 function loadDefaultImage(){

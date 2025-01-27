@@ -1,9 +1,8 @@
-var traps = []
-
-class Trap {
-    constructor(x, y, health = BASE_HEALTH, id, color, ownerName ) {
+class Trap extends Placeable{
+    constructor(x, y, rot, health = BASE_HEALTH, id, color, ownerName ) {
+        super(x,y,rot,30,20,1);
+        this.type = "trap";
         this.id = id; // socket ID
-        this.pos = createVector(x, y);
         this.hp = health;
         this.mhp = BASE_HEALTH;
         this.name = ownerName
@@ -16,37 +15,26 @@ class Trap {
         }
     }
 
-    checkCollisions(xOffset, yOffset, tileSize) {
-        let x = floor(this.pos.x / tileSize) + xOffset;
-        let y = floor(this.pos.y / tileSize) + yOffset;
-        return {
-            x: (x + 0.5) * tileSize,
-            y: (y + 0.5) * tileSize,
-            val: testMap.data[x + (y / testMap.HEIGHT)]
-        };
-    }
-
     update() {
-
-
-        // Handle collisions
-        for (let i = 0; i < collisionChecks.length; i++) {
-            let check = collisionChecks[i];
-            if (check.val == -1) this.pos = oldPos;
-            if (check.val > 0) {
-                console.log("trap collison")
-                if (this.pos.dist(createVector(check.x, check.y)) < 16 + (check.val * testMap.tileSize / 2)) {
-                    this.pos = oldPos;
-                }
+        if(this.id != curPlayer.id && this.name != curPlayer.name){ //aka if you didnt make this trap
+            if(this.pos.dist(curPlayer.pos) < -2+(this.size.w+this.size.h)/2){
+                this.deleteTag = true;
+                curPlayer.hp -= 5;
+                socket.emit("update_pos", curPlayer);
+                let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+                socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
             }
         }
     }
 
-    render() {
+    render(t, alpha){
         push();
-        fill(255);
-        translate(-camera.x+(width/2), -camera.y+(height/2));
-        rect(this.pos.x, this.pos.y, 16); 
+        translate(-camera.x+(width/2)+this.pos.x, -camera.y+(height/2)+this.pos.y);
+        rotate(this.rot);
+        if(t == "green") tint(100, 200, 100, alpha);
+        if(t == "red") tint(200, 100, 100, alpha);
+        if(t == "none") noTint();
+        image(trapImg, -this.size.w/2, -this.size.h/2, this.size.w, this.size.h)
         pop();
     }
 }
