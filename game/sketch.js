@@ -344,6 +344,9 @@ function draw() {
                         else if(ghostBuild.type == "cup"){
                             temp = new Cup(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color);
                         }
+                        else if(ghostBuild.type == "turret"){
+                            temp = new Turret(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.hp, curPlayer.id, ghostBuild.color, curPlayer.name);
+                        }
                         else{
                             temp = new Placeable(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot);
                         }
@@ -423,13 +426,33 @@ function keyReleased() {
     }
 
     if (keyCode === 54){ //6
-        ghostBuild = new Trap(0,0,0, {r: 255, g: 255, b: 255});
+        ghostBuild = new Trap(0,0,0,10,0,{r:255,g:255,b:255}, " ");
+    }
+
+    if (keyCode === 55){ //8
+        ghostBuild = new Turret(0,0,0,10,0,{r:255,g:255,b:255}, " ");
     }
 }
 
 function keyPressed() {
     if (keyCode === 32) {
         keyReleasedFlag = false;
+    }
+}
+
+function mouseReleased(){
+    let x = mouseX + camera.x - width / 2;
+    let y = mouseY + camera.y - height / 2;
+    let chunkPos = testMap.globalToChunk(x,y);
+    let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y]
+    for(let i = 0; i < chunk.objects.length; i++){
+        if(chunk.objects[i].type == "door"){
+            if(createVector(x,y).dist(chunk.objects[i].pos) < chunk.objects[i].size.h){
+                chunk.objects[i].open = !chunk.objects[i].open;
+                let chunkPos = testMap.globalToChunk(chunk.objects[i].pos.x,chunk.objects[i].pos.y);
+                socket.emit("update_obj", {cx: chunkPos.x, cy: chunkPos.y, type: chunk.objects[i].type, pos: {x: chunk.objects[i].pos.x, y: chunk.objects[i].pos.y}, z: chunk.objects[i].z, update_name: "open", update_value: chunk.objects[i].open});
+            }
+        }
     }
 }
 

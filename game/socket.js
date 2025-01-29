@@ -123,6 +123,9 @@ function socketSetup(){
         else if(data.type == "cup"){
             temp = new Cup(data.pos.x, data.pos.y, data.rot, data.color);
         }
+        else if(data.type == "turret"){
+            temp = new Turret(data.pos.x, data.pos.y, data.rot, data.hp, data.ownerId, data.color, data.ownerName);
+        }
         else{
             temp = new Placeable(data.pos.x, data.pos.y, data.rot);
         }
@@ -131,11 +134,19 @@ function socketSetup(){
     });
 
     socket.on("DELETE_OBJ", (data) => {
-        console.log(data);
         let chunk = testMap.chunks[data.cx+","+data.cy];
         for(let i = chunk.objects.length-1; i >= 0; i--){
             if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.type == chunk.objects[i].type){
                 chunk.objects[i].deleteTag = true;
+            }
+        }
+    });
+
+    socket.on("UPDATE_OBJ", (data) =>{
+        let chunk = testMap.chunks[data.cx+","+data.cy];
+        for(let i = chunk.objects.length-1; i >= 0; i--){
+            if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.type == chunk.objects[i].type){
+                chunk.objects[i][data.update_name] = data.update_value;
             }
         }
     })
@@ -165,6 +176,9 @@ function socketSetup(){
             }
             else if(data.objects[i].type == "cup"){
                 temp = new Cup(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color);
+            }
+            else if(data.objects[i].type == "turret"){
+                temp = new Turret(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].hp, data.objects[i].ownerId, data.objects[i].color, data.objects[i].ownerName);
             }
             else{
                 temp = new Placeable(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot);

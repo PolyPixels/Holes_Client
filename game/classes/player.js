@@ -85,9 +85,15 @@ class Player {
         let chunk = testMap.chunks[chunkPos.x+","+chunkPos.y];
         for(let j = 0; j < chunk.objects.length; j++){
             if(chunk.objects[j].z == 2){
+                
                 let d = chunk.objects[j].pos.dist(this.pos);
-                if(d > 0){
-                    if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + 29){
+                if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + 29){
+                    if(chunk.objects[j].type == "door"){
+                        if(chunk.objects[j].open == false){
+                            this.pos = oldPos;
+                        }
+                    }
+                    else{
                         this.pos = oldPos;
                     }
                 }

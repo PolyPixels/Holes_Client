@@ -74,9 +74,7 @@ class Chunk{
 
     update(){
         for(let i = this.objects.length-1; i >= 0; i--){
-            if(this.objects[i].type == "trap"){
-                this.objects[i].update();
-            }
+            this.objects[i].update();
             if(this.objects[i].deleteTag){
                 this.objects.splice(i, 1);
             }
@@ -327,6 +325,10 @@ class Placeable{
         1=rugs,traps
         0=floors
         */
+    }
+
+    update(){
+
     }
 
     render(t, alpha){
