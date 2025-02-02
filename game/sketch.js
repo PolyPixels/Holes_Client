@@ -34,7 +34,7 @@ function setup() {
         element.addEventListener("contextmenu", (e) => e.preventDefault());
     }
 
-    socket = io.connect("http://localhost:3000");
+    socket = io.connect("http://54.91.39.132:3000");
 
     // Flip right images to create left images
     for (let raceName in raceImages) {
