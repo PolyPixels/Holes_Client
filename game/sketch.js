@@ -12,7 +12,7 @@ var raceButtons = []; // now storing "card" divs instead of p5 buttons
 var goButton;
 var nameInput;
 var keyReleasedFlag = false;
-const races = ["gnome", "aylah"];
+const races = ["gnome", "aylah", "skizzard"];
 
 var camera = { x: 0, y: 0 };
 var Debuging = true;
@@ -101,15 +101,15 @@ raceTitle = createDiv();
       raceImg.parent(card);
 
        // Race stats label with responsive font-size and right alignment
-    let raceStatsLbl = createP("health : 20");
-    raceStatsLbl.style("color", "#fff");
-    raceStatsLbl.style("font-size", "calc(0.5vw + 12px)");
-    raceStatsLbl.style("font-weight", "bold");
-    raceStatsLbl.style("margin", "0px 0 0 0");
-    // Use flex alignment override to push the element to the right
-    raceStatsLbl.style("align-self", "flex-end");
-    raceStatsLbl.style("text-align", "right");
-    raceStatsLbl.parent(card);
+        let raceStatsLbl = createP("health : 20");
+        raceStatsLbl.style("color", "#fff");
+        raceStatsLbl.style("font-size", "calc(0.5vw + 12px)");
+        raceStatsLbl.style("font-weight", "bold");
+        raceStatsLbl.style("margin", "0px 0 0 0");
+        // Use flex alignment override to push the element to the right
+        raceStatsLbl.style("align-self", "flex-end");
+        raceStatsLbl.style("text-align", "right");
+        raceStatsLbl.parent(card);
 
   
       // Race label with responsive font-size
@@ -408,6 +408,18 @@ raceTitle = createDiv();
     }
   }
   
+  function fetchServerStatus(server, callback) {
+    fetch(`http://${server.ip}:3000/status`)
+      .then(response => response.json())
+      .then(data => {
+        callback(data);
+      })
+      .catch(error => {
+        console.error(`Error fetching status from ${server.ip}:`, error);
+        callback({ status: "Offline", playerCount: 0 });
+      });
+  }
+  
   function renderServerList() {
     let oldEntries = selectAll(".serverEntry");
     for (let e of oldEntries) {
@@ -433,10 +445,22 @@ raceTitle = createDiv();
       serverIP.style("color", "#ccc");
       serverIP.parent(serverEntry);
   
-      let serverStatus = createDiv(`Status: ${server.status}`);
+      let serverStatus = createDiv("Status: Loading...");
       serverStatus.style("font-size", "14px");
-      serverStatus.style("color", server.status === "Online" ? "#4CAF50" : "#F44336");
+      serverStatus.style("color", "#FFD700");
       serverStatus.parent(serverEntry);
+  
+      let playerCount = createDiv("Players: Loading...");
+      playerCount.style("font-size", "14px");
+      playerCount.style("color", "#00FFFF");
+      playerCount.parent(serverEntry);
+  
+      // Fetch server status
+      fetchServerStatus(server, (data) => {
+        serverStatus.html(`Status: ${data.status}`);
+        serverStatus.style("color", data.status === "Online" ? "#4CAF50" : "#F44336");
+        playerCount.html(`Players: ${data.playerCount}`);
+      });
   
       // Remove server button
       let removeButton = createButton("Remove");
@@ -464,7 +488,6 @@ raceTitle = createDiv();
         serverEntry.style("background-color", "#4CAF50");
         selectedServer = server;
         console.log("Server selected:", selectedServer);
-
       });
   
       serverEntry.parent(serverBrowserContainer);
