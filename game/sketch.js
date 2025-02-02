@@ -13,6 +13,7 @@ var goButton;
 var nameInput;
 var keyReleasedFlag = false;
 const races = ["gnome", "aylah"];
+
 var camera = { x: 0, y: 0 };
 var Debuging = true;
 var dirtInv = 0;
@@ -22,19 +23,25 @@ var DIGSPEED = 0.04;
 
 let raceContainer, raceTitle
 
+let servers = ["localhost",'54.91.39.132']
 function setup() {
+    // Create a responsive canvas
     let cnv = createCanvas(innerWidth - 10, innerHeight - 8);
     cnv.parent("canvas-container");
     background(220);
     angleMode(DEGREES);
-
+  
     // Prevent right-click context menu on p5.js canvases
     const canvases = document.getElementsByClassName("p5Canvas");
     for (let element of canvases) {
-        element.addEventListener("contextmenu", (e) => e.preventDefault());
+      element.addEventListener("contextmenu", (e) => e.preventDefault());
     }
-
-    socket = io.connect("http://54.91.39.132:3000");
+  
+    // ----------------------------
+    // (Socket setup and raceImages flipping omitted for brevity)
+    // ----------------------------
+  
+    socket = io.connect("http://"+servers[1]+":3000");
 
     // Flip right images to create left images
     for (let raceName in raceImages) {
@@ -49,7 +56,7 @@ function setup() {
     ghostBuild = new Trap(0,0,0,10,0,{r:255,g:255,b:255}, " ");
 
     // ---------------------------------------------------
-    //  Create Title (centered, larger font)
+    //  Create Title (centered, larger & responsive)
     // ---------------------------------------------------
     raceTitle = createDiv("Select Your Race");
     raceTitle.id("raceTitle");
@@ -57,7 +64,8 @@ function setup() {
     raceTitle.style("top", "40px");
     raceTitle.style("left", "50%");
     raceTitle.style("transform", "translateX(-50%)");
-    raceTitle.style("font-size", "36px");
+    // Responsive font size (combining viewport and fixed pixels)
+    raceTitle.style("font-size", "calc(1.5vw + 24px)");
     raceTitle.style("font-weight", "bold");
     raceTitle.style("color", "#fff");
     raceTitle.style("text-shadow", "1px 1px 2px #000");
@@ -65,11 +73,11 @@ function setup() {
     raceTitle.style("background-color", "rgba(0, 0, 0, 0.3)");
     raceTitle.style("border-radius", "10px");
     raceTitle.style("text-align", "center");
-
+  
     // ---------------------------------------------------
     //  Create a container for race selection cards (centered)
     // ---------------------------------------------------
-     raceContainer = createDiv();
+    raceContainer = createDiv();
     raceContainer.id("raceContainer");
     raceContainer.style("position", "absolute");
     raceContainer.style("top", "120px");
@@ -83,85 +91,96 @@ function setup() {
     raceContainer.style("background-color", "rgba(0, 0, 0, 0.3)");
     raceContainer.style("padding", "20px");
     raceContainer.style("border-radius", "10px");
-
+  
     // ---------------------------------------------------
-    //  Create cards for each race
+    //  Create cards for each race (with responsive sizing)
     // ---------------------------------------------------
     races.forEach((raceName, i) => {
-        let card = createDiv();
-        card.class("raceCard");
-        card.style("display", "flex");
-        card.style("flex-direction", "column");
-        card.style("align-items", "center");
-        card.style("width", "150px");
-        card.style("background-color", "#404040");
-        card.style("border", "3px solid #fff");
-        card.style("border-radius", "10px");
-        card.style("padding", "15px");
-        card.style("cursor", "pointer");
-        card.style("transition", "transform 0.2s, background-color 0.2s, box-shadow 0.2s");
-        card.selected = false; // custom property
+      let card = createDiv();
+      card.class("raceCard");
+      card.style("display", "flex");
+      card.style("flex-direction", "column");
+      card.style("align-items", "center");
+  
+      // Responsive card width: based on canvas width, constrained between 150 and 300px
+      let cardWidth = constrain(width * 0.15, 150, 300);
+      card.style("width", cardWidth + "px");
+  
+      card.style("background-color", "#404040");
+      card.style("border", "3px solid #fff");
+      card.style("border-radius", "10px");
+      card.style("padding", "15px");
+      card.style("cursor", "pointer");
+      card.style("transition", "transform 0.2s, background-color 0.2s, box-shadow 0.2s");
+      card.selected = false; // custom property for selection
+  
+      // Create an image element for the race
+      let raceImgPath = `images/${raceName}/${raceName}_front_stand.png`;
+      let raceImg = createImg(raceImgPath, `${raceName} image`);
+      raceImg.style("max-width", "10dvw");
+      raceImg.style("height", "10dvh");
+      raceImg.parent(card);
 
-        // Create an image element for the race
-        let raceImgPath = `images/${raceName}/${raceName}_front_stand.png`;
-        let raceImg = createImg(raceImgPath, `${raceName} image`);
-        raceImg.style("max-width", "100%");
-        raceImg.style("height", "auto");
-        raceImg.parent(card);
+       // Race stats label with responsive font-size and right alignment
+    let raceStatsLbl = createP("health : 20");
+    raceStatsLbl.style("color", "#fff");
+    raceStatsLbl.style("font-size", "calc(0.5vw + 12px)");
+    raceStatsLbl.style("font-weight", "bold");
+    raceStatsLbl.style("margin", "0px 0 0 0");
+    // Use flex alignment override to push the element to the right
+    raceStatsLbl.style("align-self", "flex-end");
+    raceStatsLbl.style("text-align", "right");
+    raceStatsLbl.parent(card);
 
-        // Race label
-        let raceLbl = createP(raceName);
-        raceLbl.style("color", "#fff")
-        raceLbl.style("font-size", "18px");
-        raceLbl.style("font-weight", "bold");
-        raceLbl.style("margin", "10px 0 0 0");
-        raceLbl.style("text-align", "center");
-        raceLbl.parent(card);
-
-        // Hover effect
-        card.mouseOver(() => {
-            card.style("background-color", "#525252");
-            card.style("transform", "scale(1.03)");
-            card.style("box-shadow", "0 8px 16px rgba(0,0,0,0.3)");
+  
+      // Race label with responsive font-size
+      let raceLbl = createP(raceName);
+      raceLbl.style("color", "#fff");
+      raceLbl.style("font-size", "calc(0.5vw + 16px)");
+      raceLbl.style("font-weight", "bold");
+      raceLbl.style("margin", "10px 0 0 0");
+      raceLbl.style("text-align", "center");
+      raceLbl.parent(card);
+  
+      // Hover effect: subtle scale & shadow
+      card.mouseOver(() => {
+        card.style("background-color", "#525252");
+        card.style("transform", "scale(1.03)");
+        card.style("box-shadow", "0 8px 16px rgba(0,0,0,0.3)");
+      });
+      card.mouseOut(() => {
+        card.style("transform", "scale(1)");
+        card.style("box-shadow", "none");
+        card.style("background-color", card.selected ? "#4CAF50" : "#404040");
+      });
+  
+      // On click: deselect other cards and select this one
+      card.mousePressed(() => {
+        raceButtons.forEach((c) => {
+          c.selected = false;
+          c.style("background-color", "#404040");
         });
-        card.mouseOut(() => {
-            card.style("transform", "scale(1)");
-            card.style("box-shadow", "none");
-            if (card.selected) {
-                card.style("background-color", "#4CAF50");
-            } else {
-                card.style("background-color", "#404040");
-            }
-        });
-
-        // On click: deselect all other cards, select this one
-        card.mousePressed(() => {
-            raceButtons.forEach((c) => {
-                c.selected = false;
-                c.style("background-color", "#404040");
-            });
-            card.selected = true;
-            card.style("background-color", "#4CAF50");
-            raceSelected = true;
-            curPlayer.race = i;
-            console.log("Race selected:", races[i]);
-        });
-
-        // Hide initially (shown only in certain states)
-        card.hide();
-        card.parent(raceContainer);
-        raceButtons.push(card);
+        card.selected = true;
+        card.style("background-color", "#4CAF50");
+        raceSelected = true;
+        // Assume curPlayer and a mapping for races exist
+        curPlayer.race = i;
+        console.log("Race selected:", races[i]);
+      });
+  
+      // Hide initially (shown only in certain states)
+      card.hide();
+      card.parent(raceContainer);
+      raceButtons.push(card);
     });
-
+  
     // ---------------------------------------------------
-    //   Name Input Field (centered, larger)
+    //   Name Input Field (centered, larger & responsive)
     // ---------------------------------------------------
     nameInput = createInput("");
     nameInput.hide();
-    // Position near center: the numbers are just an example
-    nameInput.position(width / 2 - 110, height / 2 + 150);
-
-    // Additional styling for name input
+    // Positioning using canvas width and a fixed width of 220px
+    nameInput.position(width / 2 - 110, height * 0.7);
     nameInput.style("font-size", "20px");
     nameInput.style("border", "3px solid #ccc");
     nameInput.style("border-radius", "8px");
@@ -170,25 +189,23 @@ function setup() {
     nameInput.style("outline", "none");
     nameInput.style("transition", "border 0.2s");
     nameInput.input(() => {
-        checkName();
+      checkName();
     });
     nameInput.mouseOver(() => {
-        nameInput.style("border", "3px solid #4CAF50");
+      nameInput.style("border", "3px solid #4CAF50");
     });
     nameInput.mouseOut(() => {
-        nameInput.style("border", "3px solid #ccc");
+      nameInput.style("border", "3px solid #ccc");
     });
-
+  
     // ---------------------------------------------------
-    //   "Go" Button (centered, larger)
+    //   "Go" Button (centered, larger & responsive)
     // ---------------------------------------------------
     goButton = createButton("Go");
     goButton.hide();
-    // Position near center: the numbers are just an example
-    goButton.position(width / 2 + 130, height / 2 + 150);
+    // Position near the name input with a fixed offset
+    goButton.position(width / 2 + 130, height * 0.7);
     goButton.attribute("disabled", true);
-
-    // Styling for goButton
     goButton.style("font-size", "20px");
     goButton.style("background-color", "#2196F3");
     goButton.style("color", "#fff");
@@ -197,50 +214,76 @@ function setup() {
     goButton.style("padding", "10px 20px");
     goButton.style("cursor", "pointer");
     goButton.style("transition", "background-color 0.2s, transform 0.2s");
-
+  
     goButton.mouseOver(() => {
-        goButton.style("background-color", "#1e88e5");
-        goButton.style("transform", "scale(1.05)");
+      goButton.style("background-color", "#1e88e5");
+      goButton.style("transform", "scale(1.05)");
     });
     goButton.mouseOut(() => {
-        goButton.style("background-color", "#2196F3");
-        goButton.style("transform", "scale(1)");
+      goButton.style("background-color", "#2196F3");
+      goButton.style("transform", "scale(1)");
     });
-
+  
     goButton.mousePressed(() => {
-        curPlayer.name = nameInput.value();
-        socket.emit("new_player", curPlayer);
-        gameState = "playing";
-
-        // Clear a small area around the player
-        for (let y = -5; y < 5; y++) {
-            for (let x = -5; x < 5; x++) {
-                dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1);
-            }
+      curPlayer.name = nameInput.value();
+      socket.emit("new_player", curPlayer);
+      gameState = "playing";
+  
+      // Clear a small area around the player (example logic)
+      for (let y = -5; y < 5; y++) {
+        for (let x = -5; x < 5; x++) {
+          dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1);
         }
-        dirtInv = 0;
+      }
+      dirtInv = 0;
     });
-}
-
-
+  }
+  
+  // Show the selection UI elements
+  function drawSelection() {
+    nameInput.show();
+    goButton.show();
+    raceButtons.forEach((card) => {
+      card.show();
+    });
+    // Enable the "Go" button only when a race is selected and a name is entered
+    if (raceSelected && nameEntered) {
+      goButton.removeAttribute("disabled");
+    } else {
+      goButton.attribute("disabled", true);
+    }
+  }
+  
+  // ---------------------------------------------------
+  //  Responsive behavior on window resize
+  // ---------------------------------------------------
+  function windowResized() {
+    resizeCanvas(innerWidth - 10, innerHeight - 8);
+    updateResponsiveDesign();
+  }
+  
+  function updateResponsiveDesign() {
+    // Update positions for the name input and "Go" button
+    const inputWidth = 220; // as defined in style
+    nameInput.position(width / 2 - inputWidth / 2, height * 0.7);
+    const spacing = 20;
+    goButton.position(width / 2 + inputWidth / 2 + spacing, height * 0.7);
+  
+    // Update race card widths responsively
+    let newCardWidth = constrain(width * 0.15, 150, 300);
+    raceButtons.forEach((card) => {
+      card.style("width", newCardWidth + "px");
+    });
+  
+    // Optionally update the race title font size for better scaling
+    raceTitle.style("font-size", "calc(1.5vw + 24px)");
+  }
 
 function draw() {
     background("#71413B");
 
     if (gameState === "initial") {
-        nameInput.show();
-        goButton.show();
-
-        // Show race cards (instead of old text buttons)
-        raceButtons.forEach((card) => {
-            card.show();
-        });
-        // "Go" button enable/disable
-        if (raceSelected && nameEntered) {
-            goButton.removeAttribute("disabled");
-        } else {
-            goButton.attribute("disabled", true);
-        }
+        drawSelection()
     } else {
         // Hide UI elements during gameplay
         nameInput.hide();
