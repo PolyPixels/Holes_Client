@@ -23,7 +23,6 @@ var DIGSPEED = 0.04;
 
 let raceContainer, raceTitle
 
-let servers = ["localhost",'54.91.39.132']
 function setup() {
     // Create a responsive canvas
     let cnv = createCanvas(innerWidth - 10, innerHeight - 8);
@@ -292,44 +291,129 @@ raceTitle = createDiv();
         raceTitle.style("display", "none");
   }
 
-  let serverList = [
+  let serverList = JSON.parse(localStorage.getItem("servers")) || [
     { ip: "localhost", name: "Local Server", status: "Online" },
     { ip: "54.91.39.132", name: "Remote Server", status: "Online" },
     { ip: "192.168.1.5", name: "Test Server", status: "Offline" }
   ];
   
-  let selectedServer = null; // Global variable to store the selected server
+  let selectedServer = null;
+  let serverBrowserContainer, inputName, inputIP, inputStatus, addServerButton;
+  let renderedserverBrowserContainer = false;
   
-  let serverBrowserContainer, renderedserverBrowserContainer = false
-  // --- Function to Render the Server Browser ---
+  function saveServers() {
+    localStorage.setItem("servers", JSON.stringify(serverList));
+  }
+  
   function renderServerBrowser() {
-    // Create a container div for the server browser and style it
-    
-        if (!renderedserverBrowserContainer) {
-            renderedserverBrowserContainer = true;
-            serverBrowserContainer = createDiv();
-    serverBrowserContainer.id("serverBrowserContainer");
-    serverBrowserContainer.style("width", "320px");
-    serverBrowserContainer.style("max-height", "300px");
-    serverBrowserContainer.style("overflow-y", "auto");
-    serverBrowserContainer.style("background-color", "rgba(0, 0, 0, 0.6)");
-    serverBrowserContainer.style("padding", "15px");
-    serverBrowserContainer.style("border-radius", "10px");
-    serverBrowserContainer.style("color", "#fff");
-    serverBrowserContainer.style("font-family", "sans-serif");
-    serverBrowserContainer.style("box-shadow", "0 4px 8px rgba(0, 0, 0, 0.2)");
-    // Position the container
-    serverBrowserContainer.position(20, 20);
+    if (!renderedserverBrowserContainer) {
+      renderedserverBrowserContainer = true;
+      serverBrowserContainer = createDiv();
+      serverBrowserContainer.id("serverBrowserContainer");
+      serverBrowserContainer.style("width", "320px");
+      serverBrowserContainer.style("max-height", "400px");
+      serverBrowserContainer.style("overflow-y", "auto");
+      serverBrowserContainer.style("background-color", "rgba(0, 0, 0, 0.6)");
+      serverBrowserContainer.style("padding", "15px");
+      serverBrowserContainer.style("border-radius", "10px");
+      serverBrowserContainer.style("color", "#fff");
+      serverBrowserContainer.style("font-family", "sans-serif");
+      serverBrowserContainer.style("box-shadow", "0 4px 8px rgba(0, 0, 0, 0.2)");
+      serverBrowserContainer.position(20, 20);
   
-    // Create and add a title for the server browser
-    let title = createDiv("Select a Server");
-    title.style("font-size", "20px");
-    title.style("font-weight", "bold");
-    title.style("margin-bottom", "15px");
-    title.style("text-align", "center");
-    title.parent(serverBrowserContainer);
+      let title = createDiv("Select a Server");
+      title.style("font-size", "20px");
+      title.style("font-weight", "bold");
+      title.style("margin-bottom", "15px");
+      title.style("text-align", "center");
+      title.parent(serverBrowserContainer);
   
-    // For each server in our list, create a clickable entry
+      renderServerList();
+  
+      // Create input fields for adding a server
+      inputName = createInput("").attribute("placeholder", "Server Name");
+      inputName.parent(serverBrowserContainer);
+      inputName.style("margin", "5px 0");
+      inputName.style("padding", "5px");
+  
+      inputIP = createInput("").attribute("placeholder", "Server IP");
+      inputIP.parent(serverBrowserContainer);
+      inputIP.style("margin", "5px 0");
+      inputIP.style("padding", "5px");
+  
+      inputStatus = createSelect();
+      inputStatus.option("Online");
+      inputStatus.option("Offline");
+      inputStatus.parent(serverBrowserContainer);
+      inputStatus.style("margin", "5px 0");
+  
+      // Button to add server
+      addServerButton = createButton("Add Server");
+      addServerButton.parent(serverBrowserContainer);
+      addServerButton.style("margin-top", "10px");
+      addServerButton.style("padding", "10px 20px");
+      addServerButton.style("cursor", "pointer");
+      addServerButton.style("background-color", "#008CBA");
+      addServerButton.style("color", "#fff");
+      addServerButton.style("border", "none");
+      addServerButton.style("border-radius", "5px");
+  
+      addServerButton.mousePressed(() => {
+        let newServer = {
+          name: inputName.value(),
+          ip: inputIP.value(),
+          status: inputStatus.value(),
+        };
+  
+        if (newServer.name && newServer.ip) {
+          serverList.push(newServer);
+          saveServers();
+          renderServerList();
+          inputName.value("");
+          inputIP.value("");
+        } else {
+          alert("Please enter both a server name and IP.");
+        }
+      });
+  
+      // Create connect button
+      let connectButton = createButton("Connect");
+      connectButton.parent(serverBrowserContainer);
+      connectButton.style("margin-top", "10px");
+      connectButton.style("padding", "10px 20px");
+      connectButton.style("background-color", "#4CAF50");
+      connectButton.style("color", "#fff");
+      connectButton.style("border", "none");
+      connectButton.style("border-radius", "5px");
+  
+      connectButton.mousePressed(() => {
+        if (selectedServer) {
+          // Run your socket connection and setup code using the selected server.
+          socket = io.connect("http://" + selectedServer.ip + ":3000");
+          socketSetup();
+          testMap = new Map();
+          ghostBuild = new Trap(0, 0, 0, 10, 0, { r: 255, g: 255, b: 255 }, " ");
+          console.log("Connected to " + selectedServer.ip);
+         
+          // Hide or remove the server browser after connecting
+          hideServerBrowser();
+          gameState = "race_selection";
+          renderServerBrowser = false;
+        } else {
+          alert("Please select a server first.");
+        }
+      });
+    }else {
+        return
+    }
+  }
+  
+  function renderServerList() {
+    let oldEntries = selectAll(".serverEntry");
+    for (let e of oldEntries) {
+      e.remove();
+    }
+  
     serverList.forEach((server, index) => {
       let serverEntry = createDiv();
       serverEntry.class("serverEntry");
@@ -338,87 +422,55 @@ raceTitle = createDiv();
       serverEntry.style("border-radius", "5px");
       serverEntry.style("background-color", "#404040");
       serverEntry.style("cursor", "pointer");
-      serverEntry.style("transition", "background-color 0.3s");
   
-      // Add server name
       let serverName = createDiv(server.name);
       serverName.style("font-size", "16px");
       serverName.style("font-weight", "bold");
       serverName.parent(serverEntry);
   
-      // Add server IP
       let serverIP = createDiv(`IP: ${server.ip}`);
       serverIP.style("font-size", "14px");
       serverIP.style("color", "#ccc");
       serverIP.parent(serverEntry);
   
-      // Add server status
       let serverStatus = createDiv(`Status: ${server.status}`);
       serverStatus.style("font-size", "14px");
       serverStatus.style("color", server.status === "Online" ? "#4CAF50" : "#F44336");
       serverStatus.parent(serverEntry);
   
-      // On click, mark this entry as selected and highlight it
+      // Remove server button
+      let removeButton = createButton("Remove");
+      removeButton.parent(serverEntry);
+      removeButton.style("margin-left", "10px");
+      removeButton.style("padding", "5px");
+      removeButton.style("background-color", "#F44336");
+      removeButton.style("color", "#fff");
+      removeButton.style("border", "none");
+      removeButton.style("border-radius", "3px");
+      removeButton.style("cursor", "pointer");
+  
+      removeButton.mousePressed(() => {
+        serverList.splice(index, 1);
+        saveServers();
+        renderServerList();
+      });
+  
+      // Select a server
       serverEntry.mousePressed(() => {
-        // Remove highlight from all server entries
         let entries = selectAll(".serverEntry");
         for (let e of entries) {
           e.style("background-color", "#404040");
         }
-        // Highlight the selected entry and update the global variable
         serverEntry.style("background-color", "#4CAF50");
         selectedServer = server;
         console.log("Server selected:", selectedServer);
+
       });
   
-      // Add the server entry to the container
       serverEntry.parent(serverBrowserContainer);
     });
-  
-    // Create a "Connect" button below the list
-    let connectButton = createButton("Connect");
-    connectButton.parent(serverBrowserContainer);
-    connectButton.style("margin-top", "10px");
-    connectButton.style("padding", "10px 20px");
-    connectButton.style("font-size", "16px");
-    connectButton.style("cursor", "pointer");
-    connectButton.style("background-color", "#4CAF50");
-    connectButton.style("color", "#fff");
-    connectButton.style("border", "none");
-    connectButton.style("border-radius", "5px");
-    connectButton.style("transition", "background-color 0.3s");
-  
-    // Add hover effect for the button
-    connectButton.mouseOver(() => {
-      connectButton.style("background-color", "#45a049");
-    });
-    connectButton.mouseOut(() => {
-      connectButton.style("background-color", "#4CAF50");
-    });
-  
-    // When the "Connect" button is pressed, use the selected server to connect.
-    connectButton.mousePressed(() => {
-      if (selectedServer) {
-        // Run your socket connection and setup code using the selected server.
-        socket = io.connect("http://" + selectedServer.ip + ":3000");
-        socketSetup();
-        testMap = new Map();
-        ghostBuild = new Trap(0, 0, 0, 10, 0, { r: 255, g: 255, b: 255 }, " ");
-        console.log("Connected to " + selectedServer.ip);
-       
-        // Hide or remove the server browser after connecting
-        hideServerBrowser();
-        gameState = "race_selection";
-        renderServerBrowser = false;
-      } else {
-        alert("Please select a server first.");
-      }
-    });
-        }
-        else {
-            return
-        }
   }
+  
   
   // --- Function to Hide or Remove the Server Browser ---
   function hideServerBrowser() {
