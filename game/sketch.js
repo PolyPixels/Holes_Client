@@ -1,7 +1,7 @@
 /*******************************************************
  * Globals (unchanged)
  *******************************************************/
-let gameState = "race_selection";
+let gameState = "initial";
 let testMap; // your Map object
 var lastHolding;
 var projectiles = [];
@@ -295,6 +295,145 @@ raceTitle = createDiv();
         // If using raceTitle, hide it as well
         raceTitle.style("display", "none");
   }
+
+  let serverList = [
+    { ip: "localhost", name: "Local Server", status: "Online" },
+    { ip: "54.91.39.132", name: "Remote Server", status: "Online" },
+    { ip: "192.168.1.5", name: "Test Server", status: "Offline" }
+  ];
+  
+  let selectedServer = null; // Global variable to store the selected server
+  
+  let serverBrowserContainer, renderedserverBrowserContainer = false
+  // --- Function to Render the Server Browser ---
+  function renderServerBrowser() {
+    // Create a container div for the server browser and style it
+    
+        if (!renderedserverBrowserContainer) {
+            renderedserverBrowserContainer = true;
+            serverBrowserContainer = createDiv();
+    serverBrowserContainer.id("serverBrowserContainer");
+    serverBrowserContainer.style("width", "320px");
+    serverBrowserContainer.style("max-height", "300px");
+    serverBrowserContainer.style("overflow-y", "auto");
+    serverBrowserContainer.style("background-color", "rgba(0, 0, 0, 0.6)");
+    serverBrowserContainer.style("padding", "15px");
+    serverBrowserContainer.style("border-radius", "10px");
+    serverBrowserContainer.style("color", "#fff");
+    serverBrowserContainer.style("font-family", "sans-serif");
+    serverBrowserContainer.style("box-shadow", "0 4px 8px rgba(0, 0, 0, 0.2)");
+    // Position the container
+    serverBrowserContainer.position(20, 20);
+  
+    // Create and add a title for the server browser
+    let title = createDiv("Select a Server");
+    title.style("font-size", "20px");
+    title.style("font-weight", "bold");
+    title.style("margin-bottom", "15px");
+    title.style("text-align", "center");
+    title.parent(serverBrowserContainer);
+  
+    // For each server in our list, create a clickable entry
+    serverList.forEach((server, index) => {
+      let serverEntry = createDiv();
+      serverEntry.class("serverEntry");
+      serverEntry.style("padding", "10px");
+      serverEntry.style("margin-bottom", "10px");
+      serverEntry.style("border-radius", "5px");
+      serverEntry.style("background-color", "#404040");
+      serverEntry.style("cursor", "pointer");
+      serverEntry.style("transition", "background-color 0.3s");
+  
+      // Add server name
+      let serverName = createDiv(server.name);
+      serverName.style("font-size", "16px");
+      serverName.style("font-weight", "bold");
+      serverName.parent(serverEntry);
+  
+      // Add server IP
+      let serverIP = createDiv(`IP: ${server.ip}`);
+      serverIP.style("font-size", "14px");
+      serverIP.style("color", "#ccc");
+      serverIP.parent(serverEntry);
+  
+      // Add server status
+      let serverStatus = createDiv(`Status: ${server.status}`);
+      serverStatus.style("font-size", "14px");
+      serverStatus.style("color", server.status === "Online" ? "#4CAF50" : "#F44336");
+      serverStatus.parent(serverEntry);
+  
+      // On click, mark this entry as selected and highlight it
+      serverEntry.mousePressed(() => {
+        // Remove highlight from all server entries
+        let entries = selectAll(".serverEntry");
+        for (let e of entries) {
+          e.style("background-color", "#404040");
+        }
+        // Highlight the selected entry and update the global variable
+        serverEntry.style("background-color", "#4CAF50");
+        selectedServer = server;
+        console.log("Server selected:", selectedServer);
+      });
+  
+      // Add the server entry to the container
+      serverEntry.parent(serverBrowserContainer);
+    });
+  
+    // Create a "Connect" button below the list
+    let connectButton = createButton("Connect");
+    connectButton.parent(serverBrowserContainer);
+    connectButton.style("margin-top", "10px");
+    connectButton.style("padding", "10px 20px");
+    connectButton.style("font-size", "16px");
+    connectButton.style("cursor", "pointer");
+    connectButton.style("background-color", "#4CAF50");
+    connectButton.style("color", "#fff");
+    connectButton.style("border", "none");
+    connectButton.style("border-radius", "5px");
+    connectButton.style("transition", "background-color 0.3s");
+  
+    // Add hover effect for the button
+    connectButton.mouseOver(() => {
+      connectButton.style("background-color", "#45a049");
+    });
+    connectButton.mouseOut(() => {
+      connectButton.style("background-color", "#4CAF50");
+    });
+  
+    // When the "Connect" button is pressed, use the selected server to connect.
+    connectButton.mousePressed(() => {
+      if (selectedServer) {
+        // Run your socket connection and setup code using the selected server.
+        socket = io.connect("http://" + selectedServer.ip + ":3000");
+        socketSetup();
+        testMap = new Map();
+        ghostBuild = new Trap(0, 0, 0, 10, 0, { r: 255, g: 255, b: 255 }, " ");
+        console.log("Connected to " + selectedServer.ip);
+       
+        // Hide or remove the server browser after connecting
+        hideServerBrowser();
+        gameState = "race_selection";
+        renderServerBrowser = false;
+      } else {
+        alert("Please select a server first.");
+      }
+    });
+        }
+        else {
+            return
+        }
+  }
+  
+  // --- Function to Hide or Remove the Server Browser ---
+  function hideServerBrowser() {
+    let serverBrowserContainer = document.getElementById("serverBrowserContainer"); // Adjust selector accordingly
+    if (serverBrowserContainer) {
+        serverBrowserContainer.remove(); // Remove the element
+        console.log("Server browser container removed."); // Debugging output
+    } else {
+        console.warn("Server browser container not found.");
+    }
+}
 
 function draw() {
     background("#71413B");
