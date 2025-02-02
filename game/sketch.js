@@ -1,7 +1,7 @@
 /*******************************************************
  * Globals (unchanged)
  *******************************************************/
-let gameState = "initial";
+let gameState = "race_selection";
 let testMap; // your Map object
 var lastHolding;
 var projectiles = [];
@@ -57,7 +57,7 @@ function setup() {
 
   
   
-raceTitle = createDiv("Select Your Race");
+raceTitle = createDiv();
     // ---------------------------------------------------
     //  Create a container for race selection cards (centered)
     // ---------------------------------------------------
@@ -231,6 +231,7 @@ raceTitle = createDiv("Select Your Race");
     //  Create Title (centered, larger & responsive)
     // ---------------------------------------------------
     raceTitle.id("raceTitle");
+    raceTitle.elt.innerHTML =  "Select Your Race"
     raceTitle.style("position", "absolute");
     raceTitle.style("top", "40px");
     raceTitle.style("left", "50%");
