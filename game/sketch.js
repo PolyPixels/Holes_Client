@@ -94,7 +94,7 @@ raceTitle = createDiv();
       card.selected = false; // custom property for selection
   
       // Create an image element for the race
-      let raceImgPath = `images/${raceName}/${raceName}_front_stand.png`;
+      let raceImgPath = `images/characters/${raceName}/${raceName}_front_stand.png`;
       let raceImg = createImg(raceImgPath, `${raceName} image`);
       raceImg.style("max-width", "10dvw");
       raceImg.style("height", "10dvh");

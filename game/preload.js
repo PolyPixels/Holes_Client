@@ -45,32 +45,32 @@ function loadRaceImages() {
         };
         
         raceImages[raceName].front[0] = loadImage(
-            `images/${raceName}/${raceName}_front_stand.png`,
+            `images/character/${raceName}/${raceName}_front_stand.png`,
             function (img) {
-                console.log(`Loaded image: images/${raceName}/${raceName}_front_stand.png`);
+                console.log(`Loaded image: images/character/${raceName}/${raceName}_front_stand.png`);
             },
             function (err) {
-                console.error(`Failed to load image: images/${raceName}/${raceName}_front_stand.png`);
+                console.error(`Failed to load image: images/character/${raceName}/${raceName}_front_stand.png`);
                 raceImages[raceName].front[0] = defaultImage;
             }
         );
         raceImages[raceName].back[0] = loadImage(
-            `images/${raceName}/${raceName}_back_stand.png`,
+            `images/character/${raceName}/${raceName}_back_stand.png`,
             function (img) {
-                console.log(`Loaded image: images/${raceName}/${raceName}_back_stand.png`);
+                console.log(`Loaded image: images/character/${raceName}/${raceName}_back_stand.png`);
             },
             function (err) {
-                console.error(`Failed to load image: images/${raceName}/${raceName}_back_stand.png`);
+                console.error(`Failed to load image: images/character/${raceName}/${raceName}_back_stand.png`);
                 raceImages[raceName].back[0] = defaultImage;
             }
         );
         raceImages[raceName].right[0] = loadImage(
-            `images/${raceName}/${raceName}_side_stand.png`,
+            `images/character/${raceName}/${raceName}_side_stand.png`,
             function (img) {
-                console.log(`Loaded image: images/${raceName}/${raceName}_side_stand.png`);
+                console.log(`Loaded image: images/character/${raceName}/${raceName}_side_stand.png`);
             },
             function (err) {
-                console.error(`Failed to load image: images/${raceName}/${raceName}_side_stand.png`);
+                console.error(`Failed to load image: images/character/${raceName}/${raceName}_side_stand.png`);
                 raceImages[raceName].right[0] = defaultImage;
             }
         );
@@ -78,36 +78,36 @@ function loadRaceImages() {
         for (let i = 1; i < 4; i++) {
             // Front images
             raceImages[raceName].front[i] = loadImage(
-                `images/${raceName}/${raceName}_front_walk${i}.png`,
+                `images/character/${raceName}/${raceName}_front_walk${i}.png`,
                 function (img) {
-                    console.log(`Loaded image: images/${raceName}/${raceName}_front_walk${i}.png`);
+                    console.log(`Loaded image: images/character/${raceName}/${raceName}_front_walk${i}.png`);
                 },
                 function (err) {
-                    console.error(`Failed to load image: images/${raceName}/${raceName}_front_walk${i}.png`);
+                    console.error(`Failed to load image: images/character/${raceName}/${raceName}_front_walk${i}.png`);
                     raceImages[raceName].front[i] = defaultImage;
                 }
             );
     
             // Back images
             raceImages[raceName].back[i] = loadImage(
-                `images/${raceName}/${raceName}_back_walk${i}.png`,
+                `images/character/${raceName}/${raceName}_back_walk${i}.png`,
                 function (img) {
-                    console.log(`Loaded image: images/${raceName}/${raceName}_back_walk${i}.png`);
+                    console.log(`Loaded image: images/character/${raceName}/${raceName}_back_walk${i}.png`);
                 },
                 function (err) {
-                    console.error(`Failed to load image: images/${raceName}/${raceName}_back_walk${i}.png`);
+                    console.error(`Failed to load image: images/character/${raceName}/${raceName}_back_walk${i}.png`);
                     raceImages[raceName].back[i] = defaultImage;
                 }
             );
     
             // Right images
             raceImages[raceName].right[i] = loadImage(
-                `images/${raceName}/${raceName}_side_walk${i}.png`,
+                `images/character/${raceName}/${raceName}_side_walk${i}.png`,
                 function (img) {
-                    console.log(`Loaded image: images/${raceName}/${raceName}_side_walk${i}.png`);
+                    console.log(`Loaded image: images/character/${raceName}/${raceName}_side_walk${i}.png`);
                 },
                 function (err) {
-                    console.error(`Failed to load image: images/${raceName}/${raceName}_side_walk${i}.png`);
+                    console.error(`Failed to load image: images/character/${raceName}/${raceName}_side_walk${i}.png`);
                     raceImages[raceName].right[i] = defaultImage;
                 }
             );
