@@ -55,25 +55,9 @@ function setup() {
     testMap = new Map();
     ghostBuild = new Trap(0,0,0,10,0,{r:255,g:255,b:255}, " ");
 
-    // ---------------------------------------------------
-    //  Create Title (centered, larger & responsive)
-    // ---------------------------------------------------
-    raceTitle = createDiv("Select Your Race");
-    raceTitle.id("raceTitle");
-    raceTitle.style("position", "absolute");
-    raceTitle.style("top", "40px");
-    raceTitle.style("left", "50%");
-    raceTitle.style("transform", "translateX(-50%)");
-    // Responsive font size (combining viewport and fixed pixels)
-    raceTitle.style("font-size", "calc(1.5vw + 24px)");
-    raceTitle.style("font-weight", "bold");
-    raceTitle.style("color", "#fff");
-    raceTitle.style("text-shadow", "1px 1px 2px #000");
-    raceTitle.style("padding", "10px 20px");
-    raceTitle.style("background-color", "rgba(0, 0, 0, 0.3)");
-    raceTitle.style("border-radius", "10px");
-    raceTitle.style("text-align", "center");
   
+  
+raceTitle = createDiv("Select Your Race");
     // ---------------------------------------------------
     //  Create a container for race selection cards (centered)
     // ---------------------------------------------------
@@ -228,6 +212,7 @@ function setup() {
       curPlayer.name = nameInput.value();
       socket.emit("new_player", curPlayer);
       gameState = "playing";
+      hideRaceSelect()
   
       // Clear a small area around the player (example logic)
       for (let y = -5; y < 5; y++) {
@@ -239,8 +224,27 @@ function setup() {
     });
   }
   
+   
   // Show the selection UI elements
   function drawSelection() {
+      // ---------------------------------------------------
+    //  Create Title (centered, larger & responsive)
+    // ---------------------------------------------------
+    raceTitle.id("raceTitle");
+    raceTitle.style("position", "absolute");
+    raceTitle.style("top", "40px");
+    raceTitle.style("left", "50%");
+    raceTitle.style("transform", "translateX(-50%)");
+    // Responsive font size (combining viewport and fixed pixels)
+    raceTitle.style("font-size", "calc(1.5vw + 24px)");
+    raceTitle.style("font-weight", "bold");
+    raceTitle.style("color", "#fff");
+    raceTitle.style("text-shadow", "1px 1px 2px #000");
+    raceTitle.style("padding", "10px 20px");
+    raceTitle.style("background-color", "rgba(0, 0, 0, 0.3)");
+    raceTitle.style("border-radius", "10px");
+    raceTitle.style("text-align", "center");
+
     nameInput.show();
     goButton.show();
     raceButtons.forEach((card) => {
@@ -279,12 +283,7 @@ function setup() {
     raceTitle.style("font-size", "calc(1.5vw + 24px)");
   }
 
-function draw() {
-    background("#71413B");
-
-    if (gameState === "initial") {
-        drawSelection()
-    } else {
+  function hideRaceSelect(){
         // Hide UI elements during gameplay
         nameInput.hide();
         goButton.hide();
@@ -293,7 +292,21 @@ function draw() {
         });
         raceContainer.style("display", "none"); // Hide the container
         // If using raceTitle, hide it as well
-        if (raceTitle) raceTitle.style("display", "none");
+        raceTitle.style("display", "none");
+  }
+
+function draw() {
+    background("#71413B");
+
+    if(gameState === "initial") {
+        renderServerBrowser();
+    }
+    else if (gameState === "race_selection") {
+        drawSelection()
+    }
+    
+    if (gameState === "playing") {
+        hideRaceSelect()
         // ---- (Your original gameplay code) ----
         if (curPlayer) {
             camera.x = curPlayer.pos.x;
