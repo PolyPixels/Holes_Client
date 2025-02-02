@@ -41,7 +41,6 @@ function setup() {
     // (Socket setup and raceImages flipping omitted for brevity)
     // ----------------------------
   
-    socket = io.connect("http://"+servers[1]+":3000");
 
     // Flip right images to create left images
     for (let raceName in raceImages) {
@@ -51,9 +50,6 @@ function setup() {
         }
     }
 
-    socketSetup();
-    testMap = new Map();
-    ghostBuild = new Trap(0,0,0,10,0,{r:255,g:255,b:255}, " ");
 
   
   
