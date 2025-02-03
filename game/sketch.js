@@ -377,13 +377,12 @@ function setup() {
   }
   
 
-
   function renderServerBrowser() {
     if (!renderedserverBrowserContainer) {
         renderedserverBrowserContainer = true;
         serverBrowserContainer = createDiv();
         serverBrowserContainer.id("serverBrowserContainer");
-        
+
         // Main container styling
         serverBrowserContainer.style("width", "500px");
         serverBrowserContainer.style("max-height", "700px");
@@ -394,22 +393,23 @@ function setup() {
         serverBrowserContainer.style("color", "#fff");
         serverBrowserContainer.style("font-family", "Arial, sans-serif");
         serverBrowserContainer.style("box-shadow", "0px 8px 16px rgba(0, 0, 0, 0.4)");
-        
+
         // Position the container in the center
         serverBrowserContainer.style("position", "fixed");
         serverBrowserContainer.style("top", "50%");
         serverBrowserContainer.style("left", "50%");
         serverBrowserContainer.style("transform", "translate(-50%, -50%)");
-        
-        let title = createDiv("Select a Server");
+
+        // 🎮 Server Selection Title
+        let title = createDiv("🎮 Select a Server");
         title.style("font-size", "22px");
         title.style("font-weight", "bold");
         title.style("margin-bottom", "15px");
         title.style("text-align", "center");
         title.parent(serverBrowserContainer);
-        
+
         renderServerList();
-        
+
         // Separate section for adding new servers
         let addServerSection = createDiv();
         addServerSection.style("margin-top", "30px");
@@ -417,28 +417,32 @@ function setup() {
         addServerSection.style("background", "#2a2a2a");
         addServerSection.style("border-radius", "10px");
         addServerSection.parent(serverBrowserContainer);
-        
-        let addServerTitle = createDiv("Add New Server");
+
+        // ➕ Add Server Title
+        let addServerTitle = createDiv("➕ Add New Server");
         addServerTitle.style("font-size", "18px");
         addServerTitle.style("margin-bottom", "10px");
         addServerTitle.style("text-align", "center");
         addServerTitle.parent(addServerSection);
-        
-        inputName = createInput("").attribute("placeholder", "Server Name");
+
+        // 🌐 Server Name Input
+        inputName = createInput("").attribute("placeholder", "🌐 Server Name");
         inputName.parent(addServerSection);
         inputName.style("width", "90%");
         inputName.style("margin-bottom", "8px");
         inputName.style("padding", "10px");
         inputName.style("border-radius", "5px");
-        
-        inputIP = createInput("").attribute("placeholder", "Server IP");
+
+        // 📡 Server IP Input
+        inputIP = createInput("").attribute("placeholder", "📡 Server IP");
         inputIP.parent(addServerSection);
         inputIP.style("width", "90%");
         inputIP.style("margin-bottom", "8px");
         inputIP.style("padding", "10px");
         inputIP.style("border-radius", "5px");
-        
-        addServerButton = createButton("Add Server");
+
+        // Add Server Button
+        addServerButton = createButton("➕ Add Server");
         addServerButton.parent(addServerSection);
         addServerButton.style("width", "100%");
         addServerButton.style("padding", "12px");
@@ -447,7 +451,7 @@ function setup() {
         addServerButton.style("color", "#fff");
         addServerButton.style("border", "none");
         addServerButton.style("border-radius", "5px");
-        
+
         addServerButton.mousePressed(() => {
             let newServer = {
                 name: inputName.value(),
@@ -455,19 +459,20 @@ function setup() {
             };
             if (newServer.name && newServer.ip) {
                 serverList.push(newServer);
-                
+
                 saveServers();
-                
                 renderServerList();
+
                 inputName.value("");
                 inputIP.value("");
-                alert("???")
+                alert("✅ Server Added Successfully!");
             } else {
-                alert("Please enter both a server name and IP.");
+                alert("⚠️ Please enter both a server name and IP.");
             }
         });
-        
-        let connectButton = createButton("Connect");
+
+        // 🖥️ Connect Button
+        let connectButton = createButton("🖥️ Connect");
         connectButton.parent(serverBrowserContainer);
         connectButton.style("width", "100%");
         connectButton.style("margin-top", "20px");
@@ -476,7 +481,7 @@ function setup() {
         connectButton.style("color", "#fff");
         connectButton.style("border", "none");
         connectButton.style("border-radius", "5px");
-        
+
         connectButton.mousePressed(() => {
             if (selectedServer) {
                 socket = io.connect("http://" + selectedServer.ip + ":3000");
@@ -488,11 +493,12 @@ function setup() {
                 gameState = "race_selection";
                 renderServerBrowser = false;
             } else {
-                alert("Please select a server first.");
+                alert("⚠️ Please select a server first.");
             }
         });
     }
 }
+
 
   
   function fetchServerStatus(server, callback) {
@@ -576,6 +582,7 @@ function setup() {
         fetchServerStatus(server, (data) => {
             serverStatus.html(`Status: ${data.status}`);
             serverStatus.style("color", data.status === "Online" ? "#4CAF50" : "#F44336");
+            serverName.html(data.name || "Unnamed Server")
             playerCount.html(`Players: ${data.playerCount}`);
             serverLogo.attribute("src", data.image);
         });
