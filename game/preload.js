@@ -78,7 +78,7 @@ function loadRaceImages() {
         for (let i = 1; i < 4; i++) {
             // Front images
             raceImages[raceName].front[i] = loadImage(
-                `images/character/${raceName}/${raceName}_front_walk${i}.png`,
+                `images/characters/${raceName}/${raceName}_front_walk${i}.png`,
                 function (img) {
                     console.log(`Loaded image: images/characters/${raceName}/${raceName}_front_walk${i}.png`);
                 },
