@@ -293,16 +293,7 @@ raceTitle = createDiv();
 
   let serverList = JSON.parse(localStorage.getItem("servers")) || [
     { ip: "localhost", name: "Local Server", status: "Online" },
-    { ip: "54.91.39.132", name: "Remote Server", status: "Online" },
-    { ip: "192.168.1.5", name: "Test Server", status: "Offline" },
-
-    { ip: "localhost", name: "Local Server", status: "Online" },
-    { ip: "54.91.39.132", name: "Remote Server", status: "Online" },
-    { ip: "192.168.1.5", name: "Test Server", status: "Offline" },
-
-    { ip: "localhost", name: "Local Server", status: "Online" },
-    { ip: "54.91.39.132", name: "Remote Server", status: "Online" },
-    { ip: "192.168.1.5", name: "Test Server", status: "Offline" }
+    { ip: "54.91.39.132", name: "Remote Server", status: "Online" },    
   ];
   
   let selectedServer = null;
@@ -387,14 +378,16 @@ raceTitle = createDiv();
             let newServer = {
                 name: inputName.value(),
                 ip: inputIP.value(),
-                status: inputStatus.value(),
             };
             if (newServer.name && newServer.ip) {
                 serverList.push(newServer);
+                
                 saveServers();
+                
                 renderServerList();
                 inputName.value("");
                 inputIP.value("");
+                alert("???")
             } else {
                 alert("Please enter both a server name and IP.");
             }
@@ -447,40 +440,72 @@ raceTitle = createDiv();
     }
   
     serverList.forEach((server, index) => {
-      let serverEntry = createDiv();
-      serverEntry.class("serverEntry");
-      serverEntry.style("padding", "10px");
-      serverEntry.style("margin-bottom", "10px");
-      serverEntry.style("border-radius", "5px");
-      serverEntry.style("background-color", "#404040");
-      serverEntry.style("cursor", "pointer");
-  
-      let serverName = createDiv(server.name);
-      serverName.style("font-size", "16px");
-      serverName.style("font-weight", "bold");
-      serverName.parent(serverEntry);
-  
-      let serverIP = createDiv(`IP: ${server.ip}`);
-      serverIP.style("font-size", "14px");
-      serverIP.style("color", "#ccc");
-      serverIP.parent(serverEntry);
-  
-      let serverStatus = createDiv("Status: Loading...");
-      serverStatus.style("font-size", "14px");
-      serverStatus.style("color", "#FFD700");
-      serverStatus.parent(serverEntry);
-  
-      let playerCount = createDiv("Players: Loading...");
-      playerCount.style("font-size", "14px");
-      playerCount.style("color", "#00FFFF");
-      playerCount.parent(serverEntry);
-  
-      // Fetch server status
-      fetchServerStatus(server, (data) => {
-        serverStatus.html(`Status: ${data.status}`);
-        serverStatus.style("color", data.status === "Online" ? "#4CAF50" : "#F44336");
-        playerCount.html(`Players: ${data.playerCount}`);
-      });
+        let serverEntry = createDiv();
+        serverEntry.class("serverEntry");
+        serverEntry.style("padding", "10px");
+        serverEntry.style("margin-bottom", "10px");
+        serverEntry.style("border-radius", "8px");
+        serverEntry.style("background-color", "#404040");
+        serverEntry.style("cursor", "pointer");
+        serverEntry.style("display", "flex");
+        serverEntry.style("align-items", "center"); // Align items vertically
+        serverEntry.style("gap", "10px"); // Add spacing between elements
+        
+        // Create a container for the logo
+        let logoContainer = createDiv();
+        logoContainer.style("width", "60px"); // Fixed width for uniformity
+        logoContainer.style("height", "60px");
+        logoContainer.style("display", "flex");
+        logoContainer.style("align-items", "center");
+        logoContainer.style("justify-content", "center");
+        logoContainer.style("border-radius", "50%"); // Circular logo
+        logoContainer.style("overflow", "hidden"); // Prevent overflow of the image
+        
+        let serverLogo = createImg(server.image);
+        serverLogo.style("width", "100%");
+        serverLogo.style("height", "100%");
+        serverLogo.style("object-fit", "cover"); // Ensures it fits without distortion
+        serverLogo.parent(logoContainer);
+        logoContainer.parent(serverEntry);
+        
+        // Create a container for text details
+        let textContainer = createDiv();
+        textContainer.style("display", "flex");
+        textContainer.style("flex-direction", "column");
+        textContainer.style("justify-content", "center");
+        textContainer.style("flex-grow", "1"); // Allows text to take available space
+        
+        let serverName = createDiv(server.name);
+        serverName.style("font-size", "18px");
+        serverName.style("font-weight", "bold");
+        serverName.style("color", "#FFFFFF");
+        serverName.parent(textContainer);
+        
+        let serverIP = createDiv(`IP: ${server.ip}`);
+        serverIP.style("font-size", "14px");
+        serverIP.style("color", "#AAAAAA");
+        serverIP.parent(textContainer);
+        
+        let serverStatus = createDiv("Status: Loading...");
+        serverStatus.style("font-size", "14px");
+        serverStatus.style("color", "#FFD700");
+        serverStatus.parent(textContainer);
+        
+        let playerCount = createDiv("Players: Loading...");
+        playerCount.style("font-size", "14px");
+        playerCount.style("color", "#00FFFF");
+        playerCount.parent(textContainer);
+        
+        textContainer.parent(serverEntry);
+        
+        // Fetch server status
+        fetchServerStatus(server, (data) => {
+            serverStatus.html(`Status: ${data.status}`);
+            serverStatus.style("color", data.status === "Online" ? "#4CAF50" : "#F44336");
+            playerCount.html(`Players: ${data.playerCount}`);
+            serverLogo.attribute("src", data.image);
+        });
+        
   
       // Remove server button
       let removeButton = createButton("Remove");
@@ -728,6 +753,8 @@ function keyPressed() {
 }
 
 function mouseReleased(){
+    if(gameState != "playing") return
+
     let x = mouseX + camera.x - width / 2;
     let y = mouseY + camera.y - height / 2;
     let chunkPos = testMap.globalToChunk(x,y);
