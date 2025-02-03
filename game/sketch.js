@@ -52,7 +52,7 @@ function setup() {
 
   
   
-raceTitle = createDiv();
+    raceTitle = createDiv();
     // ---------------------------------------------------
     //  Create a container for race selection cards (centered)
     // ---------------------------------------------------
@@ -62,7 +62,7 @@ raceTitle = createDiv();
     raceContainer.style("top", "120px");
     raceContainer.style("left", "50%");
     raceContainer.style("transform", "translateX(-50%)");
-    raceContainer.style("display", "flex");
+    raceContainer.style("display", "none");
     raceContainer.style("flex-wrap", "wrap");
     raceContainer.style("justify-content", "center");
     raceContainer.style("align-items", "center");
@@ -70,7 +70,6 @@ raceTitle = createDiv();
     raceContainer.style("background-color", "rgba(0, 0, 0, 0.3)");
     raceContainer.style("padding", "20px");
     raceContainer.style("border-radius", "10px");
-  
     // ---------------------------------------------------
     //  Create cards for each race (with responsive sizing)
     // ---------------------------------------------------
@@ -222,6 +221,7 @@ raceTitle = createDiv();
    
   // Show the selection UI elements
   function drawSelection() {
+    raceContainer.style("display", "flex");
       // ---------------------------------------------------
     //  Create Title (centered, larger & responsive)
     // ---------------------------------------------------
@@ -303,6 +303,80 @@ raceTitle = createDiv();
   function saveServers() {
     localStorage.setItem("servers", JSON.stringify(serverList));
   }
+
+  let linksRendered = false; // Flag to prevent duplicate rendering
+
+  function renderLinks() {
+      if (linksRendered) return; // Prevent duplicate rendering
+  
+      // Parent container for links (Bottom Right)
+      let linkContainer = createDiv();
+      linkContainer.style("position", "fixed");
+      linkContainer.style("bottom", "10px");
+      linkContainer.style("right", "10px");
+      linkContainer.style("display", "flex");
+      linkContainer.style("flex-direction", "column");
+      linkContainer.style("align-items", "flex-end");
+      linkContainer.style("gap", "10px");
+      linkContainer.style("z-index", "1000"); // Keep on top
+  
+      // Create individual links
+      createLinkItem(linkContainer, "Itch.io", "https://itch.io/magentaautumn", "🔗");
+      createLinkItem(linkContainer, "GitHub", "https://github.com/PolyPixels", "🐙");
+      createLinkItem(linkContainer, "Discord", "https://discord.com/", "💬");
+  
+      // Parent container for settings (Bottom Left)
+      let settingsContainer = createDiv();
+      settingsContainer.style("position", "fixed");
+      settingsContainer.style("bottom", "10px");
+      settingsContainer.style("left", "10px");
+      settingsContainer.style("z-index", "1000"); 
+  
+      // Create settings button
+      let settingsButton = createButton("⚙️ Settings");
+      settingsButton.style("padding", "10px 15px");
+      settingsButton.style("font-size", "16px");
+      settingsButton.style("border", "none");
+      settingsButton.style("border-radius", "5px");
+      settingsButton.style("background-color", "#555");
+      settingsButton.style("color", "white");
+      settingsButton.style("cursor", "pointer");
+      settingsButton.mousePressed(() => openSettings()); // Attach action
+  
+      settingsButton.parent(settingsContainer);
+  
+      // Append elements to body
+      linkContainer.parent(document.body);
+      settingsContainer.parent(document.body);
+  
+      linksRendered = true; // Set flag to true
+  }
+  
+  // Helper function to create a link
+  function createLinkItem(parent, text, url, emoji) {
+      let link = createA(url, `${emoji} ${text}`, "_blank");
+      link.style("padding", "10px 15px");
+      link.style("font-size", "16px");
+      link.style("border-radius", "5px");
+      link.style("background-color", "#333");
+      link.style("color", "white");
+      link.style("text-decoration", "none");
+      link.style("display", "inline-block");
+      link.style("transition", "0.3s");
+  
+      // Hover effect
+      link.mouseOver(() => link.style("background-color", "#555"));
+      link.mouseOut(() => link.style("background-color", "#333"));
+  
+      link.parent(parent);
+  }
+  
+  // Placeholder function for settings
+  function openSettings() {
+      alert("Settings menu coming soon!"); // Replace with actual settings logic
+  }
+  
+
 
   function renderServerBrowser() {
     if (!renderedserverBrowserContainer) {
@@ -556,9 +630,11 @@ function draw() {
 
     if(gameState === "initial") {
         renderServerBrowser();
+        renderLinks()
     }
     else if (gameState === "race_selection") {
         drawSelection()
+        renderLinks()
     }
     
     if (gameState === "playing") {
@@ -755,10 +831,12 @@ function keyPressed() {
 function mouseReleased(){
     if(gameState != "playing") return
 
+
     let x = mouseX + camera.x - width / 2;
     let y = mouseY + camera.y - height / 2;
     let chunkPos = testMap.globalToChunk(x,y);
     let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y]
+    if(!chunk?.objects) return
     for(let i = 0; i < chunk.objects.length; i++){
         if(chunk.objects[i].type == "door"){
             if(createVector(x,y).dist(chunk.objects[i].pos) < chunk.objects[i].size.h){
