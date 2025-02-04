@@ -52,7 +52,7 @@ function setup() {
 
   
   
-raceTitle = createDiv();
+    raceTitle = createDiv();
     // ---------------------------------------------------
     //  Create a container for race selection cards (centered)
     // ---------------------------------------------------
@@ -62,7 +62,7 @@ raceTitle = createDiv();
     raceContainer.style("top", "120px");
     raceContainer.style("left", "50%");
     raceContainer.style("transform", "translateX(-50%)");
-    raceContainer.style("display", "flex");
+    raceContainer.style("display", "none");
     raceContainer.style("flex-wrap", "wrap");
     raceContainer.style("justify-content", "center");
     raceContainer.style("align-items", "center");
@@ -70,7 +70,6 @@ raceTitle = createDiv();
     raceContainer.style("background-color", "rgba(0, 0, 0, 0.3)");
     raceContainer.style("padding", "20px");
     raceContainer.style("border-radius", "10px");
-  
     // ---------------------------------------------------
     //  Create cards for each race (with responsive sizing)
     // ---------------------------------------------------
@@ -191,6 +190,8 @@ raceTitle = createDiv();
     goButton.style("border", "none");
     goButton.style("border-radius", "8px");
     goButton.style("padding", "10px 20px");
+
+    goButton.style("margin-left", "20px");
     goButton.style("cursor", "pointer");
     goButton.style("transition", "background-color 0.2s, transform 0.2s");
   
@@ -204,6 +205,20 @@ raceTitle = createDiv();
     });
   
     goButton.mousePressed(() => {
+        if(!selectedServer) {
+            alert("issue with server retry") 
+            return
+        } 
+        if(!raceSelected) {
+            alert("Pick a race") 
+            return
+        }
+
+        if(!nameEntered) {
+            alert("pick a name") 
+            return
+        }
+
       curPlayer.name = nameInput.value();
       socket.emit("new_player", curPlayer);
       gameState = "playing";
@@ -219,325 +234,29 @@ raceTitle = createDiv();
     });
   }
   
-   
-  // Show the selection UI elements
-  function drawSelection() {
-      // ---------------------------------------------------
-    //  Create Title (centered, larger & responsive)
-    // ---------------------------------------------------
-    raceTitle.id("raceTitle");
-    raceTitle.elt.innerHTML =  "Select Your Race"
-    raceTitle.style("position", "absolute");
-    raceTitle.style("top", "40px");
-    raceTitle.style("left", "50%");
-    raceTitle.style("transform", "translateX(-50%)");
-    // Responsive font size (combining viewport and fixed pixels)
-    raceTitle.style("font-size", "calc(1.5vw + 24px)");
-    raceTitle.style("font-weight", "bold");
-    raceTitle.style("color", "#fff");
-    raceTitle.style("text-shadow", "1px 1px 2px #000");
-    raceTitle.style("padding", "10px 20px");
-    raceTitle.style("background-color", "rgba(0, 0, 0, 0.3)");
-    raceTitle.style("border-radius", "10px");
-    raceTitle.style("text-align", "center");
 
-    nameInput.show();
-    goButton.show();
-    raceButtons.forEach((card) => {
-      card.show();
-    });
-    // Enable the "Go" button only when a race is selected and a name is entered
-    if (raceSelected && nameEntered) {
-      goButton.removeAttribute("disabled");
-    } else {
-      goButton.attribute("disabled", true);
-    }
-  }
-  
-  // ---------------------------------------------------
-  //  Responsive behavior on window resize
-  // ---------------------------------------------------
+
+   
   function windowResized() {
     resizeCanvas(innerWidth - 10, innerHeight - 8);
     updateResponsiveDesign();
   }
-  
-  function updateResponsiveDesign() {
-    // Update positions for the name input and "Go" button
-    const inputWidth = 220; // as defined in style
-    nameInput.position(width / 2 - inputWidth / 2, height * 0.7);
-    const spacing = 20;
-    goButton.position(width / 2 + inputWidth / 2 + spacing, height * 0.7);
-  
-    // Update race card widths responsively
-    let newCardWidth = constrain(width * 0.15, 150, 300);
-    raceButtons.forEach((card) => {
-      card.style("width", newCardWidth + "px");
-    });
-  
-    // Optionally update the race title font size for better scaling
-    raceTitle.style("font-size", "calc(1.5vw + 24px)");
-  }
-
-  function hideRaceSelect(){
-        // Hide UI elements during gameplay
-        nameInput.hide();
-        goButton.hide();
-        raceButtons.forEach((card) => {
-            card.hide();
-        });
-        raceContainer.style("display", "none"); // Hide the container
-        // If using raceTitle, hide it as well
-        raceTitle.style("display", "none");
-  }
-
-  let serverList = JSON.parse(localStorage.getItem("servers")) || [
-    { ip: "localhost", name: "Local Server", status: "Online" },
-    { ip: "54.91.39.132", name: "Remote Server", status: "Online" },
-    { ip: "192.168.1.5", name: "Test Server", status: "Offline" },
-
-    { ip: "localhost", name: "Local Server", status: "Online" },
-    { ip: "54.91.39.132", name: "Remote Server", status: "Online" },
-    { ip: "192.168.1.5", name: "Test Server", status: "Offline" },
-
-    { ip: "localhost", name: "Local Server", status: "Online" },
-    { ip: "54.91.39.132", name: "Remote Server", status: "Online" },
-    { ip: "192.168.1.5", name: "Test Server", status: "Offline" }
-  ];
-  
-  let selectedServer = null;
-  let serverBrowserContainer, inputName, inputIP, inputStatus, addServerButton;
-  let renderedserverBrowserContainer = false;
-  
-  function saveServers() {
-    localStorage.setItem("servers", JSON.stringify(serverList));
-  }
-
-  function renderServerBrowser() {
-    if (!renderedserverBrowserContainer) {
-        renderedserverBrowserContainer = true;
-        serverBrowserContainer = createDiv();
-        serverBrowserContainer.id("serverBrowserContainer");
-        
-        // Main container styling
-        serverBrowserContainer.style("width", "500px");
-        serverBrowserContainer.style("max-height", "700px");
-        serverBrowserContainer.style("overflow-y", "auto");
-        serverBrowserContainer.style("background", "#1e1e1e");
-        serverBrowserContainer.style("padding", "25px");
-        serverBrowserContainer.style("border-radius", "15px");
-        serverBrowserContainer.style("color", "#fff");
-        serverBrowserContainer.style("font-family", "Arial, sans-serif");
-        serverBrowserContainer.style("box-shadow", "0px 8px 16px rgba(0, 0, 0, 0.4)");
-        
-        // Position the container in the center
-        serverBrowserContainer.style("position", "fixed");
-        serverBrowserContainer.style("top", "50%");
-        serverBrowserContainer.style("left", "50%");
-        serverBrowserContainer.style("transform", "translate(-50%, -50%)");
-        
-        let title = createDiv("Select a Server");
-        title.style("font-size", "22px");
-        title.style("font-weight", "bold");
-        title.style("margin-bottom", "15px");
-        title.style("text-align", "center");
-        title.parent(serverBrowserContainer);
-        
-        renderServerList();
-        
-        // Separate section for adding new servers
-        let addServerSection = createDiv();
-        addServerSection.style("margin-top", "30px");
-        addServerSection.style("padding", "15px");
-        addServerSection.style("background", "#2a2a2a");
-        addServerSection.style("border-radius", "10px");
-        addServerSection.parent(serverBrowserContainer);
-        
-        let addServerTitle = createDiv("Add New Server");
-        addServerTitle.style("font-size", "18px");
-        addServerTitle.style("margin-bottom", "10px");
-        addServerTitle.style("text-align", "center");
-        addServerTitle.parent(addServerSection);
-        
-        inputName = createInput("").attribute("placeholder", "Server Name");
-        inputName.parent(addServerSection);
-        inputName.style("width", "90%");
-        inputName.style("margin-bottom", "8px");
-        inputName.style("padding", "10px");
-        inputName.style("border-radius", "5px");
-        
-        inputIP = createInput("").attribute("placeholder", "Server IP");
-        inputIP.parent(addServerSection);
-        inputIP.style("width", "90%");
-        inputIP.style("margin-bottom", "8px");
-        inputIP.style("padding", "10px");
-        inputIP.style("border-radius", "5px");
-        
-        addServerButton = createButton("Add Server");
-        addServerButton.parent(addServerSection);
-        addServerButton.style("width", "100%");
-        addServerButton.style("padding", "12px");
-        addServerButton.style("cursor", "pointer");
-        addServerButton.style("background", "#007acc");
-        addServerButton.style("color", "#fff");
-        addServerButton.style("border", "none");
-        addServerButton.style("border-radius", "5px");
-        
-        addServerButton.mousePressed(() => {
-            let newServer = {
-                name: inputName.value(),
-                ip: inputIP.value(),
-                status: inputStatus.value(),
-            };
-            if (newServer.name && newServer.ip) {
-                serverList.push(newServer);
-                saveServers();
-                renderServerList();
-                inputName.value("");
-                inputIP.value("");
-            } else {
-                alert("Please enter both a server name and IP.");
-            }
-        });
-        
-        let connectButton = createButton("Connect");
-        connectButton.parent(serverBrowserContainer);
-        connectButton.style("width", "100%");
-        connectButton.style("margin-top", "20px");
-        connectButton.style("padding", "12px");
-        connectButton.style("background", "#4CAF50");
-        connectButton.style("color", "#fff");
-        connectButton.style("border", "none");
-        connectButton.style("border-radius", "5px");
-        
-        connectButton.mousePressed(() => {
-            if (selectedServer) {
-                socket = io.connect("http://" + selectedServer.ip + ":3000");
-                socketSetup();
-                testMap = new Map();
-                ghostBuild = new Trap(0, 0, 0, 10, 0, { r: 255, g: 255, b: 255 }, " ");
-                console.log("Connected to " + selectedServer.ip);
-                hideServerBrowser();
-                gameState = "race_selection";
-                renderServerBrowser = false;
-            } else {
-                alert("Please select a server first.");
-            }
-        });
-    }
-}
-
-  
-  function fetchServerStatus(server, callback) {
-    fetch(`http://${server.ip}:3000/status`)
-      .then(response => response.json())
-      .then(data => {
-        callback(data);
-      })
-      .catch(error => {
-        console.error(`Error fetching status from ${server.ip}:`, error);
-        callback({ status: "Offline", playerCount: 0 });
-      });
-  }
-  
-  function renderServerList() {
-    let oldEntries = selectAll(".serverEntry");
-    for (let e of oldEntries) {
-      e.remove();
-    }
-  
-    serverList.forEach((server, index) => {
-      let serverEntry = createDiv();
-      serverEntry.class("serverEntry");
-      serverEntry.style("padding", "10px");
-      serverEntry.style("margin-bottom", "10px");
-      serverEntry.style("border-radius", "5px");
-      serverEntry.style("background-color", "#404040");
-      serverEntry.style("cursor", "pointer");
-  
-      let serverName = createDiv(server.name);
-      serverName.style("font-size", "16px");
-      serverName.style("font-weight", "bold");
-      serverName.parent(serverEntry);
-  
-      let serverIP = createDiv(`IP: ${server.ip}`);
-      serverIP.style("font-size", "14px");
-      serverIP.style("color", "#ccc");
-      serverIP.parent(serverEntry);
-  
-      let serverStatus = createDiv("Status: Loading...");
-      serverStatus.style("font-size", "14px");
-      serverStatus.style("color", "#FFD700");
-      serverStatus.parent(serverEntry);
-  
-      let playerCount = createDiv("Players: Loading...");
-      playerCount.style("font-size", "14px");
-      playerCount.style("color", "#00FFFF");
-      playerCount.parent(serverEntry);
-  
-      // Fetch server status
-      fetchServerStatus(server, (data) => {
-        serverStatus.html(`Status: ${data.status}`);
-        serverStatus.style("color", data.status === "Online" ? "#4CAF50" : "#F44336");
-        playerCount.html(`Players: ${data.playerCount}`);
-      });
-  
-      // Remove server button
-      let removeButton = createButton("Remove");
-      removeButton.parent(serverEntry);
-      removeButton.style("margin-left", "10px");
-      removeButton.style("padding", "5px");
-      removeButton.style("background-color", "#F44336");
-      removeButton.style("color", "#fff");
-      removeButton.style("border", "none");
-      removeButton.style("border-radius", "3px");
-      removeButton.style("cursor", "pointer");
-  
-      removeButton.mousePressed(() => {
-        serverList.splice(index, 1);
-        saveServers();
-        renderServerList();
-      });
-  
-      // Select a server
-      serverEntry.mousePressed(() => {
-        let entries = selectAll(".serverEntry");
-        for (let e of entries) {
-          e.style("background-color", "#404040");
-        }
-        serverEntry.style("background-color", "#4CAF50");
-        selectedServer = server;
-        console.log("Server selected:", selectedServer);
-      });
-  
-      serverEntry.parent(serverBrowserContainer);
-    });
-  }
-  
-  
-  // --- Function to Hide or Remove the Server Browser ---
-  function hideServerBrowser() {
-    let serverBrowserContainer = document.getElementById("serverBrowserContainer"); // Adjust selector accordingly
-    if (serverBrowserContainer) {
-        serverBrowserContainer.remove(); // Remove the element
-        console.log("Server browser container removed."); // Debugging output
-    } else {
-        console.warn("Server browser container not found.");
-    }
-}
 
 function draw() {
     background("#71413B");
 
     if(gameState === "initial") {
         renderServerBrowser();
+        renderLinks()
     }
     else if (gameState === "race_selection") {
         drawSelection()
+        renderLinks()
     }
     
     if (gameState === "playing") {
         hideRaceSelect()
+        hideLinks()
         // ---- (Your original gameplay code) ----
         if (curPlayer) {
             camera.x = curPlayer.pos.x;
@@ -728,10 +447,14 @@ function keyPressed() {
 }
 
 function mouseReleased(){
+    if(gameState != "playing") return
+
+
     let x = mouseX + camera.x - width / 2;
     let y = mouseY + camera.y - height / 2;
     let chunkPos = testMap.globalToChunk(x,y);
     let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y]
+    if(!chunk?.objects) return
     for(let i = 0; i < chunk.objects.length; i++){
         if(chunk.objects[i].type == "door"){
             if(createVector(x,y).dist(chunk.objects[i].pos) < chunk.objects[i].size.h){
