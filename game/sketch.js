@@ -27,6 +27,7 @@ function setup() {
     // Create a responsive canvas
     let cnv = createCanvas(innerWidth - 10, innerHeight - 8);
     cnv.parent("canvas-container");
+    noSmooth();
     background(220);
     angleMode(DEGREES);
   
@@ -144,6 +145,7 @@ raceTitle = createDiv();
         raceSelected = true;
         // Assume curPlayer and a mapping for races exist
         curPlayer.race = i;
+        curPlayer.statBlock = new StatBlock(curPlayer.race, curPlayer.statBlock.stats.hp);
         console.log("Race selected:", races[i]);
       });
   
@@ -607,7 +609,7 @@ function draw() {
 
             if (mouseButton === LEFT) {
                 if(!buildMode){
-                    if (dirtInv < 150 - DIGSPEED) playerDig(x, y, DIGSPEED);
+                    if (dirtInv < 150 - curPlayer.statBlock.stats.handDigSpeed) playerDig(x, y, curPlayer.statBlock.stats.handDigSpeed);
                 }
                 else{
                     if(ghostBuild.openBool){
@@ -645,7 +647,7 @@ function draw() {
             }
             if (mouseButton === RIGHT) {
                 if(!buildMode){
-                    if (dirtInv > DIGSPEED) playerDig(x, y, -DIGSPEED);
+                    if (dirtInv > curPlayer.statBlock.stats.handDigSpeed) playerDig(x, y, -curPlayer.statBlock.stats.handDigSpeed);
                 }
                 else{
                     let chunkPos = testMap.globalToChunk(x,y);

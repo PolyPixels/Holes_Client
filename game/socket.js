@@ -41,7 +41,7 @@ function socketSetup(){
         curPlayer = new Player(
             random(-200*TILESIZE, 200*TILESIZE),
             random(-200*TILESIZE, 200*TILESIZE),
-            100,
+            undefined,
             data.id,
             data.color,
             0,

@@ -1,21 +1,19 @@
 // Player.js
 
-const BASE_HEALTH = 100;
 const BASE_SPEED = 5;
 
 var curPlayer; //Your player
 var players = {}; //other players
 
 class Player {
-    constructor(x, y, health = BASE_HEALTH, id, color,race, name ) {
+    constructor(x, y, health, id, color,race, name ) {
         this.id = id; // socket ID
         this.pos = createVector(x, y);
-        this.hp = health;
-        this.mhp = BASE_HEALTH;
         this.holding = { w: false, a: false, s: false, d: false }; // Movement keys state
         this.race = race; // Race index
         this.name = name;
         this.color = color || { r: 255, g: 5, b: 5 };
+        this.statBlock = new StatBlock(this.race, health);
 
         // Animation properties
         this.currentFrame = 0; // Current frame for animation
@@ -55,26 +53,26 @@ class Player {
         let collisionChecks = [];
 
         if (this.holding.w) {
-            this.pos.y += -BASE_SPEED;
+            this.pos.y += -BASE_SPEED*this.statBlock.stats.runningSpeed;
             this.direction = 'up';
             collisionChecks.push(this.checkCollisions( 1, -1));
             collisionChecks.push(this.checkCollisions( 0, -1));
         }
         if (this.holding.a) {
-            this.pos.x += -BASE_SPEED;
+            this.pos.x += -BASE_SPEED*this.statBlock.stats.runningSpeed;
             this.direction = 'left';
             collisionChecks.push(this.checkCollisions( 0,  1));
             collisionChecks.push(this.checkCollisions( 0,  0));
             collisionChecks.push(this.checkCollisions( 0, -1));
         }
         if (this.holding.s) {
-            this.pos.y += BASE_SPEED;
+            this.pos.y += BASE_SPEED*this.statBlock.stats.runningSpeed;
             this.direction = 'down';
             collisionChecks.push(this.checkCollisions( 1, 1));
             collisionChecks.push(this.checkCollisions( 0, 1));
         }
         if (this.holding.d) {
-            this.pos.x += BASE_SPEED;
+            this.pos.x += BASE_SPEED*this.statBlock.stats.runningSpeed;
             this.direction = 'right';
             collisionChecks.push(this.checkCollisions(1,  1));
             collisionChecks.push(this.checkCollisions(1,  0));
@@ -160,7 +158,7 @@ class Player {
 
         // Draw health bar foreground (based on current health)
         fill(0, 255, 0); // Green for health
-        let healthWidth = map(this.hp, 0, this.mhp, 0, 32);
+        let healthWidth = map(this.statBlock.hp, 0, this.statBlock.mhp, 0, 32);
         rect(this.pos.x - 16, this.pos.y + 20, healthWidth, 6);
 
         pop();

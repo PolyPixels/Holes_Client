@@ -1,4 +1,4 @@
-var TILESIZE = 16;
+var TILESIZE = 32;
 const CHUNKSIZE = 50; //how many nodes in 1 direction
 
 class Map{
@@ -30,10 +30,10 @@ class Map{
 
     render(){
         let chunkPos = this.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
-        for(let yOff = -2; yOff < 3; yOff++){
-            for(let xOff = -2; xOff < 3; xOff++){
+        for(let yOff = -1; yOff < 2; yOff++){
+            for(let xOff = -1; xOff < 2; xOff++){
                 let chunk = this.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
-                if(chunk != undefined && yOff != -2 && yOff != 2 && xOff != -2 && xOff != 2) chunk.render();
+                if(chunk != undefined) chunk.render();
                 if(Debuging){
                     push();
                     noFill();
