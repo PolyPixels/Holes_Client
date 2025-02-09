@@ -143,7 +143,7 @@ function draw() {
                         let chunkPos = testMap.globalToChunk(x,y);
                         let temp;
                         if(ghostBuild.type == "trap"){
-                            temp = new Trap(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.hp, curPlayer.id, ghostBuild.color, curPlayer.name);
+                            temp = new Trap(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.hp, curPlayer.id, ghostBuild.color, curPlayer.name);
                         }
                         else if(ghostBuild.type == "wall"){
                             temp = new Wall(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color);
@@ -163,12 +163,17 @@ function draw() {
                         else if(ghostBuild.type == "turret"){
                             temp = new Turret(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.hp, curPlayer.id, ghostBuild.color, curPlayer.name);
                         }
+                        else if(ghostBuild.type == "bomb"){
+                            temp = new Bomb(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.hp, curPlayer.id, ghostBuild.color, curPlayer.name);
+                        }
                         else{
                             temp = new Placeable(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot);
                         }
                         testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(temp);
                         testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
                         socket.emit("new_object", {cx: chunkPos.x, cy: chunkPos.y, type: temp.type, pos: {x: temp.pos.x, y: temp.pos.y}, rot: temp.rot, id: temp.id, hp: temp.hp, name: temp.name, color: temp.color});
+
+                        curPlayer.animationCreate("put");
                     }
                 }
             }
@@ -242,11 +247,15 @@ function keyReleased() {
     }
 
     if (keyCode === 54){ //6
-        ghostBuild = new Trap(0,0,0,10,0,{r:255,g:255,b:255}, " ");
+        ghostBuild = new Trap(0,0,10,0,{r:255,g:255,b:255}, " ");
     }
 
     if (keyCode === 55){ //8
         ghostBuild = new Turret(0,0,0,10,0,{r:255,g:255,b:255}, " ");
+    }
+
+    if (keyCode === 56){ //9
+        ghostBuild = new Bomb(0,0,10,0,{r:255,g:255,b:255}, " ");
     }
 }
 

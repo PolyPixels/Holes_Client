@@ -1,10 +1,12 @@
-  
+
+
   function updateResponsiveDesign() {
     // Update positions for the name input and "Go" button
     const inputWidth = 220; // as defined in style
-    nameInput.position(width / 2 - inputWidth / 2, height * 0.7);
     const spacing = 20;
-    goButton.position(width / 2 + inputWidth / 2 + spacing, height * 0.7);
+
+    nameInput?.position(width / 2 - inputWidth / 2, height * 0.7);
+    goButton?.position(width / 2 + inputWidth / 2 + spacing, height * 0.7);
   
     // Update race card widths responsively
     let newCardWidth = constrain(width * 0.15, 150, 300);
@@ -13,7 +15,7 @@
     });
   
     // Optionally update the race title font size for better scaling
-    raceTitle.style("font-size", "calc(1.5vw + 24px)");
+    raceTitle?.style("font-size", "calc(1.5vw + 24px)");
   }
 
   function hideRaceSelect(){
@@ -501,7 +503,7 @@ function hideLinks() {
       card.selected = false; // custom property for selection
   
       // Create an image element for the race
-      let raceImgPath = `images/characters/${raceName}/${raceName}_front_stand.png`;
+      let raceImgPath = `images/characters/${raceName}/${raceName}_portrait.png`;
       let raceImg = createImg(raceImgPath, `${raceName} image`);
       raceImg.style("max-width", "10dvw");
       raceImg.style("height", "10dvh");

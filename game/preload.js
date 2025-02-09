@@ -10,6 +10,13 @@ function preload() {
     loadRaceImages();
 
     trapImg = loadImage('images/structures/beartrap1.png');
+    bombImg = loadImage('images/structures/bomb1.png');
+    bombFlareImg = loadImage('images/structures/bomb2.png');
+    
+    dirtBombImg = loadImage('images/structures/dirtbomb1.png');
+    
+    mineImg = loadImage('images/structures/bomb1.png');
+    dirtMineImg = loadImage('images/structures/dirtmine1.png');
 }
 
 function loadDefaultImage(){
@@ -35,6 +42,7 @@ function loadDefaultImage(){
 }
 
 function loadRaceFrame(path) {
+    path = `images/characters/` + path;
     let img = loadImage(
         path,
         function (loadedImage) {
@@ -62,23 +70,33 @@ function loadRaceImages() {
         
         // 0 is standing
         // 1, 2, 3 are walk cycle
-        // 4 is standing with shovel
-        // 5, 6, 7 are walking with shovel
 
-        raceImages[raceName].front[0] = loadRaceFrame(`images/characters/${raceName}/${raceName}_front_stand.png`);
-        raceImages[raceName].back[0] = loadRaceFrame(`images/characters/${raceName}/${raceName}_back_stand.png`);
-        raceImages[raceName].right[0] = loadRaceFrame(`images/characters/${raceName}/${raceName}_side_stand.png`);
+        // 4 is putting something down
+
+        // 5 is standing with shovel
+        // 6, 7, 8 are walking with shovel
+
+
+        raceImages[raceName].front[0] = loadRaceFrame(`${raceName}/${raceName}_front_stand.png`);
+        raceImages[raceName].back[0] = loadRaceFrame(`${raceName}/${raceName}_back_stand.png`);
+        raceImages[raceName].right[0] = loadRaceFrame(`${raceName}/${raceName}_side_stand.png`);
 
         // Load images for each direction
         for (let i = 1; i < 4; i++) {
             // Front images
-            raceImages[raceName].front[i] = loadRaceFrame(`images/characters/${raceName}/${raceName}_front_walk${i}.png`);
+            raceImages[raceName].front[i] = loadRaceFrame(`${raceName}/${raceName}_front_walk${i}.png`);
     
             // Back images
-            raceImages[raceName].back[i] = loadRaceFrame(`images/characters/${raceName}/${raceName}_back_walk${i}.png`);
+            raceImages[raceName].back[i] = loadRaceFrame(`${raceName}/${raceName}_back_walk${i}.png`);
     
             // Right images
-            raceImages[raceName].right[i] = loadRaceFrame(`images/characters/${raceName}/${raceName}_side_walk${i}.png`);
+            raceImages[raceName].right[i] = loadRaceFrame(`${raceName}/${raceName}_side_walk${i}.png`);
         }
+
+        raceImages[raceName].front[4] = loadRaceFrame(`${raceName}/place/${raceName}_front_place.png`);
+        raceImages[raceName].back[4] = loadRaceFrame(`${raceName}/place/${raceName}_back_place.png`);
+        raceImages[raceName].right[4] = loadRaceFrame(`${raceName}/place/${raceName}_side_place.png`);
+
+        //raceImages[raceName].right[4] = loadRaceFrame(`${raceName}/shovel/${raceName}_side_stand_shovel.png`);
     }
 }
