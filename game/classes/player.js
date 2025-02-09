@@ -19,6 +19,7 @@ class Player {
         this.currentFrame = 0; // Current frame for animation
         this.direction = 'down'; // Default direction
         this.frameCount = 4; // Number of frames per direction
+        this.animationFrame = 0;
         this.animationType = ""; // Name of current animation
         this.alignment = 50;
     }
