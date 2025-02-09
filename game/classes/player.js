@@ -18,10 +18,8 @@ class Player {
         // Animation properties
         this.currentFrame = 0; // Current frame for animation
         this.direction = 'down'; // Default direction
-        this.frameCount = 4; // Number of frames per direction
         this.animationFrame = 0;
         this.animationType = ""; // Name of current animation
-        this.alignment = 50;
     }
 
     checkCollisions(xOffset, yOffset) {
@@ -65,28 +63,28 @@ class Player {
         let collisionChecks = [];
 
         if (this.holding.w) {
-            this.pos.y += -BASE_SPEED*this.statBlock.stats.runningSpeed;
+            this.pos.y += -BASE_SPEED*this.statBlock.stats.runningSpeed*(2*deltaTime/frameRate());
             this.direction = 'up';
             collisionChecks.push(this.checkCollisions( 1, -1));
             collisionChecks.push(this.checkCollisions( 0, -1));
             collisionChecks.push(this.checkCollisions( -1, -1));
         }
         if (this.holding.a) {
-            this.pos.x += -BASE_SPEED*this.statBlock.stats.runningSpeed;
+            this.pos.x += -BASE_SPEED*this.statBlock.stats.runningSpeed*(2*deltaTime/frameRate());
             this.direction = 'left';
             collisionChecks.push(this.checkCollisions( -1,  1));
             collisionChecks.push(this.checkCollisions( -1,  0));
             collisionChecks.push(this.checkCollisions( -1, -1));
         }
         if (this.holding.s) {
-            this.pos.y += BASE_SPEED*this.statBlock.stats.runningSpeed;
+            this.pos.y += BASE_SPEED*this.statBlock.stats.runningSpeed*(2*deltaTime/frameRate());
             this.direction = 'down';
             collisionChecks.push(this.checkCollisions( 1, 1));
             collisionChecks.push(this.checkCollisions( 0, 1));
             collisionChecks.push(this.checkCollisions( -1, 1));
         }
         if (this.holding.d) {
-            this.pos.x += BASE_SPEED*this.statBlock.stats.runningSpeed;
+            this.pos.x += BASE_SPEED*this.statBlock.stats.runningSpeed*(2*deltaTime/frameRate());
             this.direction = 'right';
             collisionChecks.push(this.checkCollisions(1,  1));
             collisionChecks.push(this.checkCollisions(1,  0));
@@ -177,15 +175,15 @@ class Player {
     renderHealthBar() {
         push();
         //translate(-camera.x+(width/2), -camera.y+(height/2));
-        fill(255, 0, 0);
-        noStroke();
 
         // Draw health bar background
+        fill(255, 0, 0);
+        noStroke();
         rect(this.pos.x - 16, this.pos.y + 40, 32, 6);
 
         // Draw health bar foreground (based on current health)
         fill(0, 255, 0); // Green for health
-        let healthWidth = map(this.statBlock.stats.hp, 0, this.statBlock.stats.mhp, 0, 32);
+        let healthWidth = constrain(map(this.statBlock.stats.hp, 0, this.statBlock.stats.mhp, 0, 32),0,32);
         rect(this.pos.x - 16, this.pos.y + 40, healthWidth, 6);
 
         pop();

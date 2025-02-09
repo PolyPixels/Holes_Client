@@ -91,6 +91,8 @@ function socketSetup(){
             players[data.id].pos.y = data.pos.y;
             players[data.id].hp = data.hp;
             players[data.id].holding = data.holding;
+            players[data.id].animationType = data.animationType;
+            players[data.id].animationFrame = data.animationFrame;
         }
     });
 

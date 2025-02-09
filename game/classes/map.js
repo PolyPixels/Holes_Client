@@ -95,7 +95,9 @@ class Chunk{
     }
   
     render(){
-        fill("#3B1725");
+        // 1600 by 1600
+
+        fill("#3A2016"); //old one is #3B1725
         noStroke();
         for (let x = 0; x < CHUNKSIZE; x++){
             for (let y = 0; y < CHUNKSIZE; y++){

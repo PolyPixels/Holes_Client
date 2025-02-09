@@ -49,7 +49,7 @@ function setup() {
   }
 
 function draw() {
-    background("#71413B");
+    background("#71413B"); //old color is 
 
     if(gameState === "initial") {
         renderServerBrowser();
@@ -174,6 +174,7 @@ function draw() {
                         socket.emit("new_object", {cx: chunkPos.x, cy: chunkPos.y, type: temp.type, pos: {x: temp.pos.x, y: temp.pos.y}, rot: temp.rot, id: temp.id, hp: temp.hp, name: temp.name, color: temp.color});
 
                         curPlayer.animationCreate("put");
+                        socket.emit("update_pos", curPlayer);
                     }
                 }
             }
