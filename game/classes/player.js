@@ -23,7 +23,7 @@ class Player {
 
     checkCollisions(xOffset, yOffset) {
         let chunkPos = testMap.globalToChunk(this.pos.x+(xOffset*TILESIZE), this.pos.y+(yOffset*TILESIZE));
-
+        
         let x = floor(this.pos.x / TILESIZE) - (chunkPos.x*CHUNKSIZE) + xOffset;
         let y = floor(this.pos.y / TILESIZE) - (chunkPos.y*CHUNKSIZE) + yOffset;
         if(Debuging){
@@ -33,7 +33,16 @@ class Player {
             pop();
         }
         
-        
+        if(testMap.chunks[chunkPos.x+","+chunkPos.y] == undefined){ //if you dont have that chunk assume there is no dirt in the way
+            return {
+                x: (x + 0.5) * TILESIZE,
+                y: (y + 0.5) * TILESIZE,
+                cx: chunkPos.x,
+                cy: chunkPos.y,
+                val: 0
+            };
+        }
+
         return {
             x: (x + 0.5) * TILESIZE,
             y: (y + 0.5) * TILESIZE,
@@ -57,19 +66,21 @@ class Player {
             this.direction = 'up';
             collisionChecks.push(this.checkCollisions( 1, -1));
             collisionChecks.push(this.checkCollisions( 0, -1));
+            collisionChecks.push(this.checkCollisions( -1, -1));
         }
         if (this.holding.a) {
             this.pos.x += -BASE_SPEED*this.statBlock.stats.runningSpeed;
             this.direction = 'left';
-            collisionChecks.push(this.checkCollisions( 0,  1));
-            collisionChecks.push(this.checkCollisions( 0,  0));
-            collisionChecks.push(this.checkCollisions( 0, -1));
+            collisionChecks.push(this.checkCollisions( -1,  1));
+            collisionChecks.push(this.checkCollisions( -1,  0));
+            collisionChecks.push(this.checkCollisions( -1, -1));
         }
         if (this.holding.s) {
             this.pos.y += BASE_SPEED*this.statBlock.stats.runningSpeed;
             this.direction = 'down';
             collisionChecks.push(this.checkCollisions( 1, 1));
             collisionChecks.push(this.checkCollisions( 0, 1));
+            collisionChecks.push(this.checkCollisions( -1, 1));
         }
         if (this.holding.d) {
             this.pos.x += BASE_SPEED*this.statBlock.stats.runningSpeed;

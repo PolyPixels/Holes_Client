@@ -108,12 +108,12 @@ class Floor extends Placeable{
 }
 
 class Turret extends Placeable{
-    constructor(x, y, rot, health = BASE_HEALTH, id, color, ownerName ) {
+    constructor(x, y, rot, health, id, color, ownerName ) {
         super(x,y,rot,40,40,2);
         this.type = "turret";
         this.id = id; // socket ID
         this.hp = health;
-        this.mhp = BASE_HEALTH;
+        this.mhp = health;
         this.name = ownerName;
         // Set color with default fallback
         if (!color) {

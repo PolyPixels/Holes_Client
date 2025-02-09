@@ -87,8 +87,12 @@ function draw() {
 
         let keys = Object.keys(players);
         for (let i = 0; i < keys.length; i++) {
-            players[keys[i]].render();
-            players[keys[i]].update();
+            if(curPlayer){
+                if(players[keys[i]].pos.dist(curPlayer.pos) < TILESIZE*CHUNKSIZE*2){
+                    players[keys[i]].render();
+                    players[keys[i]].update();
+                }
+            }
         }
 
         if (curPlayer) {
@@ -274,6 +278,7 @@ function mouseReleased(){
 
 function playerDig(x,y, amount){
     let ray = createVector(x-curPlayer.pos.x, y-curPlayer.pos.y);
+
     let digSpot = cast(curPlayer.pos.x, curPlayer.pos.y, ray.heading(), (amount < 0));
     if(digSpot != undefined) dig(((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE), amount);
     
@@ -341,7 +346,8 @@ function cast(x,y, angle, placeBool){
     x = x-(chunkPos.x*CHUNKSIZE);
     y = y-(chunkPos.y*CHUNKSIZE);
     let index = x + (y / CHUNKSIZE);
-    if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 0) return {x: x, y: y};
+
+    if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 0) return {cx: chunkPos.x, cy: chunkPos.y, x: x, y: y};
 
     let playerToMouse = curPlayer.pos.dist(createVector((mouseX + camera.x - (width / 2)), (mouseY + camera.y - (height / 2))));
     let playerToTile = curPlayer.pos.dist(createVector(((chunkPos.x*CHUNKSIZE+x)*TILESIZE), ((chunkPos.y*CHUNKSIZE+y)*TILESIZE)));
