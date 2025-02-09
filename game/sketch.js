@@ -27,6 +27,7 @@ function setup() {
     // Create a responsive canvas
     let cnv = createCanvas(innerWidth - 10, innerHeight - 8);
     cnv.parent("canvas-container");
+    noSmooth();
     background(220);
     angleMode(DEGREES);
   
