@@ -139,7 +139,7 @@ function draw() {
                         let chunkPos = testMap.globalToChunk(x,y);
                         let temp;
                         if(ghostBuild.type == "trap"){
-                            temp = new Trap(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.hp, curPlayer.id, ghostBuild.color, curPlayer.name);
+                            temp = new Trap(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.hp, curPlayer.id, ghostBuild.color, curPlayer.name);
                         }
                         else if(ghostBuild.type == "wall"){
                             temp = new Wall(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color);

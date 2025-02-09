@@ -10,6 +10,10 @@ function preload() {
     loadRaceImages();
 
     trapImg = loadImage('images/structures/beartrap1.png');
+    bombImg = loadImage('images/structures/bomb1.png');
+    bombFlareImg = loadImage('images/structures/bomb2.png');
+    
+    dirtBombImg = loadImage('images/structures/dirtbomb1.png');
 }
 
 function loadDefaultImage(){

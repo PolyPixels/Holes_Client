@@ -1,6 +1,6 @@
 class Trap extends Placeable{
-    constructor(x, y, rot, health, id, color, ownerName ) {
-        super(x,y,rot,30,20,1);
+    constructor(x, y, health, id, color, ownerName ) {
+        super(x,y,0,30,20,1);
         this.type = "trap";
         this.id = id; // socket ID
         this.hp = health;
@@ -30,11 +30,10 @@ class Trap extends Placeable{
     render(t, alpha){
         push();
         translate(-camera.x+(width/2)+this.pos.x, -camera.y+(height/2)+this.pos.y);
-        rotate(this.rot);
         if(t == "green") tint(100, 200, 100, alpha);
         if(t == "red") tint(200, 100, 100, alpha);
         if(t == "none") noTint();
-        image(trapImg, -this.size.w/2, -this.size.h/2, this.size.w, this.size.h)
+        image(trapImg, -this.size.w/2, -this.size.h/2, this.size.w*2, this.size.h*2)
         pop();
     }
 }
