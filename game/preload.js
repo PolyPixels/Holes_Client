@@ -46,7 +46,7 @@ function loadRaceFrame(path) {
     let img = loadImage(
         path,
         function (loadedImage) {
-            console.log(`Loaded image: ` + path);
+            //console.log(`Loaded image: ` + path);
             return loadedImage;
         },
         function (err) {

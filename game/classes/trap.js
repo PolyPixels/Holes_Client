@@ -16,7 +16,7 @@ class Trap extends Placeable{
     }
 
     update() {
-        //if(this.id != curPlayer.id && this.name != curPlayer.name){ //aka if you didnt make this trap
+        if(this.id != curPlayer.id && this.name != curPlayer.name){ //aka if you didnt make this trap
             if(this.pos.dist(curPlayer.pos) < -2+(this.size.w+this.size.h)/2){
                 this.deleteTag = true;
                 curPlayer.statBlock.stats.hp -= 5;
@@ -24,7 +24,7 @@ class Trap extends Placeable{
                 let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
                 socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
             }
-        //}
+        }
     }
 
     render(t, alpha){
