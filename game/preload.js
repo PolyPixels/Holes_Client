@@ -35,6 +35,7 @@ function loadDefaultImage(){
 }
 
 function loadRaceFrame(path) {
+    path = `images/characters/` + path;
     let img = loadImage(
         path,
         function (loadedImage) {
@@ -65,20 +66,22 @@ function loadRaceImages() {
         // 4 is standing with shovel
         // 5, 6, 7 are walking with shovel
 
-        raceImages[raceName].front[0] = loadRaceFrame(`images/characters/${raceName}/${raceName}_front_stand.png`);
-        raceImages[raceName].back[0] = loadRaceFrame(`images/characters/${raceName}/${raceName}_back_stand.png`);
-        raceImages[raceName].right[0] = loadRaceFrame(`images/characters/${raceName}/${raceName}_side_stand.png`);
+        raceImages[raceName].front[0] = loadRaceFrame(`${raceName}/${raceName}_front_stand.png`);
+        raceImages[raceName].back[0] = loadRaceFrame(`${raceName}/${raceName}_back_stand.png`);
+        raceImages[raceName].right[0] = loadRaceFrame(`${raceName}/${raceName}_side_stand.png`);
 
         // Load images for each direction
         for (let i = 1; i < 4; i++) {
             // Front images
-            raceImages[raceName].front[i] = loadRaceFrame(`images/characters/${raceName}/${raceName}_front_walk${i}.png`);
+            raceImages[raceName].front[i] = loadRaceFrame(`${raceName}/${raceName}_front_walk${i}.png`);
     
             // Back images
-            raceImages[raceName].back[i] = loadRaceFrame(`images/characters/${raceName}/${raceName}_back_walk${i}.png`);
+            raceImages[raceName].back[i] = loadRaceFrame(`${raceName}/${raceName}_back_walk${i}.png`);
     
             // Right images
-            raceImages[raceName].right[i] = loadRaceFrame(`images/characters/${raceName}/${raceName}_side_walk${i}.png`);
+            raceImages[raceName].right[i] = loadRaceFrame(`${raceName}/${raceName}_side_walk${i}.png`);
         }
+
+        //raceImages[raceName].right[4] = loadRaceFrame(`${raceName}/shovel/${raceName}_side_stand_shovel.png`);
     }
 }

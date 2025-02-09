@@ -6,7 +6,7 @@ var curPlayer; //Your player
 var players = {}; //other players
 
 class Player {
-    constructor(x, y, health, id, color,race, name ) {
+    constructor(x, y, health, id, color, race, name ) {
         this.id = id; // socket ID
         this.pos = createVector(x, y);
         this.holding = { w: false, a: false, s: false, d: false }; // Movement keys state
