@@ -14,6 +14,9 @@ function preload() {
     bombFlareImg = loadImage('images/structures/bomb2.png');
     
     dirtBombImg = loadImage('images/structures/dirtbomb1.png');
+    
+    mineImg = loadImage('images/structures/bomb1.png');
+    dirtMineImg = loadImage('images/structures/dirtMine1.png');
 }
 
 function loadDefaultImage(){

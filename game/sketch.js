@@ -159,6 +159,9 @@ function draw() {
                         else if(ghostBuild.type == "turret"){
                             temp = new Turret(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.hp, curPlayer.id, ghostBuild.color, curPlayer.name);
                         }
+                        else if(ghostBuild.type == "bomb"){
+                            temp = new Bomb(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.hp, curPlayer.id, ghostBuild.color, curPlayer.name);
+                        }
                         else{
                             temp = new Placeable(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot);
                         }
@@ -243,6 +246,10 @@ function keyReleased() {
 
     if (keyCode === 55){ //8
         ghostBuild = new Turret(0,0,0,10,0,{r:255,g:255,b:255}, " ");
+    }
+
+    if (keyCode === 56){ //9
+        ghostBuild = new Bomb(0,0,0,10,0,{r:255,g:255,b:255}, " ");
     }
 }
 
