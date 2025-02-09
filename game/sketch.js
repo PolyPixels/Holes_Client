@@ -168,6 +168,8 @@ function draw() {
                         testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(temp);
                         testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
                         socket.emit("new_object", {cx: chunkPos.x, cy: chunkPos.y, type: temp.type, pos: {x: temp.pos.x, y: temp.pos.y}, rot: temp.rot, id: temp.id, hp: temp.hp, name: temp.name, color: temp.color});
+
+                        curPlayer.animationCreate("put");
                     }
                 }
             }
@@ -241,7 +243,7 @@ function keyReleased() {
     }
 
     if (keyCode === 54){ //6
-        ghostBuild = new Trap(0,0,0,10,0,{r:255,g:255,b:255}, " ");
+        ghostBuild = new Trap(0,0,10,0,{r:255,g:255,b:255}, " ");
     }
 
     if (keyCode === 55){ //8
@@ -249,7 +251,7 @@ function keyReleased() {
     }
 
     if (keyCode === 56){ //9
-        ghostBuild = new Bomb(0,0,0,10,0,{r:255,g:255,b:255}, " ");
+        ghostBuild = new Bomb(0,0,10,0,{r:255,g:255,b:255}, " ");
     }
 }
 

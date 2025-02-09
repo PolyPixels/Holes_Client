@@ -18,6 +18,7 @@ class Player {
         // Animation properties
         this.currentFrame = 0; // Current frame for animation
         this.animationFrame = 0; // Number to keep track of animation progress
+        this.animationType = ""; // Name of current animation
         this.direction = 'right'; // Default direction
     }
 
@@ -110,12 +111,28 @@ class Player {
 
         // Update the current frame for animation
         if (this.holding.w || this.holding.a || this.holding.s || this.holding.d) {
+
             this.animationFrame += (1/7);
             this.currentFrame = 1 + (this.animationFrame) % 4;
             if (this.currentFrame >= 4) this.currentFrame = 2
+
+        } else if (this.animationType != "") {
+
+            switch (this.animationType) {
+                case "put": { this.currentFrame = 4; } break;
+            }
+
+            this.animationFrame -= 1;
+            if (this.animationFrame <= 0) {
+                this.animationFrame = 0;
+                this.animationType = "";
+            }
+
         } else {
+
             this.animationFrame = 0;
             this.currentFrame = 0; // Reset to standing frame when not moving
+
         }
     }
 
@@ -168,5 +185,12 @@ class Player {
         rect(this.pos.x - 16, this.pos.y + 43, healthWidth, 6);
 
         pop();
+    }
+
+    animationCreate(anim) {
+        switch (anim) {
+            case "put": { this.animationFrame = 4; } break;
+        }
+        this.animationType = anim;
     }
 }

@@ -70,8 +70,12 @@ function loadRaceImages() {
         
         // 0 is standing
         // 1, 2, 3 are walk cycle
-        // 4 is standing with shovel
-        // 5, 6, 7 are walking with shovel
+
+        // 4 is putting something down
+
+        // 5 is standing with shovel
+        // 6, 7, 8 are walking with shovel
+
 
         raceImages[raceName].front[0] = loadRaceFrame(`${raceName}/${raceName}_front_stand.png`);
         raceImages[raceName].back[0] = loadRaceFrame(`${raceName}/${raceName}_back_stand.png`);
@@ -88,6 +92,10 @@ function loadRaceImages() {
             // Right images
             raceImages[raceName].right[i] = loadRaceFrame(`${raceName}/${raceName}_side_walk${i}.png`);
         }
+
+        raceImages[raceName].front[4] = loadRaceFrame(`${raceName}/place/${raceName}_front_place.png`);
+        raceImages[raceName].back[4] = loadRaceFrame(`${raceName}/place/${raceName}_back_place.png`);
+        raceImages[raceName].right[4] = loadRaceFrame(`${raceName}/place/${raceName}_side_place.png`);
 
         //raceImages[raceName].right[4] = loadRaceFrame(`${raceName}/shovel/${raceName}_side_stand_shovel.png`);
     }
