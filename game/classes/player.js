@@ -19,12 +19,9 @@ class Player {
         this.currentFrame = 0; // Current frame for animation
         this.direction = 'down'; // Default direction
         this.frameCount = 4; // Number of frames per direction
+        this.animationType = ""; // Name of current animation
         this.alignment = 50;
     }
-
-    
-
-    
 
     checkCollisions(xOffset, yOffset) {
         let chunkPos = testMap.globalToChunk(this.pos.x+(xOffset*TILESIZE), this.pos.y+(yOffset*TILESIZE));
@@ -126,8 +123,21 @@ class Player {
 
         // Update the current frame for animation
         if (this.holding.w || this.holding.a || this.holding.s || this.holding.d) {
-            this.currentFrame = (this.currentFrame + (1/7)) % this.frameCount;
+            this.animationFrame += (1/7);
+            this.currentFrame = 1 + (this.animationFrame) % 4;
+            if (this.currentFrame >= 4) this.currentFrame = 2;
+        } else if (this.animationType != "") {
+            switch (this.animationType) {
+                case "put": { this.currentFrame = 4; } break;
+            }
+
+            this.animationFrame -= 1;
+            if (this.animationFrame <= 0) {
+                this.animationFrame = 0;
+                this.animationType = "";
+            }
         } else {
+            this.animationFrame = 0;
             this.currentFrame = 0; // Reset to standing frame when not moving
         }
     }
@@ -142,7 +152,7 @@ class Player {
         fill(255);
         textSize(10);
         textAlign(CENTER);
-        text(this.name, this.pos.x, this.pos.y - 25); // Display player's name above the character
+        text(this.name, this.pos.x, this.pos.y - 40); // Display player's name above the character
         let raceName = races[this.race]
         // Select the correct image based on the direction and frame
         let imageToRender;
@@ -170,13 +180,20 @@ class Player {
         noStroke();
 
         // Draw health bar background
-        rect(this.pos.x - 16, this.pos.y + 20, 32, 6);
+        rect(this.pos.x - 16, this.pos.y + 40, 32, 6);
 
         // Draw health bar foreground (based on current health)
         fill(0, 255, 0); // Green for health
-        let healthWidth = map(this.statBlock.hp, 0, this.statBlock.mhp, 0, 32);
-        rect(this.pos.x - 16, this.pos.y + 20, healthWidth, 6);
+        let healthWidth = map(this.statBlock.stats.hp, 0, this.statBlock.stats.mhp, 0, 32);
+        rect(this.pos.x - 16, this.pos.y + 40, healthWidth, 6);
 
         pop();
+    }
+
+    animationCreate(anim) {
+        switch (anim) {
+            case "put": { this.animationFrame = 4; } break;
+        }
+        this.animationType = anim;
     }
 }
