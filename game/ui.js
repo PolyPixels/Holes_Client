@@ -25,6 +25,7 @@
         raceButtons.forEach((card) => {
             card.hide();
         });
+        race_back_button.hide()
         raceContainer.style("display", "none"); // Hide the container
         // If using raceTitle, hide it as well
         raceTitle.style("display", "none");
@@ -265,7 +266,7 @@ function hideLinks() {
                 console.log("Connected to " + selectedServer.ip);
                 hideServerBrowser();
                 gameState = "race_selection";
-                renderServerBrowser = false;
+                renderedserverBrowserContainer = false;
             } else {
                 alert("⚠️ Please select a server first.");
             }
@@ -304,7 +305,7 @@ function hideLinks() {
         serverEntry.style("display", "flex");
         serverEntry.style("align-items", "center"); // Align items vertically
         serverEntry.style("gap", "10px"); // Add spacing between elements
-        
+        serverEntry
         // Create a container for the logo
         let logoContainer = createDiv();
         logoContainer.style("width", "60px"); // Fixed width for uniformity
@@ -359,6 +360,13 @@ function hideLinks() {
             serverName.html(data.name || "Unnamed Server")
             playerCount.html(`Players: ${data.playerCount}`);
             serverLogo.attribute("src", data.image);
+
+
+    // Disable pointer events to prevent any interactions
+            serverEntry.style("pointer-events", data.status === "Online" ?"all" : "none");
+
+    // Optionally, adjust opacity to signal a disabled state
+            serverEntry.style("opacity", data.status === "Online" ?"1": "0.5");
         });
         
   
@@ -372,6 +380,9 @@ function hideLinks() {
       removeButton.style("border", "none");
       removeButton.style("border-radius", "3px");
       removeButton.style("cursor", "pointer");
+
+
+
   
       removeButton.mousePressed(() => {
         serverList.splice(index, 1);
@@ -414,7 +425,7 @@ function hideLinks() {
     raceTitle.id("raceTitle");
     raceTitle.elt.innerHTML =  "Select Your Race"
     raceTitle.style("position", "absolute");
-    raceTitle.style("top", "40px");
+    raceTitle.style("top", "1dvw");
     raceTitle.style("left", "50%");
     raceTitle.style("transform", "translateX(-50%)");
     // Responsive font size (combining viewport and fixed pixels)
@@ -426,6 +437,18 @@ function hideLinks() {
     raceTitle.style("background-color", "rgba(0, 0, 0, 0.3)");
     raceTitle.style("border-radius", "10px");
     raceTitle.style("text-align", "center");
+
+
+    //back to server selection button
+    race_back_button.innerHTML = "Go Back"
+    race_back_button.style("position", "absolute");
+    race_back_button.style("top", "80dvw");
+    race_back_button.mousePressed(()=>{
+      console.log("pressed")
+      hideRaceSelect()
+      gameState = "initial"
+    })
+    race_back_button.parent(raceContainer)
 
     nameInput.show();
     goButton.show();
@@ -467,6 +490,7 @@ function hideLinks() {
     //  Create a container for race selection cards (centered)
     // ---------------------------------------------------
     raceContainer = createDiv();
+    race_back_button =createButton("go back")
     raceContainer.id("raceContainer");
     raceContainer.style("position", "absolute");
     raceContainer.style("top", "120px");
@@ -561,6 +585,7 @@ function hideLinks() {
       card.parent(raceContainer);
       raceButtons.push(card);
     });
+    race_back_button.hide()
   
     // ---------------------------------------------------
     //   Name Input Field (centered, larger & responsive)

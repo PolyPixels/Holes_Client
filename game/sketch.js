@@ -21,7 +21,6 @@ var buildMode = false;
 var ghostBuild;
 var DIGSPEED = 0.04;
 
-let raceContainer, raceTitle
 
 function setup() {
     // Create a responsive canvas
@@ -51,7 +50,8 @@ function setup() {
 function draw() {
     background("#71413B"); //old color is 
 
-    if(gameState === "initial") {
+    if(gameState == "initial") {
+        console.log("restart")
         renderServerBrowser();
         renderLinks()
     }
