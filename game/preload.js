@@ -1,6 +1,7 @@
 const raceImages = {}; // Object to hold all race images
 var defaultImage;
 var trapImg;
+var chunkDirtImg;
 
 function preload() {
     // Load the default image
@@ -17,6 +18,8 @@ function preload() {
     
     mineImg = loadImage('images/structures/bomb1.png');
     dirtMineImg = loadImage('images/structures/dirtmine1.png');
+
+    chunkDirtImg = loadImage('images/dirt_walls.png');
 }
 
 function loadDefaultImage(){

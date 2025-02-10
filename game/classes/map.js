@@ -34,6 +34,7 @@ class Map{
             for(let xOff = -1; xOff < 2; xOff++){
                 let chunk = this.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
                 if(chunk != undefined) chunk.render();
+                
                 if(Debuging){
                     push();
                     noFill();
@@ -97,8 +98,10 @@ class Chunk{
     render(){
         // 1600 by 1600
 
+        push();
+        beginClip();
         fill("#3A2016"); //old one is #3B1725
-        noStroke();
+        //noStroke();
         for (let x = 0; x < CHUNKSIZE; x++){
             for (let y = 0; y < CHUNKSIZE; y++){
                 //holds the values at each corner
@@ -123,6 +126,9 @@ class Chunk{
                 //holds the screen cordinates of each corner
                 let scCorners = [this.cordToScreen(x,y),this.cordToScreen(x+1,y),
                                  this.cordToScreen(x+1,y+1),this.cordToScreen(x,y+1)];
+
+                //scCorners = [{x: x*TILESIZE/4, y: y*TILESIZE/4},{x: (x+1)*TILESIZE/4, y: y*TILESIZE/4},
+                //             {x: (x+1)*TILESIZE/4, y: (y+1)*TILESIZE/4},{x: x*TILESIZE/4, y: (y+1)*TILESIZE/4}];
                 
                 //an attempt to reduce banding effects
                 scCorners[0].x -= 1.5; scCorners[0].y -= 1.5;
@@ -160,8 +166,6 @@ class Chunk{
                 d.y = lerp(scCorners[0].y,scCorners[3].y,amt);
 
                 
-                //strokeWeight(5);
-                //stroke(100,50,0);
                 
                 //draw the specific shape based on which corner values > 0
                 switch(state){
@@ -307,6 +311,9 @@ class Chunk{
             }
         }
 
+        endClip();
+        image(chunkDirtImg, this.cx*CHUNKSIZE*TILESIZE - camera.x + width/2, this.cy*CHUNKSIZE*TILESIZE - camera.y + height/2, 1600, 1600);
+        pop();
         for(let i = 0; i < this.objects.length; i++){
             this.objects[i].render("none", 255);
         }

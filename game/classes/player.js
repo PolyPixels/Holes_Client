@@ -14,6 +14,7 @@ class Player {
         this.name = name;
         this.color = color || { r: 255, g: 5, b: 5 };
         this.statBlock = new StatBlock(this.race, health);
+        this.alignment = 50;
 
         // Animation properties
         this.currentFrame = 0; // Current frame for animation

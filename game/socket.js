@@ -39,8 +39,8 @@ function socketSetup(){
 
     socket.on('YOUR_ID', (data) => {
         curPlayer = new Player(
-            random(-200*TILESIZE, 200*TILESIZE),
-            random(-200*TILESIZE, 200*TILESIZE),
+            200, //random(-200*TILESIZE, 200*TILESIZE)
+            200, //random(-200*TILESIZE, 200*TILESIZE)
             undefined,
             data.id,
             data.color,
