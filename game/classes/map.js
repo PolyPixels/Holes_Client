@@ -334,7 +334,7 @@ class Placeable{
         3=decorations (ex. mugs, plates, flowers, papers)
         2=walls,doors,tables,chairs,chests
         1=rugs,traps
-        0=floors
+        0=floors, plants
         */
     }
 
