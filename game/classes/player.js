@@ -64,28 +64,28 @@ class Player {
         let collisionChecks = [];
 
         if (this.holding.w) {
-            this.pos.y += -BASE_SPEED*this.statBlock.stats.runningSpeed*(2*deltaTime/frameRate());
+            this.pos.y += -BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'up';
             collisionChecks.push(this.checkCollisions( 1, -1));
             collisionChecks.push(this.checkCollisions( 0, -1));
             collisionChecks.push(this.checkCollisions( -1, -1));
         }
         if (this.holding.a) {
-            this.pos.x += -BASE_SPEED*this.statBlock.stats.runningSpeed*(2*deltaTime/frameRate());
+            this.pos.x += -BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'left';
             collisionChecks.push(this.checkCollisions( -1,  1));
             collisionChecks.push(this.checkCollisions( -1,  0));
             collisionChecks.push(this.checkCollisions( -1, -1));
         }
         if (this.holding.s) {
-            this.pos.y += BASE_SPEED*this.statBlock.stats.runningSpeed*(2*deltaTime/frameRate());
+            this.pos.y += BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'down';
             collisionChecks.push(this.checkCollisions( 1, 1));
             collisionChecks.push(this.checkCollisions( 0, 1));
             collisionChecks.push(this.checkCollisions( -1, 1));
         }
         if (this.holding.d) {
-            this.pos.x += BASE_SPEED*this.statBlock.stats.runningSpeed*(2*deltaTime/frameRate());
+            this.pos.x += BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'right';
             collisionChecks.push(this.checkCollisions(1,  1));
             collisionChecks.push(this.checkCollisions(1,  0));
