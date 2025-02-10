@@ -96,11 +96,13 @@ class Chunk{
     }
   
     render(){
-        // 1600 by 1600
+        // Chunk dimensions: 1600 by 1600
+        let cpos = this.cordToScreen(0,0)
+        image(dirtFloorImg, cpos.x, cpos.y, 1600, 1600 );
 
         push();
         beginClip();
-        fill("#3A2016"); //old one is #3B1725
+        fill("#3B1725"); //old one is #3B1725
         //noStroke();
         for (let x = 0; x < CHUNKSIZE; x++){
             for (let y = 0; y < CHUNKSIZE; y++){

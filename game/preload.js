@@ -20,6 +20,7 @@ function preload() {
     dirtMineImg = loadImage('images/structures/dirtmine1.png');
 
     chunkDirtImg = loadImage('images/dirt_walls.png');
+    dirtFloorImg = loadImage('images/floor.png');
 }
 
 function loadDefaultImage(){

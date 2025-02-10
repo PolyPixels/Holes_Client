@@ -48,7 +48,7 @@ function setup() {
   }
 
 function draw() {
-    background("#71413B"); //old color is 
+    background("#7F3F00"); //old color is 71413B
 
     if(gameState == "initial") {
         console.log("restart")
