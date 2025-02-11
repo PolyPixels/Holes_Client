@@ -444,14 +444,3 @@ function getState(c1,c2,c3,c4){
     if(c4 >= 1) val+=1
     return val;
 }
-
-function cleanChunk(cx,cy){
-    let chunk = testMap.chunks[cx+","+cy];
-    for (let x = 0; x < CHUNKSIZE; x++){
-        for (let y = 0; y < CHUNKSIZE; y++){
-            let index = x + (y / CHUNKSIZE);
-            chunk.data[index] = 0; 
-            socket.emit("update_node", {chunkPos: (cx+","+cy), index: index, val: 0});
-        }
-    }
-}
