@@ -2,6 +2,7 @@ const raceImages = {}; // Object to hold all race images
 var defaultImage;
 var trapImg;
 var chunkDirtImg;
+var dirtFloorImg;
 
 function preload() {
     // Load the default image
@@ -10,17 +11,33 @@ function preload() {
     // Load race images
     loadRaceImages();
 
-    trapImg = loadImage('images/structures/beartrap1.png');
-    bombImg = loadImage('images/structures/bomb1.png');
-    bombFlareImg = loadImage('images/structures/bomb2.png');
-    
-    dirtBombImg = loadImage('images/structures/dirtbomb1.png');
-    
-    mineImg = loadImage('images/structures/bomb1.png');
-    dirtMineImg = loadImage('images/structures/dirtmine1.png');
-
+    //Dirt floor and wall images
     chunkDirtImg = loadImage('images/dirt_walls.png');
     dirtFloorImg = loadImage('images/floor.png');
+
+    // //load obj imgs
+    // wallImg = loadImage();
+    // doorImg = loadImage();
+    // floorImg = loadImage();
+    // rugImg = loadImage();
+    // mugImg = loadImage();
+    // bearTrapImg = loadImage('images/structures/beartrap1.png');
+    // landMineImg = loadImage('images/structures/bomb1.png');
+    // turretImg = loadImage();
+    // mushroomImg = loadImage();
+
+    // //sort obj imgs
+    // objImgs = [
+    // /*0*/    [wallImg],
+    // /*1*/    [doorImg],
+    // /*2*/    [floorImg],
+    // /*3*/    [rugImg],
+    // /*4*/    [mugImg],
+    // /*5*/    [bearTrapImg],
+    // /*6*/    [landMineImg],
+    // /*7*/    [turretImg],
+    // /*8*/    [mushroomImg]
+    // ]
 }
 
 function loadDefaultImage(){
