@@ -49,23 +49,6 @@ const BASE_STATS = [
         "powerLevel": 1,
         "handDigSpeed": 0.08,
         "runningSpeed": 1
-    },
-    {
-        "name": "gayward",
-        "hp": 120,
-        "mhp": 100,
-        "regen": 10,
-        "attack": 1,
-        "magic": 1,
-        "magicResistance": 1,
-        "luck": 1,
-        "credit": 1,
-        "hearing": 5,
-        "speakingRange": 1,
-        "Fear": 2,
-        "powerLevel": 1,
-        "handDigSpeed": 0.08,
-        "runningSpeed": 1
     }
 ]
 class StatBlock{
