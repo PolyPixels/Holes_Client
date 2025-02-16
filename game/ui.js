@@ -262,7 +262,7 @@ function renderServerBrowser() {
               socket = io.connect("http://" + selectedServer.ip + ":3000");
               socketSetup();
               testMap = new Map();
-              ghostBuild = new Trap(0, 0, 0, 10, 0, { r: 255, g: 255, b: 255 }, " ");
+              ghostBuild = createObject("Wall", 0,0,0, 0, " ", " ");
               console.log("Connected to " + selectedServer.ip);
               hideServerBrowser();
               gameState = "race_selection";

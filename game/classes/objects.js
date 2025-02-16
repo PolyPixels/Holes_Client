@@ -16,21 +16,50 @@ Obj Dic is a full dictanary of every object that can exist, falling into one of 
 */
 
 var objDic = {};
-definePlacable("Wall", 0, 60, 60, 2, 100);
-definePlacable("Door", 1, 60, 60, 2, 100);
-definePlacable("Floor", 2, 60, 60, 0, 100);
-definePlacable("Rug", 3, 60, 60, 1, 100);
-definePlacable("Mug", 4, 60, 60, 3, 100);
-defineTrap("BearTrap", 5, 60, 60, 100, 60, 60, false, 5);
-defineTrap("LandMine", 6, 60, 60, 100, 60, 60, false, 5);
+definePlaceable("Wall", 0, 128, 128, 2, 100, true);
+definePlaceable("Door", 1, 64, 128, 2, 100, true);
+definePlaceable("Floor", 2, 128, 128, 0, 100, true);
+definePlaceable("Rug", 3, 128, 128, 1, 100, true);
+definePlaceable("Mug", 4, 32, 32, 3, 100, false);
+defineTrap("BearTrap", 5, 68, 48, 100, 50, 50, false, 15);
+defineTrap("LandMine", 6, 52, 36, 100, 40, 40, false, 10);
 
 function turretUpdate(){
-    console.log("turret is working");
+    if(curPlayer.name != this.ownerName){
+        this.rot = curPlayer.pos.copy().sub(this.pos).heading();
+        let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+        socket.emit("update_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, update_name: "rot", update_value: this.rot});
+    }
 }
-defineCustomObj("Turret", 7, 60, 60, 2, 100, turretUpdate);
-definePlant("Mushroom", 8, 60, 60, 100, 5.5, "edible_mushroom");
+defineCustomObj("Turret", 7, 60, 60, 2, 100, turretUpdate, true);
+definePlant("Mushroom", 8, 60, 60, 100, 60, "edible_mushroom");
 
-//defineInvObj("Chest", 9, 60, 60, 100, 10.5);
+function bombUpdate(){
+    //Fuse go down
+    this.hp-=1;
+
+    if (this.hp <= 0) {
+        
+        // Bomb hurts everyone nearby
+        if(this.pos.dist(curPlayer.pos) < -2+(this.size.w+this.size.h)/2){
+            curPlayer.statBlock.stats.hp -= 20;
+            socket.emit("update_pos", curPlayer);
+        }
+
+        // if you made this bomb, when it eventually blows up, the 'damage' will be sent to server by bomb-placer
+        if(this.id == curPlayer.id && this.ownerName == curPlayer.name) { 
+
+        }
+
+        // Remove bomb after explosion
+        this.deleteTag = true;
+        let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+        socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
+    }
+}
+defineCustomObj("PlacedBomb", 9, 15*4, 13*4, 1, 200, bombUpdate);
+
+//defineInvObj("Chest", 10, 60, 60, 100, 10.5, true);
 
 var teamColors = [
     {r:   0, g:   0, b:   0}, //Black - No Team
@@ -49,7 +78,8 @@ var teamColors = [
 ]
 
 class Placeable{
-    constructor(x,y,w,h,rot,z,color,health,imgNum){
+    constructor(objName,x,y,w,h,rot,z,color,health,imgNum,canRotate){
+        this.objName = objName;
         this.pos = createVector(x,y);
         this.size = {w: w, h: h};
         this.rot = rot;
@@ -58,9 +88,11 @@ class Placeable{
         this.hp = health;
         this.mhp = health;
         this.imgNum = imgNum;
+        this.canRotate = canRotate;
 
         this.openBool = true; //is object in an open spot?, used for ghost rendering
         this.deleteTag = false;
+        this.type = "Placeable";
     }
 
     update(){}
@@ -71,7 +103,7 @@ class Placeable{
         rotate(this.rot);
         if(t == "green") tint(100, 200, 100, alpha);
         if(t == "red") tint(200, 100, 100, alpha);
-        image(objImgs[this.imgNum], -this.size.w/2,-this.size.h/2);
+        image(objImgs[this.imgNum][0], -this.size.w/2,-this.size.h/2, this.size.w, this.size.h);
         pop();
     }
 
@@ -138,7 +170,7 @@ class Placeable{
             translate(camera.x-(width/2)-this.pos.x, camera.y-(height/2)-this.pos.y);
             fill(255);
             circle(((x+(chunkPos.x*CHUNKSIZE))*TILESIZE)-camera.x+(width/2),((y+(chunkPos.y*CHUNKSIZE))*TILESIZE)-camera.y+(height/2), 10);
-            pop();
+            pop(); 
         }
         
         return {
@@ -153,40 +185,53 @@ class Placeable{
 }
 
 class Plant extends Placeable{
-    constructor(x,y,w,h,color,health,imgNum,growthRate,itemDrop){
-        super(x,y,w,h,0,0,color,health,imgNum);
+    constructor(objName,x,y,w,h,color,health,imgNum,growthRate,itemDrop){
+        super(objName,x,y,w,h,0,0,color,health,imgNum,false);
         this.growthRate = growthRate;
         this.itemDrop = itemDrop;
         
         this.growthTimer = 0;
         this.stage = 0;
+        this.type = "Plant";
     }
 
     update(){
         if(this.growthTimer > this.growthRate){
             if(this.stage < objImgs[this.imgNum].length-1){
                 this.stage ++;
+                this.growthTimer = 0;
             }
         }
-        this.growthTimer += 1/rfameRate(); //growth timer goes up by 1 every second
+        this.growthTimer += 1/frameRate(); //growth timer goes up by 1 every second
+    }
+
+    render(t, alpha){
+        push();
+        translate(-camera.x+(width/2)+this.pos.x, -camera.y+(height/2)+this.pos.y);
+        rotate(this.rot);
+        if(t == "green") tint(100, 200, 100, alpha);
+        if(t == "red") tint(200, 100, 100, alpha);
+        image(objImgs[this.imgNum][this.stage], -this.size.w/2,-this.size.h/2, this.size.w, this.size.h);
+        pop();
     }
 }
 
 class Trap extends Placeable{
-    constructor(x,y,w,h,color,health,imgNum,id,ownerName,triggerRadius,damageRadius,digBool,damage){
-        super(x,y,w,h,0,1,color,health,imgNum);
+    constructor(objName,x,y,w,h,color,health,imgNum,id,ownerName,triggerRadius,damageRadius,digBool,damage){
+        super(objName,x,y,w,h,0,1,color,health,imgNum,false);
         this.id = id;
         this.ownerName = ownerName;
         this.triggerRadius = triggerRadius; //in pixels
         this.damage = damage; //how much it hurts players and objs
         this.damageRadius = damageRadius; //in pixels
         this.digBool = digBool; //does it affect dirt?
+        this.type = "Trap";
     }
 
     update(){
         //!make this handle multiple players
-        if(curPlayer.color != this.color){ //not on the same team as the trap
-            if(this.id != curPlayer.id && this.name != curPlayer.name){ //aka if you didnt make this trap
+        if(curPlayer.color != this.color || this.color == 0){ //not on the same team as the trap, or the trap belongs to no team
+            if(this.id != curPlayer.id && this.ownerName != curPlayer.name){ //aka if you didnt make this trap
                 if(this.pos.dist(curPlayer.pos) < this.triggerRadius){
                     this.deleteTag = true;
                     curPlayer.statBlock.stats.hp -= this.damage;
@@ -200,14 +245,15 @@ class Trap extends Placeable{
 }
 
 class InvObj extends Placeable{
-    constructor(x,y,w,h,color,health,imgNum,id,ownerName,maxWeight){
-        super(x,y,w,h,0,2,color,health,imgNum);
+    constructor(objName,x,y,w,h,color,health,imgNum,id,ownerName,maxWeight,canRotate){
+        super(objName,x,y,w,h,0,2,color,health,imgNum,canRotate);
         this.id = id;
         this.ownerName = ownerName;
         this.maxWeight = maxWeight;
 
         this.locked = false;
         this.inv = [];
+        this.type = "InvObj";
     }
 
     update(){
@@ -238,16 +284,42 @@ class InvObj extends Placeable{
 }
 
 class CustomObj extends Placeable{
-    constructor(x,y,w,h,rot,z,color,health,imgNum,id,ownerName,update){
-        super(x,y,w,h,rot,z,color,health,imgNum);
+    constructor(objName,x,y,w,h,rot,z,color,health,imgNum,id,ownerName,update,canRotate){
+        super(objName,x,y,w,h,rot,z,color,health,imgNum,canRotate);
         this.id = id;
         this.ownerName = ownerName;
         this.update = update;
+        this.type = "Custom";
     }
 
     //define your own update
 }
 
+function createObject(name, x, y, rot, color, id, ownerName){
+    if(objDic[name] == undefined){
+        throw new Error(`Object with name: ${name}, does not exist`);
+    }
+    else{
+        if(objDic[name].type == "Placeable"){
+            return new Placeable(name, x, y, objDic[name].w, objDic[name].h, rot, objDic[name].z, color, objDic[name].hp, objDic[name].img, objDic[name].canRotate);
+        }
+        else if(objDic[name].type == "Plant"){
+            return new Plant(name, x, y, objDic[name].w, objDic[name].h, color, objDic[name].hp, objDic[name].img, objDic[name].gr, objDic[name].itemDrop);
+        }
+        else if(objDic[name].type == "Trap"){
+            return new Trap(name, x, y, objDic[name].w, objDic[name].h, color, objDic[name].hp, objDic[name].img, id, ownerName, objDic[name].tr, objDic[name].dr, objDic[name].db, objDic[name].damage);
+        }
+        else if(objDic[name].type == "InvObj"){
+            return new InvObj(name, x, y, objDic[name].w, objDic[name].h, color, objDic[name].hp, objDic[name].img, id, ownerName, objDic[name].mw, objDic[name].canRotate);
+        }
+        else if(objDic[name].type == "Custom"){
+            return new CustomObj(name, x, y, objDic[name].w, objDic[name].h, rot, objDic[name].z, color, objDic[name].hp, objDic[name].img, id, ownerName, objDic[name].update, objDic[name].canRotate);
+        }
+        else{
+            throw new Error(`Object type: ${objDic[name].type}, does not exist.`);
+        }
+    }
+}
 
 //These should probably be moved to a different file?
 function checkParams(inputs, inputNames, checks){
@@ -270,8 +342,8 @@ function getParamNames(func){
 }
 
 /**
- * Creates a new lookup in objDic for an object of type Placable
- * @returns {Placeable} not an actual Placable but all info needed for one
+ * Creates a new lookup in objDic for an object of type Placeable
+ * @returns {Placeable} not an actual Placeable but all info needed for one
  * @param {string} name the name of the object
  * @param {int} imgNum the index of the png or pngs, in the objImgs array
  * @param {int} width the desired width of the obj, in pixels !Keep TILESIZE in mind!
@@ -282,17 +354,19 @@ function getParamNames(func){
  * - 2=walls,doors,tables,chairs,chests
  * - 3=decorations
  * @param {int} health how much health this object should have
+ * @param {boolean} canRotate self explanitory
 */
-function definePlacable(name,imgNum,width,height,zLevel,health){
-    checkParams(arguments, getParamNames(definePlacable), ["string","int","int","int","int","int"]);
+function definePlaceable(name,imgNum,width,height,zLevel,health,canRotate){
+    checkParams(arguments, getParamNames(definePlaceable), ["string","int","int","int","int","int","boolean"]);
     objDic[name] = {
-        type: "Placable",
+        type: "Placeable",
         name: name,
         img: imgNum,
         w: width,
         h: height,
         z: zLevel,
-        hp: health
+        hp: health,
+        canRotate: canRotate
     };
 }
 
@@ -335,18 +409,20 @@ function defineTrap(name,imgNum,width,height,health,triggerRadius,damageRadius,d
  * @param {int} height the desired height of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} health how much health this object should have
  * @param {number} maxWeight how much this object can hold
+ * @param {boolean} canRotate self explanitory
 */
-function defineInvObj(name,imgNum,width,height,health,maxWeight){
-    checkParams(arguments, getParamNames(defineInvObj), ["string","int","int","int","int","number"]);
+function defineInvObj(name,imgNum,width,height,health,maxWeight,canRotate){
+    checkParams(arguments, getParamNames(defineInvObj), ["string","int","int","int","int","number","boolean"]);
     objDic[name] = {
-        type: "Inv",
+        type: "InvObj",
         name: name,
         img: imgNum,
         w: width,
         h: height,
         z: 2,
         hp: health,
-        mw: maxWeight
+        mw: maxWeight,
+        canRotate: canRotate
     };
 }
 
@@ -391,9 +467,10 @@ function definePlant(name,imgNum,width,height,health,growthRate,itemDrop){
  * - 3=decorations
  * @param {int} health how much health this object should have
  * @param {Function} update a function to call every tick
+ * @param {boolean} canRotate self explanitory
 */
-function defineCustomObj(name,imgNum,width,height,zLevel,health,update){
-    checkParams(arguments, getParamNames(defineCustomObj), ["string","int","int","int","int","int","function"]);
+function defineCustomObj(name,imgNum,width,height,zLevel,health,update,canRotate){
+    checkParams(arguments, getParamNames(defineCustomObj), ["string","int","int","int","int","int","function","boolean"]);
     objDic[name] = {
         type: "Custom",
         name: name,
@@ -402,6 +479,7 @@ function defineCustomObj(name,imgNum,width,height,zLevel,health,update){
         h: height,
         z: zLevel,
         hp: health,
-        update: update
+        update: update,
+        canRotate: canRotate
     };
 }

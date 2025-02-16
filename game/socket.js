@@ -43,7 +43,7 @@ function socketSetup(){
             200, //random(-200*TILESIZE, 200*TILESIZE)
             undefined,
             data.id,
-            data.color,
+            0,
             0,
             ''
         ); // Default race index 0
@@ -106,31 +106,7 @@ function socketSetup(){
 
     socket.on("NEW_OBJECT", (data) => {
         let chunk = testMap.chunks[data.cx+","+data.cy];
-        let temp;
-        if(data.type == "trap"){
-            temp = new Trap(data.pos.x, data.pos.y, data.rot, data.hp, data.ownerId, data.color, data.ownerName);
-        }
-        else if(data.type == "wall"){
-            temp = new Wall(data.pos.x, data.pos.y, data.rot, data.color);
-        }
-        else if(data.type == "door"){
-            temp = new Door(data.pos.x, data.pos.y, data.rot, data.color);
-        }
-        else if(data.type == "floor"){
-            temp = new Floor(data.pos.x, data.pos.y, data.rot, data.color);
-        }
-        else if(data.type == "rug"){
-            temp = new Rug(data.pos.x, data.pos.y, data.rot, data.color);
-        }
-        else if(data.type == "cup"){
-            temp = new Cup(data.pos.x, data.pos.y, data.rot, data.color);
-        }
-        else if(data.type == "turret"){
-            temp = new Turret(data.pos.x, data.pos.y, data.rot, data.hp, data.ownerId, data.color, data.ownerName);
-        }
-        else{
-            temp = new Placeable(data.pos.x, data.pos.y, data.rot);
-        }
+        let temp = createObject(data.obj.objName, data.obj.pos.x, data.obj.pos.y, data.obj.rot, data.obj.color, data.obj.id, data.obj.ownerName);
         chunk.objects.push(temp);
         chunk.objects.sort((a,b) => a.z - b.z);
     });
@@ -158,33 +134,8 @@ function socketSetup(){
         let keys = Object.keys(data.data);
         for(let i=0; i<keys.length; i++) testMap.chunks[data.x+","+data.y].data[keys[i]] = data.data[keys[i]];
         testMap.chunkBools[data.x+","+data.y] = true;
-        //console.log(data.objects);
         for(let i=0; i<data.objects.length; i++){
-            let temp;
-            if(data.objects[i].type == "trap"){
-                temp = new Trap(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].hp, data.objects[i].ownerId, data.objects[i].color, data.objects[i].ownerName);
-            }
-            else if(data.objects[i].type == "wall"){
-                temp = new Wall(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color);
-            }
-            else if(data.objects[i].type == "door"){
-                temp = new Door(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color);
-            }
-            else if(data.objects[i].type == "floor"){
-                temp = new Floor(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color);
-            }
-            else if(data.objects[i].type == "rug"){
-                temp = new Rug(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color);
-            }
-            else if(data.objects[i].type == "cup"){
-                temp = new Cup(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color);
-            }
-            else if(data.objects[i].type == "turret"){
-                temp = new Turret(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].hp, data.objects[i].ownerId, data.objects[i].color, data.objects[i].ownerName);
-            }
-            else{
-                temp = new Placeable(data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot);
-            }
+            let temp = createObject(data.objects[i].objName, data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color, data.objects[i].id, data.objects[i].ownerName);;
             testMap.chunks[data.x+","+data.y].objects.push(temp);
             testMap.chunks[data.x+","+data.y].objects.sort((a,b) => a.z - b.z);
         }

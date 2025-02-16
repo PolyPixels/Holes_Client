@@ -12,7 +12,7 @@ class Player {
         this.holding = { w: false, a: false, s: false, d: false }; // Movement keys state
         this.race = race; // Race index
         this.name = name;
-        this.color = color || { r: 255, g: 5, b: 5 };
+        this.color = color; //team color index
         this.statBlock = new StatBlock(this.race, health);
         this.alignment = 50;
 
