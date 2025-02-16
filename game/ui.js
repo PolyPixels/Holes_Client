@@ -507,87 +507,97 @@ function setupUI(){
   raceContainer.style("background-color", "rgba(0, 0, 0, 0.3)");
   raceContainer.style("padding", "20px");
   raceContainer.style("border-radius", "10px");
+  raceContainer.style("min-width","100dvw")
   // ---------------------------------------------------
   //  Create cards for each race (with responsive sizing)
-  // ---------------------------------------------------
-  races.forEach((raceName, i) => {
-    let card = createDiv();
-    card.class("raceCard");
-    card.style("display", "flex");
-    card.style("flex-direction", "column");
-    card.style("align-items", "center");
+// Allowed stats to display
+const allowedStats = ["hp", "mhp", "regen", "attack", "magic", "magicResistance", "hearing"];
 
-    // Responsive card width: based on canvas width, constrained between 150 and 300px
-    let cardWidth = constrain(width * 0.15, 150, 300);
-    card.style("width", cardWidth + "px");
+// Iterate over each race in the races array
+races.forEach((raceName, i) => {
+  // Create the card container for the race
+  let card = createDiv();
+  card.class("raceCard");
+  card.style("display", "flex");
+  card.style("flex-direction", "column");
+  card.style("align-items", "center");
 
-    card.style("background-color", "#404040");
-    card.style("border", "3px solid #fff");
-    card.style("border-radius", "10px");
-    card.style("padding", "15px");
-    card.style("cursor", "pointer");
-    card.style("transition", "transform 0.2s, background-color 0.2s, box-shadow 0.2s");
-    card.selected = false; // custom property for selection
+  // Responsive card width: based on canvas width, constrained between 150 and 300px
+  let cardWidth = constrain(width * 0.15, 150, 300);
+  card.style("width", cardWidth + "px");
 
-    // Create an image element for the race
-    let raceImgPath = `images/characters/${raceName}/${raceName}_portrait.png`;
-    let raceImg = createImg(raceImgPath, `${raceName} image`);
-    raceImg.style("max-width", "10dvw");
-    raceImg.style("height", "10dvh");
-    raceImg.parent(card);
+  card.style("background-color", "#404040");
+  card.style("border", "3px solid #fff");
+  card.style("border-radius", "10px");
+  card.style("padding", "15px");
+  card.style("cursor", "pointer");
+  card.style("transition", "transform 0.2s, background-color 0.2s, box-shadow 0.2s");
+  card.selected = false; // custom property for selection
 
-     // Race stats label with responsive font-size and right alignment
-      let raceStatsLbl = createP("health : 20");
-      raceStatsLbl.style("color", "#fff");
-      raceStatsLbl.style("font-size", "calc(0.5vw + 12px)");
-      raceStatsLbl.style("font-weight", "bold");
-      raceStatsLbl.style("margin", "0px 0 0 0");
-      // Use flex alignment override to push the element to the right
-      raceStatsLbl.style("align-self", "flex-end");
-      raceStatsLbl.style("text-align", "right");
-      raceStatsLbl.parent(card);
+  // Create an image element for the race portrait
+  let raceImgPath = `images/characters/${raceName}/${raceName}_portrait.png`;
+  let raceImg = createImg(raceImgPath, `${raceName} image`);
+  raceImg.style("max-width", "10dvw");
+  raceImg.style("height", "10dvh");
+  raceImg.parent(card);
 
+  // Retrieve stats from BASE_STATS (assumes the same order as races)
+  let raceStats = BASE_STATS[i];
+  // Build a text string for only the allowed stats
+  let statsText = allowedStats
+    .map(stat => `${stat}: ${raceStats[stat]}`)
+    .join(" <br> ");
+    
+  // Create a label for the stats
+  let raceStatsLbl = createP(statsText);
+  raceStatsLbl.style("color", "#fff");
+  raceStatsLbl.style("font-size", "calc(0.5vw + 12px)");
+  raceStatsLbl.style("font-weight", "bold");
+  raceStatsLbl.style("margin", "0");
+  raceStatsLbl.style("align-self", "flex-end");
+  raceStatsLbl.style("text-align", "right");
+  raceStatsLbl.parent(card);
 
-    // Race label with responsive font-size
-    let raceLbl = createP(raceName);
-    raceLbl.style("color", "#fff");
-    raceLbl.style("font-size", "calc(0.5vw + 16px)");
-    raceLbl.style("font-weight", "bold");
-    raceLbl.style("margin", "10px 0 0 0");
-    raceLbl.style("text-align", "center");
-    raceLbl.parent(card);
+  // Create a race name label
+  let raceLbl = createP(raceName.toUpperCase());
+  raceLbl.style("color", "#fff");
+  raceLbl.style("font-size", "calc(0.5vw + 16px)");
+  raceLbl.style("font-weight", "bold");
+  raceLbl.style("margin", "10px 0 0 0");
+  raceLbl.style("text-align", "center");
+  raceLbl.parent(card);
 
-    // Hover effect: subtle scale & shadow
-    card.mouseOver(() => {
-      card.style("background-color", "#525252");
-      card.style("transform", "scale(1.03)");
-      card.style("box-shadow", "0 8px 16px rgba(0,0,0,0.3)");
-    });
-    card.mouseOut(() => {
-      card.style("transform", "scale(1)");
-      card.style("box-shadow", "none");
-      card.style("background-color", card.selected ? "#4CAF50" : "#404040");
-    });
-
-    // On click: deselect other cards and select this one
-    card.mousePressed(() => {
-      raceButtons.forEach((c) => {
-        c.selected = false;
-        c.style("background-color", "#404040");
-      });
-      card.selected = true;
-      card.style("background-color", "#4CAF50");
-      raceSelected = true;
-      // Assume curPlayer and a mapping for races exist
-      curPlayer.race = i;
-      console.log("Race selected:", races[i]);
-    });
-
-    // Hide initially (shown only in certain states)
-    card.hide();
-    card.parent(raceContainer);
-    raceButtons.push(card);
+  // Add a hover effect: subtle scale & shadow
+  card.mouseOver(() => {
+    card.style("background-color", "#525252");
+    card.style("transform", "scale(1.03)");
+    card.style("box-shadow", "0 8px 16px rgba(0,0,0,0.3)");
   });
+  card.mouseOut(() => {
+    card.style("transform", "scale(1)");
+    card.style("box-shadow", "none");
+    card.style("background-color", card.selected ? "#4CAF50" : "#404040");
+  });
+
+  // On click: deselect all cards, then select this one and update curPlayer
+  card.mousePressed(() => {
+    raceButtons.forEach((c) => {
+      c.selected = false;
+      c.style("background-color", "#404040");
+    });
+    card.selected = true;
+    card.style("background-color", "#4CAF50");
+    raceSelected = true;
+    curPlayer.race = i; // Assuming a mapping by index
+    console.log("Race selected:", races[i]);
+  });
+
+  // Hide the card initially (only shown in the race selection state)
+  card.hide();
+  card.parent(raceContainer);
+  raceButtons.push(card);
+});
+
   race_back_button.hide()
 
   // ---------------------------------------------------
