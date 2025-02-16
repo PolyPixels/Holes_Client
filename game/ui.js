@@ -440,10 +440,23 @@ function drawSelection() {
 
 
   
+
+  nameInput.show();
+  goButton.show();
+
+
   //back to server selection button
   race_back_button.innerHTML = "Go Back"
+
+  race_back_button.style("font-size", "20px");
+  race_back_button.style("background-color", "#2196F3");
+  race_back_button.style("color", "#fff");
+  race_back_button.style("border", "none");
+  race_back_button.style("border-radius", "8px");
+
   race_back_button.style("position", "absolute");
-  race_back_button.style("top", "30dvw");
+  race_back_button.style("top", "35dvw");
+  
   race_back_button.mousePressed(()=>{
     console.log("pressed")
     hideRaceSelect()
@@ -452,9 +465,6 @@ function drawSelection() {
 
   race_back_button.show()
   race_back_button.parent(raceContainer)
-
-  nameInput.show();
-  goButton.show();
   raceButtons.forEach((card) => {
     card.show();
   });
