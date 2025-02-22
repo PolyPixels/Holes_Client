@@ -196,6 +196,38 @@ function draw() {
                 }
             }
         }
+
+
+
+        //Rendering player card
+        push();
+        //fill(255);
+        //textSize(10);
+        //textAlign(CENTER);
+        //text(this.name, this.pos.x, this.pos.y - 40); // Display player's name above the character
+
+
+        // Draw the character's image
+        let cardPosx = width - playerCardImg.width*2 - 20;
+        let cardPosy = -playerCardImg.height;
+        image(playerCardImg, cardPosx, cardPosy, 308*2, 149*2 ); // Adjust size as needed
+        fill( "#FF7F00" );
+        textFont(gameUIFont);
+        textSize(32);
+        textStyle(BOLD);
+        textAlign(CENTER);
+        text("Zoda390", width - playerCardImg.width*1.06 - 30, 37); // Display player's name above the character
+        textStyle(NORMAL);
+
+        //HP curPlayer.statBlock.stats.hp
+        stroke(0);
+        fill(0);
+        let healthWidth = map(curPlayer.statBlock.stats.hp, 0, curPlayer.statBlock.stats.mhp, 0, 342);
+        rect(cardPosx + 108 + healthWidth, cardPosy+214, 342-healthWidth, 16);
+
+        //this.renderHealthBar(); // Render health bar
+        pop();
+
     }
 }
 

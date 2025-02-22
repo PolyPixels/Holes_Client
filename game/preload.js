@@ -21,6 +21,11 @@ function preload() {
 
     chunkDirtImg = loadImage('images/dirt_walls.png');
     dirtFloorImg = loadImage('images/floor.png');
+
+    playerCardImg = loadImage('images/ui/playercard.png');
+
+    gameUIFont = loadFont('CalibrationGothicNbpLatin-rYmy.ttf');
+    console.log("font:", gameUIFont);
 }
 
 function loadDefaultImage(){
