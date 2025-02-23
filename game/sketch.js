@@ -12,7 +12,9 @@ var raceButtons = []; // now storing "card" divs instead of p5 buttons
 var goButton;
 var nameInput;
 var keyReleasedFlag = false;
-const races = ["gnome", "aylah", "skizzard"];
+const races = BASE_STATS.map(item => item.name);
+console.log("Race names:", races);
+
 
 var camera = { x: 0, y: 0 };
 var Debuging = true;
