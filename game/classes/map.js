@@ -30,6 +30,17 @@ class Map{
 
     render(){
         let chunkPos = this.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+
+
+        let cpos = {};
+        for(let yOff = -1; yOff < 2; yOff++){
+            for(let xOff = -1; xOff < 2; xOff++){
+                cpos.x = ((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.x+(width/2);
+                cpos.y = ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.y+(height/2);
+                image(dirtFloorImg, cpos.x, cpos.y, 1600, 1600 );
+            }
+        }
+
         for(let yOff = -1; yOff < 2; yOff++){
             for(let xOff = -1; xOff < 2; xOff++){
                 let chunk = this.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
@@ -96,10 +107,6 @@ class Chunk{
     }
   
     render(){
-        // Chunk dimensions: 1600 by 1600
-        let cpos = this.cordToScreen(0,0)
-        image(dirtFloorImg, cpos.x, cpos.y, 1600, 1600 );
-
         push();
         beginClip();
         fill("#3B1725"); //old one is #3B1725
