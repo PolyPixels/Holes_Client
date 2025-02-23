@@ -20,6 +20,8 @@ var camera = { x: 0, y: 0 };
 var Debuging = true;
 var dirtInv = 0;
 var buildMode = false;
+var renderGhost = false;
+var wantRotate = true;
 var ghostBuild;
 var DIGSPEED = 0.04;
 
@@ -79,10 +81,12 @@ function draw() {
         if (curPlayer) {
             curPlayer.render();
             curPlayer.update();
-            if(buildMode){
+            if(renderGhost){
                 ghostBuild.pos.x = mouseX + camera.x - width / 2;
                 ghostBuild.pos.y = mouseY + camera.y - height / 2;
-                ghostBuild.rot = ghostBuild.pos.copy().sub(curPlayer.pos).heading();
+                if(ghostBuild.canRotate & wantRotate){
+                    ghostBuild.rot = ghostBuild.pos.copy().sub(curPlayer.pos).heading();
+                }
                 ghostBuild.ghostRender(createVector(ghostBuild.pos.x,ghostBuild.pos.y).dist(curPlayer.pos) < 200);
             }
         }
@@ -119,16 +123,14 @@ function draw() {
             }
         }
 
+        curPlayer.invBlock.renderHotBar();
+
         // Dirt Inventory
         push();
-        fill(255);
-        textSize(20);
-        text("Dirt:", 10, height - 10);
-        stroke(0);
-        fill(0);
-        rect(50, height - 30, 200, 20);
-        fill(255, 255, 0);
-        rect(50, height - 30, 200 * (dirtInv / 150), 20);
+        image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
+        
+        fill("#70443C");
+        rect(width - 180 + 20, height - 186 + 25 + (120 * (1-(dirtInv/150))), 120, 120 * (dirtInv/150));
         pop();
 
         // Digging logic
@@ -138,42 +140,24 @@ function draw() {
 
             if (mouseButton === LEFT) {
                 if(!buildMode){
-                    if (dirtInv < 150 - DIGSPEED) playerDig(x, y, DIGSPEED);
+                    if(curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] != ""){
+                        curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].use(x, y, mouseButton);
+                    }
+                    else{
+                        if (dirtInv < 150 - DIGSPEED) playerDig(x, y, DIGSPEED);
+                    }
                 }
                 else{
                     if(ghostBuild.openBool){
                         let chunkPos = testMap.globalToChunk(x,y);
-                        let temp;
-                        if(ghostBuild.type == "trap"){
-                            temp = new Trap(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.hp, curPlayer.id, ghostBuild.color, curPlayer.name);
-                        }
-                        else if(ghostBuild.type == "wall"){
-                            temp = new Wall(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color);
-                        }
-                        else if(ghostBuild.type == "door"){
-                            temp = new Door(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color);
-                        }
-                        else if(ghostBuild.type == "floor"){
-                            temp = new Floor(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color);
-                        }
-                        else if(ghostBuild.type == "rug"){
-                            temp = new Rug(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color);
-                        }
-                        else if(ghostBuild.type == "cup"){
-                            temp = new Cup(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color);
-                        }
-                        else if(ghostBuild.type == "turret"){
-                            temp = new Turret(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.hp, curPlayer.id, ghostBuild.color, curPlayer.name);
-                        }
-                        else if(ghostBuild.type == "bomb"){
-                            temp = new Bomb(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.hp, curPlayer.id, ghostBuild.color, curPlayer.name);
-                        }
-                        else{
-                            temp = new Placeable(ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot);
-                        }
+                        let temp = createObject(ghostBuild.objName, ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color, curPlayer.id, curPlayer.name);
                         testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(temp);
                         testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
-                        socket.emit("new_object", {cx: chunkPos.x, cy: chunkPos.y, type: temp.type, pos: {x: temp.pos.x, y: temp.pos.y}, rot: temp.rot, id: temp.id, hp: temp.hp, name: temp.name, color: temp.color});
+                        socket.emit("new_object", {
+                            cx: chunkPos.x, 
+                            cy: chunkPos.y, 
+                            obj: temp
+                        });
 
                         curPlayer.animationCreate("put");
                         socket.emit("update_pos", curPlayer);
@@ -182,7 +166,12 @@ function draw() {
             }
             if (mouseButton === RIGHT) {
                 if(!buildMode){
-                    if (dirtInv > DIGSPEED) playerDig(x, y, -DIGSPEED);
+                    if(curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] != ""){
+                        curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].use(x, y, mouseButton);
+                    }
+                    else{
+                        if (dirtInv > DIGSPEED) playerDig(x, y, -DIGSPEED);
+                    }
                 }
                 else{
                     let chunkPos = testMap.globalToChunk(x,y);
@@ -227,38 +216,59 @@ function keyReleased() {
 
     if (keyCode === 82){ //r
         buildMode = !buildMode;
+        renderGhost = buildMode;
     }
 
-    if (keyCode === 49){ //1
-        ghostBuild = new Wall(0,0,0, {r: 100, g: 200, b: 0});
+    if(buildMode){
+        if (keyCode === 49){ //1
+            ghostBuild = createObject("Wall", 0, 0, 0, curPlayer.color, " ", " ");
+        }
+    
+        if (keyCode === 50){ //2
+            ghostBuild = createObject("Floor", 0, 0, 0, curPlayer.color, " ", " ");
+        }
+    
+        if (keyCode === 51){ //3
+            ghostBuild = createObject("Door", 0, 0, 0, curPlayer.color, " ", " ");
+        }
+    
+        if (keyCode === 52){ //4
+            ghostBuild = createObject("Rug", 0, 0, 0, curPlayer.color, " ", " ");
+        }
+    
+        if (keyCode === 53){ //5
+            ghostBuild = createObject("Mug", 0, 0, 0, curPlayer.color, " ", " ");
+        }
+    
+        if (keyCode === 54){ //6
+            ghostBuild = createObject("BearTrap", 0, 0, 0, curPlayer.color, " ", " ");
+        }
+    
+        if (keyCode === 55){ //8
+            ghostBuild = createObject("Turret", 0,0,0, curPlayer.obj, " ", " ");
+        }
+    
+        if (keyCode === 56){ //9
+            ghostBuild = createObject("PlacedBomb", 0,0,0, curPlayer.obj, " ", " ");
+        }
     }
 
-    if (keyCode === 50){ //2
-        ghostBuild = new Floor(0,0,0, {r: 150, g: 150, b: 0});
-    }
+    if(keyCode >= 48 && keyCode <= 58){  //0-9
+        // convert key to slot
+        if(key == 0) key = 5;
+        key --;
+        let slot = key%5;
+        curPlayer.invBlock.selectedHotBar = slot;
 
-    if (keyCode === 51){ //3
-        ghostBuild = new Door(0,0,0, {r: 80, g: 180, b: 0});
-    }
-
-    if (keyCode === 52){ //4
-        ghostBuild = new Rug(0,0,0, {r: 50, g: 150, b: 0});
-    }
-
-    if (keyCode === 53){ //5
-        ghostBuild = new Cup(0,0,0, {r: 255, g: 255, b: 255});
-    }
-
-    if (keyCode === 54){ //6
-        ghostBuild = new Trap(0,0,10,0,{r:255,g:255,b:255}, " ");
-    }
-
-    if (keyCode === 55){ //8
-        ghostBuild = new Turret(0,0,0,10,0,{r:255,g:255,b:255}, " ");
-    }
-
-    if (keyCode === 56){ //9
-        ghostBuild = new Bomb(0,0,10,0,{r:255,g:255,b:255}, " ");
+        if(curPlayer.invBlock.hotbar[slot] != ""){
+            if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].type == "Seed"){
+                ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
+                renderGhost = true;
+            }
+        }
+        else{
+            renderGhost = false;
+        }
     }
 }
 
