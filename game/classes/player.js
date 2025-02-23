@@ -14,6 +14,7 @@ class Player {
         this.name = name;
         this.color = color; //team color index
         this.statBlock = new StatBlock(this.race, health);
+        this.invBlock = new InvBlock();
         this.alignment = 50;
 
         // Animation properties

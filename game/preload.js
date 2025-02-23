@@ -3,6 +3,7 @@ var defaultImage;
 var trapImg;
 var chunkDirtImg;
 var dirtFloorImg;
+var dirtBagImg;
 
 function preload() {
     // Load the default image
@@ -14,6 +15,7 @@ function preload() {
     //Dirt floor and wall images
     chunkDirtImg = loadImage('images/dirt_walls.png');
     dirtFloorImg = loadImage('images/floor.png');
+    dirtBagImg = loadImage('images/ui/dirtbag.png');
 
     //load obj imgs
     wallImg = loadImage('images/structures/tempwall1.png');
@@ -42,7 +44,23 @@ function preload() {
     /*7*/   [turretImg],
     /*8*/   [mushroomImg1, mushroomImg2, mushroomImg3],
     /*9*/   [bombImg,bombFlareImg]
-    ]
+    ];
+
+    basicShovelImg = loadImage("images/items/tempshovel.png");
+    swordImg = loadImage("images/items/tempSword.png");
+    slingShotImg = loadImage("images/items/tempslingshot.png");
+    rockImg = loadImage("images/items/temprock.png");
+    appleImg = loadImage("images/items/tempapple.png");
+    mushroomSeedImg = loadImage("images/items/tempmushroomseed.png");
+
+    itemImgs = [
+    /*0*/ [basicShovelImg],
+    /*1*/ [swordImg],
+    /*2*/ [slingShotImg],
+    /*3*/ [rockImg],
+    /*4*/ [appleImg],
+    /*5*/ [mushroomSeedImg],
+    ];
 }
 
 function loadDefaultImage(){

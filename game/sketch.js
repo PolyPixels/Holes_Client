@@ -18,6 +18,7 @@ var camera = { x: 0, y: 0 };
 var Debuging = true;
 var dirtInv = 0;
 var buildMode = false;
+var renderGhost = false;
 var wantRotate = true;
 var ghostBuild;
 var DIGSPEED = 0.04;
@@ -78,7 +79,7 @@ function draw() {
         if (curPlayer) {
             curPlayer.render();
             curPlayer.update();
-            if(buildMode){
+            if(renderGhost){
                 ghostBuild.pos.x = mouseX + camera.x - width / 2;
                 ghostBuild.pos.y = mouseY + camera.y - height / 2;
                 if(ghostBuild.canRotate & wantRotate){
@@ -120,16 +121,14 @@ function draw() {
             }
         }
 
+        curPlayer.invBlock.renderHotBar();
+
         // Dirt Inventory
         push();
-        fill(255);
-        textSize(20);
-        text("Dirt:", 10, height - 10);
-        stroke(0);
-        fill(0);
-        rect(50, height - 30, 200, 20);
-        fill(255, 255, 0);
-        rect(50, height - 30, 200 * (dirtInv / 150), 20);
+        image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
+        
+        fill("#70443C");
+        rect(width - 180 + 20, height - 186 + 25 + (120 * (1-(dirtInv/150))), 120, 120 * (dirtInv/150));
         pop();
 
         // Digging logic
@@ -139,7 +138,12 @@ function draw() {
 
             if (mouseButton === LEFT) {
                 if(!buildMode){
-                    if (dirtInv < 150 - DIGSPEED) playerDig(x, y, DIGSPEED);
+                    if(curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] != ""){
+                        curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].use(x, y, mouseButton);
+                    }
+                    else{
+                        if (dirtInv < 150 - DIGSPEED) playerDig(x, y, DIGSPEED);
+                    }
                 }
                 else{
                     if(ghostBuild.openBool){
@@ -160,7 +164,12 @@ function draw() {
             }
             if (mouseButton === RIGHT) {
                 if(!buildMode){
-                    if (dirtInv > DIGSPEED) playerDig(x, y, -DIGSPEED);
+                    if(curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] != ""){
+                        curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].use(x, y, mouseButton);
+                    }
+                    else{
+                        if (dirtInv > DIGSPEED) playerDig(x, y, -DIGSPEED);
+                    }
                 }
                 else{
                     let chunkPos = testMap.globalToChunk(x,y);
@@ -205,38 +214,59 @@ function keyReleased() {
 
     if (keyCode === 82){ //r
         buildMode = !buildMode;
+        renderGhost = buildMode;
     }
 
-    if (keyCode === 49){ //1
-        ghostBuild = createObject("Wall", 0, 0, 0, curPlayer.color, " ", " ");
+    if(buildMode){
+        if (keyCode === 49){ //1
+            ghostBuild = createObject("Wall", 0, 0, 0, curPlayer.color, " ", " ");
+        }
+    
+        if (keyCode === 50){ //2
+            ghostBuild = createObject("Floor", 0, 0, 0, curPlayer.color, " ", " ");
+        }
+    
+        if (keyCode === 51){ //3
+            ghostBuild = createObject("Door", 0, 0, 0, curPlayer.color, " ", " ");
+        }
+    
+        if (keyCode === 52){ //4
+            ghostBuild = createObject("Rug", 0, 0, 0, curPlayer.color, " ", " ");
+        }
+    
+        if (keyCode === 53){ //5
+            ghostBuild = createObject("Mug", 0, 0, 0, curPlayer.color, " ", " ");
+        }
+    
+        if (keyCode === 54){ //6
+            ghostBuild = createObject("BearTrap", 0, 0, 0, curPlayer.color, " ", " ");
+        }
+    
+        if (keyCode === 55){ //8
+            ghostBuild = createObject("Turret", 0,0,0, curPlayer.obj, " ", " ");
+        }
+    
+        if (keyCode === 56){ //9
+            ghostBuild = createObject("PlacedBomb", 0,0,0, curPlayer.obj, " ", " ");
+        }
     }
 
-    if (keyCode === 50){ //2
-        ghostBuild = createObject("Floor", 0, 0, 0, curPlayer.color, " ", " ");
-    }
+    if(keyCode >= 48 && keyCode <= 58){  //0-9
+        // convert key to slot
+        if(key == 0) key = 5;
+        key --;
+        let slot = key%5;
+        curPlayer.invBlock.selectedHotBar = slot;
 
-    if (keyCode === 51){ //3
-        ghostBuild = createObject("Door", 0, 0, 0, curPlayer.color, " ", " ");
-    }
-
-    if (keyCode === 52){ //4
-        ghostBuild = createObject("Rug", 0, 0, 0, curPlayer.color, " ", " ");
-    }
-
-    if (keyCode === 53){ //5
-        ghostBuild = createObject("Mug", 0, 0, 0, curPlayer.color, " ", " ");
-    }
-
-    if (keyCode === 54){ //6
-        ghostBuild = createObject("BearTrap", 0, 0, 0, curPlayer.color, " ", " ");
-    }
-
-    if (keyCode === 55){ //8
-        ghostBuild = createObject("Turret", 0,0,0, curPlayer.obj, " ", " ");
-    }
-
-    if (keyCode === 56){ //9
-        ghostBuild = createObject("PlacedBomb", 0,0,0, curPlayer.obj, " ", " ");
+        if(curPlayer.invBlock.hotbar[slot] != ""){
+            if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].type == "Seed"){
+                ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
+                renderGhost = true;
+            }
+        }
+        else{
+            renderGhost = false;
+        }
     }
 }
 
