@@ -253,21 +253,29 @@ function keyReleased() {
         }
     }
 
-    if(keyCode >= 48 && keyCode <= 58){  //0-9
-        // convert key to slot
-        if(key == 0) key = 5;
-        key --;
-        let slot = key%5;
-        curPlayer.invBlock.selectedHotBar = slot;
+    if(keyCode == 49 || keyCode == 51){  //1 or 3
+        if(abs(curPlayer.invBlock.animationTimer) <= 0.1){
+            let offset = 0;
+            if(keyCode == 49) offset = -1;
+            if(keyCode == 51) offset = 1;
+            let slot = curPlayer.invBlock.selectedHotBar + offset;
+            if(slot < 0) slot = 4;
+            if(slot > 4) slot = 0;
+            curPlayer.invBlock.selectedHotBar = slot;
+            curPlayer.invBlock.animationTimer = offset;
 
-        if(curPlayer.invBlock.hotbar[slot] != ""){
-            if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].type == "Seed"){
-                ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
-                renderGhost = true;
+            if(curPlayer.invBlock.hotbar[slot] != ""){
+                if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].type == "Seed"){
+                    ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
+                    renderGhost = true;
+                }
+                else{
+                    renderGhost = false;
+                }
             }
-        }
-        else{
-            renderGhost = false;
+            else{
+                renderGhost = false;
+            }
         }
     }
 }

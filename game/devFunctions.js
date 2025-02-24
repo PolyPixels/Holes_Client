@@ -28,3 +28,16 @@ function teleportToPlayer(name){ //teleports you to another player
     console.log(name + " not found");
     return false;
 }
+
+function giveDefaultItems(){
+    curPlayer.invBlock.addItem("Basic Shovel", 1);
+    curPlayer.invBlock.hotbarItem("Basic Shovel", 0);
+    curPlayer.invBlock.addItem("Basic Sword", 1);
+    curPlayer.invBlock.hotbarItem("Basic Sword", 1);
+    curPlayer.invBlock.addItem("Basic SlingShot", 1);
+    curPlayer.invBlock.hotbarItem("Basic SlingShot", 2);
+    curPlayer.invBlock.addItem("Apple", 3);
+    curPlayer.invBlock.hotbarItem("Apple", 3);
+    curPlayer.invBlock.addItem("Mushroom Seed", 3);
+    curPlayer.invBlock.hotbarItem("Mushroom Seed", 4);
+}

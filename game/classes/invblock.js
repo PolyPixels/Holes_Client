@@ -12,6 +12,7 @@ class InvBlock{
         };
 
         this.useTimer = 0; //for some items, so you cant spam them
+        this.animationTimer = 0; //for hotbar animations
     }
 
     addItem(item,amount){
@@ -58,6 +59,8 @@ class InvBlock{
 
     renderHotBar(){
         if(this.useTimer > 0) this.useTimer--;
+        if(this.animationTimer > 0) this.animationTimer-= 0.1;
+        if(this.animationTimer < 0) this.animationTimer+= 0.1;
 
         // Hotbar Inventory
         push();
@@ -70,47 +73,50 @@ class InvBlock{
         strokeWeight(45);
         arc(width, height, 595, 595, 180, 270);
 
-        fill(255);
-        stroke(0);
-        strokeWeight(2);
-        if(this.selectedHotBar == 0) circle(width - (0.965 * 300), height - (0.258 * 300), 50);
-        if(this.selectedHotBar == 1) circle(width - (0.866 * 300), height - (0.5 * 300), 50);
-        if(this.selectedHotBar == 2) circle(width - (0.707 * 300), height - (0.707 * 300), 50);
-        if(this.selectedHotBar == 3) circle(width - (0.5 * 300), height - (0.866 * 300), 50);
-        if(this.selectedHotBar == 4) circle(width - (0.258 * 300), height - (0.965 * 300), 50);
-
         imageMode(CENTER);
-        if(this.hotbar[0] != "") this.items[this.hotbar[0]].renderImage(width - (0.965 * 300), height - (0.258 * 300));
-        if(this.hotbar[1] != "") this.items[this.hotbar[1]].renderImage(width - (0.866 * 300), height - (0.5 * 300));
-        if(this.hotbar[2] != "") this.items[this.hotbar[2]].renderImage(width - (0.707 * 300), height - (0.707 * 300));
-        if(this.hotbar[3] != "") this.items[this.hotbar[3]].renderImage(width - (0.5 * 300), height - (0.866 * 300));
-        if(this.hotbar[4] != "") this.items[this.hotbar[4]].renderImage(width - (0.258 * 300), height - (0.965 * 300));
+        let slots = [this.selectedHotBar-2,this.selectedHotBar-1,this.selectedHotBar,this.selectedHotBar+1,this.selectedHotBar+2];
+        for(let i = 0; i < slots.length; i++){
+            if(slots[i] < 0) slots[i] = 5 + slots[i];
+            if(slots[i] > 4) slots[i] = slots[i] - 5;
+        }
+
+        // if(this.hotbar[slots[0]] != "") this.items[this.hotbar[slots[0]]].renderImage(width - (0.965 * 300), height - (0.258 * 300));
+        // if(this.hotbar[slots[1]] != "") this.items[this.hotbar[slots[1]]].renderImage(width - (0.866 * 300), height - (0.5 * 300));
+        // if(this.hotbar[slots[2]] != "") this.items[this.hotbar[slots[2]]].renderImage(width - (0.707 * 300), height - (0.707 * 300));
+        // if(this.hotbar[slots[3]] != "") this.items[this.hotbar[slots[3]]].renderImage(width - (0.5 * 300), height - (0.866 * 300));
+        // if(this.hotbar[slots[4]] != "") this.items[this.hotbar[slots[4]]].renderImage(width - (0.258 * 300), height - (0.965 * 300));
+
+        for(let i=0; i < slots.length; i++){
+            if(this.hotbar[slots[i]] != ""){
+                this.items[this.hotbar[slots[i]]].renderImage(
+                    width - (cos(15 + (15*i) + (15*this.animationTimer)) *300), 
+                    height - (sin(15 + (15*i) + (15*this.animationTimer)) *300)
+                );
+            }
+        }
         
         fill(150);
         stroke(255);
         strokeWeight(1);
         rectMode(CENTER);
 
-        //0.965, 0.258 circle stuff
-        rect(width - (0.965 * 255), height - (0.258 * 255), 20, 20); //rect for "1" key
-        //0.866, 0.5 circle stuff
-        rect(width - (0.866 * 255), height - (0.5 * 255), 20, 20); //rect for "2" key
-        //0.707, 0.707 circle stuff
-        rect(width - (0.707 * 255), height - (0.707 * 255), 20, 20); //rect for "3" key
-        //0.5, 0.866 circle stuff
-        rect(width - (0.5 * 255), height - (0.866 * 255), 20, 20); //rect for "4" key
-        //0.258, 0.965 circle stuff
-        rect(width - (0.258 * 255), height - (0.965 * 255), 20, 20); //rect for "5" key
+        rect(width - (0.866 * 255), height - (0.5 * 255), 20, 20); //rect for "1" key
+        rect(width - (0.5 * 255), height - (0.866 * 255), 20, 20); //rect for "3" key
+
+        fill(255,0,0);
+        beginShape();
+        vertex(width - (0.676 * 250), height - (0.737 * 250)); //left
+        vertex(width - (0.737 * 250), height - (0.676 * 250)); //right
+        vertex(width - (0.707 * 265), height - (0.707 * 265)); //center
+        endShape(CLOSE);
 
         fill(0);
         stroke(0);
         textAlign(CENTER, CENTER);
         textSize(15);
-        text("1", width - (0.965 * 255), height - (0.258 * 255));
-        text("2", width - (0.866 * 255), height - (0.5 * 255));
-        text("3", width - (0.707 * 255), height - (0.707 * 255));
-        text("4", width - (0.5 * 255), height - (0.866 * 255));
-        text("5", width - (0.258 * 255), height - (0.965 * 255));
+        text("1", width - (0.866 * 255), height - (0.5 * 255));
+        text("3", width - (0.5 * 255), height - (0.866 * 255));
+
 
         pop();
     }
