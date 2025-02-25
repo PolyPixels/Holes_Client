@@ -55,6 +55,7 @@ function draw() {
         //! Why call these in draw if they only need to be called once?
         hideRaceSelect();
         hideLinks();
+        renderChatUI()
         // ---- (Your original gameplay code) ----
         if (Object.keys(testMap.chunks).length > 0) {
             testMap.render();
