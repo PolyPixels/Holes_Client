@@ -692,9 +692,10 @@ function setupUI(){
 // Global variables for chat UI elements and player count display
 let chatContainer, chatMessagesBox, chatInput, chatSendButton;
 let playerCountDiv; // New global variable for player count display
-
+let chatRendered = false
 function renderChatUI() {
-  
+  if(chatRendered) return
+  chatRendered = true
   // Create chat container positioned at bottom left
   chatContainer = createDiv();
   chatContainer.style("position", "fixed");
@@ -710,7 +711,7 @@ function renderChatUI() {
   // Create messages box to display chat history
   chatMessagesBox = createDiv();
   chatMessagesBox.style("height", "150px");
-  chatMessagesBox.style("overflow-y", "auto");
+  chatMessagesBox.style("overflow-y", "scroll");
   chatMessagesBox.style("background-color", "#222");
   chatMessagesBox.style("color", "#fff");
   chatMessagesBox.style("padding", "5px");
@@ -822,7 +823,7 @@ function sendChatMessage() {
   if (socket) {
     socket.emit("send_message", data);
   }
-
+  addChatMessage("test")
   // Clear the input after sending
   chatInput.value("");
 }

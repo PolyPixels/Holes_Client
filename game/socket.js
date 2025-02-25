@@ -144,16 +144,10 @@ function socketSetup(){
     });
 
     // Listen for a broadcasted new chat message from the server
-    socket.on("NEW_CHAT_MESSAGE", function(data) {
+    socket.on("NEW_CHAT_MESSAGE", (data) => {
+        console.log(data)
         addChatMessage(data);
     });
 
-    // Alternatively, if the server responds with a list of messages:
-    socket.on("GET_MESSAGES", function(data) {
-        // Clear existing messages
-        chatMessagesBox.html("");
-        data.forEach(function(chatMsg) {
-        addChatMessage(chatMsg);
-        });
-    });
+  
 }
