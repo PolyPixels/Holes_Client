@@ -58,6 +58,8 @@ function socketSetup(){
                 testMap.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
             }
         }
+
+        giveAllItems(); //TODO: give players starting gear not all items
     });
 
     socket.on('UPDATE_ALL_POS', (data) => {

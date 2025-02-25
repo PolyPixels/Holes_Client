@@ -225,9 +225,6 @@ function draw() {
         fill("#70443C");
         rect(width - 180 + 20, height - 186 + 25 + (120 * (1-(dirtInv/150))), 120, 120 * (dirtInv/150));
         pop();
-
-        //render the inventory UI
-        invDiv.show();
     }
 }
 
@@ -260,6 +257,18 @@ function keyReleased() {
     if (keyCode === 82){ //r
         buildMode = !buildMode;
         renderGhost = buildMode;
+    }
+
+    if(keyCode == 73){
+        if(gameState == "playing"){
+            gameState = "inventory";
+            updateItemList();
+            invDiv.show();
+        }
+        else if(gameState == "inventory"){
+            gameState = "playing";
+            invDiv.hide();
+        }
     }
 
     if(buildMode){
