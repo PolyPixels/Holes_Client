@@ -148,8 +148,6 @@ class Placeable{
                 if (check.val == -1) this.openBool = false;
                 if (check.val > 0) {
                     this.openBool = false;
-                    //if (this.pos.dist(createVector(check.x+(check.cx*CHUNKSIZE*TILESIZE), check.y+(check.cy*CHUNKSIZE*TILESIZE))) < ((this.size.w+this.size.h)/2)-5 + (check.val * TILESIZE / 2)) {
-                    //}
                 }
             }
         }
@@ -319,26 +317,6 @@ function createObject(name, x, y, rot, color, id, ownerName){
             throw new Error(`Object type: ${objDic[name].type}, does not exist.`);
         }
     }
-}
-
-//These should probably be moved to a different file?
-function checkParams(inputs, inputNames, checks){
-    for(let i = 0; i < inputs.length; i++){
-        if(checks[i] == "int"){
-            if(parseInt(inputs[i]) !== inputs[i]){
-                throw new TypeError(`${inputNames[i]} is not of type int, ${inputs[i]} was passed as ${inputNames[i]}`);
-            }
-        }
-        else{
-            if(typeof inputs[i] != checks[i]){
-                throw new TypeError(`${inputNames[i]} is not of type ${checks[i]}, ${inputs[i]} was passed as ${inputNames[i]}`);
-            }
-        }
-    }
-}
-
-function getParamNames(func){
-    return func.toString().split("{")[0].split("(")[1].split(")")[0].split(",");
 }
 
 /**

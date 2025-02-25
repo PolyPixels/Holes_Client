@@ -5,6 +5,14 @@ const BASE_SPEED = 5;
 var curPlayer; //Your player
 var players = {}; //other players
 
+//player globals
+var dirtInv = 0;
+var buildMode = false;
+var renderGhost = false;
+var wantRotate = true;
+var ghostBuild;
+var DIGSPEED = 0.04;
+
 class Player {
     constructor(x, y, health, id, color,race, name ) {
         this.id = id; // socket ID
