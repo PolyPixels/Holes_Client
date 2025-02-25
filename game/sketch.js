@@ -186,6 +186,49 @@ function draw() {
             }
         }
     }
+    if (gameState === "inventory") {
+        //render the game in the background
+        if (Object.keys(testMap.chunks).length > 0) {
+            testMap.render();
+            testMap.update();
+        }
+
+        if (curPlayer) {
+            curPlayer.render();
+            curPlayer.update();
+            if(renderGhost){
+                ghostBuild.pos.x = mouseX + camera.x - width / 2;
+                ghostBuild.pos.y = mouseY + camera.y - height / 2;
+                if(ghostBuild.canRotate & wantRotate){
+                    ghostBuild.rot = ghostBuild.pos.copy().sub(curPlayer.pos).heading();
+                }
+                ghostBuild.ghostRender(createVector(ghostBuild.pos.x,ghostBuild.pos.y).dist(curPlayer.pos) < 200);
+            }
+        }
+
+        let keys = Object.keys(players);
+        for (let i = 0; i < keys.length; i++) {
+            if(curPlayer){
+                if(players[keys[i]].pos.dist(curPlayer.pos) < TILESIZE*CHUNKSIZE*2){
+                    players[keys[i]].render();
+                    players[keys[i]].update();
+                }
+            }
+        }
+
+        curPlayer.invBlock.renderHotBar();
+
+        // Dirt Inventory
+        push();
+        image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
+        
+        fill("#70443C");
+        rect(width - 180 + 20, height - 186 + 25 + (120 * (1-(dirtInv/150))), 120, 120 * (dirtInv/150));
+        pop();
+
+        //render the inventory UI
+        invDiv.show();
+    }
 }
 
 /*******************************************************

@@ -11,6 +11,8 @@ class InvBlock{
             feet: ""
         };
 
+        this.curItem = ""; //name of the item you are currently selecting
+        this.curTag = "All"; //tag for sorting through items
         this.useTimer = 0; //for some items, so you cant spam them
         this.animationTimer = 0; //for hotbar animations
     }

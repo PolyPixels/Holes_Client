@@ -12,20 +12,30 @@ Item Dic is a full dictanary of every item that can exist, falling into one of t
 
 var itemDic = {};
 
-defineShovel("Basic Shovel", 0, 1, 100, 0.12, 3, 1);
-defineMelee("Basic Sword", 1, 1, 100, 10, 1, 90, 10, false);
-defineRanged("Basic SlingShot", 2, 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false);
-defineSimpleItem("Rock", 3, 1);
-defineFood("Apple", 4, 1, 100, 10);
-defineSeed("Mushroom Seed", 5, 1, 1, "Mushroom", 0.5);
+defineShovel("Basic Shovel", 0, 1, 100, 0.12, 3, 1, "A basic shovel for digging dirt");
+defineShovel("Better Shovel", 0, 1, 100, 0.18, 3, 1, "A better shovel for digging dirt");
+defineShovel("God Shovel", 0, 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt");
+defineMelee("Basic Sword", 1, 1, 100, 10, 1, 90, 10, false, "A basic sword for slashing");
+defineMelee("Better Sword", 1, 1, 100, 10, 1, 90, 10, false, "A better sword for slashing");
+defineRanged("Basic SlingShot", 2, 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false, "A basic slingshot for shooting");
+defineRanged("Better SlingShot", 2, 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false, "A better slingshot for shooting");
+defineSimpleItem("Rock", 3, 1, "A rock for your slingshot");
+defineSimpleItem("Gem", 3, 1, "A pretty gem");
+defineSimpleItem("Plank", 3, 1, "A wooden plank");
+defineSimpleItem("Gay Goo", 3, 1, "A gooey substance");
+defineFood("Apple", 4, 1, 100, 10, "A juicy apple");
+defineFood("Mushroom", 4, 1, 100, 10, "A tasty mushroom");
+defineSeed("Mushroom Seed", 5, 1, 1, "Mushroom", 0.5, "Some mushroom spores");
+defineSeed("Apple Seed", 5, 1, 1, "Mushroom", 0.5, "A seed for growing apples");
 
 class SimpleItem{
-    constructor(itemName, weight, durability, imgNum){
+    constructor(itemName, weight, durability, imgNum, desc){
         this.itemName = itemName;
         this.weight = weight;
         this.durability = durability; //can be used for other stuff such as spoiling
         this.maxDurability = durability;
         this.imgNum = imgNum;
+        this.desc = desc;
 
         this.amount = 1;
         this.type = "Simple";
@@ -63,11 +73,18 @@ class SimpleItem{
             curPlayer.invBlock.items[this.itemName] = undefined; //remove item from inventory
         }
     }
+
+    getStats(){
+        return [
+            ["Durability", this.durability], 
+            ["Weight", this.weight]
+        ];
+    }
 }
 
 class Shovel extends SimpleItem{
-    constructor(itemName, weight, durability, imgNum, digSpeed, digSize, range){
-        super(itemName, weight, durability, imgNum);
+    constructor(itemName, weight, durability, imgNum, desc, digSpeed, digSize, range){
+        super(itemName, weight, durability, imgNum, desc);
         this.digSpeed = digSpeed;
         this.digSize = digSize;
         this.range = range;
@@ -84,11 +101,21 @@ class Shovel extends SimpleItem{
             if (dirtInv > this.digSpeed) playerDig(x, y, -this.digSpeed);
         }
     }
+
+    getStats(){
+        return [
+            ["Durability", this.durability], 
+            ["Weight", this.weight], 
+            ["Dig Speed", this.digSpeed], 
+            ["Dig Size", this.digSize], 
+            ["Range", this.range]
+        ];
+    }
 }
 
 class Melee extends SimpleItem{
-    constructor(itemName, weight, durability, imgNum, damage, range, angle, swingSpeed, magicBool){
-        super(itemName, weight, durability, imgNum);
+    constructor(itemName, weight, durability, imgNum, desc, damage, range, angle, swingSpeed, magicBool){
+        super(itemName, weight, durability, imgNum, desc);
         this.damage = damage;
         this.range = range;
         this.angle = angle;
@@ -104,11 +131,22 @@ class Melee extends SimpleItem{
             curPlayer.invBlock.useTimer = this.swingSpeed;
         }
     }
+
+    getStats(){
+        return [
+            ["Durability", this.durability], 
+            ["Weight", this.weight], 
+            ["Damage", this.damage], 
+            ["Range", this.range], 
+            ["Angle", this.angle], 
+            ["Swing Speed", (1/this.swingSpeed).toFixed(3)]
+        ];
+    }
 }
 
 class Ranged extends SimpleItem{
-    constructor(itemName, weight, durability, imgNum, damage, spread, projName, ammoName, fireRate, roundSize, reloadSpeed, magicBool){
-        super(itemName, weight, durability, imgNum);
+    constructor(itemName, weight, durability, imgNum, desc, damage, spread, projName, ammoName, fireRate, roundSize, reloadSpeed, magicBool){
+        super(itemName, weight, durability, imgNum, desc);
         this.damage = damage;
         this.spread = spread;
         this.projName = projName; //projectile name
@@ -147,11 +185,24 @@ class Ranged extends SimpleItem{
             this.bulletsLeft = this.roundSize;
         }
     }
+
+    getStats(){
+        return [
+            ["Durability", this.durability], 
+            ["Weight", this.weight], 
+            ["Damage", this.damage], 
+            ["Spread", this.spread],
+            ["Ammo Name", this.ammoName],
+            ["Firerate", (1/this.fireRate).toFixed(3)],
+            ["Round Size", this.roundSize],
+            ["Reload Speed", (1/this.reloadSpeed).toFixed(3)]
+        ];
+    }
 }
 
 class Food extends SimpleItem{
-    constructor(itemName, weight, durability, imgNum, heal){
-        super(itemName, weight, durability, imgNum);
+    constructor(itemName, weight, durability, imgNum, desc, heal){
+        super(itemName, weight, durability, imgNum, desc);
         this.heal = heal; //how much the food heals you
         this.eatWait = 60; //maybe make this variable? so BIGGER food items make you wait longer imbetween bites
 
@@ -164,6 +215,14 @@ class Food extends SimpleItem{
             curPlayer.invBlock.useTimer = this.eatWait;
             this.decreaseAmount(1);
         }
+    }
+
+    getStats(){
+        return [
+            ["Durability", this.durability], 
+            ["Weight", this.weight], 
+            ["Heal", this.heal]
+        ];
     }
 }
 
@@ -184,11 +243,18 @@ class Potion extends SimpleItem{
             this.decreaseAmount(1);
         }
     }
+
+    getStats(){
+        return [
+            ["Durability", this.durability], 
+            ["Weight", this.weight]
+        ];
+    }
 }
 
 class Equipment extends SimpleItem{
-    constructor(itemName, weight, durability, imgNum, slot, defense, statName, statBoost){
-        super(itemName, weight, durability, imgNum);
+    constructor(itemName, weight, durability, imgNum, desc, slot, defense, statName, statBoost){
+        super(itemName, weight, durability, imgNum, desc);
         this.slot = slot; //what slot the armor should go in
         this.defense = defense; //how much defense it grants the wearer
         this.statName = statName; //which stat this equipment effects
@@ -215,8 +281,8 @@ class Equipment extends SimpleItem{
 }
 
 class Seed extends SimpleItem{
-    constructor(itemName, weight, durability, imgNum, plantName, chance){
-        super(itemName, weight, durability, imgNum);
+    constructor(itemName, weight, durability, imgNum, desc, plantName, chance){
+        super(itemName, weight, durability, imgNum, desc);
         this.plantName = plantName;
         this.chance = chance;
 
@@ -245,8 +311,8 @@ class Seed extends SimpleItem{
 }
 
 class CustomItem extends SimpleItem{
-    constructor(itemName, weight, durability, imgNum, useFunc){
-        super(itemName, weight, durability, imgNum);
+    constructor(itemName, weight, durability, imgNum, desc, useFunc){
+        super(itemName, weight, durability, imgNum, desc);
         this.use = useFunc;
 
         this.type = "CustomItem";
@@ -259,31 +325,31 @@ function createItem(name){
     }
     else{
         if(itemDic[name].type == "SimpleItem"){
-            return new SimpleItem(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img);
+            return new SimpleItem(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc);
         }
         else if(itemDic[name].type == "Shovel"){
-            return new Shovel(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].digSpeed, itemDic[name].digSize, itemDic[name].range);
+            return new Shovel(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].digSpeed, itemDic[name].digSize, itemDic[name].range);
         }
         else if(itemDic[name].type == "Melee"){
-            return new Melee(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].damage, itemDic[name].range, itemDic[name].angle, itemDic[name].swingSpeed, itemDic[name].magicBool);
+            return new Melee(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].damage, itemDic[name].range, itemDic[name].angle, itemDic[name].swingSpeed, itemDic[name].magicBool);
         }
         else if(itemDic[name].type == "Ranged"){
-            return new Ranged(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].damage, itemDic[name].spread, itemDic[name].projName, itemDic[name].ammoName, itemDic[name].fireRate, itemDic[name].roundSize, itemDic[name].reloadSpeed, itemDic[name].magicBool);
+            return new Ranged(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].damage, itemDic[name].spread, itemDic[name].projName, itemDic[name].ammoName, itemDic[name].fireRate, itemDic[name].roundSize, itemDic[name].reloadSpeed, itemDic[name].magicBool);
         }
         else if(itemDic[name].type == "Food"){
-            return new Food(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].heal);
+            return new Food(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].heal);
         }
         else if(itemDic[name].type == "Potion"){
-            return new Potion(name, itemDic[name].weight, itemDic[name].img, itemDic[name].statName, itemDic[name].statBoost, itemDic[name].time);
+            return new Potion(name, itemDic[name].weight, itemDic[name].img, itemDic[name].desc, itemDic[name].statName, itemDic[name].statBoost, itemDic[name].time);
         }
         else if(itemDic[name].type == "Equipment"){
-            return new Equipment(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].slot, itemDic[name].defense, itemDic[name].statName, itemDic[name].statBoost);
+            return new Equipment(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].slot, itemDic[name].defense, itemDic[name].statName, itemDic[name].statBoost);
         }
         else if(itemDic[name].type == "Seed"){
-            return new Seed(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].plantName, itemDic[name].chance);
+            return new Seed(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].plantName, itemDic[name].chance);
         }
         else if(itemDic[name].type == "CustomItem"){
-            return new CustomItem(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].use);
+            return new CustomItem(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].use);
         }
         else{
             throw new Error(`Object type: ${objDic[name].type}, does not exist.`);
@@ -292,38 +358,22 @@ function createItem(name){
 }
 
 /**
- * Creates a new lookup in objDic for an object of type Placeable
- * @returns {Placeable} not an actual Placeable but all info needed for one
- * @param {string} name the name of the object
- * @param {int} imgNum the index of the png or pngs, in the objImgs array
- * @param {number} weight how much the item weighs
-*/
-function defineSimpleItem(name,imgNum, weight){
-    checkParams(arguments, getParamNames(defineSimpleItem), ["string","int","int","int","int","int","boolean"]);
-    itemDic[name] = {
-        type: "SimpleItem",
-        name: name,
-        img: imgNum,
-        weight: weight,
-        durability: 1
-    };
-}
-
-/**
  * Creates a new lookup in itemDic for an object of type SimpleItem
  * @returns {SimpleItem} not an actual SimpleItem but all info needed for one
  * @param {string} name the name of the object
  * @param {int} imgNum the index of the png or pngs, in the objImgs array
  * @param {number} weight how much the item weighs
+ * @param {string} desc the description of the item
 */
-function defineSimpleItem(name,imgNum, weight){
-    checkParams(arguments, getParamNames(defineSimpleItem), ["string","int","number"]);
+function defineSimpleItem(name,imgNum, weight, desc){
+    checkParams(arguments, getParamNames(defineSimpleItem), ["string","int","number","string"]);
     itemDic[name] = {
         type: "SimpleItem",
         name: name,
         img: imgNum,
         weight: weight,
-        durability: 1
+        durability: 1,
+        desc: desc
     };
 }
 
@@ -337,9 +387,10 @@ function defineSimpleItem(name,imgNum, weight){
  * @param {number} digSpeed how fast you affect the dirt your digging 0.065 is the average
  * @param {number} digSize not sure how this will work, but bigger number here should mean more effected dirt nodes
  * @param {int} range how far from the character the shovel will be able to dig
+ * @param {string} desc the description of the item
 */
-function defineShovel(name, imgNum, weight, durability, digSpeed, digSize, range){
-    checkParams(arguments, getParamNames(defineShovel), ["string","int","number","int","number","number","int"]);
+function defineShovel(name, imgNum, weight, durability, digSpeed, digSize, range, desc){
+    checkParams(arguments, getParamNames(defineShovel), ["string","int","number","int","number","number","int","string"]);
     itemDic[name] = {
         type: "Shovel",
         name: name,
@@ -348,7 +399,8 @@ function defineShovel(name, imgNum, weight, durability, digSpeed, digSize, range
         durability: durability,
         digSpeed: digSpeed,
         digSize: digSize,
-        range: range
+        range: range,
+        desc: desc
     };
 }
 
@@ -364,9 +416,10 @@ function defineShovel(name, imgNum, weight, durability, digSpeed, digSize, range
  * @param {int} angle how wide the weapon can hit
  * @param {int} swingSpeed how many frames between each swing
  * @param {boolean} magicBool if the weapon does magic damage
+ * @param {string} desc the description of the item
 */
-function defineMelee(name,imgNum, weight, durability, damage, range, angle, swingSpeed, magicBool){
-    checkParams(arguments, getParamNames(defineMelee), ["string","int","number","int","int","int","int", "int","boolean"]);
+function defineMelee(name,imgNum, weight, durability, damage, range, angle, swingSpeed, magicBool, desc){
+    checkParams(arguments, getParamNames(defineMelee), ["string","int","number","int","int","int","int", "int","boolean","string"]);
     itemDic[name] = {
         type: "Melee",
         name: name,
@@ -377,7 +430,8 @@ function defineMelee(name,imgNum, weight, durability, damage, range, angle, swin
         range: range,
         angle: angle,
         swingSpeed: swingSpeed,
-        magicBool: magicBool
+        magicBool: magicBool,
+        desc: desc
     };
 }
 
@@ -396,9 +450,10 @@ function defineMelee(name,imgNum, weight, durability, damage, range, angle, swin
  * @param {int} roundSize how many bullets before having to reload
  * @param {number} reloadSpeed how many seconds it takes to reload
  * @param {boolean} magicBool if the weapon does magic damage
+ * @param {string} desc the description of the item
 */
-function defineRanged(name,imgNum, weight, durability, damage, spread, projName, ammoName, fireRate, roundSize, reloadSpeed, magicBool){
-    checkParams(arguments, getParamNames(defineRanged), ["string","int","number","int","int","int","string","string","int","int","number","boolean"]);
+function defineRanged(name,imgNum, weight, durability, damage, spread, projName, ammoName, fireRate, roundSize, reloadSpeed, magicBool, desc){
+    checkParams(arguments, getParamNames(defineRanged), ["string","int","number","int","int","int","string","string","int","int","number","boolean","string"]);
     itemDic[name] = {
         type: "Ranged",
         name: name,
@@ -412,7 +467,8 @@ function defineRanged(name,imgNum, weight, durability, damage, spread, projName,
         fireRate: fireRate,
         roundSize: roundSize,
         reloadSpeed: reloadSpeed,
-        magicBool: magicBool
+        magicBool: magicBool,
+        desc: desc
     };
 }
 
@@ -424,16 +480,18 @@ function defineRanged(name,imgNum, weight, durability, damage, spread, projName,
  * @param {number} weight how much the item weighs
  * @param {int} durability how many inv updates before this food spoils
  * @param {int} heal how much the food heals
+ * @param {string} desc the description of the item
 */
-function defineFood(name,imgNum, weight, durability, heal){
-    checkParams(arguments, getParamNames(defineFood), ["string","int","number","int","int"]);
+function defineFood(name,imgNum, weight, durability, heal, desc){
+    checkParams(arguments, getParamNames(defineFood), ["string","int","number","int","int","string"]);
     itemDic[name] = {
         type: "Food",
         name: name,
         img: imgNum,
         weight: weight,
         durability: durability,
-        heal: heal
+        heal: heal,
+        desc: desc
     };
 }
 
@@ -446,9 +504,10 @@ function defineFood(name,imgNum, weight, durability, heal){
  * @param {string} statName the name of the stat this potion effects
  * @param {number} statBoost the percentage change in the stat
  * @param {int} time how long the effect lasts
+ * @param {string} desc the description of the item
 */
-function definePotion(name,imgNum, weight, statName, statBoost, time){
-    checkParams(arguments, getParamNames(definePotion), ["string","int","number","string","number","int"]);
+function definePotion(name,imgNum, weight, statName, statBoost, time, desc){
+    checkParams(arguments, getParamNames(definePotion), ["string","int","number","string","number","int","string"]);
     itemDic[name] = {
         type: "Potion",
         name: name,
@@ -456,7 +515,8 @@ function definePotion(name,imgNum, weight, statName, statBoost, time){
         weight: weight,
         statName: statName,
         statBoost: statBoost,
-        time: time
+        time: time,
+        desc: desc
     };
 }
 
@@ -471,9 +531,10 @@ function definePotion(name,imgNum, weight, statName, statBoost, time){
  * @param {int} defense how much defense the equipment gives
  * @param {string} statName the name of the stat this equipment effects
  * @param {number} statBoost the percentage change in the stat
+ * @param {string} desc the description of the item
 */
-function defineEquipment(name,imgNum, weight, durability, slot, defense, statName, statBoost){
-    checkParams(arguments, getParamNames(defineEquipment), ["string","int","number","int","int","string","number"]);
+function defineEquipment(name,imgNum, weight, durability, slot, defense, statName, statBoost, desc){
+    checkParams(arguments, getParamNames(defineEquipment), ["string","int","number","int","int","string","number","string"]);
     itemDic[name] = {
         type: "Equipment",
         name: name,
@@ -483,7 +544,8 @@ function defineEquipment(name,imgNum, weight, durability, slot, defense, statNam
         slot: slot,
         defense: defense,
         statName: statName,
-        statBoost: statBoost
+        statBoost: statBoost,
+        desc: desc
     };
 }
 
@@ -496,9 +558,10 @@ function defineEquipment(name,imgNum, weight, durability, slot, defense, statNam
  * @param {int} durability how many uses the item has left
  * @param {string} plantName the name of the plant this seed will grow
  * @param {number} chance the chance the plant will grow
+ * @param {string} desc the description of the item
 */
-function defineSeed(name,imgNum, weight, durability, plantName, chance){
-    checkParams(arguments, getParamNames(defineSeed), ["string","int","number","int","string","number"]);
+function defineSeed(name,imgNum, weight, durability, plantName, chance, desc){
+    checkParams(arguments, getParamNames(defineSeed), ["string","int","number","int","string","number","string"]);
     itemDic[name] = {
         type: "Seed",
         name: name,
@@ -506,6 +569,7 @@ function defineSeed(name,imgNum, weight, durability, plantName, chance){
         weight: weight,
         durability: durability,
         plantName: plantName,
-        chance: chance
+        chance: chance,
+        desc: desc
     };
 }

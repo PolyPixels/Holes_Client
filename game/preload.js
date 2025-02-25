@@ -61,6 +61,16 @@ function preload() {
     /*4*/ [appleImg],
     /*5*/ [mushroomSeedImg],
     ];
+
+    //used for inventory rendering, cause html is booty
+    itemImgNames = [
+    /*0*/ ["tempshovel"],
+    /*1*/ ["tempSword"],
+    /*2*/ ["tempslingshot"],
+    /*3*/ ["temprock"],
+    /*4*/ ["tempapple"],
+    /*5*/ ["tempmushroomseed"]
+    ]
 }
 
 function loadDefaultImage(){

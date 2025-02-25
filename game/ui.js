@@ -486,6 +486,7 @@ function setupUI(){
   // (Socket setup and raceImages flipping omitted for brevity)
   // ----------------------------
 
+  defineInvUI();
 
   // Flip right images to create left images
   for (let raceName in raceImages) {
@@ -549,6 +550,7 @@ races.forEach((raceName, i) => {
   let raceImg = createImg(raceImgPath, `${raceName} image`);
   raceImg.style("max-width", "10dvw");
   raceImg.style("height", "10dvh");
+  raceImg.style("image-rendering", "pixelated");
   raceImg.parent(card);
 
   // Retrieve stats from BASE_STATS (assumes the same order as races)
@@ -691,4 +693,415 @@ races.forEach((raceName, i) => {
     }
     dirtInv = 0;
   });
+}
+
+var invDiv;
+var itemListDiv;
+var curItemDiv;
+var allTag;
+var toolsTag;
+var weaponsTag;
+var equipmentTag;
+var consumablesTag;
+
+function defineInvUI(){
+  invDiv = createDiv();
+  invDiv.id("inventory");
+  //center the div
+  invDiv.style("position", "absolute");
+  invDiv.style("top", "50%");
+  invDiv.style("left", "50%");
+  invDiv.style("transform", "translate(-50%, -50%)");
+  invDiv.style("display", "none");
+  invDiv.style("width", "40%");
+  invDiv.style("height", "75%");
+  invDiv.style("background-color", "rgb(100, 100, 100)");
+  invDiv.style("border", "2px solid black");
+  invDiv.style("border-radius", "10px");
+
+  let topBar = createDiv();
+  topBar.style("width", "100%");
+  topBar.style("height", "10%");
+  topBar.style("display", "flex");
+  topBar.style("justify-content", "center");
+  topBar.style("align-items", "center");
+  topBar.parent(invDiv);
+
+  let invTitle = createP("Inventory");
+  invTitle.style("font-size", "24px");
+  invTitle.style("font-weight", "bold");
+  invTitle.style("color", "white");
+  invTitle.style("text-decoration", "underline");
+  invTitle.style("padding-right", "10px");
+  invTitle.parent(topBar);
+
+  let craftingTitle = createP("Crafting");
+  craftingTitle.style("font-size", "24px");
+  craftingTitle.style("font-weight", "bold");
+  craftingTitle.style("color", "white");
+  craftingTitle.style("text-decoration", "underline");
+  craftingTitle.style("padding-left", "10px");
+  craftingTitle.parent(topBar);
+
+  let tagBar = createDiv();
+  tagBar.style("width", "100%");
+  tagBar.style("height", "10%");
+  tagBar.style("display", "flex");
+  tagBar.style("justify-content", "center");
+  tagBar.style("align-items", "center");
+  tagBar.style("border-bottom", "2px solid black");
+  tagBar.parent(invDiv);
+
+  //tags: All, Tools/Seeds, Weapons, Equipment, Consumables
+  allTag = createDiv("All");
+  allTag.style("font-size", "20px");
+  allTag.style("font-weight", "bold");
+  allTag.style("color", "white");
+  allTag.style("padding", "10px");
+  allTag.style("border", "2px solid black");
+  allTag.style("border-radius", "10px");
+  allTag.style("margin", "5px");
+  allTag.style("cursor", "pointer");
+  allTag.style("background-color", "rgb(120,120,120)");
+  allTag.parent(tagBar);
+  allTag.mousePressed(() => {
+    curPlayer.invBlock.curTag = "All";
+    allTag.style("background-color", "rgb(120,120,120)");
+    toolsTag.style("background-color", "rgb(100,100,100)");
+    weaponsTag.style("background-color", "rgb(100,100,100)");
+    equipmentTag.style("background-color", "rgb(100,100,100)");
+    consumablesTag.style("background-color", "rgb(100,100,100)");
+    updateItemList();
+  });
+
+  toolsTag = createDiv("Tools/Seeds");
+  toolsTag.style("font-size", "20px");
+  toolsTag.style("font-weight", "bold");
+  toolsTag.style("color", "white");
+  toolsTag.style("padding", "10px");
+  toolsTag.style("border", "2px solid black");
+  toolsTag.style("border-radius", "10px");
+  toolsTag.style("margin", "5px");
+  toolsTag.style("cursor", "pointer");
+  toolsTag.style("background-color", "rgb(100,100,100)");
+  toolsTag.parent(tagBar);
+  toolsTag.mousePressed(() => {
+    curPlayer.invBlock.curTag = "Tools/Seeds";
+    allTag.style("background-color", "rgb(100,100,100)");
+    toolsTag.style("background-color", "rgb(120,120,120)");
+    weaponsTag.style("background-color", "rgb(100,100,100)");
+    equipmentTag.style("background-color", "rgb(100,100,100)");
+    consumablesTag.style("background-color", "rgb(100,100,100)");
+    updateItemList();
+  });
+
+  weaponsTag = createDiv("Weapons");
+  weaponsTag.style("font-size", "20px");
+  weaponsTag.style("font-weight", "bold");
+  weaponsTag.style("color", "white");
+  weaponsTag.style("padding", "10px");
+  weaponsTag.style("border", "2px solid black");
+  weaponsTag.style("border-radius", "10px");
+  weaponsTag.style("margin", "5px");
+  weaponsTag.style("cursor", "pointer");
+  weaponsTag.style("background-color", "rgb(100,100,100)");
+  weaponsTag.parent(tagBar);
+  weaponsTag.mousePressed(() => {
+    curPlayer.invBlock.curTag = "Weapons";
+    allTag.style("background-color", "rgb(100,100,100)");
+    toolsTag.style("background-color", "rgb(100,100,100)");
+    weaponsTag.style("background-color", "rgb(120,120,120)");
+    equipmentTag.style("background-color", "rgb(100,100,100)");
+    consumablesTag.style("background-color", "rgb(100,100,100)");
+    updateItemList();
+  });
+
+  equipmentTag = createDiv("Equipment");
+  equipmentTag.style("font-size", "20px");
+  equipmentTag.style("font-weight", "bold");
+  equipmentTag.style("color", "white");
+  equipmentTag.style("padding", "10px");
+  equipmentTag.style("border", "2px solid black");
+  equipmentTag.style("border-radius", "10px");
+  equipmentTag.style("margin", "5px");
+  equipmentTag.style("cursor", "pointer");
+  equipmentTag.style("background-color", "rgb(100,100,100)");
+  equipmentTag.parent(tagBar);
+  equipmentTag.mousePressed(() => {
+    curPlayer.invBlock.curTag = "Equipment";
+    allTag.style("background-color", "rgb(100,100,100)");
+    toolsTag.style("background-color", "rgb(100,100,100)");
+    weaponsTag.style("background-color", "rgb(100,100,100)");
+    equipmentTag.style("background-color", "rgb(120,120,120)");
+    consumablesTag.style("background-color", "rgb(100,100,100)");
+    updateItemList();
+  });
+
+  consumablesTag = createDiv("Consumables");
+  consumablesTag.style("font-size", "20px");
+  consumablesTag.style("font-weight", "bold");
+  consumablesTag.style("color", "white");
+  consumablesTag.style("padding", "10px");
+  consumablesTag.style("border", "2px solid black");
+  consumablesTag.style("border-radius", "10px");
+  consumablesTag.style("margin", "5px");
+  consumablesTag.style("cursor", "pointer");
+  consumablesTag.style("background-color", "rgb(100,100,100)");
+  consumablesTag.parent(tagBar);
+  consumablesTag.mousePressed(() => {
+    curPlayer.invBlock.curTag = "Consumables";
+    allTag.style("background-color", "rgb(100,100,100)");
+    toolsTag.style("background-color", "rgb(100,100,100)");
+    weaponsTag.style("background-color", "rgb(100,100,100)");
+    equipmentTag.style("background-color", "rgb(100,100,100)");
+    consumablesTag.style("background-color", "rgb(120,120,120)");
+    updateItemList();
+  });
+
+  let bottomDiv = createDiv();
+  bottomDiv.style("width", "100%");
+  bottomDiv.style("height", "80%");
+  bottomDiv.style("display", "flex");
+  bottomDiv.style("justify-content", "center");
+  bottomDiv.style("align-items", "center");
+  bottomDiv.parent(invDiv);
+
+  itemListDiv = createDiv();
+  itemListDiv.style("width", "50%");
+  itemListDiv.style("height", "100%");
+  itemListDiv.style("overflow-y", "auto");
+  itemListDiv.style("overflow-x", "none");
+  itemListDiv.parent(bottomDiv);
+
+  curItemDiv = createDiv();
+  curItemDiv.style("width", "50%");
+  curItemDiv.style("height", "100%");
+  curItemDiv.style("border-left", "2px solid black");
+  curItemDiv.parent(bottomDiv);
+
+  updateItemList();
+  updatecurItemDiv();
+}
+
+function updateItemList(){
+  if(curPlayer == undefined) return;
+
+  itemListDiv.html("");
+  //create a div for each item in the inventory
+  let arr = Object.keys(curPlayer.invBlock.items);
+  arr = arr.filter((itemName) => {
+    if(curPlayer.invBlock.curTag == "All"){
+      return true;
+    }
+    else if(curPlayer.invBlock.curTag == "Tools/Seeds"){
+      if(curPlayer.invBlock.items[itemName].type == "Shovel" || curPlayer.invBlock.items[itemName].type == "Seed"){
+        return true;
+      }
+    }
+    else if(curPlayer.invBlock.curTag == "Weapons"){
+      if(curPlayer.invBlock.items[itemName].type == "Melee" || curPlayer.invBlock.items[itemName].type == "Ranged"){
+        return true;
+      }
+    }
+    else if(curPlayer.invBlock.curTag == "Equipment"){
+      if(curPlayer.invBlock.items[itemName].type == "Equipment"){
+        return true;
+      }
+    }
+    else if(curPlayer.invBlock.curTag == "Consumables"){
+      if(curPlayer.invBlock.items[itemName].type == "Food" || curPlayer.invBlock.items[itemName].type == "Potion"){
+        return true;
+      }
+    }
+
+    return false;
+  });
+
+  for(let i = 0; i < arr.length; i++){
+    let itemName = arr[i];
+    let itemDiv = createDiv();
+    itemDiv.style("width", "100%");
+    itemDiv.style("height", "50px");
+    itemDiv.style("display", "flex");
+    itemDiv.style("align-items", "center");
+    itemDiv.style("justify-content", "center");
+    itemDiv.style("border-bottom", "2px solid black");
+    if(curPlayer.invBlock.curItem == itemName) itemDiv.style("background-color", "rgb(120, 120, 120)");
+    if(curPlayer.invBlock.curItem == itemName) itemDiv.style("font-style", "italic");
+    itemDiv.style("cursor", "pointer");
+    itemDiv.parent(itemListDiv);
+    itemDiv.mousePressed(() => {
+      curPlayer.invBlock.curItem = itemName;
+      updateItemList();
+      updatecurItemDiv();
+    });
+
+    let itemInfoDiv = createDiv();
+    itemInfoDiv.style("width", "80%");
+    itemInfoDiv.style("height", "50px");
+    itemInfoDiv.style("display", "flex");
+    itemInfoDiv.style("align-items", "center");
+    itemInfoDiv.style("justify-content", "space-between");
+    itemInfoDiv.parent(itemDiv);
+
+    let itemNameP = createP((itemName == curPlayer.invBlock.curItem ? "* ":"") + itemName);
+    itemNameP.style("font-size", "20px");
+    itemNameP.style("color", "white");
+    itemNameP.parent(itemInfoDiv);
+
+    let itemAmount = createP(curPlayer.invBlock.items[itemName].amount);
+    itemAmount.style("font-size", "20px");
+    itemAmount.style("color", "white");
+    itemAmount.parent(itemInfoDiv);
+  }
+}
+
+function updatecurItemDiv(){
+  if(curPlayer == undefined) return;
+
+  //clear the div
+  curItemDiv.html("");
+
+  let itemCardDiv = createDiv();
+  itemCardDiv.style("width", "100%");
+  itemCardDiv.style("height", "30%");
+  itemCardDiv.style("display", "flex");
+  itemCardDiv.style("margin-bottom", "20px");
+  itemCardDiv.parent(curItemDiv);
+
+  let itemImgDiv = createDiv();
+  itemImgDiv.style("width", "50%");
+  itemImgDiv.style("height", "100%");
+  itemImgDiv.style("border", "2px solid black");
+  itemImgDiv.style("border-radius", "10px");
+  itemImgDiv.style("background-image", `url(images/items/${itemImgNames[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]}.png)`);
+  itemImgDiv.style("background-size", "contain");
+  itemImgDiv.style("background-repeat", "no-repeat");
+  itemImgDiv.style("background-position", "center");
+  itemImgDiv.style("image-rendering", "pixelated");
+  itemImgDiv.parent(itemCardDiv);
+
+  let itemNameDescDiv = createDiv();
+  itemNameDescDiv.style("width", "calc(50% - 8px)");
+  itemNameDescDiv.style("height", "100%");
+  itemNameDescDiv.parent(itemCardDiv);
+
+  let itemNameDiv = createDiv();
+  itemNameDiv.style("width", "100%");
+  itemNameDiv.style("height", "20%");
+  itemNameDiv.style("border", "2px solid black");
+  itemNameDiv.style("border-radius", "10px");
+  itemNameDiv.parent(itemNameDescDiv);
+
+  let itemNameP = createP(curPlayer.invBlock.curItem);
+  itemNameP.style("font-size", "20px");
+  itemNameP.style("color", "white");
+  itemNameP.style("margin", "5px");
+  itemNameP.parent(itemNameDiv);
+
+  //create a div for the description
+  let itemDescDiv = createDiv();
+  itemDescDiv.style("width", "100%");
+  itemDescDiv.style("height", "calc(80% - 5px)");
+  itemDescDiv.style("border", "2px solid black");
+  itemDescDiv.style("border-radius", "10px");
+  itemDescDiv.parent(itemNameDescDiv);
+
+  let itemDescP = createP(curPlayer.invBlock.items[curPlayer.invBlock.curItem].desc);
+  itemDescP.style("font-size", "20px");
+  itemDescP.style("color", "white");
+  itemDescP.style("margin", "5px");
+  itemDescP.parent(itemDescDiv);
+
+  let itemStatsDiv = createDiv();
+  itemStatsDiv.style("width", "100%");
+  itemStatsDiv.style("height", "calc(70% - 10px)");
+  itemStatsDiv.parent(curItemDiv);
+  
+  if(curPlayer.invBlock.items[curPlayer.invBlock.curItem].type != "Simple"){
+    let durabilityDiv = createDiv();
+    durabilityDiv.style("width", "calc(100% - 14px)");
+    durabilityDiv.style("height", "10%");
+    durabilityDiv.style("padding", "5px");
+    durabilityDiv.style("border", "2px solid black");
+    durabilityDiv.style("border-radius", "10px");
+    durabilityDiv.style("display", "flex");
+    durabilityDiv.style("align-items", "center");
+    durabilityDiv.style("justify-content", "center");
+    durabilityDiv.style("margin-bottom", "5px");
+    durabilityDiv.parent(itemStatsDiv);
+    
+    let durabilityText = createP("Durability:");
+    durabilityText.style("font-size", "20px");
+    durabilityText.style("color", "white");
+    durabilityText.parent(durabilityDiv);
+    
+    let durabilityBar = createDiv();
+    durabilityBar.style("width", "80%");
+    durabilityBar.style("height", "20px");
+    durabilityBar.style("background-color", "red");
+    durabilityBar.style("border", "2px solid black");
+    durabilityBar.style("border-radius", "10px");
+    durabilityBar.parent(durabilityDiv);
+    
+    console.log((curPlayer.invBlock.items[curPlayer.invBlock.curItem].durability/curPlayer.invBlock.items[curPlayer.invBlock.curItem].maxDurability));
+    let durabilityFill = createDiv();
+    durabilityFill.style("width", ((curPlayer.invBlock.items[curPlayer.invBlock.curItem].durability/curPlayer.invBlock.items[curPlayer.invBlock.curItem].maxDurability)*100)+"%");
+    durabilityFill.style("height", "100%");
+    durabilityFill.style("background-color", "green");
+    durabilityFill.style("border-radius", "10px");
+    durabilityFill.parent(durabilityBar);
+  }
+
+  let statsText = createDiv("Stats");
+  statsText.style("font-size", "20px");
+  statsText.style("color", "white");
+  statsText.style("text-align", "center");
+  statsText.style("border", "2px solid black");
+  statsText.style("border-radius", "10px");
+  statsText.style("padding", "10px");
+  statsText.style("margin-bottom", "5px");
+  statsText.parent(itemStatsDiv);
+
+  let statsList = createDiv();
+  statsList.style("width", "100%");
+  statsList.style("height", "calc(90% - 10px)");
+  statsList.style("overflow-y", "auto");
+  statsList.parent(itemStatsDiv);
+
+  let stats = curPlayer.invBlock.items[curPlayer.invBlock.curItem].getStats();
+  stats.forEach(stat => {
+    if(stat[0] == "Durability"){}
+    else{
+      let statDiv = createDiv();
+      statDiv.style("width", "100%");
+      statDiv.style("height", "20px");
+      statDiv.style("display", "flex");
+      statDiv.style("margin-bottom", "12px");
+      statDiv.parent(statsList);
+
+      let statNameDiv = createDiv(stat[0]+":");
+      statNameDiv.style("width", "50%");
+      statNameDiv.style("height", "100%");
+      statNameDiv.style("color", "white");
+      statNameDiv.style("text-align", "center");
+      statNameDiv.style("font-size", "20px");
+      statNameDiv.style("border", "2px solid black");
+      statNameDiv.style("border-radius", "10px");
+      statNameDiv.style("padding", "5px");
+      statNameDiv.parent(statDiv);
+
+      let statNumDiv = createDiv(stat[1]);
+      statNumDiv.style("width", "50%");
+      statNumDiv.style("height", "100%");
+      statNumDiv.style("color", "white");
+      statNumDiv.style("text-align", "center");
+      statNumDiv.style("font-size", "20px");
+      statNumDiv.style("border", "2px solid black");
+      statNumDiv.style("border-radius", "10px");
+      statNumDiv.style("padding", "5px");
+      statNumDiv.parent(statDiv);
+    }
+  });
+
 }
