@@ -697,6 +697,7 @@ var toolsTag;
 var weaponsTag;
 var equipmentTag;
 var consumablesTag;
+var spaceBarDiv;
 
 function defineInvUI(){
     invDiv = createDiv();
@@ -873,6 +874,24 @@ function defineInvUI(){
     curItemDiv.style("border-left", "2px solid black");
     curItemDiv.parent(bottomDiv);
 
+    spaceBarDiv = createDiv("");
+    spaceBarDiv.style("position", "absolute");
+    spaceBarDiv.style("top", "105%");
+    spaceBarDiv.style("left", "50%");
+    spaceBarDiv.style("transform", "translate(-50%, 0%)");
+    spaceBarDiv.style("background-color", "rgb(100,100,100)");
+    spaceBarDiv.style("border", "2px solid black");
+    spaceBarDiv.style("border-radius", "10px");
+    spaceBarDiv.style("padding", "5px");
+    spaceBarDiv.style("font-size", "20px");
+    spaceBarDiv.style("color", "white");
+    spaceBarDiv.style("cursor", "pointer");
+    spaceBarDiv.parent(invDiv);
+    spaceBarDiv.mousePressed(() => {
+        curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem, curPlayer.invBlock.selectedHotBar);
+    });
+    spaceBarDiv.hide();
+
     updateItemList();
     updatecurItemDiv();
 }
@@ -1038,7 +1057,6 @@ function updatecurItemDiv(){
         durabilityBar.style("border-radius", "10px");
         durabilityBar.parent(durabilityDiv);
         
-        console.log((curPlayer.invBlock.items[curPlayer.invBlock.curItem].durability/curPlayer.invBlock.items[curPlayer.invBlock.curItem].maxDurability));
         let durabilityFill = createDiv();
         durabilityFill.style("width", ((curPlayer.invBlock.items[curPlayer.invBlock.curItem].durability/curPlayer.invBlock.items[curPlayer.invBlock.curItem].maxDurability)*100)+"%");
         durabilityFill.style("height", "100%");
@@ -1097,6 +1115,27 @@ function updatecurItemDiv(){
             statNumDiv.parent(statDiv);
         }
     });
+
+    updateSpaceBarDiv();
+}
+
+function updateSpaceBarDiv(){
+    if(curPlayer.invBlock.curItem == "") return;
+
+    if(curPlayer.invBlock.items[curPlayer.invBlock.curItem].type == "Simple"){
+        spaceBarDiv.hide();
+    }
+    else{
+        spaceBarDiv.show();
+        let msg = "";
+        if(curPlayer.invBlock.curItem == curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]){
+            msg = "(SpaceBar) - remove from hotbar";
+        }
+        else{
+            msg = "(SpaceBar) - put in hotbar";
+        }
+        spaceBarDiv.html(msg);
+    }
 }
 
 function renderDirtBagUI(){

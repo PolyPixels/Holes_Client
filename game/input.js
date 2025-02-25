@@ -23,7 +23,7 @@ function keyReleased() {
     }
     else if(gameState == "inventory"){
         if (keyCode === 32) { //space
-            //curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem);
+            curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem, curPlayer.invBlock.selectedHotBar);
         }
         if(keyCode == 73){
             gameState = "playing";
@@ -54,6 +54,8 @@ function keyReleased() {
             else{
                 renderGhost = false;
             }
+
+            updateSpaceBarDiv();
         }
     }
 }
