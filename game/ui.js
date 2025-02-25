@@ -722,8 +722,10 @@ function renderChatUI() {
   chatInput.style("border", "none");
   chatInput.style("border-radius", "5px");
   chatInput.changed(() => {
-    gameState = "chating"
     console.log("Chat input changed to:", chatInput.value());
+  });
+  chatInput.mousePressed(() =>{
+    gameState = "chating"
   });
   
   // Listen for the Enter key to send the chat message:
@@ -742,7 +744,10 @@ function renderChatUI() {
   chatSendButton.style("border-radius", "5px");
   chatSendButton.style("background-color", "#2196F3");
   chatSendButton.style("color", "#fff");
-  chatSendButton.mousePressed(sendChatMessage);
+  chatSendButton.mousePressed(() =>{
+    sendChatMessage();
+    gameState="playing";
+  });
   
   // Create a container for input and button
   let inputContainer = createDiv();
@@ -789,23 +794,6 @@ function addChatMessage(chatMsg) {
 
   // Optionally, scroll to the bottom of the messages box
   chatMessagesBox.elt.scrollTop = chatMessagesBox.elt.scrollHeight;
-}
-
-// Socket listeners to update the chat UI when messages arrive
-if (socket) {
-  // Listen for a broadcasted new chat message from the server
-  socket.on("NEW_CHAT_MESSAGE", function(data) {
-    addChatMessage(data);
-  });
-
-  // Alternatively, if the server responds with a list of messages:
-  socket.on("GET_MESSAGES", function(data) {
-    // Clear existing messages
-    chatMessagesBox.html("");
-    data.forEach(function(chatMsg) {
-      addChatMessage(chatMsg);
-    });
-  });
 }
 
 var invDiv;
