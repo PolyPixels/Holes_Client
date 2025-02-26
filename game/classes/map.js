@@ -61,11 +61,6 @@ class Map{
             }
         }
 
-        push();
-        fill(255); // Set the text color to white
-        textSize(16); // Optional: Set text size for readability
-        text('Players: ' + (Object.keys(players).length +1), 50, 50); // Display the number of players
-        pop();
     }
 }
 

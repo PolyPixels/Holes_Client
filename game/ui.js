@@ -689,6 +689,156 @@ function setupUI(){
     });
 }
 
+// Global variables for chat UI elements and player count display
+let chatContainer, chatMessagesBox, chatInput, chatSendButton;
+let playerCountDiv; // New global variable for player count display
+let chatRendered = false
+function renderChatUI() {
+  if(chatRendered) return
+  chatRendered = true
+  // Create chat container positioned at bottom left
+  chatContainer = createDiv();
+  chatContainer.style("position", "fixed");
+  chatContainer.style("bottom", "10px");
+  chatContainer.style("left", "10px");
+  chatContainer.style("z-index", "1000");
+  chatContainer.style("width", "300px");
+  chatContainer.style("background-color", "rgba(0, 0, 0, 0.5)");
+  chatContainer.style("padding", "10px");
+  chatContainer.style("border-radius", "8px");
+  chatContainer.style("pointer-events", "auto"); // Ensure clicks go through
+  
+  // Create messages box to display chat history
+  chatMessagesBox = createDiv();
+  chatMessagesBox.style("height", "150px");
+  chatMessagesBox.style("overflow-y", "scroll");
+  chatMessagesBox.style("background-color", "#222");
+  chatMessagesBox.style("color", "#fff");
+  chatMessagesBox.style("padding", "5px");
+  chatMessagesBox.style("margin-bottom", "10px");
+  chatMessagesBox.style("border-radius", "5px");
+  
+  // Create a player count display div
+  // Adjust the text, position, and styles as desired
+  playerCountDiv = createDiv("Players: " + (Object.keys(players).length + 1));
+  playerCountDiv.style("position", "fixed");
+  playerCountDiv.style("z-index", "1000");
+  playerCountDiv.style("color", "#fff");
+  playerCountDiv.style("background-color", "rgba(0, 0, 0, 0.5)");
+  playerCountDiv.style("border-radius", "8px");
+  playerCountDiv.style("margin-top", "-20px");
+  playerCountDiv.parent(chatContainer);
+
+  // Create chat input field
+  chatInput = createInput("");
+  chatInput.attribute("placeholder", "Type your message...");
+  chatInput.style("width", "calc(100% - 60px)");
+  chatInput.style("padding", "8px");
+  chatInput.style("border", "none");
+  chatInput.style("border-radius", "5px");
+  chatInput.changed(() => {
+    console.log("Chat input changed to:", chatInput.value());
+  });
+  chatInput.mousePressed(() => {
+    gameState = "chating";
+  });
+  
+  // Listen for the Enter key to send the chat message:
+  chatInput.elt.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      sendChatMessage(); // Make sure this function emits your socket event
+      gameState = "playing";
+    }
+  });
+  
+  // Create send button
+  chatSendButton = createButton("Send");
+  chatSendButton.style("padding", "8px 12px");
+  chatSendButton.style("margin-left", "5px");
+  chatSendButton.style("border", "none");
+  chatSendButton.style("border-radius", "5px");
+  chatSendButton.style("background-color", "#2196F3");
+  chatSendButton.style("color", "#fff");
+  chatSendButton.mousePressed(() => {
+    sendChatMessage();
+    gameState = "playing";
+  });
+  
+  // Create a container for input and button
+  let inputContainer = createDiv();
+  inputContainer.style("display", "flex");
+  inputContainer.child(chatInput);
+  inputContainer.child(chatSendButton);
+  
+  // Append the messages box and input container to the chat container
+  chatContainer.child(chatMessagesBox);
+  chatContainer.child(inputContainer);
+  
+  // Append chat container to the document body
+  chatContainer.parent(document.body);
+  
+}
+
+// Function to update the player count display when players change
+function updatePlayerCount() {
+  if (playerCountDiv) {
+    playerCountDiv.html("Players: " + (Object.keys(players).length + 1));
+  }
+}
+
+// Function to send a chat message via socket
+function sendChatMessage() {
+  let message = chatInput.value();
+  if (message.trim() === "") return; // Avoid sending empty messages
+
+  // Retrieve player position (adjust if you store the player's position differently)
+  let x = curPlayer && curPlayer.pos ? curPlayer.pos.x : 0;
+  let y = curPlayer && curPlayer.pos ? curPlayer.pos.y : 0;
+
+  // Format data: "x,y,message"
+  let data = `${x},${y},${message}`;
+
+  // Emit the chat message to the server
+  if (socket) {
+    socket.emit("send_message", data);
+  }
+
+  // Clear the input after sending
+  chatInput.value("");
+}
+
+
+// Function to send a chat message via socket
+function sendChatMessage() {
+  let message = chatInput.value();
+  if (message.trim() === "") return; // Avoid sending empty messages
+
+  // Retrieve player position (adjust if you store the player's position differently)
+  let x = curPlayer && curPlayer.pos ? curPlayer.pos.x : 0;
+  let y = curPlayer && curPlayer.pos ? curPlayer.pos.y : 0;
+
+  // Format data: "x,y,message"
+  let data = `${x},${y},${message}`;
+
+  // Emit the chat message to the server
+  if (socket) {
+    socket.emit("send_message", data);
+  }
+  // Clear the input after sending
+  chatInput.value("");
+}
+
+// Helper function to add a chat message to the messages box
+function addChatMessage(chatMsg) {
+  // Create a new div element with the message content
+  let msgDiv = createDiv(`<strong>${chatMsg.user}:</strong> ${chatMsg.message}`);
+  msgDiv.style("padding", "2px 0");
+  chatMessagesBox.child(msgDiv);
+
+  // Optionally, scroll to the bottom of the messages box
+  chatMessagesBox.elt.scrollTop = chatMessagesBox.elt.scrollHeight;
+}
+
 var invDiv;
 var itemListDiv;
 var curItemDiv;

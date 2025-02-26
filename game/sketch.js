@@ -55,6 +55,7 @@ function draw() {
         //! Why call these in draw if they only need to be called once?
         hideRaceSelect();
         hideLinks();
+        renderChatUI()
         // ---- (Your original gameplay code) ----
         if (Object.keys(testMap.chunks).length > 0) {
             testMap.render();
@@ -100,6 +101,39 @@ function draw() {
         pop();
     }
     if (gameState === "inventory") {
+        //render the game in the background
+        if (Object.keys(testMap.chunks).length > 0) {
+            testMap.render();
+            testMap.update();
+        }
+
+        if (curPlayer) {
+            curPlayer.render();
+            curPlayer.update();
+            if(renderGhost){
+                ghostBuild.pos.x = mouseX + camera.x - width / 2;
+                ghostBuild.pos.y = mouseY + camera.y - height / 2;
+                if(ghostBuild.canRotate & wantRotate){
+                    ghostBuild.rot = ghostBuild.pos.copy().sub(curPlayer.pos).heading();
+                }
+                ghostBuild.ghostRender(createVector(ghostBuild.pos.x,ghostBuild.pos.y).dist(curPlayer.pos) < 200);
+            }
+        }
+
+        let keys = Object.keys(players);
+        for (let i = 0; i < keys.length; i++) {
+            if(curPlayer){
+                if(players[keys[i]].pos.dist(curPlayer.pos) < TILESIZE*CHUNKSIZE*2){
+                    players[keys[i]].render();
+                    players[keys[i]].update();
+                }
+            }
+        }
+
+        curPlayer.invBlock.renderHotBar();
+        renderDirtBagUI();
+    }
+    if (gameState === "chating") {
         //render the game in the background
         if (Object.keys(testMap.chunks).length > 0) {
             testMap.render();
