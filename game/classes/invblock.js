@@ -43,8 +43,11 @@ class InvBlock{
         }
     }
 
-    hotbarItem(itemName,slot){ //move an item to the hotbar
-        if(slot >= 0 && slot < this.hotbar.length){
+    hotbarItem(itemName, slot){ //move an item to the hotbar
+        if(itemName == this.hotbar[slot]){
+            this.hotbar[slot] = "";
+        }
+        else{
             if (itemDic[itemName].type != "SimpleItem"){ //if item has a use
                 this.hotbar[slot] = itemName;
             }
