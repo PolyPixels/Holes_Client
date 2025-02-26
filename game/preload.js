@@ -46,11 +46,11 @@ function preload() {
     /*9*/   [bombImg,bombFlareImg]
     ];
 
-    basicShovelImg = loadImage("images/items/tempshovel.png");
+    basicShovelImg = loadImage("images/items/shovel1.png");
     swordImg = loadImage("images/items/tempSword.png");
-    slingShotImg = loadImage("images/items/tempslingshot.png");
+    slingShotImg = loadImage("images/items/sling.png");
     rockImg = loadImage("images/items/temprock.png");
-    appleImg = loadImage("images/items/tempapple.png");
+    appleImg = loadImage("images/items/apple.png");
     mushroomSeedImg = loadImage("images/items/tempmushroomseed.png");
 
     itemImgs = [
@@ -64,11 +64,11 @@ function preload() {
 
     //used for inventory rendering, cause html is booty
     itemImgNames = [
-    /*0*/ ["tempshovel"],
+    /*0*/ ["shovel1"],
     /*1*/ ["tempSword"],
-    /*2*/ ["tempslingshot"],
+    /*2*/ ["sling"],
     /*3*/ ["temprock"],
-    /*4*/ ["tempapple"],
+    /*4*/ ["apple"],
     /*5*/ ["tempmushroomseed"]
     ]
 
