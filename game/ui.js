@@ -725,9 +725,10 @@ function renderChatUI() {
   playerCountDiv.style("z-index", "1000");
   playerCountDiv.style("color", "#fff");
   playerCountDiv.style("background-color", "rgba(0, 0, 0, 0.5)");
-  playerCountDiv.style("padding", "5px 10px");
   playerCountDiv.style("border-radius", "8px");
+  playerCountDiv.style("margin-top", "-20px");
   playerCountDiv.parent(chatContainer);
+
   // Create chat input field
   chatInput = createInput("");
   chatInput.attribute("placeholder", "Type your message...");
@@ -823,7 +824,6 @@ function sendChatMessage() {
   if (socket) {
     socket.emit("send_message", data);
   }
-  addChatMessage("test")
   // Clear the input after sending
   chatInput.value("");
 }

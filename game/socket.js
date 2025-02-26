@@ -145,7 +145,7 @@ function socketSetup(){
 
     // Listen for a broadcasted new chat message from the server
     socket.on("NEW_CHAT_MESSAGE", (data) => {
-        console.log(data)
+        console.log("message data ",data)
         addChatMessage(data);
     });
 
