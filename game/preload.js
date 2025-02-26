@@ -71,6 +71,11 @@ function preload() {
     /*4*/ ["tempapple"],
     /*5*/ ["tempmushroomseed"]
     ]
+
+    playerCardImg = loadImage('images/ui/playercard.png');
+
+    gameUIFont = loadFont('CalibrationGothicNbpLatin-rYmy.ttf');
+    console.log("font:", gameUIFont);
 }
 
 function loadDefaultImage(){
