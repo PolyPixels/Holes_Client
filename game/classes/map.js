@@ -180,7 +180,7 @@ class Chunk{
                         vertex(c.x,c.y);
                         vertex(d.x,d.y);
                         endShape();
-                        circle(scCorners[3].x, scCorners[3].y, (corners[3]-0.6)*TILESIZE);  //TODO: revisit small nodes rendering werid
+                        //circle(scCorners[3].x, scCorners[3].y, (corners[3]-0.6)*TILESIZE);  //TODO: revisit small nodes rendering werid
                         break;
                     case 2:
                         //line(b.x,b.y,c.x,c.y);
@@ -189,7 +189,7 @@ class Chunk{
                         vertex(b.x,b.y);
                         vertex(c.x,c.y);
                         endShape();
-                        circle(scCorners[2].x, scCorners[2].y, (corners[2]-0.6)*TILESIZE);  //TODO: revisit small nodes rendering werid
+                        //circle(scCorners[2].x, scCorners[2].y, (corners[2]-0.6)*TILESIZE);  //TODO: revisit small nodes rendering werid
                         break;
                     case 3:
                         //line(b.x,b.y,d.x,d.y);
@@ -207,7 +207,7 @@ class Chunk{
                         vertex(b.x,b.y);
                         vertex(a.x,a.y);
                         endShape();
-                        circle(scCorners[1].x, scCorners[1].y, (corners[1]-0.6)*TILESIZE);  //TODO: revisit small nodes rendering werid
+                        //circle(scCorners[1].x, scCorners[1].y, (corners[1]-0.6)*TILESIZE);  //TODO: revisit small nodes rendering werid
                         break;
                     case 5:
                         //line(a.x,a.y,d.x,d.y);
@@ -247,7 +247,7 @@ class Chunk{
                         vertex(a.x,a.y);
                         vertex(d.x,d.y);
                         endShape();
-                        circle(scCorners[0].x, scCorners[0].y, (corners[0]-0.6)*TILESIZE);  //TODO: revisit small nodes rendering werid
+                        //circle(scCorners[0].x, scCorners[0].y, (corners[0]-0.6)*TILESIZE);  //TODO: revisit small nodes rendering werid
                         break;
                     case 9:
                         //line(a.x,a.y,c.x,c.y);
