@@ -400,9 +400,6 @@ function renderServerList() {
             playerCount.html(`Players: ${data.playerCount}`);
             serverLogo.attribute("src", data.image);
 
-            // Disable pointer events to prevent any interactions
-            serverEntry.style("pointer-events", data.status === "Online" ?"all" : "none");
-
             // Optionally, adjust opacity to signal a disabled state
             serverEntry.style("opacity", data.status === "Online" ?"1": "0.5");
         });
@@ -567,7 +564,6 @@ function setupUI(){
         let cardWidth = constrain(width * 0.15, 150, 300);
         card.style("width", cardWidth + "px");
 
-        card.style("background-color", "#404040");
         card.style("border", "3px solid #fff");
         card.style("border-radius", "10px");
         card.style("padding", "15px");
@@ -686,7 +682,6 @@ function setupUI(){
     goButton.style("transition", "background-color 0.2s, transform 0.2s");
 
     goButton.mouseOver(() => {
-        goButton.style("background-color", "#1e88e5");
         goButton.style("transform", "scale(1.05)");
     });
     goButton.mouseOut(() => {
@@ -1304,12 +1299,6 @@ function definePauseUI() {
     });
     resumeButton.parent(pauseDiv);
 
-    serverSelectButton = createButton("Disconnect");
-    styleButton(serverSelectButton);
-    serverSelectButton.mousePressed(() => {
-        location.reload()
-    });
-    serverSelectButton.parent(pauseDiv);
 
     optionsButton = createButton("Options / Settings");
     styleButton(optionsButton);
@@ -1317,6 +1306,14 @@ function definePauseUI() {
         
     });
     optionsButton.parent(pauseDiv);
+
+
+    serverSelectButton = createButton("Disconnect");
+    styleButton(serverSelectButton);
+    serverSelectButton.mousePressed(() => {
+        location.reload()
+    });
+    serverSelectButton.parent(pauseDiv);
 }
 
 

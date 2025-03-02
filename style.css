@@ -3,8 +3,8 @@
 
 /* 🎨 Root Theme Variables */
 :root {
-  --primary-color: #0ff; /* Neon Cyan */
-  --secondary-color: #ff0077; /* Neon Magenta */
+  --primary-color: #ff0077; /* Neon Cyan */
+  --secondary-color:#0ff ; /* Neon Magenta */
   --bg-color: #080808;
   --dark-bg: #000000;
   --button-glow: rgba(255, 230, 0, 0.877);
@@ -200,5 +200,37 @@ input:hover {
   input {
     font-size: 14px;
     padding: 10px;
+  }
+}
+
+
+.raceCard {
+  transform: translateY(20px);
+  /* Other styling for the card, e.g., background, padding, border, etc. */
+  background-color: #222;
+  color: #fff;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+}
+
+.raceCard:hover {
+  transform: translateY(-5px);
+}
+
+.entry-animation {
+  animation: cardEntry 0.5s forwards;
+}
+
+@keyframes cardEntry {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

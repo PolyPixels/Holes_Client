@@ -169,43 +169,43 @@
     // Display a race card with details.
     // The entire card becomes clickable; clicking it will load the editing form.
     function displayRaceCard(race) {
-      const container = document.getElementById('raceDisplay');
-      container.innerHTML = ''; // Clear previous content.
-      
-      const card = document.createElement('div');
-      card.className = 'card';
-      
-      const title = document.createElement('h3');
-      title.textContent = race.name;
-      card.appendChild(title);
-      
-      const img = document.createElement('img');
-      img.src = './images/characters/' + race.name + '.png';
-      img.alt = race.name;
-      // Fallback image if not found.
-      img.onerror = function() {
-        this.src = 'https://via.placeholder.com/250x150?text=No+Image';
-      };
-      card.appendChild(img);
-      
-      // List race stats (skipping name).
-      const statsList = document.createElement('ul');
-      for (let key in race) {
-        if (key === 'name') continue;
-        const li = document.createElement('li');
-        li.textContent = key + ': ' + race[key];
-        statsList.appendChild(li);
-      }
-      card.appendChild(statsList);
-      
-      // Clicking on the card loads the edit page for this race.
-      card.addEventListener('click', () => {
-        openEditPage(race);
-      });
-      
-      container.appendChild(card);
-    }
+    const container = document.getElementById('raceDisplay');
+    container.innerHTML = ''; // Clear previous content.
     
+    const card = document.createElement('div');
+    card.className = 'card entry-animation'; // 'entry-animation' triggers the animation
+
+    const title = document.createElement('h3');
+    title.textContent = race.name;
+    card.appendChild(title);
+    
+    const img = document.createElement('img');
+    img.src = './images/characters/' + race.name + '.png';
+    img.alt = race.name;
+    // Fallback image if not found.
+    img.onerror = function() {
+      this.src = 'https://via.placeholder.com/250x150?text=No+Image';
+    };
+    card.appendChild(img);
+    
+    // List race stats (skipping name).
+    const statsList = document.createElement('ul');
+    for (let key in race) {
+      if (key === 'name') continue;
+      const li = document.createElement('li');
+      li.textContent = `${key}: ${race[key]}`;
+      statsList.appendChild(li);
+    }
+    card.appendChild(statsList);
+    
+    // Clicking on the card loads the edit page for this race.
+    card.addEventListener('click', () => {
+      openEditPage(race);
+    });
+    
+    container.appendChild(card);
+  }
+
     // Open the edit page and prefill the form with the race data.
     function openEditPage(race) {
       currentRace = race;
