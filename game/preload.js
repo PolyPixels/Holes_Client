@@ -4,6 +4,7 @@ var trapImg;
 var chunkDirtImg;
 var dirtFloorImg;
 var dirtBagImg;
+var dirtBagOpenImg;
 
 function preload() {
     // Load the default image
@@ -16,6 +17,7 @@ function preload() {
     chunkDirtImg = loadImage('images/dirt_walls.png');
     dirtFloorImg = loadImage('images/floor.png');
     dirtBagImg = loadImage('images/ui/dirtbag.png');
+    dirtBagOpenImg = loadImage('images/ui/dirtbagopen.png');
 
     //load obj imgs
     wallImg = loadImage('images/structures/tempwall1.png');

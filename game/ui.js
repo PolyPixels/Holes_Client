@@ -1292,7 +1292,20 @@ function renderDirtBagUI(){
     // Dirt Inventory
     push();
     //should add an open and closed version
-    image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
+    if (curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Shovel"){
+        if(dirtInv >= 150 - curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].digSpeed){
+            image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
+        }
+        else{
+            image(dirtBagOpenImg, width - 180 - 10, height - 186 - 10, 180, 186);
+        }
+    }
+    else if(dirtInv >= 150 - DIGSPEED){
+        image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
+    }
+    else{
+        image(dirtBagOpenImg, width - 180 - 10, height - 186 - 10, 180, 186);
+    }
     
     fill("#70443C");
     rect(width - 180 + 20, height - 186 + 25 + (120 * (1-(dirtInv/150))), 120, 120 * (dirtInv/150));
