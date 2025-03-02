@@ -51,45 +51,41 @@ function saveServers() {
 
 let linksRendered = false; // Flag to prevent duplicate rendering
 let linkContainer, settingsContainer, toggleButton; // Store references for hiding
-
+// Function to render buttons instead of links
 function renderLinks() {
     if (linksRendered) return; // Prevent duplicate rendering
 
-    // Parent container for links (Bottom Right)
+    // Parent container for buttons (Bottom Right)
     linkContainer = createDiv();
-    linkContainer.style("position", "fixed");
-    linkContainer.style("bottom", "10px");
-    linkContainer.style("right", "10px");
-    linkContainer.style("display", "flex");
-    linkContainer.style("flex-direction", "column");
-    linkContainer.style("align-items", "flex-end");
-    linkContainer.style("gap", "10px");
-    linkContainer.style("z-index", "1000");
+    applyStyle(linkContainer, {
+        position: "fixed",
+        bottom: "10px",
+        right: "10px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-end",
+        gap: "10px",
+        zIndex: "1000",
+    });
 
-    // Create individual links
-    createLinkItem(linkContainer, "Itch.io", "https://itch.io/magentaautumn", "🔗");
-    createLinkItem(linkContainer, "GitHub", "https://github.com/PolyPixels", "🐙");
-    createLinkItem(linkContainer, "Discord", "https://discord.com/", "💬");
+    // Create individual buttons
+    createLinkButton(linkContainer, "🔗 Itch.io", "https://itch.io/magentaautumn");
+    createLinkButton(linkContainer, "🐙 GitHub", "https://github.com/PolyPixels");
+    createLinkButton(linkContainer, "💬 Discord", "https://discord.com/");
 
     // Parent container for settings (Bottom Left)
     settingsContainer = createDiv();
-    settingsContainer.style("position", "fixed");
-    settingsContainer.style("bottom", "10px");
-    settingsContainer.style("left", "10px");
-    settingsContainer.style("z-index", "1000");
+    applyStyle(settingsContainer, {
+        position: "fixed",
+        bottom: "10px",
+        left: "10px",
+        zIndex: "1000",
+    });
 
     // Create settings button
-    let settingsButton = createButton("⚙️ Settings");
-    settingsButton.style("padding", "10px 15px");
-    settingsButton.style("font-size", "16px");
-    settingsButton.style("border", "none");
-    settingsButton.style("border-radius", "5px");
-    settingsButton.style("background-color", "#555");
-    settingsButton.style("color", "white");
-    settingsButton.style("cursor", "pointer");
+    let settingsButton = createButton("⚙️ Settings").parent(settingsContainer);
+    styleButton(settingsButton);
     settingsButton.mousePressed(() => openSettings());
-
-    settingsButton.parent(settingsContainer);
 
     // Append elements to body
     linkContainer.parent(document.body);
@@ -97,6 +93,43 @@ function renderLinks() {
 
     linksRendered = true; // Set flag to true
 }
+
+// 🎯 Helper Function to Create Buttons
+function createLinkButton(parent, text, url) {
+    let button = createButton(text).parent(parent);
+    styleButton(button);
+    button.mousePressed(() => window.open(url, "_blank"));
+}
+
+// 🎮 Styling for Buttons
+function styleButton(button) {
+    applyStyle(button, {
+        padding: "10px 15px",
+        fontSize: "16px",
+        borderRadius: "5px",
+        backgroundColor: "#333",
+        color: "white",
+        border: "2px solid cyan",
+        cursor: "pointer",
+        transition: "0.3s ease-in-out",
+    });
+
+    button.mouseOver(() => button.style("box-shadow", "0 0 10px cyan"));
+    button.mouseOut(() => button.style("box-shadow", "none"));
+    addGlitchEffect(button);
+}
+
+// ⚡ Apply Glitch Effect
+function addGlitchEffect(element) {
+    element.mouseOver(() => element.style("animation", "glitch 0.3s infinite"));
+    element.mouseOut(() => element.style("animation", "none"));
+}
+
+// 🎨 Apply Style Utility Function
+function applyStyle(element, styles) {
+    Object.entries(styles).forEach(([key, value]) => element.style(key, value));
+}
+
 
 // Helper function to create a link
 function createLinkItem(parent, text, url, emoji) {
@@ -446,7 +479,6 @@ function drawSelection() {
     race_back_button.innerHTML = "Go Back"
 
     race_back_button.style("font-size", "20px");
-    race_back_button.style("background-color", "#2196F3");
     race_back_button.style("color", "#fff");
     race_back_button.style("border", "none");
     race_back_button.style("border-radius", "8px");
@@ -619,6 +651,7 @@ function setupUI(){
     nameInput.style("padding", "10px");
     nameInput.style("width", "220px");
     nameInput.style("outline", "none");
+    nameInput.attribute('placeholder', 'Name :');
     nameInput.style("transition", "border 0.2s");
     nameInput.input(() => {
         checkName();
@@ -639,7 +672,6 @@ function setupUI(){
     goButton.position(width / 2 + 130, height * 0.7);
     goButton.attribute("disabled", true);
     goButton.style("font-size", "20px");
-    goButton.style("background-color", "#2196F3");
     goButton.style("color", "#fff");
     goButton.style("border", "none");
     goButton.style("border-radius", "8px");
@@ -654,7 +686,6 @@ function setupUI(){
         goButton.style("transform", "scale(1.05)");
     });
     goButton.mouseOut(() => {
-        goButton.style("background-color", "#2196F3");
         goButton.style("transform", "scale(1)");
     });
 
@@ -757,7 +788,6 @@ function renderChatUI() {
   chatSendButton.style("margin-left", "5px");
   chatSendButton.style("border", "none");
   chatSendButton.style("border-radius", "5px");
-  chatSendButton.style("background-color", "#2196F3");
   chatSendButton.style("color", "#fff");
   chatSendButton.mousePressed(() => {
     sendChatMessage();
@@ -848,203 +878,137 @@ var weaponsTag;
 var equipmentTag;
 var consumablesTag;
 var spaceBarDiv;
-
-function defineInvUI(){
+function defineInvUI() {
     invDiv = createDiv();
     invDiv.id("inventory");
-    //center the div
-    invDiv.style("position", "absolute");
-    invDiv.style("top", "50%");
-    invDiv.style("left", "50%");
-    invDiv.style("transform", "translate(-50%, -50%)");
-    invDiv.style("display", "none");
-    invDiv.style("width", "40%");
-    invDiv.style("height", "75%");
-    invDiv.style("background-color", "rgb(100, 100, 100)");
-    invDiv.style("border", "2px solid black");
-    invDiv.style("border-radius", "10px");
-
-    let topBar = createDiv();
-    topBar.style("width", "100%");
-    topBar.style("height", "10%");
-    topBar.style("display", "flex");
-    topBar.style("justify-content", "center");
-    topBar.style("align-items", "center");
-    topBar.parent(invDiv);
-
-    let invTitle = createP("Inventory");
-    invTitle.style("font-size", "24px");
-    invTitle.style("font-weight", "bold");
-    invTitle.style("color", "white");
-    invTitle.style("text-decoration", "underline");
-    invTitle.style("padding-right", "10px");
-    invTitle.parent(topBar);
-
-    let craftingTitle = createP("Crafting");
-    craftingTitle.style("font-size", "24px");
-    craftingTitle.style("font-weight", "bold");
-    craftingTitle.style("color", "white");
-    craftingTitle.style("text-decoration", "underline");
-    craftingTitle.style("padding-left", "10px");
-    craftingTitle.parent(topBar);
-
-    let tagBar = createDiv();
-    tagBar.style("width", "100%");
-    tagBar.style("height", "10%");
-    tagBar.style("display", "flex");
-    tagBar.style("justify-content", "center");
-    tagBar.style("align-items", "center");
-    tagBar.style("border-bottom", "2px solid black");
-    tagBar.parent(invDiv);
-
-    //tags: All, Tools/Seeds, Weapons, Equipment, Consumables
-    allTag = createDiv("All");
-    allTag.style("font-size", "20px");
-    allTag.style("font-weight", "bold");
-    allTag.style("color", "white");
-    allTag.style("padding", "10px");
-    allTag.style("border", "2px solid black");
-    allTag.style("border-radius", "10px");
-    allTag.style("margin", "5px");
-    allTag.style("cursor", "pointer");
-    allTag.style("background-color", "rgb(120,120,120)");
-    allTag.parent(tagBar);
-    allTag.mousePressed(() => {
-        curPlayer.invBlock.curTag = "All";
-        allTag.style("background-color", "rgb(120,120,120)");
-        toolsTag.style("background-color", "rgb(100,100,100)");
-        weaponsTag.style("background-color", "rgb(100,100,100)");
-        equipmentTag.style("background-color", "rgb(100,100,100)");
-        consumablesTag.style("background-color", "rgb(100,100,100)");
-        updateItemList();
+    
+    // Center the div
+    applyStyle(invDiv, {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        display: "none",
+        width: "40%",
+        height: "75%",
+        backgroundColor: "rgb(50, 50, 50)",
+        border: "2px solid cyan",
+        borderRadius: "10px",
+        boxShadow: "0 0 15px rgba(0, 255, 255, 0.5)",
     });
 
-    toolsTag = createDiv("Tools/Seeds");
-    toolsTag.style("font-size", "20px");
-    toolsTag.style("font-weight", "bold");
-    toolsTag.style("color", "white");
-    toolsTag.style("padding", "10px");
-    toolsTag.style("border", "2px solid black");
-    toolsTag.style("border-radius", "10px");
-    toolsTag.style("margin", "5px");
-    toolsTag.style("cursor", "pointer");
-    toolsTag.style("background-color", "rgb(100,100,100)");
-    toolsTag.parent(tagBar);
-    toolsTag.mousePressed(() => {
-        curPlayer.invBlock.curTag = "Tools/Seeds";
-        allTag.style("background-color", "rgb(100,100,100)");
-        toolsTag.style("background-color", "rgb(120,120,120)");
-        weaponsTag.style("background-color", "rgb(100,100,100)");
-        equipmentTag.style("background-color", "rgb(100,100,100)");
-        consumablesTag.style("background-color", "rgb(100,100,100)");
-        updateItemList();
+    // Top Bar (Title)
+    let topBar = createDiv().parent(invDiv);
+    applyStyle(topBar, {
+        width: "100%",
+        height: "10%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
     });
 
-    weaponsTag = createDiv("Weapons");
-    weaponsTag.style("font-size", "20px");
-    weaponsTag.style("font-weight", "bold");
-    weaponsTag.style("color", "white");
-    weaponsTag.style("padding", "10px");
-    weaponsTag.style("border", "2px solid black");
-    weaponsTag.style("border-radius", "10px");
-    weaponsTag.style("margin", "5px");
-    weaponsTag.style("cursor", "pointer");
-    weaponsTag.style("background-color", "rgb(100,100,100)");
-    weaponsTag.parent(tagBar);
-    weaponsTag.mousePressed(() => {
-        curPlayer.invBlock.curTag = "Weapons";
-        allTag.style("background-color", "rgb(100,100,100)");
-        toolsTag.style("background-color", "rgb(100,100,100)");
-        weaponsTag.style("background-color", "rgb(120,120,120)");
-        equipmentTag.style("background-color", "rgb(100,100,100)");
-        consumablesTag.style("background-color", "rgb(100,100,100)");
-        updateItemList();
+    let invTitle = createP("Inventory").parent(topBar);
+    applyStyle(invTitle, {
+        fontSize: "24px",
+        fontWeight: "bold",
+        color: "white",
+        textDecoration: "underline",
+        paddingRight: "10px",
     });
 
-    equipmentTag = createDiv("Equipment");
-    equipmentTag.style("font-size", "20px");
-    equipmentTag.style("font-weight", "bold");
-    equipmentTag.style("color", "white");
-    equipmentTag.style("padding", "10px");
-    equipmentTag.style("border", "2px solid black");
-    equipmentTag.style("border-radius", "10px");
-    equipmentTag.style("margin", "5px");
-    equipmentTag.style("cursor", "pointer");
-    equipmentTag.style("background-color", "rgb(100,100,100)");
-    equipmentTag.parent(tagBar);
-    equipmentTag.mousePressed(() => {
-        curPlayer.invBlock.curTag = "Equipment";
-        allTag.style("background-color", "rgb(100,100,100)");
-        toolsTag.style("background-color", "rgb(100,100,100)");
-        weaponsTag.style("background-color", "rgb(100,100,100)");
-        equipmentTag.style("background-color", "rgb(120,120,120)");
-        consumablesTag.style("background-color", "rgb(100,100,100)");
-        updateItemList();
+    let craftingTitle = createP("Crafting").parent(topBar);
+    applyStyle(craftingTitle, {
+        fontSize: "24px",
+        fontWeight: "bold",
+        color: "white",
+        textDecoration: "underline",
+        paddingLeft: "10px",
     });
 
-    consumablesTag = createDiv("Consumables");
-    consumablesTag.style("font-size", "20px");
-    consumablesTag.style("font-weight", "bold");
-    consumablesTag.style("color", "white");
-    consumablesTag.style("padding", "10px");
-    consumablesTag.style("border", "2px solid black");
-    consumablesTag.style("border-radius", "10px");
-    consumablesTag.style("margin", "5px");
-    consumablesTag.style("cursor", "pointer");
-    consumablesTag.style("background-color", "rgb(100,100,100)");
-    consumablesTag.parent(tagBar);
-    consumablesTag.mousePressed(() => {
-        curPlayer.invBlock.curTag = "Consumables";
-        allTag.style("background-color", "rgb(100,100,100)");
-        toolsTag.style("background-color", "rgb(100,100,100)");
-        weaponsTag.style("background-color", "rgb(100,100,100)");
-        equipmentTag.style("background-color", "rgb(100,100,100)");
-        consumablesTag.style("background-color", "rgb(120,120,120)");
-        updateItemList();
+    // Tag Bar (Category Buttons)
+    let tagBar = createDiv().parent(invDiv);
+    applyStyle(tagBar, {
+        width: "100%",
+        height: "10%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        borderBottom: "2px solid black",
+        gap: "5px",
     });
 
-    let bottomDiv = createDiv();
-    bottomDiv.style("width", "100%");
-    bottomDiv.style("height", "80%");
-    bottomDiv.style("display", "flex");
-    bottomDiv.style("justify-content", "center");
-    bottomDiv.style("align-items", "center");
-    bottomDiv.parent(invDiv);
+    // Define categories
+    const categories = ["All", "Tools/Seeds", "Weapons", "Equipment", "Consumables"];
+    let categoryButtons = {};
 
-    itemListDiv = createDiv();
-    itemListDiv.style("width", "50%");
-    itemListDiv.style("height", "100%");
-    itemListDiv.style("overflow-y", "auto");
-    itemListDiv.style("overflow-x", "none");
-    itemListDiv.parent(bottomDiv);
+    categories.forEach((category) => {
+        let button = createButton(category).parent(tagBar);
+        styleButton(button, "120px");
 
-    curItemDiv = createDiv();
-    curItemDiv.style("width", "50%");
-    curItemDiv.style("height", "100%");
-    curItemDiv.style("border-left", "2px solid black");
-    curItemDiv.parent(bottomDiv);
+        button.mousePressed(() => {
+            curPlayer.invBlock.curTag = category;
+            updateItemList();
 
-    spaceBarDiv = createDiv("");
-    spaceBarDiv.style("position", "absolute");
-    spaceBarDiv.style("top", "105%");
-    spaceBarDiv.style("left", "50%");
-    spaceBarDiv.style("transform", "translate(-50%, 0%)");
-    spaceBarDiv.style("background-color", "rgb(100,100,100)");
-    spaceBarDiv.style("border", "2px solid black");
-    spaceBarDiv.style("border-radius", "10px");
-    spaceBarDiv.style("padding", "5px");
-    spaceBarDiv.style("font-size", "20px");
-    spaceBarDiv.style("color", "white");
-    spaceBarDiv.style("cursor", "pointer");
-    spaceBarDiv.parent(invDiv);
+            // Highlight selected button
+            Object.values(categoryButtons).forEach((btn) => btn.style("background-color", "rgb(80,80,80)"));
+            button.style("background-color", "rgb(120,120,120)");
+        });
+
+        categoryButtons[category] = button;
+    });
+
+    // Default selection highlight
+    categoryButtons["All"].style("background-color", "rgb(120,120,120)");
+
+    // Bottom Area (Item List & Details)
+    let bottomDiv = createDiv().parent(invDiv);
+    applyStyle(bottomDiv, {
+        width: "100%",
+        height: "80%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    });
+
+    itemListDiv = createDiv().parent(bottomDiv);
+    applyStyle(itemListDiv, {
+        width: "50%",
+        height: "100%",
+        overflowY: "auto",
+    });
+
+    curItemDiv = createDiv().parent(bottomDiv);
+    applyStyle(curItemDiv, {
+        width: "50%",
+        height: "100%",
+        borderLeft: "2px solid black",
+    });
+
+    // Spacebar Hotkey Div
+    spaceBarDiv = createDiv("").parent(invDiv);
+    applyStyle(spaceBarDiv, {
+        position: "absolute",
+        top: "105%",
+        left: "50%",
+        transform: "translate(-50%, 0%)",
+        backgroundColor: "rgb(80,80,80)",
+        border: "2px solid black",
+        borderRadius: "10px",
+        padding: "5px",
+        fontSize: "20px",
+        color: "white",
+        cursor: "pointer",
+    });
+
     spaceBarDiv.mousePressed(() => {
         curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem, curPlayer.invBlock.selectedHotBar);
     });
-    spaceBarDiv.hide();
 
+    spaceBarDiv.hide();
     updateItemList();
     updatecurItemDiv();
 }
+
 
 function updateItemList(){
     if(curPlayer == undefined) return;
@@ -1389,3 +1353,5 @@ function styleButton(button) {
     button.style("background-color", "rgb(80, 80, 80)");
     button.style("color", "white");
 }
+
+
