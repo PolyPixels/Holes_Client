@@ -1,4 +1,9 @@
 function keyReleased() {
+    if(keyCode == 27 ){
+        gameState = "playing";
+        pauseDiv.hide();
+        invDiv.hide();
+    }
     if(gameState == "playing"){
         if (keyCode === 82){ //r
             buildMode = !buildMode;
@@ -9,7 +14,7 @@ function keyReleased() {
             updateItemList();
             invDiv.show();
         }
-        if(keyCode == 27 || keyCode == 80){ //i
+        if( keyCode == 80 ){ //i
             gameState = "pause";
             pauseDiv.show();
         }
@@ -41,7 +46,6 @@ function keyReleased() {
     }
 
     else if (gameState =="pause") {
-      
         if(keyCode == 80 || keyCode ==27){
             gameState = "playing";
             pauseDiv.hide();

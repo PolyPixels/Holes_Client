@@ -57,6 +57,7 @@ function renderLinks() {
 
     // Parent container for buttons (Bottom Right)
     linkContainer = createDiv();
+    linkContainer.class("container")
     applyStyle(linkContainer, {
         position: "fixed",
         bottom: "10px",
@@ -75,6 +76,7 @@ function renderLinks() {
 
     // Parent container for settings (Bottom Left)
     settingsContainer = createDiv();
+    settingsContainer.class("container")
     applyStyle(settingsContainer, {
         position: "fixed",
         bottom: "10px",
@@ -194,6 +196,7 @@ function renderServerBrowser() {
         renderedserverBrowserContainer = true;
         serverBrowserContainer = createDiv();
         serverBrowserContainer.id("serverBrowserContainer");
+        serverBrowserContainer.class("container")
 
         // Main container styling
         serverBrowserContainer.style("width", "500px");
@@ -332,6 +335,7 @@ function renderServerList() {
     serverList.forEach((server, index) => {
         let serverEntry = createDiv();
         serverEntry.class("serverEntry");
+        
         serverEntry.style("padding", "10px");
         serverEntry.style("margin-bottom", "10px");
         serverEntry.style("border-radius", "8px");
@@ -729,6 +733,7 @@ function renderChatUI() {
   chatRendered = true
   // Create chat container positioned at bottom left
   chatContainer = createDiv();
+  chatContainer.class("container")
   chatContainer.style("position", "fixed");
   chatContainer.style("bottom", "10px");
   chatContainer.style("left", "10px");
@@ -881,6 +886,7 @@ var spaceBarDiv;
 function defineInvUI() {
     invDiv = createDiv();
     invDiv.id("inventory");
+    invDiv.class("container")
     
     // Center the div
     applyStyle(invDiv, {
@@ -891,7 +897,6 @@ function defineInvUI() {
         display: "none",
         width: "40%",
         height: "75%",
-        backgroundColor: "rgb(50, 50, 50)",
         border: "2px solid cyan",
         borderRadius: "10px",
         boxShadow: "0 0 15px rgba(0, 255, 255, 0.5)",
@@ -1270,6 +1275,7 @@ var optionsButton;
 
 function definePauseUI() {
     pauseDiv = createDiv();
+    pauseDiv.class("container")
     pauseDiv.id("pauseMenu");
     pauseDiv.style("position", "absolute");
     pauseDiv.style("top", "50%");
@@ -1278,7 +1284,6 @@ function definePauseUI() {
     pauseDiv.style("display", "none");
     pauseDiv.style("width", "30%");
     pauseDiv.style("height", "40%");
-    pauseDiv.style("background-color", "rgb(50, 50, 50)");
     pauseDiv.style("border", "2px solid black");
     pauseDiv.style("border-radius", "10px");
     pauseDiv.style("text-align", "center");
@@ -1295,7 +1300,7 @@ function definePauseUI() {
     styleButton(resumeButton);
     resumeButton.mousePressed(() => {
         pauseDiv.hide();
-        // Resume game logic
+        gameState = "playing"
     });
     resumeButton.parent(pauseDiv);
 
@@ -1309,7 +1314,7 @@ function definePauseUI() {
     optionsButton = createButton("Options / Settings");
     styleButton(optionsButton);
     optionsButton.mousePressed(() => {
-        // Open settings menu logic
+        
     });
     optionsButton.parent(pauseDiv);
 }
@@ -1327,7 +1332,6 @@ function definePlayerStatusDiv() {
     player_status_container.style("display", "none");
     player_status_container.style("width", "30%");
     player_status_container.style("height", "40%");
-    player_status_container.style("background-color", "rgb(50, 50, 50)");
     player_status_container.style("border", "2px solid black");
     player_status_container.style("border-radius", "10px");
     player_status_container.style("text-align", "center");
@@ -1347,10 +1351,8 @@ function styleButton(button) {
     button.style("padding", "10px");
     button.style("margin", "10px");
     button.style("font-size", "18px");
-    button.style("border", "2px solid black");
     button.style("border-radius", "5px");
     button.style("cursor", "pointer");
-    button.style("background-color", "rgb(80, 80, 80)");
     button.style("color", "white");
 }
 

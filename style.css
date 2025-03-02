@@ -62,7 +62,7 @@ button {
   color: var(--primary-color);
   padding: 12px 30px;
   border-radius: 8px;
-  border: 2px solid var(--primary-color);
+  border: 2px solid white;
   background: transparent;
   cursor: pointer;
   transition: 0.3s ease-in-out;
@@ -147,7 +147,7 @@ input:hover {
 }
 
 /* Cyberpunk Div Styling */
-.div-box {
+.container {
   padding: 20px;
   border: 2px solid var(--primary-color);
   background: var(--input-bg);
@@ -155,10 +155,11 @@ input:hover {
   border-radius: 10px;
   text-align: center;
   transition: 0.3s ease-in-out;
+  background-color: #000;
 }
 
 /* Div Hover Effect */
-.div-box:hover {
+.container:hover {
   border-color: var(--secondary-color);
   box-shadow: 0 0 20px var(--secondary-color);
 }
