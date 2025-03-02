@@ -1,4 +1,9 @@
 function keyReleased() {
+    if(keyCode == 27 ){
+        gameState = "playing";
+        pauseDiv.hide();
+        invDiv.hide();
+    }
     if(gameState == "playing"){
         if (keyCode === 82){ //r
             buildMode = !buildMode;
@@ -8,6 +13,15 @@ function keyReleased() {
             gameState = "inventory";
             updateItemList();
             invDiv.show();
+        }
+        if( keyCode == 80 ){ //i
+            gameState = "pause";
+            pauseDiv.show();
+        }
+
+        if(keyCode == 9){ //i
+            gameState = "player_status";
+            player_status_container.show();
         }
 
         if(buildMode){ //replace this with the wheel at some point
@@ -28,6 +42,21 @@ function keyReleased() {
         if(keyCode == 73){
             gameState = "playing";
             invDiv.hide();
+        }
+    }
+
+    else if (gameState =="pause") {
+        if(keyCode == 80 || keyCode ==27){
+            gameState = "playing";
+            pauseDiv.hide();
+        }
+    }
+
+    else if(gameState == "player_status" ) {
+        if(keyCode== 9) {
+
+            gameState = "playing";
+            player_status_container.hide();
         }
     }
 

@@ -100,7 +100,7 @@ function draw() {
         rect(width - 180 + 20, height - 186 + 25 + (120 * (1-(dirtInv/150))), 120, 120 * (dirtInv/150));
         pop();
     }
-    if (gameState === "inventory") {
+    if (gameState === "inventory" || gameState === "pause" || gameState =="player_status") {
         //render the game in the background
         if (Object.keys(testMap.chunks).length > 0) {
             testMap.render();
