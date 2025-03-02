@@ -56,7 +56,7 @@ class SimpleItem{
     }
 
     renderImage(x,y){
-        image(itemImgs[this.imgNum][0], x,y, 64, 64);
+        image(itemImgs[this.imgNum][0], x,y, 60, 60);
     }
 
     decreaseAmount(amount){
