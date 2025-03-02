@@ -19,6 +19,7 @@ function socketSetup(){
             data.race,
             data.name
         );
+        updatePlayerCount()
     });
 
     socket.on('OLD_DATA', (data) => {
@@ -104,6 +105,7 @@ function socketSetup(){
 
     socket.on('REMOVE_PLAYER', (data) => {
         delete players[data];
+        updatePlayerCount()
     });
 
     socket.on("NEW_OBJECT", (data) => {

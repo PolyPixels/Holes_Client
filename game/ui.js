@@ -492,7 +492,7 @@ function setupUI(){
     }
     
     defineInvUI();
-
+    definePauseUI()
     raceTitle = createDiv();
     // ---------------------------------------------------
     //  Create a container for race selection cards (centered)
@@ -1297,4 +1297,95 @@ function renderDirtBagUI(){
     fill("#70443C");
     rect(width - 180 + 20, height - 186 + 25 + (120 * (1-(dirtInv/150))), 120, 120 * (dirtInv/150));
     pop();
+}
+
+var pauseDiv;
+var resumeButton;
+var serverSelectButton;
+var optionsButton;
+
+function definePauseUI() {
+    pauseDiv = createDiv();
+    pauseDiv.id("pauseMenu");
+    pauseDiv.style("position", "absolute");
+    pauseDiv.style("top", "50%");
+    pauseDiv.style("left", "50%");
+    pauseDiv.style("transform", "translate(-50%, -50%)");
+    pauseDiv.style("display", "none");
+    pauseDiv.style("width", "30%");
+    pauseDiv.style("height", "40%");
+    pauseDiv.style("background-color", "rgb(50, 50, 50)");
+    pauseDiv.style("border", "2px solid black");
+    pauseDiv.style("border-radius", "10px");
+    pauseDiv.style("text-align", "center");
+    pauseDiv.style("padding", "20px");
+
+    let pauseTitle = createP("Paused");
+    pauseTitle.style("font-size", "28px");
+    pauseTitle.style("font-weight", "bold");
+    pauseTitle.style("color", "white");
+    pauseTitle.style("text-decoration", "underline");
+    pauseTitle.parent(pauseDiv);
+
+    resumeButton = createButton("Resume");
+    styleButton(resumeButton);
+    resumeButton.mousePressed(() => {
+        pauseDiv.hide();
+        // Resume game logic
+    });
+    resumeButton.parent(pauseDiv);
+
+    serverSelectButton = createButton("Disconnect");
+    styleButton(serverSelectButton);
+    serverSelectButton.mousePressed(() => {
+        location.reload()
+    });
+    serverSelectButton.parent(pauseDiv);
+
+    optionsButton = createButton("Options / Settings");
+    styleButton(optionsButton);
+    optionsButton.mousePressed(() => {
+        // Open settings menu logic
+    });
+    optionsButton.parent(pauseDiv);
+}
+
+
+var player_status_container;
+
+function definePlayerStatusDiv() {
+    player_status_container = createDiv();
+    player_status_container.id("player_status_container");
+    player_status_container.style("position", "absolute");
+    player_status_container.style("top", "50%");
+    player_status_container.style("left", "50%");
+    player_status_container.style("transform", "translate(-50%, -50%)");
+    player_status_container.style("display", "none");
+    player_status_container.style("width", "30%");
+    player_status_container.style("height", "40%");
+    player_status_container.style("background-color", "rgb(50, 50, 50)");
+    player_status_container.style("border", "2px solid black");
+    player_status_container.style("border-radius", "10px");
+    player_status_container.style("text-align", "center");
+    player_status_container.style("padding", "20px");
+
+    let pauseTitle = createP("Paused");
+    pauseTitle.style("font-size", "28px");
+    pauseTitle.style("font-weight", "bold");
+    pauseTitle.style("color", "white");
+    pauseTitle.style("text-decoration", "underline");
+    pauseTitle.parent(player_status_container);
+
+}
+
+function styleButton(button) {
+    button.style("width", "80%");
+    button.style("padding", "10px");
+    button.style("margin", "10px");
+    button.style("font-size", "18px");
+    button.style("border", "2px solid black");
+    button.style("border-radius", "5px");
+    button.style("cursor", "pointer");
+    button.style("background-color", "rgb(80, 80, 80)");
+    button.style("color", "white");
 }

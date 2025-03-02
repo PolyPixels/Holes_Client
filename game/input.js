@@ -9,6 +9,15 @@ function keyReleased() {
             updateItemList();
             invDiv.show();
         }
+        if(keyCode == 27 || keyCode == 80){ //i
+            gameState = "pause";
+            pauseDiv.show();
+        }
+
+        if(keyCode == 9){ //i
+            gameState = "player_status";
+            player_status_container.show();
+        }
 
         if(buildMode){ //replace this with the wheel at some point
             if (keyCode === 49) ghostBuild = createObject("Wall", 0, 0, 0, curPlayer.color, " ", " "); //1
@@ -28,6 +37,22 @@ function keyReleased() {
         if(keyCode == 73){
             gameState = "playing";
             invDiv.hide();
+        }
+    }
+
+    else if (gameState =="pause") {
+      
+        if(keyCode == 80 || keyCode ==27){
+            gameState = "playing";
+            pauseDiv.hide();
+        }
+    }
+
+    else if(gameState == "player_status" ) {
+        if(keyCode== 9) {
+
+            gameState = "playing";
+            player_status_container.hide();
         }
     }
 
