@@ -3,6 +3,7 @@ function keyReleased() {
         gameState = "playing";
         pauseDiv.hide();
         invDiv.hide();
+        
     }
     if(gameState == "playing"){
         if (keyCode === 82){ //r
@@ -25,6 +26,11 @@ function keyReleased() {
         }
 
         if(buildMode){ //replace this with the wheel at some point
+
+            // render build UI
+            // list of object strings and keycodes 
+            // if keycode make ghostbuild valid
+            buildDiv.show()
             if (keyCode === 49) ghostBuild = createObject("Wall", 0, 0, 0, curPlayer.color, " ", " "); //1
             if (keyCode === 50) ghostBuild = createObject("Floor", 0, 0, 0, curPlayer.color, " ", " "); //2
             if (keyCode === 51) ghostBuild = createObject("Door", 0, 0, 0, curPlayer.color, " ", " "); //3
@@ -33,6 +39,8 @@ function keyReleased() {
             if (keyCode === 54) ghostBuild = createObject("BearTrap", 0, 0, 0, curPlayer.color, " ", " "); //6
             if (keyCode === 55) ghostBuild = createObject("Turret", 0,0,0, curPlayer.obj, " ", " "); //8
             if (keyCode === 56) ghostBuild = createObject("PlacedBomb", 0,0,0, curPlayer.obj, " ", " "); //9
+        }else {
+            buildDiv.hide()
         }
     }
     else if(gameState == "inventory"){

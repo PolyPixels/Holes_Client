@@ -526,6 +526,7 @@ function setupUI(){
     
     defineInvUI();
     definePauseUI()
+    defineBuildUI()
     raceTitle = createDiv();
     // ---------------------------------------------------
     //  Create a container for race selection cards (centered)
@@ -1354,3 +1355,25 @@ function styleButton(button) {
 }
 
 
+// render build UI
+
+
+var buildDiv;
+function defineBuildUI() {
+    buildDiv = createDiv();
+    buildDiv.class("container")
+    buildDiv.id("pauseMenu");
+    buildDiv.style("position", "absolute");
+    buildDiv.style("top", "40%");
+    buildDiv.style("left", "100%");
+    buildDiv.style("transform", "translate(-50%, -50%)");
+    buildDiv.style("display", "none");
+    buildDiv.style("width", "10%");
+    buildDiv.style("height", "100%");
+    buildDiv.style("border", "2px solid black");
+    buildDiv.style("border-radius", "10px");
+    buildDiv.style("text-align", "center");
+    buildDiv.style("padding", "20px");
+
+
+}
