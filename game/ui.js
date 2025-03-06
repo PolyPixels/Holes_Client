@@ -5,6 +5,8 @@ var raceButtons = []; // now storing "card" divs instead of p5 buttons
 var goButton;
 var nameInput;
 
+// Array of build option objects
+
 function updateResponsiveDesign() {
     // Update positions for the name input and "Go" button
     const inputWidth = 220; // as defined in style
@@ -1355,25 +1357,70 @@ function styleButton(button) {
 }
 
 
-// render build UI
+
+  
+  // Render build UI container
+  var buildDiv;
 
 
-var buildDiv;
-function defineBuildUI() {
+  var buildOptions = [
+    { type: "Wall", key: 49, params: { color: curPlayer.color } },
+    { type: "Floor", key: 50, params: { color: curPlayer.color } },
+    { type: "Door", key: 51, params: { color: curPlayer.color } },
+    { type: "Rug", key: 52, params: { color: curPlayer.color } },
+    { type: "Mug", key: 53, params: { color: curPlayer.color } },
+    { type: "BearTrap", key: 54, params: { color: curPlayer.color } },
+    { type: "Turret", key: 55, params: { obj: curPlayer.obj } },
+    { type: "PlacedBomb", key: 56, params: { obj: curPlayer.obj } },
+  ];
+  
+  function defineBuildUI() {
     buildDiv = createDiv();
-    buildDiv.class("container")
+    buildDiv.class("container");
     buildDiv.id("pauseMenu");
     buildDiv.style("position", "absolute");
     buildDiv.style("top", "40%");
-    buildDiv.style("left", "100%");
+    buildDiv.style("left", "90%");
     buildDiv.style("transform", "translate(-50%, -50%)");
     buildDiv.style("display", "none");
     buildDiv.style("width", "10%");
-    buildDiv.style("height", "100%");
+    buildDiv.style("height", "60%");
     buildDiv.style("border", "2px solid black");
     buildDiv.style("border-radius", "10px");
     buildDiv.style("text-align", "center");
     buildDiv.style("padding", "20px");
+  }
 
 
-}
+  
+  // Function to render each build option as a child element
+  function renderBuildOptions() {
+    // Clear any previous content
+    buildDiv.html('');
+
+    var buildOptions = [
+        { type: "Wall", key: 49, params: { color: curPlayer.color } },
+        { type: "Floor", key: 50, params: { color: curPlayer.color } },
+        { type: "Door", key: 51, params: { color: curPlayer.color } },
+        { type: "Rug", key: 52, params: { color: curPlayer.color } },
+        { type: "Mug", key: 53, params: { color: curPlayer.color } },
+        { type: "BearTrap", key: 54, params: { color: curPlayer.color } },
+        { type: "Turret", key: 55, params: { obj: curPlayer.obj } },
+        { type: "PlacedBomb", key: 56, params: { obj: curPlayer.obj } },
+      ];
+    buildOptions.forEach(option => {
+      // Create a div for each option
+      const optionDiv = createDiv(`${option.key}: ${option.type}`);
+      optionDiv.class("buildOption");
+      
+      // Optionally add an event listener if you want to trigger ghost build on click
+      optionDiv.mouseClicked(() => {
+        ghostBuild = createObject(option.type, 0, 0, 0, 
+          option.params.color || option.params.obj, " ", " ");
+      });
+      
+      // Append each option to the build container
+      buildDiv.child(optionDiv);
+    });
+  }
+  

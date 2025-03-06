@@ -121,8 +121,6 @@ class InvBlock{
         textSize(15);
         text("1", width - (0.866 * 255), height - (0.5 * 255));
         text("3", width - (0.5 * 255), height - (0.866 * 255));
-
-
         pop();
     }
 }
