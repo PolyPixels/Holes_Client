@@ -1394,33 +1394,129 @@ function styleButton(button) {
 
   
   // Function to render each build option as a child element
+// Helper function to translate key codes to human-friendly strings
+function keyCodeToHuman(keyCode) {
+    // For alphanumeric keys, we can convert the keyCode to its character representation
+    if ((keyCode >= 48 && keyCode <= 57) ||  // numbers
+        (keyCode >= 65 && keyCode <= 90)) {  // uppercase letters
+      return String.fromCharCode(keyCode);
+    }
+    
+    // Add more cases if needed
+    switch (keyCode) {
+      case 32:
+        return "Space";
+      // You can add other key codes and their human-readable names here.
+      default:
+        return keyCode.toString();
+    }
+  }
+  
+// Helper function to translate key codes to human-friendly strings
+function keyCodeToHuman(keyCode) {
+    // For alphanumeric keys, we can convert the keyCode to its character representation
+    if ((keyCode >= 48 && keyCode <= 57) ||  // numbers
+        (keyCode >= 65 && keyCode <= 90)) {  // uppercase letters
+      return String.fromCharCode(keyCode);
+    }
+    
+    // Add more cases if needed
+    switch (keyCode) {
+      case 32:
+        return "Space";
+      default:
+        return keyCode.toString();
+    }
+  }
+  
+// Helper function to translate key codes to human-friendly strings
+function keyCodeToHuman(keyCode) {
+    if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90)) {
+      return String.fromCharCode(keyCode);
+    }
+    switch (keyCode) {
+      case 32:
+        return "Space";
+      default:
+        return keyCode.toString();
+    }
+  }
+  
+// Helper function to translate key codes to human-friendly strings
+function keyCodeToHuman(keyCode) {
+    if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90)) {
+      return String.fromCharCode(keyCode);
+    }
+    switch (keyCode) {
+      case 32:
+        return "Space";
+      default:
+        return keyCode.toString();
+    }
+  }
+  
   function renderBuildOptions() {
     // Clear any previous content
     buildDiv.html('');
-
+    console.log(ghostBuild.objName)
+    // Create an unordered list to hold build options
+    const ul = createElement('ul');
+    ul.style('list-style', 'none');
+    ul.style('padding', '0');
+    ul.style('font-size', '20px');
+    ul.style('margin', '0 auto');
+    ul.parent(buildDiv);  // Append the list to the build container
+  
+    // Map each build option to an image from your provided list.
+    // Adjust these paths if your directory structure changes.
     var buildOptions = [
-        { type: "Wall", key: 49, params: { color: curPlayer.color } },
-        { type: "Floor", key: 50, params: { color: curPlayer.color } },
-        { type: "Door", key: 51, params: { color: curPlayer.color } },
-        { type: "Rug", key: 52, params: { color: curPlayer.color } },
-        { type: "Mug", key: 53, params: { color: curPlayer.color } },
-        { type: "BearTrap", key: 54, params: { color: curPlayer.color } },
-        { type: "Turret", key: 55, params: { obj: curPlayer.obj } },
-        { type: "PlacedBomb", key: 56, params: { obj: curPlayer.obj } },
-      ];
+      { type: "Wall", key: 49, params: { color: curPlayer.color }, image: "images/structures/tempwall1.png" },
+      { type: "Floor", key: 50, params: { color: curPlayer.color }, image: "images/structures/tempfloor1.png" },
+      { type: "Door", key: 51, params: { color: curPlayer.color }, image: "images/structures/tempdoor1.png" },
+      { type: "Rug", key: 52, params: { color: curPlayer.color }, image: "images/structures/temprug1.png" },
+      { type: "Mug", key: 53, params: { color: curPlayer.color }, image: "images/structures/tempmug.png" },
+      { type: "BearTrap", key: 54, params: { color: curPlayer.color }, image: "images/structures/beartrap1.png" },
+      { type: "Turret", key: 55, params: { obj: curPlayer.obj }, image: "images/structures/tempturret1.png" },
+      { type: "PlacedBomb", key: 56, params: { obj: curPlayer.obj }, image: "images/structures/bomb1.png" }
+    ];
+        
     buildOptions.forEach(option => {
-      // Create a div for each option
-      const optionDiv = createDiv(`${option.key}: ${option.type}`);
-      optionDiv.class("buildOption");
+      const humanKey = keyCodeToHuman(option.key);
       
-      // Optionally add an event listener if you want to trigger ghost build on click
-      optionDiv.mouseClicked(() => {
-        ghostBuild = createObject(option.type, 0, 0, 0, 
+      // Create a list item for the option and set up a flexbox layout
+      const li = createElement('li');
+      li.class("buildOption");
+      li.style('margin', '15px 0');
+      li.style('display', 'flex');
+      li.style('align-items', 'center');
+      
+      // Create an image element for the option
+      const img = createImg(option.image, option.type);
+      img.style('width', '50px');  // Adjust the size as needed
+      img.style('height', '50px');
+
+      if(ghostBuild.objName == option.type){
+        li.style("font-size", "2em")
+      }
+      img.style('margin-right', '10px');
+      
+      // Create a text container that shows the key and object type
+      const textDiv = createDiv(`${humanKey}: ${option.type}`);
+      textDiv.style('flex-grow', '1');
+      
+      // Append the image and text into the list item
+      li.child(img);
+      li.child(textDiv);
+      
+      // Add event listener to trigger ghost build on click
+      li.mouseClicked(() => {
+        ghostBuild = createObject(option.type, 0, 0, 0,
           option.params.color || option.params.obj, " ", " ");
       });
       
-      // Append each option to the build container
-      buildDiv.child(optionDiv);
+      // Append the list item to the unordered list
+      ul.child(li);
     });
   }
   
+  renderBuildOptions()  
