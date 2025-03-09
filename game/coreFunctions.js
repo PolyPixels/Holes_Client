@@ -20,12 +20,12 @@ function checkParams(inputs, inputNames, checks){
     for(let i = 0; i < inputs.length; i++){
         if(checks[i] == "int"){
             if(parseInt(inputs[i]) !== inputs[i]){
-                throw new TypeError(`${inputNames[i]} is not of type int, ${inputs[i]} was passed as ${inputNames[i]}`);
+                throw new TypeError(`${inputNames[i]} is not of type int, ${inputs[i]} was passed as ${inputNames[i]}, ${inputs[i]} is of type ${typeof inputs[i]}`);
             }
         }
         else{
             if(typeof inputs[i] != checks[i]){
-                throw new TypeError(`${inputNames[i]} is not of type ${checks[i]}, ${inputs[i]} was passed as ${inputNames[i]}`);
+                throw new TypeError(`${inputNames[i]} is not of type ${checks[i]}, ${inputs[i]} was passed as ${inputNames[i]}, ${inputs[i]} is of type ${typeof inputs[i]}`);
             }
         }
     }

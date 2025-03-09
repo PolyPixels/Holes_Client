@@ -24,6 +24,7 @@ var buildOptions = [
         if (keyCode === 82){ //r
             buildMode = !buildMode;
             renderGhost = buildMode;
+            if(buildMode) renderBuildOptions(); //run this once so you see it when opening the menu
         }
         if(keyCode == 73){ //i
             gameState = "inventory";
@@ -47,10 +48,10 @@ var buildOptions = [
             const option = buildOptions.find(opt => opt.key === keyCode);
             if (option) {
 
-              ghostBuild = createObject(option.type, 0, 0, 0, 
+                ghostBuild = createObject(option.type, 0, 0, 0, 
                 option.params.color || option.params.obj, " ", " ");
 
-            renderBuildOptions()   
+                renderBuildOptions(); //runs this again to highlight which obj you have selected
             }
           } else {
             buildDiv.hide();

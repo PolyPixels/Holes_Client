@@ -4,6 +4,7 @@ var trapImg;
 var chunkDirtImg;
 var dirtFloorImg;
 var dirtBagImg;
+var objImgs = [];
 
 function preload() {
     // Load the default image
@@ -17,34 +18,56 @@ function preload() {
     dirtFloorImg = loadImage('images/floor.png');
     dirtBagImg = loadImage('images/ui/dirtbag.png');
 
+    for(let i = 0; i < objImgPaths.length; i++){
+        let temp = [];
+        for(let j = 0; j < objImgPaths[i].length; j++){
+            temp.push(loadImage(objImgPaths[i][j]));
+        }
+        objImgs.push(temp);
+    }
+    
     //load obj imgs
-    wallImg = loadImage('images/structures/tempwall1.png');
-    doorImg = loadImage('images/structures/tempdoor1.png');
-    floorImg = loadImage('images/structures/tempfloor1.png');
-    rugImg = loadImage('images/structures/temprug1.png');
-    mugImg = loadImage('images/structures/tempmug.png');
-    bearTrapImg = loadImage('images/structures/beartrap1.png');
-    landMineImg = loadImage('images/structures/bomb1.png');
-    turretImg = loadImage('images/structures/tempturret1.png');
-    mushroomImg3 = loadImage('images/structures/tempmushroom1.png');
-    mushroomImg2 = loadImage('images/structures/tempmushroom2.png');
-    mushroomImg1 = loadImage('images/structures/tempmushroom3.png');
-    bombImg = loadImage('images/structures/bomb1.png');
-    bombFlareImg = loadImage('images/structures/bomb2.png');
+    // wallImg = loadImage('images/structures/tempwall1.png');
+    // doorImg = loadImage('images/structures/tempdoor1.png');
+    // floorImg = loadImage('images/structures/tempfloor1.png');
+    // rugImg = loadImage('images/structures/temprug1.png');
+    // mugImg = loadImage('images/structures/tempmug.png');
+    // bearTrapImg = loadImage('images/structures/beartrap1.png');
+    // landMineImg = loadImage('images/structures/bomb1.png');
+    // turretImg = loadImage('images/structures/tempturret1.png');
+    // mushroomImg3 = loadImage('images/structures/tempmushroom1.png');
+    // mushroomImg2 = loadImage('images/structures/tempmushroom2.png');
+    // mushroomImg1 = loadImage('images/structures/tempmushroom3.png');
+    // bombImg = loadImage('images/structures/bomb1.png');
+    // bombFlareImg = loadImage('images/structures/bomb2.png');
 
     //sort obj imgs
-    objImgs = [
-    /*0*/   [wallImg],
-    /*1*/   [doorImg],
-    /*2*/   [floorImg],
-    /*3*/   [rugImg],
-    /*4*/   [mugImg],
-    /*5*/   [bearTrapImg],
-    /*6*/   [landMineImg],
-    /*7*/   [turretImg],
-    /*8*/   [mushroomImg1, mushroomImg2, mushroomImg3],
-    /*9*/   [bombImg,bombFlareImg]
-    ];
+    // objImgs = [
+    // /*0*/   [wallImg],
+    // /*1*/   [doorImg],
+    // /*2*/   [floorImg],
+    // /*3*/   [rugImg],
+    // /*4*/   [mugImg],
+    // /*5*/   [bearTrapImg],
+    // /*6*/   [landMineImg],
+    // /*7*/   [turretImg],
+    // /*8*/   [mushroomImg1, mushroomImg2, mushroomImg3],
+    // /*9*/   [bombImg,bombFlareImg]
+    // ];
+
+    //used for build rendering, cause html is booty
+    // objImgNames = [
+    // /*0*/ ["tempwall1"],
+    // /*1*/ ["tempdoor1"],
+    // /*2*/ ["tempfloor1"],
+    // /*3*/ ["temprug1"],
+    // /*4*/ ["tempmug"],
+    // /*5*/ ["beartrap1"],
+    // /*6*/ ["bomb1"],
+    // /*7*/ ["tempturret1"],
+    // /*8*/ ["tempmushroom1","tempmushroom2","tempmushroom3"],
+    // /*9*/ ["bomb1","bomb2"]
+    // ];
 
     basicShovelImg = loadImage("images/items/shovel1.png");
     swordImg = loadImage("images/items/tempSword.png");
