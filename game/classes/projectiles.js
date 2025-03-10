@@ -29,6 +29,8 @@ class SimpleProjectile{
         if(this.lifespan <= 0){
             this.deleteTag = true;
         }
+
+        this.checkCollision();
     }
 
     render(){
@@ -39,7 +41,14 @@ class SimpleProjectile{
     }
 
     checkCollision(){
+        //check collision with dirt walls
 
+        //check collision with objects
+
+        //check collision with curPlayer
+        //if player collishion tell server to set delete tag to true
+
+        //if any collishion set delete tag to true
     }
 }
 

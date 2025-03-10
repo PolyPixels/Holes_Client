@@ -176,6 +176,7 @@ class Ranged extends SimpleItem{
                                 toMouse.heading()
                             )
                         );
+                        //tell the server you made a projectile
                         this.bulletsLeft --;
                         curPlayer.invBlock.items[this.ammoName].decreaseAmount(1);
                         curPlayer.invBlock.useTimer = this.fireRate;
