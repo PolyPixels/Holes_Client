@@ -70,6 +70,7 @@ class Chunk{
         this.cx = x; //chunk pos x
         this.cy = y; //chunk pos y
         this.objects = []; // list of objects (might need sorting if we make chunks bigger or have tons of objects in a chunk)
+        this.projectiles = [];
     }
 
     cordToScreen(x,y){
@@ -84,6 +85,12 @@ class Chunk{
             this.objects[i].update();
             if(this.objects[i].deleteTag){
                 this.objects.splice(i, 1);
+            }
+        }
+        for(let i = this.projectiles.length-1; i >= 0; i--){
+            this.projectiles[i].update();
+            if(this.projectiles[i].deleteTag){
+                this.projectiles.splice(i, 1);
             }
         }
     }
@@ -320,6 +327,10 @@ class Chunk{
         pop();
         for(let i = 0; i < this.objects.length; i++){
             this.objects[i].render("none", 255);
+        }
+        for(let i = 0; i < this.projectiles.length; i++){
+            
+            this.projectiles[i].render();
         }
     }
 

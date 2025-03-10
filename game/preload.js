@@ -74,6 +74,10 @@ function preload() {
     /*5*/ ["tempmushroomseed"]
     ]
 
+    projImgs = [
+        [rockImg]
+    ];
+
     playerCardImg = loadImage('images/ui/playercard.png');
 
     gameUIFont = loadFont('CalibrationGothicNbpLatin-rYmy.ttf');

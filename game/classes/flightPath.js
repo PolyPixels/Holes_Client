@@ -1,7 +1,11 @@
 
 var flightPathDic = {};
 
-defineFlightPath("straight", "p*TILESIZE", "0", 0.01, true);
+defineFlightPath("Straight", "p*TILESIZE", "0", 0.01, true);
+defineFlightPath("Screw", "20*(cos((p*360*2)+180)+(p*3.5))", "20*sin(p*360*2)", 0.01, true);
+defineFlightPath("Stay", "0", "0", 1, true);
+defineFlightPath("Circle", "60*cos(p*360)", "60*sin(p*360)", 0.01, true);
+defineFlightPath("FollowMouse", "(mouseX-lpX+camera.x-(width/2))*p", "(mouseY-lpY+camera.y-(height/2))*p", 0.01, true);
 
 class FlightPath{
     constructor(sx,sy,a,eqX, eqY, calcRes, repeate = true){
@@ -15,6 +19,11 @@ class FlightPath{
         //stored for less computation
         this.cosA = cos(a); 
         this.sinA = sin(a);
+        
+        //set the last position to the starting position
+        this.lp = this.s.copy();
+        let lpX = this.lp.x;
+        let lpY = this.lp.y;
         
         //get the starting offset of the flight path
         let p = 0;
@@ -40,17 +49,21 @@ class FlightPath{
         stroke(c);
         strokeWeight(2);
         let curPos = this.calc(0);
+        this.lp = this.calc(0);
         
         //just draw a bunch of point along the path
         for(let i = 0; i < iterations; i += stepSize){ 
             point(curPos.x, curPos.y);
             
             curPos = this.calc(i);
+            this.lp = curPos.copy();
         }
         pop();
     }
     
     update(d){ //d is how far down the path you want to move
+        this.lp = this.calc(this.p);
+        
         this.p += d/this.l;
         
         //no huge numbers for p if not needed
@@ -67,17 +80,27 @@ class FlightPath{
     }
     
     calc(p){
-      let v = createVector(0,0);
-      
-      //stored for less computation
-      let ex = eval(this.eqX);
-      let ey = eval(this.eqY);
-      
-      //rotation math
-      v.x = (ex - this.so.x)*this.cosA - (ey - this.so.y)*this.sinA + this.s.x;
-      v.y = (ey - this.so.y)*this.cosA + (ex - this.so.x)*this.sinA + this.s.y;
-      
-      return v;
+        let v = createVector(0,0);
+        
+        let lpX = this.lp.x;
+        let lpY = this.lp.y;
+        
+        if(mouseX == this.lp.x){
+            lpX -= 1;
+        }
+        if(mouseY == this.lp.y){
+            lpY -= 1;
+        }
+        
+        //stored for less computation
+        let ex = eval(this.eqX);
+        let ey = eval(this.eqY);
+        
+        //rotation math
+        v.x = (ex - this.so.x)*this.cosA - (ey - this.so.y)*this.sinA + this.s.x;
+        v.y = (ey - this.so.y)*this.cosA + (ex - this.so.x)*this.sinA + this.s.y;
+        
+        return v;
     }
     
     calcL(stepSize){
@@ -107,5 +130,8 @@ function defineFlightPath(name, eqX, eqY, calcRes, repeats = true){
 }
 
 function createFlightPath(name,sx=0,sy=0,angle=0){
+    if(flightPathDic[name] == undefined){
+        throw new Error(`Flight Path with name: ${name}, does not exist`);
+    }
     return new FlightPath(sx,sy,angle,flightPathDic[name].eqX,flightPathDic[name].eqY,flightPathDic[name].calcRes,flightPathDic[name].repeats);
 }

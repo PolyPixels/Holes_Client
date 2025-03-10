@@ -164,9 +164,22 @@ class Ranged extends SimpleItem{
         if(mouseButton == LEFT){
             if(curPlayer.invBlock.useTimer <= 0){
                 if(this.bulletsLeft > 0){
-                    console.log("Shoot");
-                    this.bulletsLeft --;
-                    curPlayer.invBlock.useTimer = this.fireRate;
+                    if(curPlayer.invBlock.items[this.ammoName] != undefined){ //if you have item used for ammo
+                        console.log("Shoot");
+                        let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+                        let toMouse = createVector(x,y).sub(curPlayer.pos).setMag(50);
+                        testMap.chunks[chunkPos.x+','+chunkPos.y].projectiles.push(
+                            createProjectile(
+                                this.ammoName, curPlayer.name, curPlayer.color,
+                                curPlayer.pos.x + toMouse.x - 20,
+                                curPlayer.pos.y + toMouse.y,
+                                toMouse.heading()
+                            )
+                        );
+                        this.bulletsLeft --;
+                        curPlayer.invBlock.items[this.ammoName].decreaseAmount(1);
+                        curPlayer.invBlock.useTimer = this.fireRate;
+                    }
                 }
                 else{
                     console.log("Reload");
