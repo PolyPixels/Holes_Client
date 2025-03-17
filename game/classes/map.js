@@ -24,8 +24,12 @@ class Map{
 
     update(){
         let chunkPos = this.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
-        let chunk = this.getChunk(chunkPos.x,chunkPos.y);
-        if(chunk) chunk.update();
+        for(let yOff = -1; yOff < 2; yOff++){
+            for(let xOff = -1; xOff < 2; xOff++){
+                let chunk = this.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
+                if(chunk != undefined) chunk.update();
+            }
+        }
     }
 
     render(){
@@ -70,6 +74,7 @@ class Chunk{
         this.cx = x; //chunk pos x
         this.cy = y; //chunk pos y
         this.objects = []; // list of objects (might need sorting if we make chunks bigger or have tons of objects in a chunk)
+        this.projectiles = [];
     }
 
     cordToScreen(x,y){
@@ -84,6 +89,12 @@ class Chunk{
             this.objects[i].update();
             if(this.objects[i].deleteTag){
                 this.objects.splice(i, 1);
+            }
+        }
+        for(let i = this.projectiles.length-1; i >= 0; i--){
+            this.projectiles[i].update();
+            if(this.projectiles[i].deleteTag){
+                this.projectiles.splice(i, 1);
             }
         }
     }
@@ -102,6 +113,11 @@ class Chunk{
     }
   
     render(){
+        //rendered under other stuff to help hide collishion problems
+        for(let i = 0; i < this.projectiles.length; i++){
+            this.projectiles[i].render();
+        }
+        
         push();
         beginClip();
         fill("#3B1725"); //old one is #3B1725

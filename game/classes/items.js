@@ -70,7 +70,7 @@ class SimpleItem{
             if(!buildMode){
                 renderGhost = false;
             }
-            curPlayer.invBlock.items[this.itemName] = undefined; //remove item from inventory
+            delete curPlayer.invBlock.items[this.itemName]; //remove item from inventory
         }
     }
 
@@ -164,9 +164,25 @@ class Ranged extends SimpleItem{
         if(mouseButton == LEFT){
             if(curPlayer.invBlock.useTimer <= 0){
                 if(this.bulletsLeft > 0){
-                    console.log("Shoot");
-                    this.bulletsLeft --;
-                    curPlayer.invBlock.useTimer = this.fireRate;
+                    if(curPlayer.invBlock.items[this.ammoName] != undefined){ //if you have item used for ammo
+                        console.log("Shoot");
+                        let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+                        let toMouse = createVector(x,y).sub(curPlayer.pos).setMag(50);
+                        let proj = createProjectile(
+                            this.ammoName, curPlayer.name, curPlayer.color,
+                            curPlayer.pos.x + toMouse.x - 20,
+                            curPlayer.pos.y + toMouse.y,
+                            toMouse.heading()
+                        )
+                        testMap.chunks[chunkPos.x+','+chunkPos.y].projectiles.push(
+                            proj
+                        );
+                        //tell the server you made a projectile
+                        socket.emit("new_proj", proj);
+                        this.bulletsLeft --;
+                        curPlayer.invBlock.items[this.ammoName].decreaseAmount(1);
+                        curPlayer.invBlock.useTimer = this.fireRate;
+                    }
                 }
                 else{
                     console.log("Reload");

@@ -92,7 +92,7 @@ function socketSetup(){
         if (players[data.id]) {
             players[data.id].pos.x = data.pos.x;
             players[data.id].pos.y = data.pos.y;
-            players[data.id].hp = data.hp;
+            players[data.id].statBlock.stats.hp = data.hp;
             players[data.id].holding = data.holding;
             players[data.id].animationType = data.animationType;
             players[data.id].animationFrame = data.animationFrame;
@@ -133,15 +133,40 @@ function socketSetup(){
         }
     })
 
+    socket.on("NEW_PROJECTILE", (data) =>{
+        let proj = createProjectile(data.name, data.ownerName, data.color, data.pos.x, data.pos.y, data.flightPath.a);
+        proj.id = data.id;
+        testMap.chunks[data.cPos.x+','+data.cPos.y].projectiles.push(proj);
+    });
+
+    socket.on("DELETE_PROJ", (data) =>{
+        let chunk = testMap.chunks[data.cPos.x+','+data.cPos.y];
+        for(let i=chunk.projectiles.length-1; i>=0; i--){
+            if(
+                data.id == chunk.projectiles[i].id &&
+                data.lifeSpan == chunk.projectiles[i].lifeSpan &&
+                data.name == chunk.projectiles[i].name &&
+                data.ownerName == chunk.projectiles[i].ownerName
+            ){
+                chunk.projectiles[i].deleteTag = true;
+            }
+        }
+    });
+
     socket.on("GIVE_CHUNK", (data) => {
         testMap.chunks[data.x+","+data.y] = new Chunk(data.x, data.y);
         let keys = Object.keys(data.data);
         for(let i=0; i<keys.length; i++) testMap.chunks[data.x+","+data.y].data[keys[i]] = data.data[keys[i]];
         testMap.chunkBools[data.x+","+data.y] = true;
         for(let i=0; i<data.objects.length; i++){
-            let temp = createObject(data.objects[i].objName, data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color, data.objects[i].id, data.objects[i].ownerName);;
+            let temp = createObject(data.objects[i].objName, data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color, data.objects[i].id, data.objects[i].ownerName);
             testMap.chunks[data.x+","+data.y].objects.push(temp);
             testMap.chunks[data.x+","+data.y].objects.sort((a,b) => a.z - b.z);
+        }
+        for(let i=0; i<data.projectiles.length; i++){
+            let temp = createProjectile(data.projectiles[i].name, data.projectiles[i].ownerName, data.projectiles[i].color, data.projectiles[i].pos.x, data.projectiles[i].pos.y, data.projectiles[i].flightPath.a);
+            temp.id = data.projectiles[i].id;
+            testMap.chunks[data.x+","+data.y].projectiles.push(temp);
         }
     });
 

@@ -92,13 +92,7 @@ function draw() {
             curPlayer.invBlock.renderHotBar();
         }
 
-        // Dirt Inventory
-        push();
-        image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
-        
-        fill("#70443C");
-        rect(width - 180 + 20, height - 186 + 25 + (120 * (1-(dirtInv/150))), 120, 120 * (dirtInv/150));
-        pop();
+        renderDirtBagUI();
     }
     if (gameState === "inventory" || gameState === "pause" || gameState =="player_status") {
         //render the game in the background
