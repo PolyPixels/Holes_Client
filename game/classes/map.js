@@ -24,8 +24,12 @@ class Map{
 
     update(){
         let chunkPos = this.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
-        let chunk = this.getChunk(chunkPos.x,chunkPos.y);
-        if(chunk) chunk.update();
+        for(let yOff = -1; yOff < 2; yOff++){
+            for(let xOff = -1; xOff < 2; xOff++){
+                let chunk = this.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
+                if(chunk != undefined) chunk.update();
+            }
+        }
     }
 
     render(){
@@ -109,6 +113,11 @@ class Chunk{
     }
   
     render(){
+        //rendered under other stuff to help hide collishion problems
+        for(let i = 0; i < this.projectiles.length; i++){
+            this.projectiles[i].render();
+        }
+        
         push();
         beginClip();
         fill("#3B1725"); //old one is #3B1725
@@ -327,10 +336,6 @@ class Chunk{
         pop();
         for(let i = 0; i < this.objects.length; i++){
             this.objects[i].render("none", 255);
-        }
-        for(let i = 0; i < this.projectiles.length; i++){
-            
-            this.projectiles[i].render();
         }
     }
 

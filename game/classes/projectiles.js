@@ -1,13 +1,14 @@
+
 /*
 Proj Dic is a full dictanary of every projectile that can exist, falling into one of these types:
     Simple - just a projectile
 */
 var projDic = {};
 
-defineSimpleProjectile("Rock", 0, 20, 5, "FollowMouse", 5, 10);
+defineSimpleProjectile("Rock", 0, 20, 5, "Straight", 5, 10);
 
 class SimpleProjectile{
-    constructor(name, damage, flightPath, speed, lifespan, imgNum){
+    constructor(name, damage, flightPath, speed, lifespan, ownerName, color, imgNum){
         this.name = name;
         this.damage = damage;
         this.flightPath = flightPath;
@@ -15,15 +16,38 @@ class SimpleProjectile{
         this.pos = this.flightPath.calc(0);
         this.speed = speed;
         this.lifespan = lifespan;
+        this.ownerName = ownerName;
+        this.color = color;
         this.imgNum = imgNum;
+        this.cPos = testMap.globalToChunk(this.pos.x, this.pos.y);
 
         this.type = "Simple";
         this.deleteTag = false;
+        this.id = floor(random()*100000);
     }
 
     update(){
         this.flightPath.update(this.speed);
         this.pos = this.flightPath.calc(this.flightPath.p);
+
+        //move projectiles between chunks
+        let newCPos = testMap.globalToChunk(this.pos.x, this.pos.y);
+        if(newCPos.x != this.cPos.x || newCPos.y != this.cPos.y){
+            let newProj = createProjectile(this.name, this.ownerName, this.color, this.flightPath.s.x, this.flightPath.s.y, this.flightPath.a);
+            newProj.pos = this.pos.copy();
+            newProj.flightPath.p = this.flightPath.p;
+            newProj.cPos.x = newCPos.x;
+            newProj.cPos.y = newCPos.y;
+
+            socket.emit("new_proj", newProj);
+
+            if(testMap.chunks[newCPos.x+","+newCPos.y] != undefined){
+                testMap.chunks[newCPos.x+","+newCPos.y].projectiles.push(newProj);
+            }
+            
+            this.deleteTag = true;
+            socket.emit("delete_proj", this);
+        }
 
         this.lifespan -= 1/60;
         if(this.lifespan <= 0){
@@ -42,13 +66,67 @@ class SimpleProjectile{
 
     checkCollision(){
         //check collision with dirt walls
+        let x = floor(this.pos.x / TILESIZE) - (this.cPos.x*CHUNKSIZE);
+        let y = floor(this.pos.y / TILESIZE) - (this.cPos.y*CHUNKSIZE);
+        let chunk = testMap.chunks[this.cPos.x+","+this.cPos.y];
+        if(chunk.data[x + (y / CHUNKSIZE)] > 0){
+            this.deleteTag = true;
+            socket.emit("delete_proj", this);
+        }
 
         //check collision with objects
+        for(let j = 0; j < chunk.objects.length; j++){
+            if(chunk.objects[j].z == 2){
+                
+                let d = chunk.objects[j].pos.dist(this.pos);
+                if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + 5){
+                    if(chunk.objects[j].type == "door"){
+                        if(chunk.objects[j].open == false){
+                            this.deleteTag = true;
+                            socket.emit("delete_proj", this);
+
+                            //damage the obj
+                            chunk.objects[j].hp -= this.damage;
+                            socket.emit("upadate_obj", {
+                                cx: this.cPos.x, cy: this.cPos.y,
+                                type: chunk.objects[j].type, 
+                                pos: {x: chunk.objects[j].pos.x, y: chunk.objects[j].pos.y}, 
+                                z: chunk.objects[j].z, 
+                                update_name: "hp", 
+                                update_value: chunk.objects[j].hp
+                            });
+                        }
+                    }
+                    else{
+                        this.deleteTag = true;
+                        socket.emit("delete_proj", this);
+
+                        //damage the obj
+                        chunk.objects[j].hp -= this.damage;
+                        socket.emit("upadate_obj", {
+                            cx: this.cPos.x, cy: this.cPos.y,
+                            type: chunk.objects[j].type, 
+                            pos: {x: chunk.objects[j].pos.x, y: chunk.objects[j].pos.y}, 
+                            z: chunk.objects[j].z, 
+                            update_name: "hp", 
+                            update_value: chunk.objects[j].hp
+                        });
+                    }
+                }
+            }
+        }
 
         //check collision with curPlayer
-        //if player collishion tell server to set delete tag to true
-
-        //if any collishion set delete tag to true
+        if(this.ownerName != curPlayer.name || this.color != curPlayer.color){
+            if(this.pos.dist(curPlayer.pos) < 29){
+                this.deleteTag = true;
+                //if player collishion tell server to set delete tag to true
+                socket.emit("delete_proj", this);
+                
+                curPlayer.statBlock.stats.hp -= this.damage;
+                socket.emit("update_pos", curPlayer);
+            }
+        }
     }
 }
 
@@ -57,7 +135,7 @@ function createProjectile(name,owner,color, x,y,a){
         throw new Error(`Projectile with name: ${name}, does not exist`);
     }
     if(projDic[name].type == "SimpleProj"){
-        return new SimpleProjectile(name, projDic[name].damage, createFlightPath(projDic[name].fpn, x,y,a), projDic[name].speed, projDic[name].lifespan, projDic[name].imgNum);
+        return new SimpleProjectile(name, projDic[name].damage, createFlightPath(projDic[name].fpn, x,y,a), projDic[name].speed, projDic[name].lifespan, owner, color, projDic[name].imgNum);
     }
 }
 
