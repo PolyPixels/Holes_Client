@@ -43,6 +43,7 @@ var buildOptions = [
         if (buildMode) { // Assuming buildMode is a boolean flag
             buildDiv.show();
 
+            renderBuildOptions()   
             
             const option = buildOptions.find(opt => opt.key === keyCode);
             if (option) {
@@ -50,7 +51,7 @@ var buildOptions = [
               ghostBuild = createObject(option.type, 0, 0, 0, 
                 option.params.color || option.params.obj, " ", " ");
 
-            renderBuildOptions()   
+                renderBuildOptions()   
             }
           } else {
             buildDiv.hide();
