@@ -1376,16 +1376,16 @@ function styleButton(button) {
   var buildDiv;
 
 
-  var buildOptions = [
-    { type: "Wall", key: 49, params: { color: curPlayer.color } },
-    { type: "Floor", key: 50, params: { color: curPlayer.color } },
-    { type: "Door", key: 51, params: { color: curPlayer.color } },
-    { type: "Rug", key: 52, params: { color: curPlayer.color } },
-    { type: "Mug", key: 53, params: { color: curPlayer.color } },
-    { type: "BearTrap", key: 54, params: { color: curPlayer.color } },
-    { type: "Turret", key: 55, params: { obj: curPlayer.obj } },
-    { type: "PlacedBomb", key: 56, params: { obj: curPlayer.obj } },
-  ];
+//   var buildOptions = [
+//     { type: "Wall", key: 49, params: { color: curPlayer.color } },
+//     { type: "Floor", key: 50, params: { color: curPlayer.color } },
+//     { type: "Door", key: 51, params: { color: curPlayer.color } },
+//     { type: "Rug", key: 52, params: { color: curPlayer.color } },
+//     { type: "Mug", key: 53, params: { color: curPlayer.color } },
+//     { type: "BearTrap", key: 54, params: { color: curPlayer.color } },
+//     { type: "Turret", key: 55, params: { obj: curPlayer.obj } },
+//     { type: "PlacedBomb", key: 56, params: { obj: curPlayer.obj } },
+//   ];
   
   function defineBuildUI() {
     buildDiv = createDiv();
@@ -1479,20 +1479,7 @@ function keyCodeToHuman(keyCode) {
     ul.style('font-size', '20px');
     ul.style('margin', '0 auto');
     ul.parent(buildDiv);  // Append the list to the build container
-  
-    // Map each build option to an image from your provided list.
-    // Adjust these paths if your directory structure changes.
-    var buildOptions = [
-      { type: "Wall", key: 49, params: { color: curPlayer.color }, image: "images/structures/tempwall1.png" },
-      { type: "Floor", key: 50, params: { color: curPlayer.color }, image: "images/structures/tempfloor1.png" },
-      { type: "Door", key: 51, params: { color: curPlayer.color }, image: "images/structures/tempdoor1.png" },
-      { type: "Rug", key: 52, params: { color: curPlayer.color }, image: "images/structures/temprug1.png" },
-      { type: "Mug", key: 53, params: { color: curPlayer.color }, image: "images/structures/tempmug.png" },
-      { type: "BearTrap", key: 54, params: { color: curPlayer.color }, image: "images/structures/beartrap1.png" },
-      { type: "Turret", key: 55, params: { obj: curPlayer.obj }, image: "images/structures/tempturret1.png" },
-      { type: "PlacedBomb", key: 56, params: { obj: curPlayer.obj }, image: "images/structures/bomb1.png" }
-    ];
-        
+    
     buildOptions.forEach(option => {
       const humanKey = keyCodeToHuman(option.key);
       
@@ -1507,6 +1494,7 @@ function keyCodeToHuman(keyCode) {
       const img = createImg(option.image, option.type);
       img.style('width', '50px');  // Adjust the size as needed
       img.style('height', '50px');
+      img.style('image-rendering', 'pixelated');
 
       if(ghostBuild.objName == option.type){
         li.style("font-size", "2em")
@@ -1523,13 +1511,10 @@ function keyCodeToHuman(keyCode) {
       
       // Add event listener to trigger ghost build on click
       li.mouseClicked(() => {
-        ghostBuild = createObject(option.type, 0, 0, 0,
-          option.params.color || option.params.obj, " ", " ");
+        ghostBuild = createObject(option.type, 0, 0, 0, curPlayer.color, " ", " ");
       });
       
       // Append the list item to the unordered list
       ul.child(li);
     });
-  }
-  
-  renderBuildOptions()  
+}
