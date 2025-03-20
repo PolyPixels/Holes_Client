@@ -1,8 +1,24 @@
+
 function keyReleased() {
+
+var buildOptions = [
+    { type: "Wall", key: 49, params: { color: curPlayer.color } },
+    { type: "Floor", key: 50, params: { color: curPlayer.color } },
+    { type: "Door", key: 51, params: { color: curPlayer.color } },
+    { type: "Rug", key: 52, params: { color: curPlayer.color } },
+    { type: "Mug", key: 53, params: { color: curPlayer.color } },
+    { type: "BearTrap", key: 54, params: { color: curPlayer.color } },
+    { type: "Turret", key: 55, params: { obj: curPlayer.obj } },
+    { type: "PlacedBomb", key: 56, params: { obj: curPlayer.obj } },
+  ];
     if(keyCode == 27 ){
         gameState = "playing";
         pauseDiv.hide();
         invDiv.hide();
+        buildMode = false;
+       
+        renderGhost = false;
+        
     }
     if(gameState == "playing"){
         if (keyCode === 82){ //r
@@ -24,16 +40,22 @@ function keyReleased() {
             player_status_container.show();
         }
 
-        if(buildMode){ //replace this with the wheel at some point
-            if (keyCode === 49) ghostBuild = createObject("Wall", 0, 0, 0, curPlayer.color, " ", " "); //1
-            if (keyCode === 50) ghostBuild = createObject("Floor", 0, 0, 0, curPlayer.color, " ", " "); //2
-            if (keyCode === 51) ghostBuild = createObject("Door", 0, 0, 0, curPlayer.color, " ", " "); //3
-            if (keyCode === 52) ghostBuild = createObject("Rug", 0, 0, 0, curPlayer.color, " ", " "); //4
-            if (keyCode === 53) ghostBuild = createObject("Mug", 0, 0, 0, curPlayer.color, " ", " "); //5
-            if (keyCode === 54) ghostBuild = createObject("BearTrap", 0, 0, 0, curPlayer.color, " ", " "); //6
-            if (keyCode === 55) ghostBuild = createObject("Turret", 0,0,0, curPlayer.obj, " ", " "); //8
-            if (keyCode === 56) ghostBuild = createObject("PlacedBomb", 0,0,0, curPlayer.obj, " ", " "); //9
-        }
+        if (buildMode) { // Assuming buildMode is a boolean flag
+            buildDiv.show();
+
+            
+            const option = buildOptions.find(opt => opt.key === keyCode);
+            if (option) {
+
+              ghostBuild = createObject(option.type, 0, 0, 0, 
+                option.params.color || option.params.obj, " ", " ");
+
+            renderBuildOptions()   
+            }
+          } else {
+            buildDiv.hide();
+          }
+     
     }
     else if(gameState == "inventory"){
         if (keyCode === 32) { //space
@@ -61,6 +83,8 @@ function keyReleased() {
     }
 
     if(keyCode == 49 || keyCode == 51){  //1 or 3 -should work in inventory and playing, so players can look at their wheel
+        if(buildMode) return
+
         if(abs(curPlayer.invBlock.animationTimer) <= 0.1){
             let offset = 0;
             if(keyCode == 49) offset = -1;
@@ -74,14 +98,14 @@ function keyReleased() {
             if(curPlayer.invBlock.hotbar[slot] != ""){
                 if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].type == "Seed"){
                     ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
-                    renderGhost = true;
+                    renderGhost = buildMode;
                 }
                 else{
-                    renderGhost = false;
+                    renderGhost = buildMode;
                 }
             }
             else{
-                renderGhost = false;
+                renderGhost = buildMode;
             }
 
             updateSpaceBarDiv();
