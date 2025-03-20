@@ -72,9 +72,9 @@ function renderLinks() {
     });
 
     // Create individual buttons
-    createLinkButton(linkContainer, "🔗 Itch.io", "https://itch.io/magentaautumn");
+    createLinkButton(linkContainer, "🔗 Itch.io", "https://polypikzel.itch.io/");
     createLinkButton(linkContainer, "🐙 GitHub", "https://github.com/PolyPixels");
-    createLinkButton(linkContainer, "💬 Discord", "https://discord.com/");
+    createLinkButton(linkContainer, "💬 Discord", "https://discord.gg/Quhy52U5ae");
 
     // Parent container for settings (Bottom Left)
     settingsContainer = createDiv();
