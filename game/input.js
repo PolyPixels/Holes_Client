@@ -84,7 +84,7 @@ var buildOptions = [
     }
 
     if(keyCode == 49 || keyCode == 51){  //1 or 3 -should work in inventory and playing, so players can look at their wheel
-        if(buildMode) return
+        if(buildMode || gameState != "playing") return
 
         if(abs(curPlayer.invBlock.animationTimer) <= 0.1){
             let offset = 0;
