@@ -15,7 +15,7 @@ var itemDic = {};
 defineShovel("Basic Shovel", 0, 1, 100, 0.12, 3, 1, "A basic shovel for digging dirt");
 defineShovel("Better Shovel", 0, 1, 100, 0.18, 3, 1, "A better shovel for digging dirt");
 defineShovel("God Shovel", 0, 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt");
-defineMelee("Basic Sword", 1, 1, 100, 10, 1, 90, 10, false, "A basic sword for slashing");
+defineMelee("Basic Sword", 1, 1, 100, 10, 50, 90, 10, false, "A basic sword for slashing");
 defineMelee("Better Sword", 1, 1, 100, 10, 1, 90, 10, false, "A better sword for slashing");
 defineRanged("Basic SlingShot", 2, 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false, "A basic slingshot for shooting");
 defineRanged("Better SlingShot", 2, 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false, "A better slingshot for shooting");
@@ -127,7 +127,15 @@ class Melee extends SimpleItem{
 
     use(x,y,mouseButton){
         if(curPlayer.invBlock.useTimer <= 0){
-            console.log("Swing");
+            let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+            let toMouse = createVector(x,y).sub(curPlayer.pos).setMag(50);
+            let proj = createProjectile(this.itemName+" Slash", curPlayer.name, curPlayer.color, curPlayer.pos.x, curPlayer.pos.y, toMouse.heading());
+            testMap.chunks[chunkPos.x+','+chunkPos.y].projectiles.push(
+                proj
+            );
+            //tell the server you made a projectile
+            socket.emit("new_proj", proj);
+
             curPlayer.invBlock.useTimer = this.swingSpeed;
         }
     }
@@ -449,6 +457,8 @@ function defineMelee(name,imgNum, weight, durability, damage, range, angle, swin
         magicBool: magicBool,
         desc: desc
     };
+
+    defineMeleeProjectile(name+" Slash", 0, range, 60, angle, damage, 0.5);
 }
 
 /**
