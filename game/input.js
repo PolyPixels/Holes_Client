@@ -1,16 +1,7 @@
 
 function keyReleased() {
 
-var buildOptions = [
-    { type: "Wall", key: 49, params: { color: curPlayer.color } },
-    { type: "Floor", key: 50, params: { color: curPlayer.color } },
-    { type: "Door", key: 51, params: { color: curPlayer.color } },
-    { type: "Rug", key: 52, params: { color: curPlayer.color } },
-    { type: "Mug", key: 53, params: { color: curPlayer.color } },
-    { type: "BearTrap", key: 54, params: { color: curPlayer.color } },
-    { type: "Turret", key: 55, params: { obj: curPlayer.obj } },
-    { type: "PlacedBomb", key: 56, params: { obj: curPlayer.obj } },
-  ];
+
     if(keyCode == 27 ){
         gameState = "playing";
         pauseDiv.hide();
@@ -99,14 +90,14 @@ var buildOptions = [
             if(curPlayer.invBlock.hotbar[slot] != ""){
                 if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].type == "Seed"){
                     ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
-                    renderGhost = buildMode;
+                    renderGhost = true; //this is seperate from buildMode, because this is a placable item, not something you can find in buildMode
                 }
                 else{
-                    renderGhost = buildMode;
+                    renderGhost = false;
                 }
             }
             else{
-                renderGhost = buildMode;
+                renderGhost = false;
             }
 
             updateSpaceBarDiv();
