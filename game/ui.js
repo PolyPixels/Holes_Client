@@ -1406,55 +1406,7 @@ function styleButton(button) {
 
 
   
-  // Function to render each build option as a child element
-// Helper function to translate key codes to human-friendly strings
-function keyCodeToHuman(keyCode) {
-    // For alphanumeric keys, we can convert the keyCode to its character representation
-    if ((keyCode >= 48 && keyCode <= 57) ||  // numbers
-        (keyCode >= 65 && keyCode <= 90)) {  // uppercase letters
-      return String.fromCharCode(keyCode);
-    }
-    
-    // Add more cases if needed
-    switch (keyCode) {
-      case 32:
-        return "Space";
-      // You can add other key codes and their human-readable names here.
-      default:
-        return keyCode.toString();
-    }
-  }
-  
-// Helper function to translate key codes to human-friendly strings
-function keyCodeToHuman(keyCode) {
-    // For alphanumeric keys, we can convert the keyCode to its character representation
-    if ((keyCode >= 48 && keyCode <= 57) ||  // numbers
-        (keyCode >= 65 && keyCode <= 90)) {  // uppercase letters
-      return String.fromCharCode(keyCode);
-    }
-    
-    // Add more cases if needed
-    switch (keyCode) {
-      case 32:
-        return "Space";
-      default:
-        return keyCode.toString();
-    }
-  }
-  
-// Helper function to translate key codes to human-friendly strings
-function keyCodeToHuman(keyCode) {
-    if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90)) {
-      return String.fromCharCode(keyCode);
-    }
-    switch (keyCode) {
-      case 32:
-        return "Space";
-      default:
-        return keyCode.toString();
-    }
-  }
-  
+
 // Helper function to translate key codes to human-friendly strings
 function keyCodeToHuman(keyCode) {
     if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90)) {
