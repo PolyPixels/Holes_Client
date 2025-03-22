@@ -28,6 +28,12 @@ defineTrap("BearTrap", ['beartrap1'], 68, 48, 100, 50, 50, false, 15, true);
 defineTrap("LandMine", ['bomb1'], 52, 36, 100, 40, 40, false, 10, false);
 
 function turretUpdate(){
+    if(this.hp <= 0){
+        this.deleteTag = true;
+
+        let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+        socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
+    }
     if(curPlayer.name != this.ownerName){
         this.rot = curPlayer.pos.copy().sub(this.pos).heading();
         let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
@@ -98,7 +104,14 @@ class Placeable{
         this.type = "Placeable";
     }
 
-    update(){}
+    update(){
+        if(this.hp <= 0){
+            this.deleteTag = true;
+
+            let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+            socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
+        }
+    }
 
     render(t, alpha){
         push();
@@ -197,6 +210,7 @@ class Plant extends Placeable{
     }
 
     update(){
+        this.super.update();
         if(this.growthTimer > this.growthRate){
             if(this.stage < objImgs[this.imgNum].length-1){
                 this.stage ++;
@@ -230,6 +244,7 @@ class Trap extends Placeable{
     }
 
     update(){
+        this.super.update();
         //!make this handle multiple players
         if(curPlayer.color != this.color || this.color == 0){ //not on the same team as the trap, or the trap belongs to no team
             if(this.id != curPlayer.id && this.ownerName != curPlayer.name){ //aka if you didnt make this trap
@@ -258,6 +273,7 @@ class InvObj extends Placeable{
     }
 
     update(){
+        this.super.update();
         if(mouseIsPressed){
             if(createVector(mouseX + camera.x - width / 2, mouseY + camera.y - height / 2).dist(this.pos) < (this.size.w+this.size.h)/2){ //if mouse is over the obj
                 if(mouseButton == LEFT){ //open inv
