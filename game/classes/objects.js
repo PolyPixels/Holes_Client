@@ -37,6 +37,30 @@ function turretUpdate(){
     if(curPlayer.name != this.ownerName){
         this.rot = curPlayer.pos.copy().sub(this.pos).heading();
         let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+
+        if(this.cooldown == undefined){
+            this.cooldown = 2;
+        }
+        else{
+            this.cooldown -= 1/60;
+            if(this.cooldown <= 0){
+                this.cooldown = 2;
+
+                let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
+                let toPlayer = curPlayer.pos.copy().sub(this.pos).setMag(50);
+                let proj = createProjectile(
+                    "Rock", this.ownerName, this.color,
+                    this.pos.x + toPlayer.x - 20,
+                    this.pos.y + toPlayer.y,
+                    toPlayer.heading()
+                )
+                testMap.chunks[chunkPos.x+','+chunkPos.y].projectiles.push(
+                    proj
+                );
+                //tell the server you made a projectile
+                socket.emit("new_proj", proj);
+            }
+        }
         socket.emit("update_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, update_name: "rot", update_value: this.rot});
     }
 }
