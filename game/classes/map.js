@@ -114,7 +114,9 @@ class Chunk{
   
     render(){
         //rendered under other stuff to help hide collishion problems
-        
+        for(let i = 0; i < this.projectiles.length; i++){
+            this.projectiles[i].render();
+        }
         
         push();
         beginClip();
@@ -333,11 +335,7 @@ class Chunk{
         image(chunkDirtImg, this.cx*CHUNKSIZE*TILESIZE - camera.x + width/2, this.cy*CHUNKSIZE*TILESIZE - camera.y + height/2, 1600, 1600);
         pop();
         for(let i = 0; i < this.objects.length; i++){
-            this.objects[i].render("none", 255);
-        }
-
-        for(let i = 0; i < this.projectiles.length; i++){
-            this.projectiles[i].render();
+            this.objects[i].render("none");
         }
     }
 

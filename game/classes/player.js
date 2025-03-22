@@ -109,8 +109,8 @@ class Player {
                 
                 let d = chunk.objects[j].pos.dist(this.pos);
                 if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + 29){
-                    if(chunk.objects[j].type == "door"){
-                        if(chunk.objects[j].open == false){
+                    if(chunk.objects[j].objName == "Door"){
+                        if(chunk.objects[j].alpha == 255){
                             this.pos = oldPos;
                         }
                     }

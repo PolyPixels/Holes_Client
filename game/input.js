@@ -123,25 +123,26 @@ function mouseReleased(){
     let x = mouseX + camera.x - width / 2;
     let y = mouseY + camera.y - height / 2;
     let chunkPos = testMap.globalToChunk(x,y);
-    let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y]
+    let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
     if(!chunk?.objects) return
     for(let i = 0; i < chunk.objects.length; i++){
-        if(chunk.objects[i].objName == "door"){ //TODO: Change this so doors work again, might have to make a custom object
+        if(chunk.objects[i].objName == "Door"){ //TODO: Change this so doors work again, might have to make a custom object
             if(createVector(x,y).dist(chunk.objects[i].pos) < chunk.objects[i].size.h){
-                if(chunk.objects[i].open == undefined){
-                    chunk.objects[i].open = true;
+                if(chunk.objects[i].ownerName != curPlayer.name && (chunk.objects[i].color != curPlayer.color || chunk.objects[i].color == 0)) return; //only team members and you can open your doors
+                if(chunk.objects[i].alpha == 255){
+                    chunk.objects[i].alpha = 100;
                 }
                 else{
-                    chunk.objects[i].open = !chunk.objects[i].open;
+                    chunk.objects[i].alpha = 255;
                 }
                 let chunkPos = testMap.globalToChunk(chunk.objects[i].pos.x,chunk.objects[i].pos.y);
                 socket.emit("update_obj", {
                     cx: chunkPos.x, cy: chunkPos.y, 
-                    type: chunk.objects[i].type, 
+                    objName: chunk.objects[i].objName, 
                     pos: {x: chunk.objects[i].pos.x, y: chunk.objects[i].pos.y}, 
                     z: chunk.objects[i].z, 
-                    update_name: "open", 
-                    update_value: chunk.objects[i].open
+                    update_name: "alpha", 
+                    update_value: chunk.objects[i].alpha
                 });
             }
         }

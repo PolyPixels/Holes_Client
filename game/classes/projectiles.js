@@ -81,8 +81,8 @@ class SimpleProjectile{
                 
                 let d = chunk.objects[j].pos.dist(this.pos);
                 if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + 5){
-                    if(chunk.objects[j].type == "door"){
-                        if(chunk.objects[j].open == false){
+                    if(chunk.objects[j].objName == "Door"){
+                        if(chunk.objects[j].alpha == 255){
                             this.deleteTag = true;
                             socket.emit("delete_proj", this);
 
@@ -189,8 +189,8 @@ class MeleeProjectile extends SimpleProjectile{
                     chunk.objects[j].pos.copy().sub(this.pos).heading() > this.flightPath.a-(this.angleWidth/2) &&
                     chunk.objects[j].pos.copy().sub(this.pos).heading() < this.flightPath.a+(this.angleWidth/2)
                 ){
-                    if(chunk.objects[j].type == "door"){
-                        if(chunk.objects[j].open == false){
+                    if(chunk.objects[j].objName == "Door"){
+                        if(chunk.objects[j].alpha == 255){
                             damageObj(chunk, chunk.objects[j], this.damage);
                         }
                     }

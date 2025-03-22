@@ -122,6 +122,7 @@ class Placeable{
         this.mhp = health;
         this.imgNum = imgNum;
         this.canRotate = canRotate;
+        this.alpha = 255;
 
         this.openBool = true; //is object in an open spot?, used for ghost rendering
         this.deleteTag = false;
@@ -137,12 +138,13 @@ class Placeable{
         }
     }
 
-    render(t, alpha){
+    render(t){
         push();
         translate(-camera.x+(width/2)+this.pos.x, -camera.y+(height/2)+this.pos.y);
         rotate(this.rot);
-        if(t == "green") tint(100, 200, 100, alpha);
-        if(t == "red") tint(200, 100, 100, alpha);
+        if(t == "green") tint(100, 200, 100, 100);
+        if(t == "red") tint(200, 100, 100, 100);
+        if(this.alpha < 255) tint(255, this.alpha);
         image(objImgs[this.imgNum][0], -this.size.w/2,-this.size.h/2, this.size.w, this.size.h);
         pop();
     }
@@ -193,8 +195,8 @@ class Placeable{
         }
         pop();
 
-        if(this.openBool) this.render("green", 100); //green
-        else this.render("red", 100); //red
+        if(this.openBool) this.render("green"); //green
+        else this.render("red"); //red
     }
 
     checkCollisions(xOffset, yOffset) {
