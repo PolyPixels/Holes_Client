@@ -10,23 +10,24 @@ Item Dic is a full dictanary of every item that can exist, falling into one of t
     Seed - makes a plant obj
 */
 
+var itemImgPaths = [];
 var itemDic = {};
 
-defineShovel("Basic Shovel", 0, 1, 100, 0.12, 3, 1, "A basic shovel for digging dirt");
-defineShovel("Better Shovel", 0, 1, 100, 0.18, 3, 1, "A better shovel for digging dirt");
-defineShovel("God Shovel", 0, 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt");
-defineMelee("Basic Sword", 1, 1, 100, 10, 50, 90, 10, false, "A basic sword for slashing");
-defineMelee("Better Sword", 1, 1, 100, 10, 1, 90, 10, false, "A better sword for slashing");
-defineRanged("Basic SlingShot", 2, 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false, "A basic slingshot for shooting");
-defineRanged("Better SlingShot", 2, 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false, "A better slingshot for shooting");
-defineSimpleItem("Rock", 3, 1, "A rock for your slingshot");
-defineSimpleItem("Gem", 3, 1, "A pretty gem");
-defineSimpleItem("Plank", 3, 1, "A wooden plank");
-defineSimpleItem("Gay Goo", 3, 1, "A gooey substance");
-defineFood("Apple", 4, 1, 100, 10, "A juicy apple");
-defineFood("Mushroom", 4, 1, 100, 10, "A tasty mushroom");
-defineSeed("Mushroom Seed", 5, 1, 1, "Mushroom", 0.5, "Some mushroom spores");
-defineSeed("Apple Seed", 5, 1, 1, "Mushroom", 0.5, "A seed for growing apples");
+defineShovel("Basic Shovel", ["shovel1"], [["Plank",1],["Rock",1]], 1, 100, 0.12, 3, 1, "A basic shovel for digging dirt",true);
+defineShovel("Better Shovel", ["shovel1"], [], 1, 100, 0.18, 3, 1, "A better shovel for digging dirt",true);
+defineShovel("God Shovel", ["shovel1"], [], 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt",true);
+defineMelee("Basic Sword", ["tempSword"], [], 1, 100, 10, 50, 90, 10, false, "A basic sword for slashing",true);
+defineMelee("Better Sword", ["tempSword"], [], 1, 100, 10, 1, 90, 10, false, "A better sword for slashing",true);
+defineRanged("Basic SlingShot", ["sling"], [], 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
+defineRanged("Better SlingShot", ["sling"], [], 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);
+defineSimpleItem("Rock", ["temprock"], [], 1, "A rock for your slingshot",false);
+defineSimpleItem("Gem", ["temprock"], [], 1, "A pretty gem",false);
+defineSimpleItem("Plank", ["temprock"], [], 1, "A wooden plank",false);
+defineSimpleItem("Gay Goo", ["temprock"], [], 1, "A gooey substance",false);
+defineFood("Apple", ["apple"], [], 1, 100, 10, "A juicy apple",false);
+defineFood("Mushroom", ["images/structures/tempmushroom3"], [], 1, 100, 10, "A tasty mushroom",false);
+defineSeed("Mushroom Seed", ["tempmushroomseed"], [["Mushroom", 1]], 1, "Mushroom", 0.5, "Some mushroom spores",true);
+defineSeed("Apple Seed", ["tempmushroomseed"], [["Apple", 1]], 1, "Mushroom", 0.5, "A seed for growing apples",true);
 
 class SimpleItem{
     constructor(itemName, weight, durability, imgNum, desc){
@@ -376,8 +377,39 @@ function createItem(name){
             return new CustomItem(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].use);
         }
         else{
-            throw new Error(`Object type: ${objDic[name].type}, does not exist.`);
+            console.log(itemDic[name]);
+            throw new Error(`Item type: ${itemDic[name].type}, does not exist.`);
         }
+    }
+}
+
+//the most common parts of a define, so we don't have to keep editing all the defines
+function defineItemSuper(type,name,imgPaths,cost,weight,durability,desc,inCraftList){
+    checkParams(arguments, getParamNames(defineItemSuper), ["string","string","object","object","number","int","string","boolean"]);
+
+    for(let i = 0; i < imgPaths.length; i++){
+        if(!imgPaths[i].includes("images")){
+            imgPaths[i] = "images/items/" + imgPaths[i];
+        }
+        if(!imgPaths[i].includes(".")){
+            imgPaths[i] = imgPaths[i] + ".png";
+        }
+    }
+    itemImgPaths.push(imgPaths);
+    let imgNum = itemImgPaths.length - 1;
+    
+    itemDic[name] = {
+        type: type,
+        name: name,
+        img: imgNum,
+        weight: weight,
+        durability: durability,
+        desc: desc,
+        cost: cost
+    };
+
+    if(inCraftList){
+        //craftOptions.push({type: name, image: imgPaths[0], cost: cost});
     }
 }
 
@@ -385,27 +417,22 @@ function createItem(name){
  * Creates a new lookup in itemDic for an object of type SimpleItem
  * @returns {SimpleItem} not an actual SimpleItem but all info needed for one
  * @param {string} name the name of the object
- * @param {int} imgNum the index of the png or pngs, in the objImgs array
+ * @param {Array} imgPaths an array of paths for any images this item will use
+ * @param {Array} cost an array of things this item needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
  * @param {number} weight how much the item weighs
  * @param {string} desc the description of the item
+ * @param {boolean} inCraftList is this item craftable?
 */
-function defineSimpleItem(name,imgNum, weight, desc){
-    checkParams(arguments, getParamNames(defineSimpleItem), ["string","int","number","string"]);
-    itemDic[name] = {
-        type: "SimpleItem",
-        name: name,
-        img: imgNum,
-        weight: weight,
-        durability: 1,
-        desc: desc
-    };
+function defineSimpleItem(name, imgPaths, cost, weight, desc, inCraftList){
+    defineItemSuper("SimpleItem", name,imgPaths,cost,weight,1,desc,inCraftList);
 }
 
 /**
  * Creates a new lookup in itemDic for an object of type Shovel
  * @returns {Shovel} not an actual Shovel but all info needed for one
  * @param {string} name the name of the object
- * @param {int} imgNum the index of the png or pngs, in the objImgs array
+ * @param {Array} imgPaths an array of paths for any images this item will use
+ * @param {Array} cost an array of things this item needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
  * @param {number} weight how much the item weighs
  * @param {int} durability how many uses the item has left
  * @param {number} digSpeed how fast you affect the dirt your digging 0.065 is the average
@@ -413,26 +440,28 @@ function defineSimpleItem(name,imgNum, weight, desc){
  * @param {int} range how far from the character the shovel will be able to dig
  * @param {string} desc the description of the item
 */
-function defineShovel(name, imgNum, weight, durability, digSpeed, digSize, range, desc){
-    checkParams(arguments, getParamNames(defineShovel), ["string","int","number","int","number","number","int","string"]);
-    itemDic[name] = {
-        type: "Shovel",
-        name: name,
-        img: imgNum,
-        weight: weight,
-        durability: durability,
-        digSpeed: digSpeed,
-        digSize: digSize,
-        range: range,
-        desc: desc
-    };
+function defineShovel(name, imgPaths, cost, weight, durability, digSpeed, digSize, range, desc, inCraftList){
+    defineItemSuper("Shovel", name,imgPaths,cost,weight,durability,desc,inCraftList);
+
+    let paramNames = getParamNames(defineShovel);
+    checkParams(
+        [arguments[5], arguments[6], arguments[7]],
+        [paramNames[5], paramNames[6], paramNames[7]],
+        ["number","number","int"]
+    );
+
+    itemDic[name].digSpeed = digSpeed;
+    itemDic[name].digSize = digSize;
+    itemDic[name].range = range;
+    
 }
 
 /**
  * Creates a new lookup in itemDic for an object of type Melee
  * @returns {Melee} not an actual Melee but all info needed for one
  * @param {string} name the name of the object
- * @param {int} imgNum the index of the png or pngs, in the objImgs array
+ * @param {Array} imgPaths an array of paths for any images this item will use
+ * @param {Array} cost an array of things this item needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
  * @param {number} weight how much the item weighs
  * @param {int} durability how many uses the item has left
  * @param {int} damage how much damage the weapon does
@@ -442,21 +471,21 @@ function defineShovel(name, imgNum, weight, durability, digSpeed, digSize, range
  * @param {boolean} magicBool if the weapon does magic damage
  * @param {string} desc the description of the item
 */
-function defineMelee(name,imgNum, weight, durability, damage, range, angle, swingSpeed, magicBool, desc){
-    checkParams(arguments, getParamNames(defineMelee), ["string","int","number","int","int","int","int", "int","boolean","string"]);
-    itemDic[name] = {
-        type: "Melee",
-        name: name,
-        img: imgNum,
-        weight: weight,
-        durability: durability,
-        damage: damage,
-        range: range,
-        angle: angle,
-        swingSpeed: swingSpeed,
-        magicBool: magicBool,
-        desc: desc
-    };
+function defineMelee(name,imgPaths, cost, weight, durability, damage, range, angle, swingSpeed, magicBool, desc, inCraftList){
+    defineItemSuper("Melee", name, imgPaths, cost, weight, durability, desc, inCraftList);
+
+    let paramNames = getParamNames(defineMelee);
+    checkParams(
+        [arguments[5], arguments[6], arguments[7], arguments[8], arguments[9]],
+        [paramNames[5], paramNames[6], paramNames[7], paramNames[8], paramNames[9]],
+        ["int","int","int","int","boolean"]
+    );
+    
+    itemDic[name].damage = damage;
+    itemDic[name].range = range;
+    itemDic[name].angle = angle;
+    itemDic[name].swingSpeed = swingSpeed;
+    itemDic[name].magicBool = magicBool;
 
     defineMeleeProjectile(name+" Slash", 0, range, 60, angle, damage, 0.5);
 }
@@ -465,7 +494,8 @@ function defineMelee(name,imgNum, weight, durability, damage, range, angle, swin
  * Creates a new lookup in itemDic for an object of type Ranged
  * @returns {Ranged} not an actual Ranged but all info needed for one
  * @param {string} name the name of the object
- * @param {int} imgNum the index of the png or pngs, in the objImgs array
+ * @param {Array} imgPaths an array of paths for any images this item will use
+ * @param {Array} cost an array of things this item needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
  * @param {number} weight how much the item weighs
  * @param {int} durability how many uses the item has left
  * @param {int} damage how much damage the weapon does
@@ -478,79 +508,77 @@ function defineMelee(name,imgNum, weight, durability, damage, range, angle, swin
  * @param {boolean} magicBool if the weapon does magic damage
  * @param {string} desc the description of the item
 */
-function defineRanged(name,imgNum, weight, durability, damage, spread, projName, ammoName, fireRate, roundSize, reloadSpeed, magicBool, desc){
-    checkParams(arguments, getParamNames(defineRanged), ["string","int","number","int","int","int","string","string","int","int","number","boolean","string"]);
-    itemDic[name] = {
-        type: "Ranged",
-        name: name,
-        img: imgNum,
-        weight: weight,
-        durability: durability,
-        damage: damage,
-        spread: spread,
-        projName: projName,
-        ammoName: ammoName,
-        fireRate: fireRate,
-        roundSize: roundSize,
-        reloadSpeed: reloadSpeed,
-        magicBool: magicBool,
-        desc: desc
-    };
+function defineRanged(name, imgPaths, cost, weight, durability, damage, spread, projName, ammoName, fireRate, roundSize, reloadSpeed, magicBool, desc, inCraftList){
+    defineItemSuper("Ranged", name, imgPaths, cost, weight, durability, desc, inCraftList);
+    
+    let paramNames = getParamNames(defineRanged);
+    checkParams(
+        [arguments[5], arguments[6], arguments[7], arguments[8], arguments[9], arguments[10], arguments[11], arguments[12]],
+        [paramNames[5], paramNames[6], paramNames[7], paramNames[8], paramNames[9], paramNames[10], paramNames[11], paramNames[12]],
+        ["int","int","string","string","int","int","number","boolean"]
+    );
+    
+    itemDic[name].damage = damage;
+    itemDic[name].spread = spread;
+    itemDic[name].projName = projName;
+    itemDic[name].ammoName = ammoName;
+    itemDic[name].fireRate = fireRate;
+    itemDic[name].roundSize = roundSize;
+    itemDic[name].reloadSpeed = reloadSpeed;
+    itemDic[name].magicBool = magicBool;
 }
 
 /**
  * Creates a new lookup in itemDic for an object of type Food
  * @returns {Food} not an actual Food but all info needed for one
  * @param {string} name the name of the object
- * @param {int} imgNum the index of the png or pngs, in the objImgs array
+ * @param {Array} imgPaths an array of paths for any images this item will use
+ * @param {Array} cost an array of things this item needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
  * @param {number} weight how much the item weighs
  * @param {int} durability how many inv updates before this food spoils
  * @param {int} heal how much the food heals
  * @param {string} desc the description of the item
 */
-function defineFood(name,imgNum, weight, durability, heal, desc){
-    checkParams(arguments, getParamNames(defineFood), ["string","int","number","int","int","string"]);
-    itemDic[name] = {
-        type: "Food",
-        name: name,
-        img: imgNum,
-        weight: weight,
-        durability: durability,
-        heal: heal,
-        desc: desc
-    };
+function defineFood(name, imgPaths, cost, weight, durability, heal, desc, inCraftList){
+    defineItemSuper("Food", name, imgPaths, cost, weight, durability, desc, inCraftList);
+
+    checkParams([arguments[5]],[getParamNames(defineFood)[5]],["int"]);
+    
+    itemDic[name].heal = heal;
 }
 
 /**
  * Creates a new lookup in itemDic for an object of type Potion
  * @returns {Potion} not an actual Potion but all info needed for one
  * @param {string} name the name of the object
- * @param {int} imgNum the index of the png or pngs, in the objImgs array
+ * @param {Array} imgPaths an array of paths for any images this item will use
+ * @param {Array} cost an array of things this item needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
  * @param {number} weight how much the item weighs
  * @param {string} statName the name of the stat this potion effects
  * @param {number} statBoost the percentage change in the stat
  * @param {int} time how long the effect lasts
  * @param {string} desc the description of the item
 */
-function definePotion(name,imgNum, weight, statName, statBoost, time, desc){
-    checkParams(arguments, getParamNames(definePotion), ["string","int","number","string","number","int","string"]);
-    itemDic[name] = {
-        type: "Potion",
-        name: name,
-        img: imgNum,
-        weight: weight,
-        statName: statName,
-        statBoost: statBoost,
-        time: time,
-        desc: desc
-    };
+function definePotion(name, imgPaths, cost, weight, statName, statBoost, time, desc, inCraftList){
+    defineItemSuper("Potion", name, imgPaths, cost, weight, 1, desc, inCraftList);
+    let paramNames = getParamNames(definePotion);
+    checkParams(
+        [arguments[4], arguments[5], arguments[6]],
+        [paramNames[4], paramNames[5], paramNames[6]],
+        ["string","number","int"]
+    );
+    
+    itemDic[name].statName = statName;
+    itemDic[name].statBoost = statBoost;
+    itemDic[name].time = time;
 }
 
 /**
  * Creates a new lookup in itemDic for an object of type Equipment
  * @returns {Equipment} not an actual Equipment but all info needed for one
  * @param {string} name the name of the object
- * @param {int} imgNum the index of the png or pngs, in the objImgs array
+ * @param {Array} imgPaths an array of paths for any images this item will use
+ * @param {Array} cost an array of things this item needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
  * @param {number} weight how much the item weighs
  * @param {int} durability how many uses the item has left
  * @param {string} slot the slot this equipment goes in
@@ -559,43 +587,42 @@ function definePotion(name,imgNum, weight, statName, statBoost, time, desc){
  * @param {number} statBoost the percentage change in the stat
  * @param {string} desc the description of the item
 */
-function defineEquipment(name,imgNum, weight, durability, slot, defense, statName, statBoost, desc){
-    checkParams(arguments, getParamNames(defineEquipment), ["string","int","number","int","int","string","number","string"]);
-    itemDic[name] = {
-        type: "Equipment",
-        name: name,
-        img: imgNum,
-        weight: weight,
-        durability: durability,
-        slot: slot,
-        defense: defense,
-        statName: statName,
-        statBoost: statBoost,
-        desc: desc
-    };
+function defineEquipment(name, imgPaths, cost, weight, durability, slot, defense, statName, statBoost, desc, inCraftList){
+    defineItemSuper("Equipment", name, imgPaths, cost, weight, durability, desc, inCraftList);
+    let paramNames = getParamNames(defineEquipment);
+    checkParams(
+        [arguments[5], arguments[6], arguments[7], arguments[8]],
+        [paramNames[5], paramNames[6], paramNames[7], paramNames[8]],
+        ["string","int","string","number"]
+    );
+    
+    itemDic[name].slot = slot;
+    itemDic[name].defense = defense;
+    itemDic[name].statName = statName;
+    itemDic[name].statBoost = statBoost;
 }
 
 /**
  * Creates a new lookup in itemDic for an object of type Seed
  * @returns {Seed} not an actual Seed but all info needed for one
  * @param {string} name the name of the object
- * @param {int} imgNum the index of the png or pngs, in the objImgs array
+ * @param {Array} imgPaths an array of paths for any images this item will use
+ * @param {Array} cost an array of things this item needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
  * @param {number} weight how much the item weighs
- * @param {int} durability how many uses the item has left
  * @param {string} plantName the name of the plant this seed will grow
  * @param {number} chance the chance the plant will grow
  * @param {string} desc the description of the item
 */
-function defineSeed(name,imgNum, weight, durability, plantName, chance, desc){
-    checkParams(arguments, getParamNames(defineSeed), ["string","int","number","int","string","number","string"]);
-    itemDic[name] = {
-        type: "Seed",
-        name: name,
-        img: imgNum,
-        weight: weight,
-        durability: durability,
-        plantName: plantName,
-        chance: chance,
-        desc: desc
-    };
+function defineSeed(name, imgPaths, cost, weight, plantName, chance, desc, inCraftList){
+    defineItemSuper("Seed", name, imgPaths, cost, weight, 1, desc, inCraftList);
+    
+    let paramNames = getParamNames(defineSeed);
+    checkParams(
+        [arguments[4], arguments[5]],
+        [paramNames[4], paramNames[5]],
+        ["string","number"]
+    );
+    
+    itemDic[name].plantName = plantName;
+    itemDic[name].chance = chance;
 }

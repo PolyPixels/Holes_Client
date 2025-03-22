@@ -899,6 +899,7 @@ function defineInvUI() {
         border: "2px solid cyan",
         borderRadius: "10px",
         boxShadow: "0 0 15px rgba(0, 255, 255, 0.5)",
+        backgroundColor: "rgba(20,20,20,1)"
     });
 
     // Top Bar (Title)
@@ -1105,7 +1106,8 @@ function updatecurItemDiv(){
     itemImgDiv.style("height", "100%");
     itemImgDiv.style("border", "2px solid black");
     itemImgDiv.style("border-radius", "10px");
-    itemImgDiv.style("background-image", `url(images/items/${itemImgNames[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]}.png)`);
+    console.log(itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]);
+    itemImgDiv.style("background-image", "url("+itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]+")");
     itemImgDiv.style("background-size", "contain");
     itemImgDiv.style("background-repeat", "no-repeat");
     itemImgDiv.style("background-position", "center");
@@ -1260,7 +1262,15 @@ function renderDirtBagUI(){
     // Dirt Inventory
     push();
     //should add an open and closed version
-    if (curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Shovel"){
+    if(curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] == ""){
+        if(dirtInv >= 150 - curPlayer.statBlock.stats.handDigSpeed){
+            image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
+        }
+        else{
+            image(dirtBagOpenImg, width - 180 - 10, height - 186 - 10, 180, 186);
+        }
+    }
+    else if (curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Shovel"){
         if(dirtInv >= 150 - curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].digSpeed){
             image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
         }

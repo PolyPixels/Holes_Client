@@ -55,6 +55,7 @@ function keyReleased() {
     else if(gameState == "inventory"){
         if (keyCode === 32) { //space
             curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem, curPlayer.invBlock.selectedHotBar);
+            updateSpaceBarDiv();
         }
         if(keyCode == 73){ //i
             gameState = "playing";

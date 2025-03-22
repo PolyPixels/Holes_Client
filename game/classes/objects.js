@@ -236,7 +236,7 @@ class Plant extends Placeable{
     }
 
     update(){
-        this.super.update();
+        super.update();
         if(this.growthTimer > this.growthRate){
             if(this.stage < objImgs[this.imgNum].length-1){
                 this.stage ++;
@@ -270,7 +270,7 @@ class Trap extends Placeable{
     }
 
     update(){
-        this.super.update();
+        super.update();
         //!make this handle multiple players
         if(curPlayer.color != this.color || this.color == 0){ //not on the same team as the trap, or the trap belongs to no team
             if(this.id != curPlayer.id && this.ownerName != curPlayer.name){ //aka if you didnt make this trap
@@ -299,7 +299,7 @@ class InvObj extends Placeable{
     }
 
     update(){
-        this.super.update();
+        super.update();
         if(mouseIsPressed){
             if(createVector(mouseX + camera.x - width / 2, mouseY + camera.y - height / 2).dist(this.pos) < (this.size.w+this.size.h)/2){ //if mouse is over the obj
                 if(mouseButton == LEFT){ //open inv
@@ -365,8 +365,8 @@ function createObject(name, x, y, rot, color, id, ownerName){
 }
 
 //the most common parts of a define, so we don't have to keep editing all the defines
-function defineSuper(type,name,imgPaths,cost,width,height,zLevel,health,canRotate,inBuildList){
-    checkParams(arguments, getParamNames(defineSuper), ["string","string","object","object","int","int","int","int","boolean","boolean"]);
+function defineObjSuper(type,name,imgPaths,cost,width,height,zLevel,health,canRotate,inBuildList){
+    checkParams(arguments, getParamNames(defineObjSuper), ["string","string","object","object","int","int","int","int","boolean","boolean"]);
 
     for(let i = 0; i < imgPaths.length; i++){
         if(!imgPaths[i].includes("images")){
@@ -414,7 +414,7 @@ function defineSuper(type,name,imgPaths,cost,width,height,zLevel,health,canRotat
  * @param {boolean} inBuildList adds this obj to the build list
 */
 function definePlaceable(name,imgNames,cost,width,height,zLevel,health,canRotate,inBuildList){
-    defineSuper("Placeable",name,imgNames,cost,width,height,zLevel,health,canRotate,inBuildList);
+    defineObjSuper("Placeable",name,imgNames,cost,width,height,zLevel,health,canRotate,inBuildList);
 }
 
 /**
@@ -433,7 +433,7 @@ function definePlaceable(name,imgNames,cost,width,height,zLevel,health,canRotate
  * @param {boolean} inBuildList adds this obj to the build list
 */
 function defineTrap(name,imgNames,cost,width,height,health,triggerRadius,damageRadius,digBool,damage,inBuildList){
-    defineSuper("Trap",name,imgNames,cost,width,height,1,health,false,inBuildList);
+    defineObjSuper("Trap",name,imgNames,cost,width,height,1,health,false,inBuildList);
     
     let paramNames = getParamNames(defineTrap);
     checkParams(
@@ -462,7 +462,7 @@ function defineTrap(name,imgNames,cost,width,height,health,triggerRadius,damageR
  * @param {boolean} inBuildList adds this obj to the build list
 */
 function defineInvObj(name,imgNames,cost,width,height,health,maxWeight,canRotate,inBuildList){
-    defineSuper("InvObj",name,imgNames,cost,width,height,2,health,canRotate,inBuildList);
+    defineObjSuper("InvObj",name,imgNames,cost,width,height,2,health,canRotate,inBuildList);
 
     checkParams([arguments[6]], [getParamNames(defineInvObj)[6]], ["number"]);
 
@@ -482,7 +482,7 @@ function defineInvObj(name,imgNames,cost,width,height,health,maxWeight,canRotate
  * @param {string} itemDrop the name of the item this plant should drop when fully grown
 */
 function definePlant(name,imgNames,cost,width,height,health,growthRate,itemDrop){
-    defineSuper("Plant",name,imgNames,cost,width,height,2,health,false,false);
+    defineObjSuper("Plant",name,imgNames,cost,width,height,2,health,false,false);
 
     let paramNames = getParamNames(definePlant);
     checkParams([arguments[6], arguments[7]], [paramNames[6], paramNames[7]], ["number", "string"]);
@@ -511,7 +511,7 @@ function definePlant(name,imgNames,cost,width,height,health,growthRate,itemDrop)
  * @param {boolean} inBuildList adds this obj to the build list
 */
 function defineCustomObj(name,imgNames,cost,width,height,zLevel,health,update,canRotate,inBuildList){
-    defineSuper("Custom",name,imgNames,cost,width,height,zLevel,health,canRotate,inBuildList);
+    defineObjSuper("Custom",name,imgNames,cost,width,height,zLevel,health,canRotate,inBuildList);
 
     checkParams([arguments[7]], [getParamNames(defineCustomObj)[7]], ["function"]);
     objDic[name].update = update;
