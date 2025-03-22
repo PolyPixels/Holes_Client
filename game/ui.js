@@ -527,8 +527,9 @@ function setupUI(){
     }
     
     defineInvUI();
-    definePauseUI()
-    defineBuildUI()
+    definePauseUI();
+    defineBuildUI();
+    definePlayerStatusDiv();
     raceTitle = createDiv();
     // ---------------------------------------------------
     //  Create a container for race selection cards (centered)
@@ -1423,7 +1424,7 @@ function keyCodeToHuman(keyCode) {
   function renderBuildOptions() {
     // Clear any previous content
     buildDiv.html('');
-    console.log(ghostBuild.objName)
+    //console.log(ghostBuild.objName)
     // Create an unordered list to hold build options
     const ul = createElement('ul');
     ul.style('list-style', 'none');

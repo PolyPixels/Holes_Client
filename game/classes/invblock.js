@@ -105,8 +105,8 @@ class InvBlock{
         strokeWeight(1);
         rectMode(CENTER);
 
-        rect(width - (0.866 * 255), height - (0.5 * 255), 20, 20); //rect for "1" key
-        rect(width - (0.5 * 255), height - (0.866 * 255), 20, 20); //rect for "3" key
+        rect(width - (0.866 * 255), height - (0.5 * 255), 20, 20); //rect for "q" key
+        rect(width - (0.5 * 255), height - (0.866 * 255), 20, 20); //rect for "e" key
 
         fill(255,0,0);
         beginShape();
@@ -119,8 +119,9 @@ class InvBlock{
         stroke(0);
         textAlign(CENTER, CENTER);
         textSize(15);
-        text("1", width - (0.866 * 255), height - (0.5 * 255));
-        text("3", width - (0.5 * 255), height - (0.866 * 255));
+        textFont(gameUIFont);
+        text("Q", width - (0.866 * 255), height - (0.5 * 255) - 3);
+        text("E", width - (0.5 * 255), height - (0.866 * 255) - 1.5);
         pop();
     }
 }

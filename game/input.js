@@ -2,10 +2,11 @@
 function keyReleased() {
 
 
-    if(keyCode == 27 ){
+    if(keyCode == 27 ){ //ESC
         gameState = "playing";
         pauseDiv.hide();
         invDiv.hide();
+        player_status_container.hide();
         buildMode = false;
        
         renderGhost = false;
@@ -21,66 +22,67 @@ function keyReleased() {
             updateItemList();
             invDiv.show();
         }
-        if( keyCode == 80 ){ //i
+        if( keyCode == 80 ){ //p
             gameState = "pause";
             pauseDiv.show();
         }
 
-        if(keyCode == 9){ //i
+        if(keyCode == 9){ //TAB
             gameState = "player_status";
             player_status_container.show();
         }
 
-        if (buildMode) { // Assuming buildMode is a boolean flag
+        if (buildMode) { // Assuming buildMode is a boolean flag, yes it is
             buildDiv.show();
 
-            renderBuildOptions()   
+            renderBuildOptions();
             
             const option = buildOptions.find(opt => opt.key === keyCode);
             if (option) {
 
-              ghostBuild = createObject(option.type, 0, 0, 0, 
-                option.params.color || option.params.obj, " ", " ");
+                ghostBuild = createObject(
+                    option.type, 0, 0, 0, 
+                    curPlayer.color, curPlayer.id, curPlayer.name
+                );
 
-                renderBuildOptions()   
+                renderBuildOptions();
             }
-          } else {
+        } else {
             buildDiv.hide();
-          }
+        }
      
     }
     else if(gameState == "inventory"){
         if (keyCode === 32) { //space
             curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem, curPlayer.invBlock.selectedHotBar);
         }
-        if(keyCode == 73){
+        if(keyCode == 73){ //i
             gameState = "playing";
             invDiv.hide();
         }
     }
 
     else if (gameState =="pause") {
-        if(keyCode == 80 || keyCode ==27){
+        if(keyCode == 80 || keyCode ==27){ //p or ESC
             gameState = "playing";
             pauseDiv.hide();
         }
     }
 
     else if(gameState == "player_status" ) {
-        if(keyCode== 9) {
-
+        if(keyCode== 9) { //TAB
             gameState = "playing";
             player_status_container.hide();
         }
     }
 
-    if(keyCode == 49 || keyCode == 51){  //1 or 3 -should work in inventory and playing, so players can look at their wheel
-        if(buildMode || gameState != "playing") return
+    if(keyCode == 81 || keyCode == 69){  //e or q -should work in inventory and playing, so players can look at their wheel
+        if(gameState != "playing" && gameState != "inventory") return
 
         if(abs(curPlayer.invBlock.animationTimer) <= 0.1){
             let offset = 0;
-            if(keyCode == 49) offset = -1;
-            if(keyCode == 51) offset = 1;
+            if(keyCode == 81) offset = -1;
+            if(keyCode == 69) offset = 1;
             let slot = curPlayer.invBlock.selectedHotBar + offset;
             if(slot < 0) slot = 4;
             if(slot > 4) slot = 0;
@@ -105,6 +107,15 @@ function keyReleased() {
     }
 }
 
+function keyPressed(){ //prevents normal key related actions
+    if(keyCode == 27){ //ESC
+        return false;
+    }
+    if(keyCode == 9){ //TAB
+        return false;
+    }
+}
+
 function mouseReleased(){
     if(gameState != "playing") return;
 
@@ -115,9 +126,14 @@ function mouseReleased(){
     let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y]
     if(!chunk?.objects) return
     for(let i = 0; i < chunk.objects.length; i++){
-        if(chunk.objects[i].type == "door"){ //TODO: Change this so doors work again, might have to make a custom object
+        if(chunk.objects[i].objName == "door"){ //TODO: Change this so doors work again, might have to make a custom object
             if(createVector(x,y).dist(chunk.objects[i].pos) < chunk.objects[i].size.h){
-                chunk.objects[i].open = !chunk.objects[i].open;
+                if(chunk.objects[i].open == undefined){
+                    chunk.objects[i].open = true;
+                }
+                else{
+                    chunk.objects[i].open = !chunk.objects[i].open;
+                }
                 let chunkPos = testMap.globalToChunk(chunk.objects[i].pos.x,chunk.objects[i].pos.y);
                 socket.emit("update_obj", {
                     cx: chunkPos.x, cy: chunkPos.y, 
@@ -150,18 +166,49 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                 }
                 else{
                     if(ghostBuild.openBool){
-                        let chunkPos = testMap.globalToChunk(x,y);
-                        let temp = createObject(ghostBuild.objName, ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color, curPlayer.id, curPlayer.name);
-                        testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(temp);
-                        testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
-                        socket.emit("new_object", {
-                            cx: chunkPos.x, 
-                            cy: chunkPos.y, 
-                            obj: temp
-                        });
-    
-                        curPlayer.animationCreate("put");
-                        socket.emit("update_pos", curPlayer);
+                        let hasCost = true;
+                        for(let i=0; i<objDic[ghostBuild.objName].cost.length; i++){
+                            if(objDic[ghostBuild.objName].cost[i][0] == "dirt"){
+                                if(dirtInv < objDic[ghostBuild.objName].cost[i][1]){
+                                    hasCost = false;
+                                    i = objDic[ghostBuild.objName].cost.length+1;
+                                }
+                            }
+                            else{ //assume item
+                                if(curPlayer.invBlock.items[objDic[ghostBuild.objName].cost[i][0]] == undefined){
+                                    hasCost = false;
+                                    i = objDic[ghostBuild.objName].cost.length+1;
+                                }
+                                else{
+                                    if(curPlayer.invBlock.items[objDic[ghostBuild.objName].cost[i][0]].amount < objDic[ghostBuild.objName].cost[i][1]){
+                                        hasCost = false;
+                                        i = objDic[ghostBuild.objName].cost.length+1;
+                                    }
+                                }
+                            }
+                        }
+                        if(hasCost){
+                            for(let i=0; i<objDic[ghostBuild.objName].cost.length; i++){
+                                if(objDic[ghostBuild.objName].cost[i][0] == "dirt"){
+                                    dirtInv -= objDic[ghostBuild.objName].cost[i][1];
+                                }
+                                else{
+                                    curPlayer.invBlock.items[objDic[ghostBuild.objName].cost[i][0]].decreaseAmount(objDic[ghostBuild.objName].cost[i][1]);
+                                }
+                            }
+                            let chunkPos = testMap.globalToChunk(x,y);
+                            let temp = createObject(ghostBuild.objName, ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color, curPlayer.id, curPlayer.name);
+                            testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(temp);
+                            testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
+                            socket.emit("new_object", {
+                                cx: chunkPos.x, 
+                                cy: chunkPos.y, 
+                                obj: temp
+                            });
+        
+                            curPlayer.animationCreate("put");
+                            socket.emit("update_pos", curPlayer);
+                        }
                     }
                 }
             }
