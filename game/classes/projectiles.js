@@ -135,7 +135,7 @@ class MeleeProjectile extends SimpleProjectile{
         push();
         translate(-camera.x+(width/2), -camera.y+(height/2));
         noFill();
-        if(!Debuging){
+        if(Debuging){
             stroke(200, 200, 215);
             strokeCap(SQUARE);
             strokeWeight(this.range);

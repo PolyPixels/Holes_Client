@@ -126,7 +126,7 @@ function mouseReleased(){
     let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
     if(!chunk?.objects) return
     for(let i = 0; i < chunk.objects.length; i++){
-        if(chunk.objects[i].objName == "Door"){ //TODO: Change this so doors work again, might have to make a custom object
+        if(chunk.objects[i].objName == "Door"){
             if(createVector(x,y).dist(chunk.objects[i].pos) < chunk.objects[i].size.h){
                 if(chunk.objects[i].ownerName != curPlayer.name && (chunk.objects[i].color != curPlayer.color || chunk.objects[i].color == 0)) return; //only team members and you can open your doors
                 if(chunk.objects[i].alpha == 255){
