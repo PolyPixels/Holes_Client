@@ -121,6 +121,13 @@ class MeleeProjectile extends SimpleProjectile{
         this.safeRange = safeRange;
         this.angleWidth = angleWidth;
 
+        this.ringAngles = [];
+        for(let i = 0; i < this.range/10; i++){
+            let ringLength = random(this.angleWidth/5, this.angleWidth*0.7);
+            let ringOffset = random(-(this.angleWidth-ringLength), this.angleWidth-ringLength)/2;
+            this.ringAngles.push([this.flightPath.a+ringOffset-(ringLength/2), this.flightPath.a+ringOffset+(ringLength/2)]);
+        }
+
         this.type = "Melee";
     }
 
@@ -128,10 +135,35 @@ class MeleeProjectile extends SimpleProjectile{
         push();
         translate(-camera.x+(width/2), -camera.y+(height/2));
         noFill();
-        strokeCap(SQUARE);
-        strokeWeight(this.range);
-        stroke(200, 200, 215);
-        arc(this.pos.x,this.pos.y,this.range+this.safeRange,this.range+this.safeRange,this.flightPath.a-(this.angleWidth/2), this.flightPath.a+(this.angleWidth/2));
+        if(!Debuging){
+            stroke(200, 200, 215);
+            strokeCap(SQUARE);
+            strokeWeight(this.range);
+            arc(this.pos.x,this.pos.y,this.range+this.safeRange,this.range+this.safeRange,this.flightPath.a-(this.angleWidth/2), this.flightPath.a+(this.angleWidth/2));
+        }
+        else{
+            for(let i = 0; i < this.ringAngles.length; i++){
+                let ringRadius = map(i, 0, this.ringAngles.length, 0, (this.range*2))+this.safeRange+10;
+                strokeWeight(4);
+                stroke(0);
+                arc(this.pos.x, this.pos.y,
+                    ringRadius,
+                    ringRadius,
+                    this.ringAngles[i][0],
+                    this.ringAngles[i][1]
+                );
+
+                strokeWeight(3);
+                stroke(200, 200, 215);
+                arc(this.pos.x, this.pos.y,
+                    ringRadius,
+                    ringRadius,
+                    this.ringAngles[i][0],
+                    this.ringAngles[i][1]
+                );
+            }
+        }
+        
         pop();
     }
 

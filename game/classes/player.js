@@ -24,6 +24,7 @@ class Player {
         this.statBlock = new StatBlock(this.race, health);
         this.invBlock = new InvBlock();
         this.alignment = 50;
+        this.moving = false;
 
         // Animation properties
         this.currentFrame = 0; // Current frame for animation
@@ -32,7 +33,7 @@ class Player {
         this.animationType = ""; // Name of current animation
     }
 
-    checkCollisions(xOffset, yOffset) {
+    newCollisionPoint(xOffset, yOffset) {
         let chunkPos = testMap.globalToChunk(this.pos.x+(xOffset*TILESIZE), this.pos.y+(yOffset*TILESIZE));
         
         let x = floor(this.pos.x / TILESIZE) - (chunkPos.x*CHUNKSIZE) + xOffset;
@@ -71,34 +72,34 @@ class Player {
         
         let oldPos = this.pos.copy();
         let collisionChecks = [];
-
+        this.moving = (this.holding.w || this.holding.a || this.holding.s || this.holding.d);
         if (this.holding.w) {
             this.pos.y += -BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'up';
-            collisionChecks.push(this.checkCollisions( 1, -1));
-            collisionChecks.push(this.checkCollisions( 0, -1));
-            collisionChecks.push(this.checkCollisions( -1, -1));
+            collisionChecks.push(this.newCollisionPoint( 1, -1));
+            collisionChecks.push(this.newCollisionPoint( 0, -1));
+            collisionChecks.push(this.newCollisionPoint( -1, -1));
         }
         if (this.holding.a) {
             this.pos.x += -BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'left';
-            collisionChecks.push(this.checkCollisions( -1,  1));
-            collisionChecks.push(this.checkCollisions( -1,  0));
-            collisionChecks.push(this.checkCollisions( -1, -1));
+            collisionChecks.push(this.newCollisionPoint( -1,  1));
+            collisionChecks.push(this.newCollisionPoint( -1,  0));
+            collisionChecks.push(this.newCollisionPoint( -1, -1));
         }
         if (this.holding.s) {
             this.pos.y += BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'down';
-            collisionChecks.push(this.checkCollisions( 1, 1));
-            collisionChecks.push(this.checkCollisions( 0, 1));
-            collisionChecks.push(this.checkCollisions( -1, 1));
+            collisionChecks.push(this.newCollisionPoint( 1, 1));
+            collisionChecks.push(this.newCollisionPoint( 0, 1));
+            collisionChecks.push(this.newCollisionPoint( -1, 1));
         }
         if (this.holding.d) {
             this.pos.x += BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'right';
-            collisionChecks.push(this.checkCollisions(1,  1));
-            collisionChecks.push(this.checkCollisions(1,  0));
-            collisionChecks.push(this.checkCollisions(1, -1));
+            collisionChecks.push(this.newCollisionPoint(1,  1));
+            collisionChecks.push(this.newCollisionPoint(1,  0));
+            collisionChecks.push(this.newCollisionPoint(1, -1));
         }
 
         // Handle collisions
@@ -131,7 +132,7 @@ class Player {
         }
 
         // Update the current frame for animation
-        if (this.holding.w || this.holding.a || this.holding.s || this.holding.d) {
+        if (this.moving) {
             this.animationFrame += (1/7);
             this.currentFrame = 1 + (this.animationFrame) % 4;
             if (this.currentFrame >= 4) this.currentFrame = 2;
