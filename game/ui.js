@@ -1290,53 +1290,6 @@ var resumeButton;
 var serverSelectButton;
 var optionsButton;
 
-function definePauseUI() {
-    pauseDiv = createDiv();
-    pauseDiv.class("container")
-    pauseDiv.id("pauseMenu");
-    pauseDiv.style("position", "absolute");
-    pauseDiv.style("top", "50%");
-    pauseDiv.style("left", "50%");
-    pauseDiv.style("transform", "translate(-50%, -50%)");
-    pauseDiv.style("display", "none");
-    pauseDiv.style("width", "30%");
-    pauseDiv.style("height", "40%");
-    pauseDiv.style("border", "2px solid black");
-    pauseDiv.style("border-radius", "10px");
-    pauseDiv.style("text-align", "center");
-    pauseDiv.style("padding", "20px");
-
-    let pauseTitle = createP("Paused");
-    pauseTitle.style("font-size", "28px");
-    pauseTitle.style("font-weight", "bold");
-    pauseTitle.style("color", "white");
-    pauseTitle.style("text-decoration", "underline");
-    pauseTitle.parent(pauseDiv);
-
-    resumeButton = createButton("Resume");
-    styleButton(resumeButton);
-    resumeButton.mousePressed(() => {
-        pauseDiv.hide();
-        gameState = "playing"
-    });
-    resumeButton.parent(pauseDiv);
-
-
-    optionsButton = createButton("Options / Settings");
-    styleButton(optionsButton);
-    optionsButton.mousePressed(() => {
-        
-    });
-    optionsButton.parent(pauseDiv);
-
-
-    serverSelectButton = createButton("Disconnect");
-    styleButton(serverSelectButton);
-    serverSelectButton.mousePressed(() => {
-        location.reload()
-    });
-    serverSelectButton.parent(pauseDiv);
-}
 
 
 var player_status_container;
@@ -1497,6 +1450,7 @@ function definePauseUI() {
         settingsIframe.style('z-index', '9999'); // High z-index to bring it to front
         settingsIframe.style('border', 'none');
         settingsIframe.style('border-radius', '10px');
+        settingsIframe.style("display","none")
         settingsIframe.parent(document.body);  // Append to the body
 
         
@@ -1530,8 +1484,7 @@ function definePauseUI() {
     });
     resumeButton.parent(pauseDiv);
 
-    // Add button to toggle settings
-    settingsButton = createButton("Toggle Settings");
+    settingsButton = createButton(" Settings");
     styleButton(settingsButton);
     settingsButton.mousePressed(toggleSettings);
     settingsButton.parent(pauseDiv);
@@ -1550,66 +1503,7 @@ function definePauseUI() {
 var settingsIframe;
 var oldState = "";
 
-function definePauseUI() {
-    // Create the settings iframe once during initialization
-    settingsIframe = createElement('iframe');
-    settingsIframe.attribute('src', 'settings.html');
-    settingsIframe.style('position', 'absolute');
-    settingsIframe.style('top', '50%');
-    settingsIframe.style('left', '50%');
-    settingsIframe.style('transform', 'translate(-50%, -50%)');
-    settingsIframe.style('width', '20%');  // Adjust width
-    settingsIframe.style('height', '20%');  // Adjust height
-    settingsIframe.style('z-index', '9999'); // High z-index to bring it to front
-    settingsIframe.style('border', 'none');
-    settingsIframe.style('border-radius', '10px');
-    settingsIframe.style('display', 'none'); // Initially hide the iframe
-    settingsIframe.parent(document.body);  // Append to the body
 
-    // Create the pause menu UI
-    pauseDiv = createDiv();
-    pauseDiv.class("container")
-    pauseDiv.id("pauseMenu");
-    pauseDiv.style("position", "absolute");
-    pauseDiv.style("top", "50%");
-    pauseDiv.style("left", "50%");
-    pauseDiv.style("transform", "translate(-50%, -50%)");
-    pauseDiv.style("display", "none");
-    pauseDiv.style("width", "30%");
-    pauseDiv.style("height", "40%");
-    pauseDiv.style("border", "2px solid black");
-    pauseDiv.style("border-radius", "10px");
-    pauseDiv.style("text-align", "center");
-    pauseDiv.style("padding", "20px");
-
-    let pauseTitle = createP("Paused");
-    pauseTitle.style("font-size", "28px");
-    pauseTitle.style("font-weight", "bold");
-    pauseTitle.style("color", "white");
-    pauseTitle.style("text-decoration", "underline");
-    pauseTitle.parent(pauseDiv);
-
-    resumeButton = createButton("Resume");
-    styleButton(resumeButton);
-    resumeButton.mousePressed(() => {
-        pauseDiv.hide();
-        gameState = oldState; // Restore the previous game state
-    });
-    resumeButton.parent(pauseDiv);
-
-    // Add button to toggle settings
-    settingsButton = createButton("Toggle Settings");
-    styleButton(settingsButton);
-    settingsButton.mousePressed(toggleSettings);
-    settingsButton.parent(pauseDiv);
-
-    serverSelectButton = createButton("Disconnect");
-    styleButton(serverSelectButton);
-    serverSelectButton.mousePressed(() => {
-        location.reload();
-    });
-    serverSelectButton.parent(pauseDiv);
-}
 
 // Toggle function for settings menu
 function toggleSettings() {
