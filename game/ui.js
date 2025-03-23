@@ -89,7 +89,7 @@ function renderLinks() {
     // Create settings button
     let settingsButton = createButton("⚙️ Settings").parent(settingsContainer);
     styleButton(settingsButton);
-    settingsButton.mousePressed(() => openSettings());
+    settingsButton.mousePressed(() => toggleSettings());
 
     // Append elements to body
     linkContainer.parent(document.body);
@@ -185,11 +185,6 @@ function createLinkItem(parent, text, url, emoji) {
     link.mouseOut(() => link.style("background-color", "#333"));
 
     link.parent(parent);
-}
-
-// Placeholder function for settings
-function openSettings() {
-    alert("Settings menu coming soon!"); // Replace with actual settings logic
 }
 
 
@@ -1481,3 +1476,159 @@ function keyCodeToHuman(keyCode) {
       ul.child(li);
     });
 }
+
+// if game state is settings 
+
+
+var settingsIframe;
+
+function definePauseUI() {
+
+    settingsIframe = createElement('iframe');
+
+        // Show settings (create iframe and change game state)
+        settingsIframe.attribute('src', 'settings.html');
+        settingsIframe.style('position', 'absolute');
+        settingsIframe.style('top', '50%');
+        settingsIframe.style('left', '50%');
+        settingsIframe.style('transform', 'translate(-50%, -50%)');
+        settingsIframe.style('width', '30%');
+        settingsIframe.style('height', '30%');
+        settingsIframe.style('z-index', '9999'); // High z-index to bring it to front
+        settingsIframe.style('border', 'none');
+        settingsIframe.style('border-radius', '10px');
+        settingsIframe.parent(document.body);  // Append to the body
+
+        
+    pauseDiv = createDiv();
+    pauseDiv.class("container")
+    pauseDiv.id("pauseMenu");
+    pauseDiv.style("position", "absolute");
+    pauseDiv.style("top", "50%");
+    pauseDiv.style("left", "50%");
+    pauseDiv.style("transform", "translate(-50%, -50%)");
+    pauseDiv.style("display", "none");
+    pauseDiv.style("width", "30%");
+    pauseDiv.style("height", "40%");
+    pauseDiv.style("border", "2px solid black");
+    pauseDiv.style("border-radius", "10px");
+    pauseDiv.style("text-align", "center");
+    pauseDiv.style("padding", "20px");
+
+    let pauseTitle = createP("Paused");
+    pauseTitle.style("font-size", "28px");
+    pauseTitle.style("font-weight", "bold");
+    pauseTitle.style("color", "white");
+    pauseTitle.style("text-decoration", "underline");
+    pauseTitle.parent(pauseDiv);
+
+    resumeButton = createButton("Resume");
+    styleButton(resumeButton);
+    resumeButton.mousePressed(() => {
+        pauseDiv.hide();
+        gameState = "playing";
+    });
+    resumeButton.parent(pauseDiv);
+
+    // Add button to toggle settings
+    settingsButton = createButton("Toggle Settings");
+    styleButton(settingsButton);
+    settingsButton.mousePressed(toggleSettings);
+    settingsButton.parent(pauseDiv);
+
+    serverSelectButton = createButton("Disconnect");
+    styleButton(serverSelectButton);
+    serverSelectButton.mousePressed(() => {
+        location.reload();
+    });
+    serverSelectButton.parent(pauseDiv);
+}
+
+
+
+
+var settingsIframe;
+var oldState = "";
+
+function definePauseUI() {
+    // Create the settings iframe once during initialization
+    settingsIframe = createElement('iframe');
+    settingsIframe.attribute('src', 'settings.html');
+    settingsIframe.style('position', 'absolute');
+    settingsIframe.style('top', '50%');
+    settingsIframe.style('left', '50%');
+    settingsIframe.style('transform', 'translate(-50%, -50%)');
+    settingsIframe.style('width', '20%');  // Adjust width
+    settingsIframe.style('height', '20%');  // Adjust height
+    settingsIframe.style('z-index', '9999'); // High z-index to bring it to front
+    settingsIframe.style('border', 'none');
+    settingsIframe.style('border-radius', '10px');
+    settingsIframe.style('display', 'none'); // Initially hide the iframe
+    settingsIframe.parent(document.body);  // Append to the body
+
+    // Create the pause menu UI
+    pauseDiv = createDiv();
+    pauseDiv.class("container")
+    pauseDiv.id("pauseMenu");
+    pauseDiv.style("position", "absolute");
+    pauseDiv.style("top", "50%");
+    pauseDiv.style("left", "50%");
+    pauseDiv.style("transform", "translate(-50%, -50%)");
+    pauseDiv.style("display", "none");
+    pauseDiv.style("width", "30%");
+    pauseDiv.style("height", "40%");
+    pauseDiv.style("border", "2px solid black");
+    pauseDiv.style("border-radius", "10px");
+    pauseDiv.style("text-align", "center");
+    pauseDiv.style("padding", "20px");
+
+    let pauseTitle = createP("Paused");
+    pauseTitle.style("font-size", "28px");
+    pauseTitle.style("font-weight", "bold");
+    pauseTitle.style("color", "white");
+    pauseTitle.style("text-decoration", "underline");
+    pauseTitle.parent(pauseDiv);
+
+    resumeButton = createButton("Resume");
+    styleButton(resumeButton);
+    resumeButton.mousePressed(() => {
+        pauseDiv.hide();
+        gameState = oldState; // Restore the previous game state
+    });
+    resumeButton.parent(pauseDiv);
+
+    // Add button to toggle settings
+    settingsButton = createButton("Toggle Settings");
+    styleButton(settingsButton);
+    settingsButton.mousePressed(toggleSettings);
+    settingsButton.parent(pauseDiv);
+
+    serverSelectButton = createButton("Disconnect");
+    styleButton(serverSelectButton);
+    serverSelectButton.mousePressed(() => {
+        location.reload();
+    });
+    serverSelectButton.parent(pauseDiv);
+}
+
+// Toggle function for settings menu
+function toggleSettings() {
+    if (gameState === "settings") {
+        // Hide settings (remove iframe and reset game state)
+        settingsIframe.style('display', 'none');
+        gameState = oldState;  // Restore to previous game state
+    } else {
+        // Show settings iframe and set game state to "settings"
+        oldState = gameState;  // Store the current game state
+        settingsIframe.style('display', 'block');  // Show the iframe
+        gameState = "settings";  // Set game state to settings
+    }
+}
+
+
+window.addEventListener('message', function(event) {
+    // Check if the message is 'toggleSettings' and call toggleSettings
+    if (event.data === 'toggleSettings') {
+        toggleSettings();
+    }
+});
