@@ -335,7 +335,7 @@ class Chunk{
         image(chunkDirtImg, this.cx*CHUNKSIZE*TILESIZE - camera.x + width/2, this.cy*CHUNKSIZE*TILESIZE - camera.y + height/2, 1600, 1600);
         pop();
         for(let i = 0; i < this.objects.length; i++){
-            this.objects[i].render("none", 255);
+            this.objects[i].render("none");
         }
     }
 

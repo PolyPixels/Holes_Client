@@ -92,6 +92,31 @@ function draw() {
             lastHolding = curPlayer.holding;
 
             curPlayer.invBlock.renderHotBar();
+
+            if(curPlayer.statBlock.stats.hp <= 0){ //death
+                console.log("dead")
+                curPlayer.pos.x = random(-200*TILESIZE, 200*TILESIZE);
+                curPlayer.pos.y = random(-200*TILESIZE, 200*TILESIZE);
+
+                //load in some chunks for easy start
+                let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+                for(let yOff = -1; yOff < 2; yOff++){
+                    for(let xOff = -1; xOff < 2; xOff++){
+                        testMap.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
+                    }
+                }
+
+                dirtInv = 0;
+                // Clear a small area around the player
+                for (let y = -5; y < 5; y++) {
+                    for (let x = -5; x < 5; x++) {
+                        dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1);
+                    }
+                }
+                dirtInv = 0;
+                
+                curPlayer.statBlock.stats.hp = 100;
+            }
         }
 
         renderDirtBagUI();

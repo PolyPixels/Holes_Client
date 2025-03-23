@@ -19,23 +19,53 @@ Obj Dic is a full dictanary of every object that can exist, falling into one of 
 */
 
 var objDic = {};
-definePlaceable("Wall", ['tempwall1'], 128, 128, 2, 100, true, true);
-definePlaceable("Door", ['tempdoor1'], 64, 128, 2, 100, true, true);
-definePlaceable("Floor", ['tempfloor1'], 128, 128, 0, 100, true, true);
-definePlaceable("Rug", ['temprug1'], 128, 128, 1, 100, true, true);
-definePlaceable("Mug", ['tempmug'], 32, 32, 3, 100, false, true);
-defineTrap("BearTrap", ['beartrap1'], 68, 48, 100, 50, 50, false, 15, true);
-defineTrap("LandMine", ['bomb1'], 52, 36, 100, 40, 40, false, 10, false);
+definePlaceable("Wall", ['tempwall1'], [["dirt", 20]], 128, 128, 2, 100, true, true);
+definePlaceable("Door", ['tempdoor1'], [["dirt", 20]], 64, 128, 2, 100, true, true);
+definePlaceable("Floor", ['tempfloor1'], [["dirt", 20]], 128, 128, 0, 100, true, true);
+definePlaceable("Rug", ['temprug1'], [["dirt", 20]], 128, 128, 1, 100, true, true);
+definePlaceable("Mug", ['tempmug'], [["dirt", 20]], 32, 32, 3, 100, false, true);
+defineTrap("BearTrap", ['beartrap1'], [["dirt", 20]], 68, 48, 100, 50, 50, false, 15, true);
+defineTrap("LandMine", ['bomb1'], [["dirt", 20]], 52, 36, 100, 40, 40, false, 10, false);
 
 function turretUpdate(){
+    if(this.hp <= 0){
+        this.deleteTag = true;
+
+        let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+        socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
+    }
     if(curPlayer.name != this.ownerName){
         this.rot = curPlayer.pos.copy().sub(this.pos).heading();
         let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+
+        if(this.cooldown == undefined){
+            this.cooldown = 2;
+        }
+        else{
+            this.cooldown -= 1/60;
+            if(this.cooldown <= 0){
+                this.cooldown = 2;
+
+                let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
+                let toPlayer = curPlayer.pos.copy().sub(this.pos).setMag(50);
+                let proj = createProjectile(
+                    "Rock", this.ownerName, this.color,
+                    this.pos.x + toPlayer.x - 20,
+                    this.pos.y + toPlayer.y,
+                    toPlayer.heading()
+                )
+                testMap.chunks[chunkPos.x+','+chunkPos.y].projectiles.push(
+                    proj
+                );
+                //tell the server you made a projectile
+                socket.emit("new_proj", proj);
+            }
+        }
         socket.emit("update_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, update_name: "rot", update_value: this.rot});
     }
 }
-defineCustomObj("Turret", ['tempturret1'], 60, 60, 2, 100, turretUpdate, true, true);
-definePlant("Mushroom", ['tempmushroom1','tempmushroom2','tempmushroom3'], 60, 60, 100, 60, "edible_mushroom");
+defineCustomObj("Turret", ['tempturret1'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
+definePlant("Mushroom", ['tempmushroom1','tempmushroom2','tempmushroom3'], [["dirt", 20]], 60, 60, 100, 60, "edible_mushroom");
 
 function bombUpdate(){
     //Fuse go down
@@ -60,7 +90,7 @@ function bombUpdate(){
         socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
     }
 }
-defineCustomObj("PlacedBomb", ['bomb1','bomb2'], 15*4, 13*4, 1, 200, bombUpdate, false, true);
+defineCustomObj("PlacedBomb", ['bomb1','bomb2'], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, true);
 
 //defineInvObj("Chest", 10, 60, 60, 100, 10.5, true);
 
@@ -92,20 +122,29 @@ class Placeable{
         this.mhp = health;
         this.imgNum = imgNum;
         this.canRotate = canRotate;
+        this.alpha = 255;
 
         this.openBool = true; //is object in an open spot?, used for ghost rendering
         this.deleteTag = false;
         this.type = "Placeable";
     }
 
-    update(){}
+    update(){
+        if(this.hp <= 0){
+            this.deleteTag = true;
 
-    render(t, alpha){
+            let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+            socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
+        }
+    }
+
+    render(t){
         push();
         translate(-camera.x+(width/2)+this.pos.x, -camera.y+(height/2)+this.pos.y);
         rotate(this.rot);
-        if(t == "green") tint(100, 200, 100, alpha);
-        if(t == "red") tint(200, 100, 100, alpha);
+        if(t == "green") tint(100, 200, 100, 100);
+        if(t == "red") tint(200, 100, 100, 100);
+        if(this.alpha < 255) tint(255, this.alpha);
         image(objImgs[this.imgNum][0], -this.size.w/2,-this.size.h/2, this.size.w, this.size.h);
         pop();
     }
@@ -156,8 +195,8 @@ class Placeable{
         }
         pop();
 
-        if(this.openBool) this.render("green", 100); //green
-        else this.render("red", 100); //red
+        if(this.openBool) this.render("green"); //green
+        else this.render("red"); //red
     }
 
     checkCollisions(xOffset, yOffset) {
@@ -197,6 +236,7 @@ class Plant extends Placeable{
     }
 
     update(){
+        super.update();
         if(this.growthTimer > this.growthRate){
             if(this.stage < objImgs[this.imgNum].length-1){
                 this.stage ++;
@@ -230,6 +270,7 @@ class Trap extends Placeable{
     }
 
     update(){
+        super.update();
         //!make this handle multiple players
         if(curPlayer.color != this.color || this.color == 0){ //not on the same team as the trap, or the trap belongs to no team
             if(this.id != curPlayer.id && this.ownerName != curPlayer.name){ //aka if you didnt make this trap
@@ -258,6 +299,7 @@ class InvObj extends Placeable{
     }
 
     update(){
+        super.update();
         if(mouseIsPressed){
             if(createVector(mouseX + camera.x - width / 2, mouseY + camera.y - height / 2).dist(this.pos) < (this.size.w+this.size.h)/2){ //if mouse is over the obj
                 if(mouseButton == LEFT){ //open inv
@@ -323,8 +365,8 @@ function createObject(name, x, y, rot, color, id, ownerName){
 }
 
 //the most common parts of a define, so we don't have to keep editing all the defines
-function defineSuper(type,name,imgPaths,width,height,zLevel,health,canRotate,inBuildList){
-    checkParams(arguments, getParamNames(defineSuper), ["string","string","object","int","int","int","int","boolean","boolean"]);
+function defineObjSuper(type,name,imgPaths,cost,width,height,zLevel,health,canRotate,inBuildList){
+    checkParams(arguments, getParamNames(defineObjSuper), ["string","string","object","object","int","int","int","int","boolean","boolean"]);
 
     for(let i = 0; i < imgPaths.length; i++){
         if(!imgPaths[i].includes("images")){
@@ -345,11 +387,12 @@ function defineSuper(type,name,imgPaths,width,height,zLevel,health,canRotate,inB
         h: height,
         z: zLevel,
         hp: health,
-        canRotate: canRotate
+        canRotate: canRotate,
+        cost: cost
     };
 
     if(inBuildList){
-        buildOptions.push({ type: name, key: 49+(buildOptions.length), image: imgPaths[0] });
+        buildOptions.push({ type: name, key: 49+(buildOptions.length), image: imgPaths[0], cost: cost});
     }
 }
 
@@ -358,6 +401,7 @@ function defineSuper(type,name,imgPaths,width,height,zLevel,health,canRotate,inB
  * @returns {Placeable} not an actual Placeable but all info needed for one
  * @param {string} name the name of the object
  * @param {Array} imgNames an array of names for any images this object will use
+ * @param {Array} cost an array of things this obj needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
  * @param {int} width the desired width of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} height the desired height of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} zLevel the place on the z axis this object should live and react to
@@ -369,8 +413,8 @@ function defineSuper(type,name,imgPaths,width,height,zLevel,health,canRotate,inB
  * @param {boolean} canRotate self explanitory
  * @param {boolean} inBuildList adds this obj to the build list
 */
-function definePlaceable(name,imgNames,width,height,zLevel,health,canRotate,inBuildList){
-    defineSuper("Placeable",name,imgNames,width,height,zLevel,health,canRotate,inBuildList);
+function definePlaceable(name,imgNames,cost,width,height,zLevel,health,canRotate,inBuildList){
+    defineObjSuper("Placeable",name,imgNames,cost,width,height,zLevel,health,canRotate,inBuildList);
 }
 
 /**
@@ -378,6 +422,7 @@ function definePlaceable(name,imgNames,width,height,zLevel,health,canRotate,inBu
  * @returns {Trap} not an actual Trap but all info needed for one
  * @param {string} name the name of the object
  * @param {Array} imgNames an array of names for any images this object will use
+ * @param {Array} cost an array of things this obj needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
  * @param {int} width the desired width of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} height the desired height of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} health how much health this object should have
@@ -387,13 +432,13 @@ function definePlaceable(name,imgNames,width,height,zLevel,health,canRotate,inBu
  * @param {int} damage how much damage does this do to a player within the damageRadius
  * @param {boolean} inBuildList adds this obj to the build list
 */
-function defineTrap(name,imgNames,width,height,health,triggerRadius,damageRadius,digBool,damage,inBuildList){
-    defineSuper("Trap",name,imgNames,width,height,1,health,false,inBuildList);
+function defineTrap(name,imgNames,cost,width,height,health,triggerRadius,damageRadius,digBool,damage,inBuildList){
+    defineObjSuper("Trap",name,imgNames,cost,width,height,1,health,false,inBuildList);
     
     let paramNames = getParamNames(defineTrap);
     checkParams(
-        [arguments[5], arguments[6], arguments[7], arguments[8]],
-        [paramNames[5], paramNames[6], paramNames[7], paramNames[8]],
+        [arguments[6], arguments[7], arguments[8], arguments[9]],
+        [paramNames[6], paramNames[7], paramNames[8], paramNames[9]],
         ["int","int","boolean","int"]
     );
     
@@ -408,6 +453,7 @@ function defineTrap(name,imgNames,width,height,health,triggerRadius,damageRadius
  * @returns {InvObj} not an actual InvObj but all info needed for one
  * @param {string} name the name of the object
  * @param {Array} imgNames an array of names for any images this object will use
+ * @param {Array} cost an array of things this obj needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
  * @param {int} width the desired width of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} height the desired height of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} health how much health this object should have
@@ -415,10 +461,10 @@ function defineTrap(name,imgNames,width,height,health,triggerRadius,damageRadius
  * @param {boolean} canRotate self explanitory
  * @param {boolean} inBuildList adds this obj to the build list
 */
-function defineInvObj(name,imgNames,width,height,health,maxWeight,canRotate,inBuildList){
-    defineSuper("InvObj",name,imgNames,width,height,2,health,canRotate,inBuildList);
+function defineInvObj(name,imgNames,cost,width,height,health,maxWeight,canRotate,inBuildList){
+    defineObjSuper("InvObj",name,imgNames,cost,width,height,2,health,canRotate,inBuildList);
 
-    checkParams([arguments[5]], [getParamNames(defineInvObj)[5]], ["number"]);
+    checkParams([arguments[6]], [getParamNames(defineInvObj)[6]], ["number"]);
 
     objDic[name].mw = maxWeight;
 }
@@ -428,17 +474,18 @@ function defineInvObj(name,imgNames,width,height,health,maxWeight,canRotate,inBu
  * @returns {Plant} not an actual Plant but all info needed for one
  * @param {string} name the name of the object
  * @param {Array} imgNames an array of names for any images this object will use
+ * @param {Array} cost an array of things this obj needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
  * @param {int} width the desired width of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} height the desired height of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} health how much health this object should have
  * @param {number} growthRate how many seconds before the plant moves to the next stage
  * @param {string} itemDrop the name of the item this plant should drop when fully grown
 */
-function definePlant(name,imgNames,width,height,health,growthRate,itemDrop){
-    defineSuper("Plant",name,imgNames,width,height,2,health,false,false);
+function definePlant(name,imgNames,cost,width,height,health,growthRate,itemDrop){
+    defineObjSuper("Plant",name,imgNames,cost,width,height,2,health,false,false);
 
     let paramNames = getParamNames(definePlant);
-    checkParams([arguments[5], arguments[6]], [paramNames[5], paramNames[6]], ["number", "string"]);
+    checkParams([arguments[6], arguments[7]], [paramNames[6], paramNames[7]], ["number", "string"]);
     
     objDic[name].gr = growthRate;
     objDic[name].itemDrop = itemDrop;
@@ -450,6 +497,7 @@ function definePlant(name,imgNames,width,height,health,growthRate,itemDrop){
  * @returns {CustomObj} not an actual CustomObj but all info needed for one
  * @param {string} name the name of the object
  * @param {Array} imgNames an array of names for any images this object will use
+ * @param {Array} cost an array of things this obj needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
  * @param {int} width the desired width of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} height the desired height of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} zLevel the place on the z axis this object should live and react to
@@ -462,9 +510,9 @@ function definePlant(name,imgNames,width,height,health,growthRate,itemDrop){
  * @param {boolean} canRotate self explanitory
  * @param {boolean} inBuildList adds this obj to the build list
 */
-function defineCustomObj(name,imgNames,width,height,zLevel,health,update,canRotate,inBuildList){
-    defineSuper("Custom",name,imgNames,width,height,zLevel,health,canRotate,inBuildList);
+function defineCustomObj(name,imgNames,cost,width,height,zLevel,health,update,canRotate,inBuildList){
+    defineObjSuper("Custom",name,imgNames,cost,width,height,zLevel,health,canRotate,inBuildList);
 
-    checkParams([arguments[6]], [getParamNames(defineCustomObj)[6]], ["function"]);
+    checkParams([arguments[7]], [getParamNames(defineCustomObj)[7]], ["function"]);
     objDic[name].update = update;
 }
