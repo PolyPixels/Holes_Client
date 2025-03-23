@@ -1454,18 +1454,18 @@ function keyCodeToHuman(keyCode) {
       li.style('align-items', 'center');
       
       // Create an image element for the option
-      const img = createImg(option.image, option.type);
+      const img = createImg(option.image, option.objName);
       img.style('width', '50px');  // Adjust the size as needed
       img.style('height', '50px');
       img.style('image-rendering', 'pixelated');
 
-      if(ghostBuild.objName == option.type){
+      if(ghostBuild.objName == option.objName){
         li.style("font-size", "2em")
       }
       img.style('margin-right', '10px');
       
-      // Create a text container that shows the key and object type
-      const textDiv = createDiv(`${humanKey}: ${option.type}`);
+      // Create a text container that shows the key and object objName
+      const textDiv = createDiv(`${humanKey}: ${option.objName}`);
       textDiv.style('flex-grow', '1');
       
       // Append the image and text into the list item
@@ -1474,7 +1474,7 @@ function keyCodeToHuman(keyCode) {
       
       // Add event listener to trigger ghost build on click
       li.mouseClicked(() => {
-        ghostBuild = createObject(option.type, 0, 0, 0, curPlayer.color, " ", " ");
+        ghostBuild = createObject(option.objName, 0, 0, 0, curPlayer.color, " ", " ");
       });
       
       // Append the list item to the unordered list

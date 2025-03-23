@@ -110,25 +110,31 @@ function socketSetup(){
 
     socket.on("NEW_OBJECT", (data) => {
         let chunk = testMap.chunks[data.cx+","+data.cy];
-        let temp = createObject(data.obj.objName, data.obj.pos.x, data.obj.pos.y, data.obj.rot, data.obj.color, data.obj.id, data.obj.ownerName);
-        chunk.objects.push(temp);
-        chunk.objects.sort((a,b) => a.z - b.z);
+        if(chunk != undefined){
+            let temp = createObject(data.objName, data.pos.x, data.pos.y, data.rot, data.color, data.id, data.ownerName);
+            chunk.objects.push(temp);
+            chunk.objects.sort((a,b) => a.z - b.z);
+        }
     });
 
     socket.on("DELETE_OBJ", (data) => {
         let chunk = testMap.chunks[data.cx+","+data.cy];
-        for(let i = chunk.objects.length-1; i >= 0; i--){
-            if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.type == chunk.objects[i].type){
-                chunk.objects[i].deleteTag = true;
+        if(chunk != undefined){
+            for(let i = chunk.objects.length-1; i >= 0; i--){
+                if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.objName == chunk.objects[i].objName){
+                    chunk.objects[i].deleteTag = true;
+                }
             }
         }
     });
 
     socket.on("UPDATE_OBJ", (data) =>{
         let chunk = testMap.chunks[data.cx+","+data.cy];
-        for(let i = chunk.objects.length-1; i >= 0; i--){
-            if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.objName == chunk.objects[i].objName){
-                chunk.objects[i][data.update_name] = data.update_value;
+        if(chunk != undefined){
+            for(let i = chunk.objects.length-1; i >= 0; i--){
+                if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.objName == chunk.objects[i].objName){
+                    chunk.objects[i][data.update_name] = data.update_value;
+                }
             }
         }
     })
@@ -136,19 +142,23 @@ function socketSetup(){
     socket.on("NEW_PROJECTILE", (data) =>{
         let proj = createProjectile(data.name, data.ownerName, data.color, data.pos.x, data.pos.y, data.flightPath.a);
         proj.id = data.id;
-        testMap.chunks[data.cPos.x+','+data.cPos.y].projectiles.push(proj);
+        if(testMap.chunks[data.cPos.x+','+data.cPos.y] != undefined){
+            testMap.chunks[data.cPos.x+','+data.cPos.y].projectiles.push(proj);
+        }
     });
 
     socket.on("DELETE_PROJ", (data) =>{
         let chunk = testMap.chunks[data.cPos.x+','+data.cPos.y];
-        for(let i=chunk.projectiles.length-1; i>=0; i--){
-            if(
-                data.id == chunk.projectiles[i].id &&
-                data.lifeSpan == chunk.projectiles[i].lifeSpan &&
-                data.name == chunk.projectiles[i].name &&
-                data.ownerName == chunk.projectiles[i].ownerName
-            ){
-                chunk.projectiles[i].deleteTag = true;
+        if(chunk != undefined){
+            for(let i=chunk.projectiles.length-1; i>=0; i--){
+                if(
+                    data.id == chunk.projectiles[i].id &&
+                    data.lifeSpan == chunk.projectiles[i].lifeSpan &&
+                    data.name == chunk.projectiles[i].name &&
+                    data.ownerName == chunk.projectiles[i].ownerName
+                ){
+                    chunk.projectiles[i].deleteTag = true;
+                }
             }
         }
     });

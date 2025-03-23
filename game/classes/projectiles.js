@@ -265,7 +265,7 @@ function damageObj(chunk, obj, damage){
     obj.hp -= damage;
     socket.emit("upadate_obj", {
         cx: chunk.cx, cy: chunk.cy,
-        type: obj.type, 
+        objName: obj.objName, 
         pos: {x: obj.pos.x, y: obj.pos.y}, 
         z: obj.z, 
         update_name: "hp", 

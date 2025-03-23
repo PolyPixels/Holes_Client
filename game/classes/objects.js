@@ -32,7 +32,7 @@ function turretUpdate(){
         this.deleteTag = true;
 
         let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
-        socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
+        socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
     }
     if(curPlayer.name != this.ownerName){
         this.rot = curPlayer.pos.copy().sub(this.pos).heading();
@@ -61,7 +61,7 @@ function turretUpdate(){
                 socket.emit("new_proj", proj);
             }
         }
-        socket.emit("update_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, update_name: "rot", update_value: this.rot});
+        socket.emit("update_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, update_name: "rot", update_value: this.rot});
     }
 }
 defineCustomObj("Turret", ['tempturret1'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
@@ -87,7 +87,7 @@ function bombUpdate(){
         // Remove bomb after explosion
         this.deleteTag = true;
         let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
-        socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
+        socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
     }
 }
 defineCustomObj("PlacedBomb", ['bomb1','bomb2'], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, true);
@@ -134,7 +134,7 @@ class Placeable{
             this.deleteTag = true;
 
             let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
-            socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
+            socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
         }
     }
 
@@ -279,7 +279,7 @@ class Trap extends Placeable{
                     curPlayer.statBlock.stats.hp -= this.damage;
                     socket.emit("update_pos", curPlayer);
                     let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
-                    socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, type: this.type, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
+                    socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
                 }
             }
         }
@@ -392,7 +392,7 @@ function defineObjSuper(type,name,imgPaths,cost,width,height,zLevel,health,canRo
     };
 
     if(inBuildList){
-        buildOptions.push({ type: name, key: 49+(buildOptions.length), image: imgPaths[0], cost: cost});
+        buildOptions.push({ objName: name, key: 49+(buildOptions.length), image: imgPaths[0], cost: cost});
     }
 }
 

@@ -41,7 +41,7 @@ function keyReleased() {
             if (option) {
 
                 ghostBuild = createObject(
-                    option.type, 0, 0, 0, 
+                    option.objName, 0, 0, 0, 
                     curPlayer.color, curPlayer.id, curPlayer.name
                 );
 
@@ -235,7 +235,7 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                         if(createVector(x,y).dist(chunk.objects[i].pos) < (chunk.objects[i].size.w+chunk.objects[i].size.h)/2){
                             socket.emit("delete_obj", {
                                 cx: chunkPos.x, cy: chunkPos.y, 
-                                type: chunk.objects[i].type, 
+                                objName: chunk.objects[i].objName, 
                                 pos: {x: chunk.objects[i].pos.x, y: chunk.objects[i].pos.y}, 
                                 z: chunk.objects[i].z
                             });
