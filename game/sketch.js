@@ -34,7 +34,9 @@ function windowResized() {
 }
 
 function draw() {
-    background("#7F3F00"); //old color is 71413B
+    // image as background
+
+    background(dirtFloorImg)
 
     if(gameState == "initial") {
         //console.log("restart");
