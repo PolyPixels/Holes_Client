@@ -1400,6 +1400,8 @@ function keyCodeToHuman(keyCode) {
       li.style('margin', '15px 0');
       li.style('display', 'flex');
       li.style('align-items', 'center');
+      li.style("text-align", "center");  // Aligns text to the center
+
       
       // Create an image element for the option
       const img = createImg(option.image, option.type);
@@ -1408,8 +1410,12 @@ function keyCodeToHuman(keyCode) {
       img.style('image-rendering', 'pixelated');
 
       if(ghostBuild.objName == option.type){
-        li.style("font-size", "2em")
+        li.style("font-size", "1.5rem");
+        li.style("background-color", "rgba(255, 255, 255, 0.2)"); // Highlight background
+        li.style("box-shadow", "0 4px 10px rgba(0, 0, 0, 0.5)"); // 3D shadow
+        li.style("border", "3px solid #ffcc00"); // Set a golden border when highlighted
       }
+      
       img.style('margin-right', '10px');
       
       // Create a text container that shows the key and object type
