@@ -174,8 +174,12 @@ function hideLinks() {
         if (linkContainer.style("display") === "none") {
             linkContainer.style("display", "flex");
             settingsContainer.style("display", "flex")
+
+            titleImage.style("display", "flex");
         } else {
             linkContainer.style("display", "none");
+
+            titleImage.style("display", "none");
             settingsContainer.style("display", "none")
             renderLinks = false
         }
