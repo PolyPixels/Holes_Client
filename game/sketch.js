@@ -92,6 +92,7 @@ function draw() {
             lastHolding = curPlayer.holding;
 
             curPlayer.invBlock.renderHotBar();
+            renderPlayerCardUI();
 
             if(curPlayer.statBlock.stats.hp <= 0){ //death
                 console.log("dead")

@@ -1481,3 +1481,74 @@ function keyCodeToHuman(keyCode) {
       ul.child(li);
     });
 }
+
+function renderPlayerCardUI(){
+    push();
+    fill(0);
+    noStroke();
+    rect(width-530, 0, 510, 125);
+
+    stroke(134);
+    strokeWeight(4);
+    rect(width-530+6, -20, 510-12, 120+20-6, 10);
+
+    strokeWeight(2);
+    line(width-30-115+6, 7, width-30-115+6, 120-6);
+    line(width-530+6+5, 42, width-30-115+6-5, 42);
+
+    noStroke();
+    fill(134);
+    rect(width-530+6+79, 52, 295, 21);
+    rect(width-530+6+79, 83, 295, 21);
+
+    fill(112, 68, 60);
+    rect(width-30-115+6+7, 7, 98, 98);
+
+    fill(0);
+    rect(width-530+91, 52, 36, 19);
+    rect(width-530+128, 52, 33, 19);
+    rect(width-530+163, 52, 34, 19);
+    rect(width-530+199, 52, 33, 19);
+    rect(width-530+233, 52, 35, 19);
+    rect(width-530+269, 52, 33, 19);
+    rect(width-530+304, 52, 34, 19);
+    rect(width-530+340, 52, 36, 19);
+
+    rect(width-530+91, 83, 36, 19);
+    rect(width-530+128, 83, 33, 19);
+    rect(width-530+163, 83, 34, 19);
+    rect(width-530+199, 83, 33, 19);
+    rect(width-530+233, 83, 35, 19);
+    rect(width-530+269, 83, 33, 19);
+    rect(width-530+304, 83, 34, 19);
+    rect(width-530+340, 83, 36, 19);
+
+    image(hpBarImg, width-530+93, 52, 281*(curPlayer.statBlock.stats.hp/curPlayer.statBlock.stats.mhp), 14, 0, 0, 281*(curPlayer.statBlock.stats.hp/curPlayer.statBlock.stats.mhp), 14);
+    image(manaBarImg, width-530+93, 83, 281*(1), 14);
+
+    let raceName = races[curPlayer.race];
+    image(raceImages[raceName].portrait, width-30-115+6+7, 7, 98, 98);
+
+    textFont(gameUIFont);
+    textSize(20);
+    strokeWeight(1);
+    fill(134);
+    stroke(134);
+    text("lvl", width-530+6+10+10, 35);
+    fill(0,255,0);
+    stroke(0,255,0);
+    text(curPlayer.statBlock.level, width-530+6+30+10+5, 35);
+    fill(255,0,0);
+    stroke(255,0,0);
+    text("HP:", width-530+6+30, 70);
+    fill(0,255,255);
+    stroke(0,255,255);
+    text("MP:", width-530+6+30, 100);
+    //fill with team color
+    textAlign(CENTER, CENTER);
+    text(curPlayer.name, width-530+6+45+(350/2), 19);
+
+    let box = gameUIFont.textBounds(curPlayer.name, width-530+6+45+(350/2), 19);
+    line(box.x, box.y+box.h+4, box.x+box.w, box.y+box.h+4);
+    pop();
+}
