@@ -214,7 +214,7 @@ function renderServerBrowser() {
         serverBrowserContainer.class("container")
 
         // Main container styling
-        serverBrowserContainer.style("width", "500px");
+        serverBrowserContainer.style("width", "50dvw");
         serverBrowserContainer.style("max-height", "700px");
         serverBrowserContainer.style("overflow-y", "auto");
         serverBrowserContainer.style("background", "#1e1e1e");
@@ -276,7 +276,6 @@ function renderServerBrowser() {
         addServerButton.style("width", "100%");
         addServerButton.style("padding", "12px");
         addServerButton.style("cursor", "pointer");
-        addServerButton.style("background", "#007acc");
         addServerButton.style("color", "#fff");
         addServerButton.style("border", "none");
         addServerButton.style("border-radius", "5px");
@@ -473,7 +472,7 @@ function drawSelection() {
     raceTitle.id("raceTitle");
     raceTitle.elt.innerHTML =  "Select Your Race"
     raceTitle.style("position", "absolute");
-    raceTitle.style("top", "15dvw");
+    raceTitle.style("top", "22dvh");
     raceTitle.style("left", "50%");
     raceTitle.style("transform", "translateX(-50%)");
     // Responsive font size (combining viewport and fixed pixels)
@@ -499,7 +498,7 @@ function drawSelection() {
     race_back_button.style("border-radius", "8px");
 
     race_back_button.style("position", "absolute");
-    race_back_button.style("top", "35dvw");
+    race_back_button.style("top", "35dvh");
   
     race_back_button.mousePressed(()=>{
         console.log("pressed")
@@ -550,7 +549,7 @@ function setupUI(){
     race_back_button = createButton("go back")
     raceContainer.id("raceContainer");
     raceContainer.style("position", "absolute");
-    raceContainer.style("top", "20dvw");
+    raceContainer.style("top", "30dvh");
     raceContainer.style("left", "50%");
     raceContainer.style("transform", "translateX(-50%)");
     raceContainer.style("display", "none");
@@ -1366,7 +1365,6 @@ function styleButton(button) {
   function defineBuildUI() {
     buildDiv = createDiv();
     buildDiv.class("container");
-    buildDiv.id("pauseMenu");
     buildDiv.style("position", "absolute");
     buildDiv.style("top", "40%");
     buildDiv.style("left", "90%");
@@ -1479,18 +1477,21 @@ function definePauseUI() {
         
     pauseDiv = createDiv();
     pauseDiv.class("container")
-    pauseDiv.id("pauseMenu");
     pauseDiv.style("position", "absolute");
     pauseDiv.style("top", "50%");
     pauseDiv.style("left", "50%");
     pauseDiv.style("transform", "translate(-50%, -50%)");
-    pauseDiv.style("display", "none");
+    pauseDiv.style("display", "none"); 
+    pauseDiv.style("flex-direction", "column"); 
+    pauseDiv.style("align-items", "center"); 
+    pauseDiv.style("justify-content", "space-evenly"); 
     pauseDiv.style("width", "30%");
     pauseDiv.style("height", "40%");
     pauseDiv.style("border", "2px solid black");
     pauseDiv.style("border-radius", "10px");
     pauseDiv.style("text-align", "center");
     pauseDiv.style("padding", "20px");
+    
 
     let pauseTitle = createP("Paused");
     pauseTitle.style("font-size", "28px");
