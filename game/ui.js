@@ -52,11 +52,24 @@ function saveServers() {
 }
 
 let linksRendered = false; // Flag to prevent duplicate rendering
-let linkContainer, settingsContainer, toggleButton; // Store references for hiding
+let linkContainer, settingsContainer, toggleButton,titleImage; // Store references for hiding
 // Function to render buttons instead of links
 function renderLinks() {
     if (linksRendered) return; // Prevent duplicate rendering
 
+    // draw title image 
+
+    titleImage = createImg("./images/ui/title.png");
+    
+    // Apply styles to the image using .style()
+    titleImage.style("width", "20%"); // Set the width of the image
+    titleImage.style("height", "20%"); // Automatically adjust the height
+    titleImage.style("border", "5px solid #000"); // Add a border
+    titleImage.style("display", "block"); // Make it a block element (to prevent inline styling)
+    titleImage.style("margin", "20px auto");
+    titleImage.style("top", "0")
+    titleImage.style("position", "absolute");
+    
     // Parent container for buttons (Bottom Right)
     linkContainer = createDiv();
     linkContainer.class("container")
@@ -91,6 +104,7 @@ function renderLinks() {
     styleButton(settingsButton);
     settingsButton.mousePressed(() => toggleSettings());
 
+    titleImage.parent(document.body)
     // Append elements to body
     linkContainer.parent(document.body);
     settingsContainer.parent(document.body);
@@ -212,8 +226,7 @@ function renderServerBrowser() {
         serverBrowserContainer.style("left", "50%");
         serverBrowserContainer.style("transform", "translate(-50%, -50%)");
 
-        // 🎮 Server Selection Title
-        let title = createDiv("🎮 Select a Server");
+        let title = createDiv("Select A Server");
         title.style("font-size", "22px");
         title.style("font-weight", "bold");
         title.style("margin-bottom", "15px");
@@ -456,7 +469,7 @@ function drawSelection() {
     raceTitle.id("raceTitle");
     raceTitle.elt.innerHTML =  "Select Your Race"
     raceTitle.style("position", "absolute");
-    raceTitle.style("top", "1dvw");
+    raceTitle.style("top", "15dvw");
     raceTitle.style("left", "50%");
     raceTitle.style("transform", "translateX(-50%)");
     // Responsive font size (combining viewport and fixed pixels)
@@ -533,7 +546,7 @@ function setupUI(){
     race_back_button = createButton("go back")
     raceContainer.id("raceContainer");
     raceContainer.style("position", "absolute");
-    raceContainer.style("top", "10dvw");
+    raceContainer.style("top", "20dvw");
     raceContainer.style("left", "50%");
     raceContainer.style("transform", "translateX(-50%)");
     raceContainer.style("display", "none");

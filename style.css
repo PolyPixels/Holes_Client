@@ -3,7 +3,7 @@
 
 /* 🎨 Root Theme Variables */
 :root {
-  --primary-color: #ff0077; /* Neon Cyan */
+  --primary-color:rgba(97, 87, 0, 0.877) ; /* Neon Cyan */
   --secondary-color:#0ff ; /* Neon Magenta */
   --bg-color: #080808;
   --dark-bg: #000000;
@@ -233,4 +233,12 @@ input:hover {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+
+.serverEntry:hover {
+
+  border:  black 5px solid;
+
+    
 }
