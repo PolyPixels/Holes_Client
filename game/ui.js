@@ -578,22 +578,7 @@ function drawSelection() {
     }
 }
 
-function flipImage2(img) {
-    // Create an offscreen buffer
-    let buffer = createGraphics(img.width, img.height);
-  
-    // If you want crisp edges (pixel art), turn off smoothing for this buffer
-    buffer.noSmooth();
-    
-    // Flip horizontally by translating and scaling
-    buffer.translate(img.width, 0);
-    buffer.scale(-1, 1);
-  
-    // Draw the original image
-    buffer.image(img, 0, 0);
-  
-    return buffer;
-  }
+
   
   
 function setupUI(){
@@ -605,7 +590,7 @@ function setupUI(){
     for (let raceName in raceImages) {
         raceImages[raceName].left = [];
         for (let i = 0; i < raceImages[raceName].right.length; i++) {
-            raceImages[raceName].left[i] = flipImage2(raceImages[raceName].right[i]);
+            raceImages[raceName].left[i] = flipImage(raceImages[raceName].right[i]);
         }
     }
     
