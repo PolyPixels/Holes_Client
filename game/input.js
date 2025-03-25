@@ -2,7 +2,7 @@
 function keyReleased() {
 
 
-    if(keyCode == 27 && gameState != "pause"){ //ESC
+    if(keyCode == 27 && gameState != "pause" && gameState != "initial"){ //ESC
         gameState = "playing";
         pauseDiv.hide();
         invDiv.hide();
@@ -22,7 +22,7 @@ function keyReleased() {
             updateItemList();
             invDiv.show();
         }
-        if( keyCode == 80 ||  keyCode ==27){ //p
+        if( (keyCode == 80 ||  keyCode ==27) && gameState != "initial"){ //p
             gameState = "pause";
             pauseDiv.show();
 
