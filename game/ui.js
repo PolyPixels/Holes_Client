@@ -210,11 +210,11 @@ function hideLinks() {
         if (linkContainer.style("display") === "none") {
             linkContainer.style("display", "flex");
             settingsToggle.style("display", "flex")
-
+            markee.style("display","flex")
             titleImage.style("display", "flex");
         } else {
             linkContainer.style("display", "none");
-
+            markee.style("display","none")
             titleImage.style("display", "none");
             settingsToggle.style("display", "none")
             renderLinks = false
