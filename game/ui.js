@@ -205,20 +205,20 @@ function createLinkItem(parent, text, url, emoji) {
     link.parent(parent);
 }
 
-
 function renderServerBrowser() {
     if (!renderedserverBrowserContainer) {
         renderedserverBrowserContainer = true;
+        
         serverBrowserContainer = createDiv();
         serverBrowserContainer.id("serverBrowserContainer");
-        serverBrowserContainer.class("container")
-
+        serverBrowserContainer.class("container");
+        serverBrowserContainer.style("overflow-y","scroll")
         // Main container styling
         serverBrowserContainer.style("width", "50dvw");
-        serverBrowserContainer.style("max-height", "700px");
-        serverBrowserContainer.style("overflow-y", "auto");
-        serverBrowserContainer.style("background", "#1e1e1e");
+        serverBrowserContainer.style("max-height", "800px");
+        serverBrowserContainer.style("overflow-y", "hide");
         serverBrowserContainer.style("padding", "25px");
+        serverBrowserContainer.style("margin-top", "25px");
         serverBrowserContainer.style("border-radius", "15px");
         serverBrowserContainer.style("color", "#fff");
         serverBrowserContainer.style("font-family", "Arial, sans-serif");
@@ -230,56 +230,70 @@ function renderServerBrowser() {
         serverBrowserContainer.style("left", "50%");
         serverBrowserContainer.style("transform", "translate(-50%, -50%)");
 
+        // Title
         let title = createDiv("Select A Server");
-        title.style("font-size", "22px");
+        title.style("font-size", "3em");
         title.style("font-weight", "bold");
         title.style("margin-bottom", "15px");
         title.style("text-align", "center");
         title.parent(serverBrowserContainer);
 
+        // Render the server list
         renderServerList();
 
-        // Separate section for adding new servers
+        // ─────────────────────────────────────────────────────────
+        //  ADD NEW SERVER (COLLAPSIBLE / DROPDOWN)
+        // ─────────────────────────────────────────────────────────
+
+        // Parent section that holds the "Add New Server" header and collapsible content
         let addServerSection = createDiv();
-        addServerSection.style("margin-top", "30px");
+        addServerSection.style("margin-top", "100px");
         addServerSection.style("padding", "15px");
         addServerSection.style("background", "#2a2a2a");
         addServerSection.style("border-radius", "10px");
-        addServerSection.parent(serverBrowserContainer);
 
-        // ➕ Add Server Title
-        let addServerTitle = createDiv("➕ Add New Server");
-        addServerTitle.style("font-size", "18px");
+        // ➕ Add Server Title (CLICKABLE)
+        // Use a downward arrow (▼) or "V" to indicate it's a dropdown
+        let addServerTitle = createDiv("Add New Server ▼");
+        addServerTitle.style("font-weight", "bold");
+        addServerTitle.style("font-size", "2em");
         addServerTitle.style("margin-bottom", "10px");
         addServerTitle.style("text-align", "center");
+        addServerTitle.style("cursor", "pointer"); // Indicate it can be clicked
         addServerTitle.parent(addServerSection);
 
-        // 🌐 Server Name Input
-        inputName = createInput("").attribute("placeholder", "🌐 Server Name");
-        inputName.parent(addServerSection);
+        // Collapsible content container (initially hidden)
+        let addServerContent = createDiv();
+        addServerContent.style("display", "none");  // Hide by default
+        addServerContent.parent(addServerSection);
+
+        // Server Name Input
+        inputName = createInput("").attribute("placeholder", " Server Name");
+        inputName.parent(addServerContent);
         inputName.style("width", "90%");
         inputName.style("margin-bottom", "8px");
         inputName.style("padding", "10px");
         inputName.style("border-radius", "5px");
 
-        // 📡 Server IP Input
-        inputIP = createInput("").attribute("placeholder", "📡 Server IP");
-        inputIP.parent(addServerSection);
+        // Server IP Input
+        inputIP = createInput("").attribute("placeholder", " Server IP");
+        inputIP.parent(addServerContent);
         inputIP.style("width", "90%");
         inputIP.style("margin-bottom", "8px");
         inputIP.style("padding", "10px");
         inputIP.style("border-radius", "5px");
 
         // Add Server Button
-        addServerButton = createButton("➕ Add Server");
-        addServerButton.parent(addServerSection);
-        addServerButton.style("width", "100%");
-        addServerButton.style("padding", "12px");
+        addServerButton = createButton("ADD");
+        addServerButton.parent(addServerContent);
+        addServerButton.style("width", "80%");
+        addServerButton.style("padding", "10px");
         addServerButton.style("cursor", "pointer");
         addServerButton.style("color", "#fff");
         addServerButton.style("border", "none");
         addServerButton.style("border-radius", "5px");
 
+        // Functionality for the Add button
         addServerButton.mousePressed(() => {
             let newServer = {
                 name: inputName.value(),
@@ -287,7 +301,6 @@ function renderServerBrowser() {
             };
             if (newServer.name && newServer.ip) {
                 serverList.push(newServer);
-
                 saveServers();
                 renderServerList();
 
@@ -299,10 +312,24 @@ function renderServerBrowser() {
             }
         });
 
-        // 🖥️ Connect Button
-        let connectButton = createButton("🖥️ Connect");
+        // Toggle display of addServerContent on header click
+        let dropdownOpen = false;
+        addServerTitle.mousePressed(() => {
+            dropdownOpen = !dropdownOpen; 
+            addServerContent.style("display", dropdownOpen ? "block" : "none");
+            // Optionally change the arrow: "▼" for open or "►" for closed
+            addServerTitle.html(dropdownOpen ? "Add New Server ▼" : "Add New Server ►");
+        });
+
+        // ─────────────────────────────────────────────────────────
+        //  CONNECT BUTTON
+        // ─────────────────────────────────────────────────────────
+        let connectButton = createButton("▶ Connect");
         connectButton.parent(serverBrowserContainer);
-        connectButton.style("width", "100%");
+        connectButton.style("width", "80%");
+        connectButton.style("height", "5dvh");
+
+        connectButton.style("font-size", "2em");
         connectButton.style("margin-top", "20px");
         connectButton.style("padding", "12px");
         connectButton.style("background", "#4CAF50");
@@ -310,6 +337,7 @@ function renderServerBrowser() {
         connectButton.style("border", "none");
         connectButton.style("border-radius", "5px");
 
+        addServerSection.parent(serverBrowserContainer);
         connectButton.mousePressed(() => {
             if (selectedServer) {
                 socket = io.connect("http://" + selectedServer.ip + ":3000");
@@ -326,6 +354,7 @@ function renderServerBrowser() {
         });
     }
 }
+
 
 
 
@@ -348,23 +377,21 @@ function renderServerList() {
     serverList.forEach((server, index) => {
         let serverEntry = createDiv();
         serverEntry.class("serverEntry");
-        
+        serverEntry.style("font-size","1em")
         serverEntry.style("padding", "10px");
         serverEntry.style("margin-bottom", "10px");
         serverEntry.style("border-radius", "8px");
         serverEntry.style("background-color", "#404040");
         serverEntry.style("cursor", "pointer");
         serverEntry.style("display", "flex");
-        serverEntry.style("align-items", "center"); // Align items vertically
+        serverEntry.style("align-items", "left"); // Align items vertically
         serverEntry.style("gap", "10px"); // Add spacing between elements
-        serverEntry
+
         // Create a container for the logo
         let logoContainer = createDiv();
         logoContainer.style("width", "60px"); // Fixed width for uniformity
         logoContainer.style("height", "60px");
         logoContainer.style("display", "flex");
-        logoContainer.style("align-items", "center");
-        logoContainer.style("justify-content", "center");
         logoContainer.style("border-radius", "50%"); // Circular logo
         logoContainer.style("overflow", "hidden"); // Prevent overflow of the image
         
@@ -383,23 +410,19 @@ function renderServerList() {
         textContainer.style("flex-grow", "1"); // Allows text to take available space
         
         let serverName = createDiv(server.name);
-        serverName.style("font-size", "18px");
         serverName.style("font-weight", "bold");
         serverName.style("color", "#FFFFFF");
         serverName.parent(textContainer);
         
         let serverIP = createDiv(`IP: ${server.ip}`);
-        serverIP.style("font-size", "14px");
         serverIP.style("color", "#AAAAAA");
         serverIP.parent(textContainer);
         
         let serverStatus = createDiv("Status: Loading...");
-        serverStatus.style("font-size", "14px");
         serverStatus.style("color", "#FFD700");
         serverStatus.parent(textContainer);
         
         let playerCount = createDiv("Players: Loading...");
-        playerCount.style("font-size", "14px");
         playerCount.style("color", "#00FFFF");
         playerCount.parent(textContainer);
         
@@ -490,15 +513,14 @@ function drawSelection() {
 
 
     //back to server selection button
-    race_back_button.innerHTML = "Go Back"
+    race_back_button.innerHTML = " <- Go Back"
 
     race_back_button.style("font-size", "20px");
     race_back_button.style("color", "#fff");
     race_back_button.style("border", "none");
     race_back_button.style("border-radius", "8px");
-
     race_back_button.style("position", "absolute");
-    race_back_button.style("top", "35dvh");
+    race_back_button.style("top", "60dvh");
   
     race_back_button.mousePressed(()=>{
         console.log("pressed")
@@ -546,7 +568,7 @@ function setupUI(){
     //  Create a container for race selection cards (centered)
     // ---------------------------------------------------
     raceContainer = createDiv();
-    race_back_button = createButton("go back")
+    race_back_button = createButton("<- Go Back")
     raceContainer.id("raceContainer");
     raceContainer.style("position", "absolute");
     raceContainer.style("top", "30dvh");
