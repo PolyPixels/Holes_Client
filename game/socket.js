@@ -163,10 +163,12 @@ function socketSetup(){
             testMap.chunks[data.x+","+data.y].objects.push(temp);
             testMap.chunks[data.x+","+data.y].objects.sort((a,b) => a.z - b.z);
         }
-        for(let i=0; i<data.projectiles.length; i++){
-            let temp = createProjectile(data.projectiles[i].name, data.projectiles[i].ownerName, data.projectiles[i].color, data.projectiles[i].pos.x, data.projectiles[i].pos.y, data.projectiles[i].flightPath.a);
-            temp.id = data.projectiles[i].id;
-            testMap.chunks[data.x+","+data.y].projectiles.push(temp);
+        if(data.projectiles){
+            for(let i=0; i<data.projectiles.length; i++){
+                let temp = createProjectile(data.projectiles[i].name, data.projectiles[i].ownerName, data.projectiles[i].color, data.projectiles[i].pos.x, data.projectiles[i].pos.y, data.projectiles[i].flightPath.a);
+                temp.id = data.projectiles[i].id;
+                testMap.chunks[data.x+","+data.y].projectiles.push(temp);
+            }
         }
     });
 
