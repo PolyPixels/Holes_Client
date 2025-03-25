@@ -108,7 +108,6 @@ class InvBlock{
     
             // If there's more than one of this item, render the amount
             if (item.amount > 1) {
-                console.log(item.amount, item)
               push();
               fill(255);
               stroke(0);
