@@ -52,7 +52,22 @@ function saveServers() {
 }
 
 let linksRendered = false; // Flag to prevent duplicate rendering
-let linkContainer, settingsContainer,settingsToggle, toggleButton,titleImage; // Store references for hiding
+let linkContainer, settingsContainer,settingsToggle, toggleButton,titleImage,markee; // Store references for hiding
+
+let markeeText = [
+    " This game is made with Hate not ♥ !!!",
+    " DIG DIG DIG there is nothing else ",
+    " Shooting people is fun and easy ",
+    "Your advert here , we gotta pay that AWS bill some how ",
+    "Learn to Code &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ... OR ELSE",
+    "Kill John's Lemons",
+    "Buy Gold Buy",
+    "According to all known laws of aviation, there is no way a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway because bees don't care what humans think is impossible. ",
+    "This game probably cures cancer ",
+    "Remember V the Media Lies",
+    "If the government could be trusted Jesus would have died of natural causes"
+
+]
 // Function to render buttons instead of links
 function renderLinks() {
     if (linksRendered) return; // Prevent duplicate rendering
@@ -62,32 +77,54 @@ function renderLinks() {
     titleImage = createImg("./images/ui/title.png");
     
     // Apply styles to the image using .style()
-    titleImage.style("width", "20%"); // Set the width of the image
-    titleImage.style("height", "20%"); // Automatically adjust the height
+    titleImage.style("width", "20dvw"); // Set the width of the image
+    titleImage.style("height", "10dvw"); // Automatically adjust the height
     titleImage.style("border", "5px solid #000"); // Add a border
     titleImage.style("display", "block"); // Make it a block element (to prevent inline styling)
     titleImage.style("margin", "20px auto");
+    titleImage.style("padding-bottom", "40px auto");
     titleImage.style("top", "0")
-    titleImage.style("position", "absolute");
+    titleImage.style("position", "absolute");let randItem1 = Math.floor(Math.random() * markeeText.length);
+   // Suppose we want 5 distinct random items
+    let chosenItems = [];
+    while (chosenItems.length < markeeText.length) {
+    let r = Math.floor(Math.random() * markeeText.length);
+    if (!chosenItems.includes(r)) chosenItems.push(r); 
+    }
+    // Now join them with a spacer or delimiter
+    let marqueeContent = chosenItems
+    .map(i => markeeText[i]).join("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+
+
+    markee = createElement("marquee", marqueeContent);
+    markee.style("position", "fixed");
+    markee.style("bottom", "0px");
+    markee.style("width", "80%");
+
+    markee.style("font-size", "1.5rem");
+    markee.style("color", "white");
+
+    markee.style("scrolldelay", "0");
     
     // Parent container for buttons (Bottom Right)
     linkContainer = createDiv();
     linkContainer.class("container")
+
     applyStyle(linkContainer, {
         position: "fixed",
         bottom: "10px",
         right: "10px",
         display: "flex",
         flexDirection: "column",
-        alignItems: "flex-end",
+        alignItems: "center",
         gap: "10px",
         zIndex: "1000",
     });
 
     // Create individual buttons
-    createLinkButton(linkContainer, "🔗 Itch.io", "https://polypikzel.itch.io/");
-    createLinkButton(linkContainer, "🐙 GitHub", "https://github.com/PolyPixels");
-    createLinkButton(linkContainer, "💬 Discord", "https://discord.gg/Quhy52U5ae");
+    createLinkButton(linkContainer, "👾 Play On Itch.io", "https://polypikzel.itch.io/");
+    createLinkButton(linkContainer, "🖳 GitHub", "https://github.com/PolyPixels");
+    createLinkButton(linkContainer, "🗪 Discord", "https://discord.gg/Quhy52U5ae");
 
     // Parent container for settings (Bottom Left)
     settingsToggle = createDiv();
@@ -174,11 +211,11 @@ function hideLinks() {
         if (linkContainer.style("display") === "none") {
             linkContainer.style("display", "flex");
             settingsToggle.style("display", "flex")
-
+            markee.style("display","flex")
             titleImage.style("display", "flex");
         } else {
             linkContainer.style("display", "none");
-
+            markee.style("display","none")
             titleImage.style("display", "none");
             settingsToggle.style("display", "none")
             renderLinks = false
@@ -215,7 +252,7 @@ function renderServerBrowser() {
         serverBrowserContainer.style("overflow-y","scroll")
         // Main container styling
         serverBrowserContainer.style("width", "50dvw");
-        serverBrowserContainer.style("max-height", "800px");
+        serverBrowserContainer.style("max-height", "50dvh");
         serverBrowserContainer.style("overflow-y", "hide");
         serverBrowserContainer.style("padding", "25px");
         serverBrowserContainer.style("margin-top", "25px");
@@ -327,9 +364,9 @@ function renderServerBrowser() {
         let connectButton = createButton("▶ Connect");
         connectButton.parent(serverBrowserContainer);
         connectButton.style("width", "80%");
-        connectButton.style("height", "5dvh");
+        connectButton.style("height", "5dvw");
 
-        connectButton.style("font-size", "2em");
+        connectButton.style("font-size", "2rem");
         connectButton.style("margin-top", "20px");
         connectButton.style("padding", "12px");
         connectButton.style("background", "#4CAF50");
@@ -441,10 +478,10 @@ function renderServerList() {
         });
 
         // Remove server button
-        let removeButton = createButton("Remove");
+        let removeButton = createButton(" &#x20E0; &nbsp; Remove ");
         removeButton.parent(serverEntry);
         removeButton.style("margin-left", "10px");
-        removeButton.style("padding", "5px");
+        removeButton.style("padding", "15px");
         removeButton.style("background-color", "#F44336");
         removeButton.style("color", "#fff");
         removeButton.style("border", "none");
@@ -541,11 +578,9 @@ function drawSelection() {
     }
 }
 
-// ---------------------------------------------------
-//  Responsive behavior on window resize
-// ---------------------------------------------------
 
-
+  
+  
 function setupUI(){
     // ----------------------------
     // (Socket setup and raceImages flipping omitted for brevity)
@@ -775,7 +810,7 @@ function renderChatUI() {
   chatContainer.style("bottom", "0dvh");
   chatContainer.style("left", "0dvw");
   chatContainer.style("z-index", "1000");
-  chatContainer.style("width", "25dvh");
+  chatContainer.style("min-width", "25dvh");
   chatContainer.style("background", "rgba(34, 34, 34, 0.8)"); // Semi-transparent dark background
   chatContainer.style("padding", "10px");
   chatContainer.style("border-radius", "8px");
@@ -823,7 +858,7 @@ function renderChatUI() {
   chatInput = createInput("");
   chatInput.attribute("placeholder", "Type your message...");
   chatInput.style("flex", "1");
-  chatInput.style("padding", "8px");
+  chatInput.style("padding", "3px");
   chatInput.style("border", "1px solid #444");
   chatInput.style("border-radius", "5px");
   chatInput.style("outline", "none");
@@ -851,6 +886,8 @@ function renderChatUI() {
   chatSendButton.style("background-color", "#4caf50");
   chatSendButton.style("color", "#fff");
   chatSendButton.style("cursor", "pointer");
+
+  chatSendButton.style("min-width", "5dvw");
   chatSendButton.mousePressed(() => {
     sendChatMessage();
     gameState = "playing";
@@ -1493,9 +1530,110 @@ function styleButton(button) {
     buildDiv.style("border-radius", "10px");
     buildDiv.style("text-align", "center");
     buildDiv.style("padding", "20px");
+
+    buildDiv.style("overflow-y", "scroll");
   }
-
-
+  function renderBuildOptions() {
+    // Clear any previous content
+    buildDiv.html('');
+  
+    // Create an unordered list to hold build options
+    const ul = createElement('ul');
+    ul.style('list-style', 'none');
+    ul.style('padding', '0');
+    ul.style('margin', '0 auto');
+    ul.parent(buildDiv);
+  
+    buildOptions.forEach(option => {
+      const humanKey = keyCodeToHuman(option.key);
+  
+      // Main list item
+      const li = createElement('li');
+      li.class("buildOption");
+      // Give some spacing around each "card"
+      li.style('margin', '15px 0');
+      
+      // This "card" wraps the entire layout for each build option
+      const buildCard = createDiv();
+      buildCard.style('display', 'flex');
+      buildCard.style('align-items', 'flex-start');
+      buildCard.style('border', '2px solid #aaa');
+      buildCard.style('border-radius', '8px');
+      buildCard.style('padding', '10px');
+      buildCard.style('background', 'rgba(0, 0, 0, 0.25)');
+      buildCard.parent(li); // attach to the li
+  
+      // Left side: the image
+      const imgDiv = createDiv();
+      imgDiv.style('margin-right', '15px');
+      imgDiv.parent(buildCard);
+  
+      const img = createImg(option.image, option.type);
+      img.style('width', '64px');
+      img.style('height', '64px');
+      img.style('image-rendering', 'pixelated');
+      img.parent(imgDiv);
+  
+      // Right side: all text info goes here
+      const infoDiv = createDiv();
+      infoDiv.style('display', 'flex');
+      infoDiv.style('flex-direction', 'column');
+      infoDiv.style('flex-grow', '1');
+      infoDiv.parent(buildCard);
+  
+      // If this is the currently selected object, visually highlight the card
+      if (ghostBuild.objName === option.type) {
+        buildCard.style('background-color', 'rgba(255, 255, 255, 0.2)');
+        buildCard.style('box-shadow', '0 4px 10px rgba(0, 0, 0, 0.5)');
+        buildCard.style('border', '3px solid #ffcc00');
+      }
+  
+      // Title row with Key and Type
+      const titleDiv = createDiv(`${humanKey}: ${option.type}`);
+      titleDiv.style('font-size', '1.1rem');
+      titleDiv.style('font-weight', 'bold');
+      titleDiv.style('margin-bottom', '8px');
+      titleDiv.parent(infoDiv);
+  
+      // Collect cost data
+      let canBuild = true;  // Start true, set false if any requirement not met
+      const costArray = objDic[option.type].cost; 
+      // costArray is e.g. [ ['dirt', 20], ['Rock', 5] ]
+  
+      // This div will list each required material
+      const costsDetailsDiv = createDiv();
+      costsDetailsDiv.style('font-size', '0.9rem');
+      costsDetailsDiv.parent(infoDiv);
+  
+      costArray.forEach(([material, requiredAmount]) => {
+        const playerHas = curPlayer.invBlock.items[material] || 0;
+        if (playerHas < requiredAmount) {
+          canBuild = false;
+        }
+        
+        // A line that says "Material: X (You have: Y)"
+        const line = createDiv(`${material}: ${requiredAmount}, / ${playerHas}`);
+        // If not enough material, make the text red
+        if (playerHas < requiredAmount) {
+          line.style('color', 'red');
+        } else {
+          line.style('color', 'white');
+        }
+        line.parent(costsDetailsDiv);
+      });
+  
+      // If the player can’t afford *any* of the materials, color the entire text section red
+      infoDiv.style('color', canBuild ? 'white' : 'red');
+  
+      // Let them select the item, or block selection if you want
+      buildCard.mouseClicked(() => {
+        // if (!canBuild) return;  // uncomment if you want to block the build entirely
+        ghostBuild = createObject(option.type, 0, 0, 0, curPlayer.color, " ", " ");
+      });
+  
+      ul.child(li);
+    });
+  }
   
 
 // Helper function to translate key codes to human-friendly strings
@@ -1511,65 +1649,7 @@ function keyCodeToHuman(keyCode) {
     }
   }
   
-  function renderBuildOptions() {
-    // Clear any previous content
-    buildDiv.html('');
-    //console.log(ghostBuild.objName)
-    // Create an unordered list to hold build options
-    const ul = createElement('ul');
-    ul.style('list-style', 'none');
-    ul.style('padding', '0');
-    ul.style('font-size', '20px');
-    ul.style('margin', '0 auto');
-    ul.parent(buildDiv);  // Append the list to the build container
-    
-    buildOptions.forEach(option => {
-      const humanKey = keyCodeToHuman(option.key);
-      
-      // Create a list item for the option and set up a flexbox layout
-      const li = createElement('li');
-      li.class("buildOption");
-      li.style('margin', '15px 0');
-      li.style('display', 'flex');
-      li.style('align-items', 'center');
-      li.style("text-align", "center");  // Aligns text to the center
-
-      
-      // Create an image element for the option
-      const img = createImg(option.image, option.type);
-      img.style('width', '50px');  // Adjust the size as needed
-      img.style('height', '50px');
-      img.style('image-rendering', 'pixelated');
-
-      if(ghostBuild.objName == option.type){
-        li.style("font-size", "1.5rem");
-        li.style("background-color", "rgba(255, 255, 255, 0.2)"); // Highlight background
-        li.style("box-shadow", "0 4px 10px rgba(0, 0, 0, 0.5)"); // 3D shadow
-        li.style("border", "3px solid #ffcc00"); // Set a golden border when highlighted
-      }
-      
-      img.style('margin-right', '10px');
-      
-      // Create a text container that shows the key and object type
-      const textDiv = createDiv(`${humanKey}: ${option.type}`);
-      textDiv.style('flex-grow', '1');
-      
-      // Append the image and text into the list item
-      li.child(img);
-      li.child(textDiv);
-      
-      // Add event listener to trigger ghost build on click
-      li.mouseClicked(() => {
-        ghostBuild = createObject(option.type, 0, 0, 0, curPlayer.color, " ", " ");
-      });
-      
-      // Append the list item to the unordered list
-      ul.child(li);
-    });
-}
-
-// if game state is settings 
-
+   
 
 
 function definePauseUI() {

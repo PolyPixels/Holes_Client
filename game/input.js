@@ -79,34 +79,8 @@ function keyReleased() {
         }
     }
 
-    if(keyCode == 81 || keyCode == 69){  //e or q -should work in inventory and playing, so players can look at their wheel
-        if(gameState != "playing" && gameState != "inventory") return
-
-        if(abs(curPlayer.invBlock.animationTimer) <= 0.1){
-            let offset = 0;
-            if(keyCode == 81) offset = -1;
-            if(keyCode == 69) offset = 1;
-            let slot = curPlayer.invBlock.selectedHotBar + offset;
-            if(slot < 0) slot = 4;
-            if(slot > 4) slot = 0;
-            curPlayer.invBlock.selectedHotBar = slot;
-            curPlayer.invBlock.animationTimer = offset;
-
-            if(curPlayer.invBlock.hotbar[slot] != ""){
-                if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].type == "Seed"){
-                    ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
-                    renderGhost = true; //this is seperate from buildMode, because this is a placable item, not something you can find in buildMode
-                }
-                else{
-                    renderGhost = false;
-                }
-            }
-            else{
-                renderGhost = false;
-            }
-
-            updateSpaceBarDiv();
-        }
+    if(keyCode == 81 || keyCode == 69 ){  //e or q -should work in inventory and playing, so players can look at their wheel
+        updatePlayerHotBarOffset()
     }
 }
 
@@ -286,3 +260,54 @@ function continousKeyBoardInput(){
         if (keyIsDown(68)){} //D
     }
 }
+
+function mouseWheel(event) {
+    if(gameState != "playing") return
+    if (event.delta > 0) {
+      // Scrolled down
+      hotBarOffset = -1
+      mouseWheelMoved= true
+    } else {
+      // Scrolled up
+      hotBarOffset = 1
+      mouseWheelMoved = true
+    }
+    updatePlayerHotBarOffset()
+    mouseWheelMoved = false
+    return false
+  }
+
+  let hotBarOffset = null;
+  let mouseWheelMoved = false
+
+
+
+  function updatePlayerHotBarOffset(){
+    if(gameState != "playing" && gameState != "inventory") return
+
+    if(abs(curPlayer.invBlock.animationTimer) <= 0.1){
+   
+        if(keyCode == 81) hotBarOffset = -1;
+        if(keyCode == 69) hotBarOffset = 1;
+        let slot = curPlayer.invBlock.selectedHotBar + hotBarOffset;
+        if(slot < 0) slot = 4;
+        if(slot > 4) slot = 0;
+        curPlayer.invBlock.selectedHotBar = slot;
+        curPlayer.invBlock.animationTimer = hotBarOffset;
+
+        if(curPlayer.invBlock.hotbar[slot] != ""){
+            if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].type == "Seed"){
+                ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
+                renderGhost = true; //this is seperate from buildMode, because this is a placable item, not something you can find in buildMode
+            }
+            else{
+                renderGhost = false;
+            }
+        }
+        else{
+            renderGhost = false;
+        }
+        mouseWheelMoved = false
+        updateSpaceBarDiv();
+    }
+  }

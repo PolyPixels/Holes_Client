@@ -244,3 +244,27 @@ input:hover {
 
     
 }
+
+/* Set scrollbar width (and optional background for the track area) */
+::-webkit-scrollbar {
+  width: 8px;                /* Adjust for desired width */
+  background: #111;          /* Dark background for the scrollbar track */
+}
+
+/* Style of the scrollbar track (behind the draggable thumb) */
+::-webkit-scrollbar-track {
+  background: #111;          /* Match the main scrollbar background */
+  border-radius: 4px;        /* Gives a subtle rounded track */
+}
+
+/* The draggable scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background: #555;          /* Medium gray thumb for a futuristic vibe */
+  border-radius: 4px;        /* Slight rounding for a modern look */
+  border: 1px solid #222;    /* A subtle border that frames the thumb */
+}
+
+/* Hover effect on the thumb */
+::-webkit-scrollbar-thumb:hover {
+  background: #888;          /* Lightens thumb on hover to show interactivity */
+}

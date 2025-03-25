@@ -128,8 +128,38 @@ class Placeable{
         this.deleteTag = false;
         this.type = "Placeable";
     }
+      
 
+    renderHealthBar() {
+        push();
+        // Move the origin to where this entity is on screen
+        translate(
+          -camera.x + (width / 2) + this.pos.x,
+          -camera.y + (height / 2) + this.pos.y
+        );
+      
+        // (Optional) shift upward so the bar is above the sprite
+        translate(0, -this.size.h / 2 - 10);
+      
+        // Draw health bar background
+        fill(255, 0, 0);
+        noStroke();
+        rect(0, 0, 32, 6);
+      
+        // Draw health portion
+        fill(0, 255, 0); 
+        let healthWidth = constrain(map(this.hp, 0, this.mhp, 0, 32), 0, 32);
+        rect(0, 0, healthWidth, 6);
+      
+        pop();
+      }
+      
     update(){
+        if(this.hp < this.mhp){
+
+        this.renderHealthBar()
+        }
+
         if(this.hp <= 0){
             this.deleteTag = true;
 
@@ -335,6 +365,7 @@ class CustomObj extends Placeable{
         this.type = "Custom";
     }
 
+ 
     //define your own update
 }
 

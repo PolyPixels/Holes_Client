@@ -9,6 +9,7 @@ function checkName() {
 
 //used while loading race images, in preload.js
 function flipImage(img) {
+    noSmooth();
     let flippedImg = createGraphics(img.width, img.height);
     flippedImg.scale(-1, 1);
     flippedImg.image(img, -img.width, 0);
