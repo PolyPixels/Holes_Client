@@ -756,10 +756,13 @@ function setupUI(){
     });
 }
 
+
 // Global variables for chat UI elements and player count display
 let chatContainer, chatMessagesBox, chatInput, chatSendButton;
-let playerCountDiv; // New global variable for player count display
 let chatRendered = false;
+let toggleChatButton; // Button to collapse/expand chat
+let inputContainer;   // Reference to hide/show input container
+let isChatOpen = true; // Track whether the chat is currently open or collapsed
 
 function renderChatUI() {
   if (chatRendered) return;
@@ -780,7 +783,29 @@ function renderChatUI() {
   chatContainer.style("backdrop-filter", "blur(5px)"); // Blurred background (if supported)
   chatContainer.style("pointer-events", "auto"); // Ensure clicks go through
 
+  // ─────────────────────────────────────────────────────────
+  // Toggle Button (Collapses/Expands the chat area)
+  // ─────────────────────────────────────────────────────────
+
+  toggleChatButton = createButton(""); 
+  toggleChatButton.parent(chatContainer);
+  toggleChatButton.style("width", "100%");
+  toggleChatButton.style("background", "#555");
+  toggleChatButton.style("color", "#fff");
+  toggleChatButton.style("border", "none");
+  toggleChatButton.style("border-radius", "5px");
+  toggleChatButton.style("cursor", "pointer");
+  toggleChatButton.style("margin-bottom", "5px");
+  toggleChatButton.style("padding", "6px");
+  toggleChatButton.mousePressed(toggleChatDropdown);
+
+  // Update the button text immediately on creation
+  updateToggleChatButtonText();
+
+  // ─────────────────────────────────────────────────────────
   // Container for messages
+  // ─────────────────────────────────────────────────────────
+
   chatMessagesBox = createDiv();
   chatMessagesBox.style("height", "15dvh");
   chatMessagesBox.style("overflow-y", "auto");
@@ -789,21 +814,12 @@ function renderChatUI() {
   chatMessagesBox.style("padding", "8px");
   chatMessagesBox.style("border-radius", "5px");
   chatMessagesBox.style("margin-bottom", "10px");
-
   chatMessagesBox.style("justify-content", "left");
 
+  // ─────────────────────────────────────────────────────────
+  // Input Field
+  // ─────────────────────────────────────────────────────────
 
-  // Player count display (like a small badge in top-right corner of the chat container)
-  playerCountDiv = createDiv("\b Players \b " + (Object.keys(players).length + 1));
-  playerCountDiv.style("position", "absolute");
-  playerCountDiv.style("top", "-20px");
-  playerCountDiv.style("left", "0dvh");
-  playerCountDiv.style("font-size", "0.9em");
-  playerCountDiv.style("padding", "3px 8px");
-  playerCountDiv.style("color", "#fff");
-  playerCountDiv.style("pointer-events", "none");
-  playerCountDiv.style("background-color","grey")
-  // Create chat input field
   chatInput = createInput("");
   chatInput.attribute("placeholder", "Type your message...");
   chatInput.style("flex", "1");
@@ -814,22 +830,25 @@ function renderChatUI() {
   chatInput.style("color", "#fff");
   chatInput.style("background-color", "#222");
   chatInput.style("margin-right", "5px");
-  // Optional: focus styling via .style or a class
   chatInput.mousePressed(() => {
     gameState = "chating";
   });
   chatInput.elt.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
-      sendChatMessage(); // Make sure this function emits your socket event
+      sendChatMessage();
       gameState = "playing";
     }
   });
 
-  // Create send button
+  // ─────────────────────────────────────────────────────────
+  // Send Button
+  // ─────────────────────────────────────────────────────────
+
   chatSendButton = createButton("Send");
   chatSendButton.style("padding", "8px 14px");
   chatSendButton.style("border", "none");
   chatSendButton.style("border-radius", "5px");
+  chatSendButton.style("background-color", "#4caf50");
   chatSendButton.style("color", "#fff");
   chatSendButton.style("cursor", "pointer");
   chatSendButton.mousePressed(() => {
@@ -837,8 +856,11 @@ function renderChatUI() {
     gameState = "playing";
   });
 
-  // Create a container for input and button (flex row)
-  let inputContainer = createDiv();
+  // ─────────────────────────────────────────────────────────
+  // Input Container (holds input + button)
+  // ─────────────────────────────────────────────────────────
+
+  inputContainer = createDiv();
   inputContainer.style("display", "flex");
   inputContainer.style("align-items", "center");
   inputContainer.child(chatInput);
@@ -847,12 +869,41 @@ function renderChatUI() {
   // Append everything to the main chat container
   chatContainer.child(chatMessagesBox);
   chatContainer.child(inputContainer);
-  playerCountDiv.parent(chatContainer);
 
-  // Append chat container to the document body
+  // Finally, append chat container to the document body
   chatContainer.parent(document.body);
 }
 
+// ─────────────────────────────────────────────────────────
+// Toggle Function: Collapses/Expands the Chat
+// ─────────────────────────────────────────────────────────
+
+function toggleChatDropdown() {
+  if (isChatOpen) {
+    // Hide the messages box and input
+    chatMessagesBox.hide();
+    inputContainer.hide();
+  } else {
+    // Show the messages box and input
+    chatMessagesBox.show();
+    inputContainer.show();
+  }
+  isChatOpen = !isChatOpen;
+  // Update the button text after toggling
+  updateToggleChatButtonText();
+}
+
+// ─────────────────────────────────────────────────────────
+// Update the toggle button text (includes player count)
+// ─────────────────────────────────────────────────────────
+
+function updateToggleChatButtonText() {
+  // Calculate player count
+  const playerCount = Object.keys(players).length + 1;
+  // Set arrow and text depending on state
+  const arrow = isChatOpen ? "▼" : "▲";
+  toggleChatButton.html(`Chat (Players: ${playerCount}) ${arrow}`);
+}
 
 // Function to update the player count display when players change
 function updatePlayerCount() {
