@@ -156,13 +156,36 @@ class Player {
         //dont render players not in your chunks
         let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
         if(testMap.chunks[chunkPos.x+","+chunkPos.y] == undefined) return;
-
         push();
-        translate(-camera.x+(width/2), -camera.y+(height/2));
-        fill(255);
-        textSize(10);
-        textAlign(CENTER);
-        text(this.name, this.pos.x, this.pos.y - 40); // Display player's name above the character
+        // Move relative to the camera
+        translate(-camera.x + width/2, -camera.y + height/2);
+        
+        // Decide how far above the character we want the label
+        // For a "larger z" effect, increase this from 40 to e.g. 60 or 80
+        const yOffset = 60;
+        
+        // Prepare text
+        textSize(16);
+        textAlign(CENTER, CENTER);
+        let nameText = this.name;
+        
+        // Measure text width to draw a background rectangle around it
+        let textW = textWidth(nameText) + 10;  // some padding
+        let textH = 20;                        // approximate line height
+        
+        // Draw background box behind the text
+        rectMode(CENTER);
+        fill(0, 150);   // semi-transparent black
+        noStroke();
+        rect(this.pos.x, this.pos.y - yOffset, textW, textH, 4); // last param 4 = corner radius
+        
+        // Now draw text with a stroke
+        stroke(0);       // black stroke around letters
+        strokeWeight(2);
+        fill(255);       // white fill
+        text(nameText, this.pos.x, this.pos.y - yOffset);
+       
+        
         let raceName = races[this.race]
         // Select the correct image based on the direction and frame
         let imageToRender;
@@ -190,12 +213,12 @@ class Player {
         // Draw health bar background
         fill(255, 0, 0);
         noStroke();
-        rect(this.pos.x - 16, this.pos.y + 40, 32, 6);
+        rect(this.pos.x, this.pos.y + 40, 32, 6);
 
         // Draw health bar foreground (based on current health)
         fill(0, 255, 0); // Green for health
         let healthWidth = constrain(map(this.statBlock.stats.hp, 0, this.statBlock.stats.mhp, 0, 32),0,32);
-        rect(this.pos.x - 16, this.pos.y + 40, healthWidth, 6);
+        rect(this.pos.x, this.pos.y + 40, healthWidth, 6);
 
         pop();
     }
