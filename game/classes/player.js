@@ -208,20 +208,43 @@ class Player {
 
     renderHealthBar() {
         push();
-        //translate(-camera.x+(width/2), -camera.y+(height/2));
-
-        // Draw health bar background
+        
+        // Set stroke and stroke weight for the outline
+        stroke(0);        // Black stroke
+        strokeWeight(2);  // Slightly thicker outline
+        
+        // Draw the health bar background with rounded corners
         fill(255, 0, 0);
+        rect(
+          this.pos.x, 
+          this.pos.y + 40, 
+          32,       // width 
+          6,        // height
+          3         // corner radius
+        );
+      
+        // Calculate current health width
+        let healthWidth = constrain(
+          map(this.statBlock.stats.hp, 0, this.statBlock.stats.mhp, 0, 32),
+          0,
+          32
+        );
+      
+        // Draw the health bar foreground
+        // Switch to noStroke if you want the green bar to have no outline
         noStroke();
-        rect(this.pos.x, this.pos.y + 40, 32, 6);
-
-        // Draw health bar foreground (based on current health)
-        fill(0, 255, 0); // Green for health
-        let healthWidth = constrain(map(this.statBlock.stats.hp, 0, this.statBlock.stats.mhp, 0, 32),0,32);
-        rect(this.pos.x, this.pos.y + 40, healthWidth, 6);
-
+        fill(0, 255, 0); 
+        rect(
+          this.pos.x, 
+          this.pos.y + 40, 
+          healthWidth,
+          6, 
+          3  // same radius so the corners match up
+        );
+      
         pop();
-    }
+      }
+      
 
     animationCreate(anim) {
         switch (anim) {
