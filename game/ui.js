@@ -64,7 +64,7 @@ let markeeText = [
     "Buy Gold Buy",
     "According to all known laws of aviation, there is no way a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway because bees don't care what humans think is impossible. ",
     "This game probably cures cancer ",
-    "Remember the Media Lies",
+    "Remember V the Media Lies",
     "If the government could be trusted Jesus would have died of natural causes"
 
 ]
@@ -578,11 +578,24 @@ function drawSelection() {
     }
 }
 
-// ---------------------------------------------------
-//  Responsive behavior on window resize
-// ---------------------------------------------------
-
-
+function flipImage2(img) {
+    // Create an offscreen buffer
+    let buffer = createGraphics(img.width, img.height);
+  
+    // If you want crisp edges (pixel art), turn off smoothing for this buffer
+    buffer.noSmooth();
+    
+    // Flip horizontally by translating and scaling
+    buffer.translate(img.width, 0);
+    buffer.scale(-1, 1);
+  
+    // Draw the original image
+    buffer.image(img, 0, 0);
+  
+    return buffer;
+  }
+  
+  
 function setupUI(){
     // ----------------------------
     // (Socket setup and raceImages flipping omitted for brevity)
@@ -592,7 +605,7 @@ function setupUI(){
     for (let raceName in raceImages) {
         raceImages[raceName].left = [];
         for (let i = 0; i < raceImages[raceName].right.length; i++) {
-            raceImages[raceName].left[i] = flipImage(raceImages[raceName].right[i]);
+            raceImages[raceName].left[i] = flipImage2(raceImages[raceName].right[i]);
         }
     }
     
