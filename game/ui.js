@@ -52,7 +52,7 @@ function saveServers() {
 }
 
 let linksRendered = false; // Flag to prevent duplicate rendering
-let linkContainer, settingsContainer, toggleButton,titleImage; // Store references for hiding
+let linkContainer, settingsContainer,settingsToggle, toggleButton,titleImage; // Store references for hiding
 // Function to render buttons instead of links
 function renderLinks() {
     if (linksRendered) return; // Prevent duplicate rendering
@@ -90,9 +90,9 @@ function renderLinks() {
     createLinkButton(linkContainer, "💬 Discord", "https://discord.gg/Quhy52U5ae");
 
     // Parent container for settings (Bottom Left)
-    settingsContainer = createDiv();
-    settingsContainer.class("container")
-    applyStyle(settingsContainer, {
+    settingsToggle = createDiv();
+    settingsToggle.class("container")
+    applyStyle(settingsToggle, {
         position: "fixed",
         bottom: "10px",
         left: "10px",
@@ -100,14 +100,14 @@ function renderLinks() {
     });
 
     // Create settings button
-    let settingsButton = createButton("⚙️ Settings").parent(settingsContainer);
+    let settingsButton = createButton("⚙ Settings").parent(settingsToggle);
     styleButton(settingsButton);
     settingsButton.mousePressed(() => toggleSettings());
 
     titleImage.parent(document.body)
     // Append elements to body
     linkContainer.parent(document.body);
-    settingsContainer.parent(document.body);
+    settingsToggle.parent(document.body);
 
     linksRendered = true; // Set flag to true
 }
@@ -173,14 +173,14 @@ function hideLinks() {
     if(renderLinks){
         if (linkContainer.style("display") === "none") {
             linkContainer.style("display", "flex");
-            settingsContainer.style("display", "flex")
+            settingsToggle.style("display", "flex")
 
             titleImage.style("display", "flex");
         } else {
             linkContainer.style("display", "none");
 
             titleImage.style("display", "none");
-            settingsContainer.style("display", "none")
+            settingsToggle.style("display", "none")
             renderLinks = false
         }
     }
@@ -1476,27 +1476,76 @@ function keyCodeToHuman(keyCode) {
 // if game state is settings 
 
 
-var settingsIframe;
 
 function definePauseUI() {
 
-    settingsIframe = createElement('iframe');
+ // Create a container div for the settings
+ settingsContainer = createDiv();
+ settingsContainer.class("container");
+ settingsContainer.style("position", "absolute")
+ // Style the container (similar to your CSS)
+ settingsContainer.style("font-family", "Arial, sans-serif");
+ settingsContainer.style("margin", "0 auto");
+ settingsContainer.style("width", "300px");
+ settingsContainer.style("background-color", "#222");
+ settingsContainer.style("color", "white");
+ settingsContainer.style("padding", "20px");
+ settingsContainer.style("border-radius", "10px");
+ settingsContainer.style("display", "none");
+ settingsContainer.style("flex-direction", "column");
+ settingsContainer.style("align-items", "center");
+ settingsContainer.style("z-index", "999")
 
-        // Show settings (create iframe and change game state)
-        settingsIframe.attribute('src', 'settings.html');
-        settingsIframe.style('position', 'absolute');
-        settingsIframe.style('top', '50%');
-        settingsIframe.style('left', '50%');
-        settingsIframe.style('transform', 'translate(-50%, -50%)');
-        settingsIframe.style('width', '30%');
-        settingsIframe.style('height', '30%');
-        settingsIframe.style('z-index', '9999'); // High z-index to bring it to front
-        settingsIframe.style('border', 'none');
-        settingsIframe.style('border-radius', '10px');
-        settingsIframe.style("display","none")
-        settingsIframe.parent(document.body);  // Append to the body
+ // Title
+ let title = createElement("h2", "Settings");
+ title.parent(settingsContainer);
 
-        
+ // Create slider container
+ let sliderContainer = createDiv();
+ sliderContainer.parent(settingsContainer);
+ sliderContainer.style("margin", "20px 0");
+
+ // Label
+ let volumeLabel = createElement("label", "Volume:");
+ volumeLabel.parent(sliderContainer);
+ volumeLabel.style("font-size", "16px");
+ volumeLabel.style("margin-right", "10px");
+
+ // p5 slider
+ volumeSlider = createSlider(0, 100, 50);
+ volumeSlider.parent(sliderContainer);
+ volumeSlider.style("width", "150px");
+
+ // Retrieve saved volume from localStorage
+ const savedVolume = localStorage.getItem("volume");
+ if (savedVolume) {
+   volumeSlider.value(savedVolume);
+ }
+
+ // Save button
+ saveButton = createButton("Save");
+ saveButton.parent(settingsContainer);
+ saveButton.class("button"); // For your reference, you can define .button in CSS if desired
+ saveButton.style("padding", "10px");
+ saveButton.style("margin-top", "20px");
+ saveButton.style("background-color", "#444");
+ saveButton.style("border", "none");
+ saveButton.style("color", "white");
+ saveButton.style("border-radius", "5px");
+ saveButton.style("cursor", "pointer");
+
+ // Save button logic
+ saveButton.mousePressed(() => {
+   // Save volume setting to localStorage
+   localStorage.setItem("volume", volumeSlider.value());
+   
+   // If this sketch is in an iframe, send a message to the parent to toggle/hide the settings
+   if (window.parent !== window) {
+     window.parent.postMessage("toggleSettings", "*");
+   }
+   toggleSettings()
+ });
+
     pauseDiv = createDiv();
     pauseDiv.class("container")
     pauseDiv.style("position", "absolute");
@@ -1546,7 +1595,6 @@ function definePauseUI() {
 
 
 
-var settingsIframe;
 var oldState = "";
 
 
@@ -1555,12 +1603,12 @@ var oldState = "";
 function toggleSettings() {
     if (gameState === "settings") {
         // Hide settings (remove iframe and reset game state)
-        settingsIframe.style('display', 'none');
+        settingsContainer.style('display', 'none');
         gameState = oldState;  // Restore to previous game state
     } else {
         // Show settings iframe and set game state to "settings"
         oldState = gameState;  // Store the current game state
-        settingsIframe.style('display', 'block');  // Show the iframe
+        settingsContainer.style('display', 'block');  // Show the iframe
         gameState = "settings";  // Set game state to settings
     }
 }
