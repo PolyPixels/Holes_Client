@@ -52,7 +52,22 @@ function saveServers() {
 }
 
 let linksRendered = false; // Flag to prevent duplicate rendering
-let linkContainer, settingsContainer,settingsToggle, toggleButton,titleImage; // Store references for hiding
+let linkContainer, settingsContainer,settingsToggle, toggleButton,titleImage,markee; // Store references for hiding
+
+let markeeText = [
+    " This game is made with Hate not ♥ !!!",
+    " DIG DIG DIG there is nothing else ",
+    " Shooting people is fun and easy ",
+    "Your advert here , we gotta pay that AWS bill some how ",
+    "Learn to Code &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ... OR ELSE",
+    "Kill John's Lemons",
+    "Buy Gold Buy",
+    "According to all known laws of aviation, there is no way a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway because bees don't care what humans think is impossible. ",
+    "This game probably cures cancer ",
+    "Remember the Media Lies",
+    "If the police were good Jesus wouldn't have been a felon"
+
+]
 // Function to render buttons instead of links
 function renderLinks() {
     if (linksRendered) return; // Prevent duplicate rendering
@@ -68,26 +83,47 @@ function renderLinks() {
     titleImage.style("display", "block"); // Make it a block element (to prevent inline styling)
     titleImage.style("margin", "20px auto");
     titleImage.style("top", "0")
-    titleImage.style("position", "absolute");
+    titleImage.style("position", "absolute");let randItem1 = Math.floor(Math.random() * markeeText.length);
+   // Suppose we want 5 distinct random items
+    let chosenItems = [];
+    while (chosenItems.length < markeeText.length) {
+    let r = Math.floor(Math.random() * markeeText.length);
+    if (!chosenItems.includes(r)) chosenItems.push(r); 
+    }
+    // Now join them with a spacer or delimiter
+    let marqueeContent = chosenItems
+    .map(i => markeeText[i]).join("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+
+
+    markee = createElement("marquee", marqueeContent);
+    markee.style("position", "fixed");
+    markee.style("bottom", "0px");
+    markee.style("width", "80%");
+
+    markee.style("font-size", "1.5rem");
+    markee.style("color", "white");
+
+    markee.style("scrolldelay", "0");
     
     // Parent container for buttons (Bottom Right)
     linkContainer = createDiv();
     linkContainer.class("container")
+
     applyStyle(linkContainer, {
         position: "fixed",
         bottom: "10px",
         right: "10px",
         display: "flex",
         flexDirection: "column",
-        alignItems: "flex-end",
+        alignItems: "center",
         gap: "10px",
         zIndex: "1000",
     });
 
     // Create individual buttons
-    createLinkButton(linkContainer, "🔗 Itch.io", "https://polypikzel.itch.io/");
-    createLinkButton(linkContainer, "🐙 GitHub", "https://github.com/PolyPixels");
-    createLinkButton(linkContainer, "💬 Discord", "https://discord.gg/Quhy52U5ae");
+    createLinkButton(linkContainer, "👾 Play On Itch.io", "https://polypikzel.itch.io/");
+    createLinkButton(linkContainer, "🖳 GitHub", "https://github.com/PolyPixels");
+    createLinkButton(linkContainer, "🗪 Discord", "https://discord.gg/Quhy52U5ae");
 
     // Parent container for settings (Bottom Left)
     settingsToggle = createDiv();
@@ -327,9 +363,9 @@ function renderServerBrowser() {
         let connectButton = createButton("▶ Connect");
         connectButton.parent(serverBrowserContainer);
         connectButton.style("width", "80%");
-        connectButton.style("height", "5dvh");
+        connectButton.style("height", "5dvw");
 
-        connectButton.style("font-size", "2em");
+        connectButton.style("font-size", "2rem");
         connectButton.style("margin-top", "20px");
         connectButton.style("padding", "12px");
         connectButton.style("background", "#4CAF50");
@@ -441,10 +477,10 @@ function renderServerList() {
         });
 
         // Remove server button
-        let removeButton = createButton("Remove");
+        let removeButton = createButton(" &#x20E0; &nbsp; Remove ");
         removeButton.parent(serverEntry);
         removeButton.style("margin-left", "10px");
-        removeButton.style("padding", "5px");
+        removeButton.style("padding", "15px");
         removeButton.style("background-color", "#F44336");
         removeButton.style("color", "#fff");
         removeButton.style("border", "none");
