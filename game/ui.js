@@ -1530,9 +1530,110 @@ function styleButton(button) {
     buildDiv.style("border-radius", "10px");
     buildDiv.style("text-align", "center");
     buildDiv.style("padding", "20px");
+
+    buildDiv.style("overflow-y", "scroll");
   }
-
-
+  function renderBuildOptions() {
+    // Clear any previous content
+    buildDiv.html('');
+  
+    // Create an unordered list to hold build options
+    const ul = createElement('ul');
+    ul.style('list-style', 'none');
+    ul.style('padding', '0');
+    ul.style('margin', '0 auto');
+    ul.parent(buildDiv);
+  
+    buildOptions.forEach(option => {
+      const humanKey = keyCodeToHuman(option.key);
+  
+      // Main list item
+      const li = createElement('li');
+      li.class("buildOption");
+      // Give some spacing around each "card"
+      li.style('margin', '15px 0');
+      
+      // This "card" wraps the entire layout for each build option
+      const buildCard = createDiv();
+      buildCard.style('display', 'flex');
+      buildCard.style('align-items', 'flex-start');
+      buildCard.style('border', '2px solid #aaa');
+      buildCard.style('border-radius', '8px');
+      buildCard.style('padding', '10px');
+      buildCard.style('background', 'rgba(0, 0, 0, 0.25)');
+      buildCard.parent(li); // attach to the li
+  
+      // Left side: the image
+      const imgDiv = createDiv();
+      imgDiv.style('margin-right', '15px');
+      imgDiv.parent(buildCard);
+  
+      const img = createImg(option.image, option.type);
+      img.style('width', '64px');
+      img.style('height', '64px');
+      img.style('image-rendering', 'pixelated');
+      img.parent(imgDiv);
+  
+      // Right side: all text info goes here
+      const infoDiv = createDiv();
+      infoDiv.style('display', 'flex');
+      infoDiv.style('flex-direction', 'column');
+      infoDiv.style('flex-grow', '1');
+      infoDiv.parent(buildCard);
+  
+      // If this is the currently selected object, visually highlight the card
+      if (ghostBuild.objName === option.type) {
+        buildCard.style('background-color', 'rgba(255, 255, 255, 0.2)');
+        buildCard.style('box-shadow', '0 4px 10px rgba(0, 0, 0, 0.5)');
+        buildCard.style('border', '3px solid #ffcc00');
+      }
+  
+      // Title row with Key and Type
+      const titleDiv = createDiv(`${humanKey}: ${option.type}`);
+      titleDiv.style('font-size', '1.1rem');
+      titleDiv.style('font-weight', 'bold');
+      titleDiv.style('margin-bottom', '8px');
+      titleDiv.parent(infoDiv);
+  
+      // Collect cost data
+      let canBuild = true;  // Start true, set false if any requirement not met
+      const costArray = objDic[option.type].cost; 
+      // costArray is e.g. [ ['dirt', 20], ['Rock', 5] ]
+  
+      // This div will list each required material
+      const costsDetailsDiv = createDiv();
+      costsDetailsDiv.style('font-size', '0.9rem');
+      costsDetailsDiv.parent(infoDiv);
+  
+      costArray.forEach(([material, requiredAmount]) => {
+        const playerHas = curPlayer.invBlock.items[material] || 0;
+        if (playerHas < requiredAmount) {
+          canBuild = false;
+        }
+        
+        // A line that says "Material: X (You have: Y)"
+        const line = createDiv(`${material}: ${requiredAmount}, / ${playerHas}`);
+        // If not enough material, make the text red
+        if (playerHas < requiredAmount) {
+          line.style('color', 'red');
+        } else {
+          line.style('color', 'white');
+        }
+        line.parent(costsDetailsDiv);
+      });
+  
+      // If the player can’t afford *any* of the materials, color the entire text section red
+      infoDiv.style('color', canBuild ? 'white' : 'red');
+  
+      // Let them select the item, or block selection if you want
+      buildCard.mouseClicked(() => {
+        // if (!canBuild) return;  // uncomment if you want to block the build entirely
+        ghostBuild = createObject(option.type, 0, 0, 0, curPlayer.color, " ", " ");
+      });
+  
+      ul.child(li);
+    });
+  }
   
 
 // Helper function to translate key codes to human-friendly strings
@@ -1548,65 +1649,7 @@ function keyCodeToHuman(keyCode) {
     }
   }
   
-  function renderBuildOptions() {
-    // Clear any previous content
-    buildDiv.html('');
-    //console.log(ghostBuild.objName)
-    // Create an unordered list to hold build options
-    const ul = createElement('ul');
-    ul.style('list-style', 'none');
-    ul.style('padding', '0');
-    ul.style('font-size', '20px');
-    ul.style('margin', '0 auto');
-    ul.parent(buildDiv);  // Append the list to the build container
-    
-    buildOptions.forEach(option => {
-      const humanKey = keyCodeToHuman(option.key);
-      
-      // Create a list item for the option and set up a flexbox layout
-      const li = createElement('li');
-      li.class("buildOption");
-      li.style('margin', '15px 0');
-      li.style('display', 'flex');
-      li.style('align-items', 'center');
-      li.style("text-align", "center");  // Aligns text to the center
-
-      
-      // Create an image element for the option
-      const img = createImg(option.image, option.type);
-      img.style('width', '50px');  // Adjust the size as needed
-      img.style('height', '50px');
-      img.style('image-rendering', 'pixelated');
-
-      if(ghostBuild.objName == option.type){
-        li.style("font-size", "1.5rem");
-        li.style("background-color", "rgba(255, 255, 255, 0.2)"); // Highlight background
-        li.style("box-shadow", "0 4px 10px rgba(0, 0, 0, 0.5)"); // 3D shadow
-        li.style("border", "3px solid #ffcc00"); // Set a golden border when highlighted
-      }
-      
-      img.style('margin-right', '10px');
-      
-      // Create a text container that shows the key and object type
-      const textDiv = createDiv(`${humanKey}: ${option.type}`);
-      textDiv.style('flex-grow', '1');
-      
-      // Append the image and text into the list item
-      li.child(img);
-      li.child(textDiv);
-      
-      // Add event listener to trigger ghost build on click
-      li.mouseClicked(() => {
-        ghostBuild = createObject(option.type, 0, 0, 0, curPlayer.color, " ", " ");
-      });
-      
-      // Append the list item to the unordered list
-      ul.child(li);
-    });
-}
-
-// if game state is settings 
-
+   
 
 
 function definePauseUI() {
