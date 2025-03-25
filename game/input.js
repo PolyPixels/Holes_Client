@@ -120,6 +120,12 @@ function keyPressed(){ //prevents normal key related actions
 }
 
 function mouseReleased(){
+    if(gameState == "chating"){
+        if(mouseX > 260 || mouseY < height-310){
+            gameState = "playing";
+            toggleChatDropdown();
+        }
+    }
     if(gameState != "playing") return;
 
 
