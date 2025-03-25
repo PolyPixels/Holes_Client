@@ -759,92 +759,100 @@ function setupUI(){
 // Global variables for chat UI elements and player count display
 let chatContainer, chatMessagesBox, chatInput, chatSendButton;
 let playerCountDiv; // New global variable for player count display
-let chatRendered = false
+let chatRendered = false;
+
 function renderChatUI() {
-  if(chatRendered) return
-  chatRendered = true
-  // Create chat container positioned at bottom left
+  if (chatRendered) return;
+  chatRendered = true;
+
+  // Create chat container positioned at bottom-left
   chatContainer = createDiv();
-  chatContainer.class("container")
+  chatContainer.class("container");
   chatContainer.style("position", "fixed");
-  chatContainer.style("bottom", "10px");
-  chatContainer.style("left", "10px");
+  chatContainer.style("bottom", "0dvh");
+  chatContainer.style("left", "0dvw");
   chatContainer.style("z-index", "1000");
-  chatContainer.style("width", "300px");
-  chatContainer.style("background-color", "rgba(0, 0, 0, 0.5)");
+  chatContainer.style("width", "25dvh");
+  chatContainer.style("background", "rgba(34, 34, 34, 0.8)"); // Semi-transparent dark background
   chatContainer.style("padding", "10px");
   chatContainer.style("border-radius", "8px");
+  chatContainer.style("box-shadow", "0 4px 12px rgba(0, 0, 0, 0.4)"); // Soft shadow
+  chatContainer.style("backdrop-filter", "blur(5px)"); // Blurred background (if supported)
   chatContainer.style("pointer-events", "auto"); // Ensure clicks go through
-  
-  // Create messages box to display chat history
-  chatMessagesBox = createDiv();
-  chatMessagesBox.style("height", "150px");
-  chatMessagesBox.style("overflow-y", "scroll");
-  chatMessagesBox.style("background-color", "#222");
-  chatMessagesBox.style("color", "#fff");
-  chatMessagesBox.style("padding", "5px");
-  chatMessagesBox.style("margin-bottom", "10px");
-  chatMessagesBox.style("border-radius", "5px");
-  
-  // Create a player count display div
-  // Adjust the text, position, and styles as desired
-  playerCountDiv = createDiv("Players: " + (Object.keys(players).length + 1));
-  playerCountDiv.style("position", "fixed");
-  playerCountDiv.style("z-index", "1000");
-  playerCountDiv.style("color", "#fff");
-  playerCountDiv.style("background-color", "rgba(0, 0, 0, 0.5)");
-  playerCountDiv.style("border-radius", "8px");
-  playerCountDiv.style("margin-top", "-20px");
-  playerCountDiv.parent(chatContainer);
 
+  // Container for messages
+  chatMessagesBox = createDiv();
+  chatMessagesBox.style("height", "15dvh");
+  chatMessagesBox.style("overflow-y", "auto");
+  chatMessagesBox.style("background-color", "#333");
+  chatMessagesBox.style("color", "#fff");
+  chatMessagesBox.style("padding", "8px");
+  chatMessagesBox.style("border-radius", "5px");
+  chatMessagesBox.style("margin-bottom", "10px");
+
+  chatMessagesBox.style("justify-content", "left");
+
+
+  // Player count display (like a small badge in top-right corner of the chat container)
+  playerCountDiv = createDiv("\b Players \b " + (Object.keys(players).length + 1));
+  playerCountDiv.style("position", "absolute");
+  playerCountDiv.style("top", "-20px");
+  playerCountDiv.style("left", "0dvh");
+  playerCountDiv.style("font-size", "0.9em");
+  playerCountDiv.style("padding", "3px 8px");
+  playerCountDiv.style("color", "#fff");
+  playerCountDiv.style("pointer-events", "none");
+  playerCountDiv.style("background-color","grey")
   // Create chat input field
   chatInput = createInput("");
   chatInput.attribute("placeholder", "Type your message...");
-  chatInput.style("width", "calc(100% - 60px)");
+  chatInput.style("flex", "1");
   chatInput.style("padding", "8px");
-  chatInput.style("border", "none");
+  chatInput.style("border", "1px solid #444");
   chatInput.style("border-radius", "5px");
-  chatInput.changed(() => {
-    console.log("Chat input changed to:", chatInput.value());
-  });
+  chatInput.style("outline", "none");
+  chatInput.style("color", "#fff");
+  chatInput.style("background-color", "#222");
+  chatInput.style("margin-right", "5px");
+  // Optional: focus styling via .style or a class
   chatInput.mousePressed(() => {
     gameState = "chating";
   });
-  
-  // Listen for the Enter key to send the chat message:
   chatInput.elt.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       sendChatMessage(); // Make sure this function emits your socket event
       gameState = "playing";
     }
   });
-  
+
   // Create send button
   chatSendButton = createButton("Send");
-  chatSendButton.style("padding", "8px 12px");
-  chatSendButton.style("margin-left", "5px");
+  chatSendButton.style("padding", "8px 14px");
   chatSendButton.style("border", "none");
   chatSendButton.style("border-radius", "5px");
   chatSendButton.style("color", "#fff");
+  chatSendButton.style("cursor", "pointer");
   chatSendButton.mousePressed(() => {
     sendChatMessage();
     gameState = "playing";
   });
-  
-  // Create a container for input and button
+
+  // Create a container for input and button (flex row)
   let inputContainer = createDiv();
   inputContainer.style("display", "flex");
+  inputContainer.style("align-items", "center");
   inputContainer.child(chatInput);
   inputContainer.child(chatSendButton);
-  
-  // Append the messages box and input container to the chat container
+
+  // Append everything to the main chat container
   chatContainer.child(chatMessagesBox);
   chatContainer.child(inputContainer);
-  
+  playerCountDiv.parent(chatContainer);
+
   // Append chat container to the document body
   chatContainer.parent(document.body);
-  
 }
+
 
 // Function to update the player count display when players change
 function updatePlayerCount() {
@@ -897,15 +905,47 @@ function sendChatMessage() {
 
 // Helper function to add a chat message to the messages box
 function addChatMessage(chatMsg) {
-  // Create a new div element with the message content
-  let msgDiv = createDiv(`<strong>${chatMsg.user}:</strong> ${chatMsg.message}`);
-  msgDiv.style("padding", "2px 0");
-  chatMessagesBox.child(msgDiv);
-
-  // Optionally, scroll to the bottom of the messages box
-  chatMessagesBox.elt.scrollTop = chatMessagesBox.elt.scrollHeight;
-}
-
+    // If your 'chatMsg' object doesn't have a time property, you can generate one:
+    // let timeString = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    // Otherwise, if 'chatMsg.time' is already set, you can do:
+    const timeString = chatMsg.time || new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  
+    // Create a container for the entire message (text + time)
+    let msgContainer = createDiv();
+    msgContainer.style("display", "flex");
+    msgContainer.style("align-items", "center");
+    msgContainer.style("margin-bottom", "6px");
+  
+    // Create a text container with the user & message
+    let textContainer = createDiv(`<strong>${chatMsg.user}:</strong> ${chatMsg.message}`);
+    textContainer.style("color", "#fff");
+    textContainer.style("background-color", "#333");
+    textContainer.style("padding", "6px 8px");
+    textContainer.style("border-radius", "5px 0 0 5px"); // Rounded left corners
+    textContainer.style("flex", "1"); // Let this container expand
+    textContainer.style("font-size", "0.9em");
+  
+    // Create a time container in a smaller box
+    let timeDiv = createDiv(timeString);
+    timeDiv.style("background-color", "#555");
+    timeDiv.style("color", "#ccc");
+    timeDiv.style("padding", "6px 8px");
+    timeDiv.style("border-radius", "0 5px 5px 0"); // Rounded right corners
+    timeDiv.style("margin-left", "4px");
+    timeDiv.style("font-size", "0.8em");
+    timeDiv.style("white-space", "nowrap"); // Ensure the time doesn't wrap to a new line
+  
+    // Add both containers to the main message container
+    msgContainer.child(textContainer);
+    msgContainer.child(timeDiv);
+  
+    // Add the message container to the messages box
+    chatMessagesBox.child(msgContainer);
+  
+    // Scroll to the bottom of the messages box
+    chatMessagesBox.elt.scrollTop = chatMessagesBox.elt.scrollHeight;
+  }
+  
 var invDiv;
 var itemListDiv;
 var curItemDiv;
@@ -1539,10 +1579,6 @@ function definePauseUI() {
    // Save volume setting to localStorage
    localStorage.setItem("volume", volumeSlider.value());
    
-   // If this sketch is in an iframe, send a message to the parent to toggle/hide the settings
-   if (window.parent !== window) {
-     window.parent.postMessage("toggleSettings", "*");
-   }
    toggleSettings()
  });
 
@@ -1613,10 +1649,3 @@ function toggleSettings() {
     }
 }
 
-
-window.addEventListener('message', function(event) {
-    // Check if the message is 'toggleSettings' and call toggleSettings
-    if (event.data === 'toggleSettings') {
-        toggleSettings();
-    }
-});
