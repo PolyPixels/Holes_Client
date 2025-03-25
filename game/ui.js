@@ -65,7 +65,7 @@ let markeeText = [
     "According to all known laws of aviation, there is no way a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway because bees don't care what humans think is impossible. ",
     "This game probably cures cancer ",
     "Remember the Media Lies",
-    "If the police were good Jesus wouldn't have been a felon"
+    "If the government could be trusted Jesus would have died of natural causes"
 
 ]
 // Function to render buttons instead of links
@@ -77,11 +77,12 @@ function renderLinks() {
     titleImage = createImg("./images/ui/title.png");
     
     // Apply styles to the image using .style()
-    titleImage.style("width", "20%"); // Set the width of the image
-    titleImage.style("height", "20%"); // Automatically adjust the height
+    titleImage.style("width", "20dvw"); // Set the width of the image
+    titleImage.style("height", "10dvw"); // Automatically adjust the height
     titleImage.style("border", "5px solid #000"); // Add a border
     titleImage.style("display", "block"); // Make it a block element (to prevent inline styling)
     titleImage.style("margin", "20px auto");
+    titleImage.style("padding-bottom", "40px auto");
     titleImage.style("top", "0")
     titleImage.style("position", "absolute");let randItem1 = Math.floor(Math.random() * markeeText.length);
    // Suppose we want 5 distinct random items
@@ -251,7 +252,7 @@ function renderServerBrowser() {
         serverBrowserContainer.style("overflow-y","scroll")
         // Main container styling
         serverBrowserContainer.style("width", "50dvw");
-        serverBrowserContainer.style("max-height", "800px");
+        serverBrowserContainer.style("max-height", "50dvh");
         serverBrowserContainer.style("overflow-y", "hide");
         serverBrowserContainer.style("padding", "25px");
         serverBrowserContainer.style("margin-top", "25px");
@@ -811,7 +812,7 @@ function renderChatUI() {
   chatContainer.style("bottom", "0dvh");
   chatContainer.style("left", "0dvw");
   chatContainer.style("z-index", "1000");
-  chatContainer.style("width", "25dvh");
+  chatContainer.style("min-width", "25dvh");
   chatContainer.style("background", "rgba(34, 34, 34, 0.8)"); // Semi-transparent dark background
   chatContainer.style("padding", "10px");
   chatContainer.style("border-radius", "8px");
@@ -859,7 +860,7 @@ function renderChatUI() {
   chatInput = createInput("");
   chatInput.attribute("placeholder", "Type your message...");
   chatInput.style("flex", "1");
-  chatInput.style("padding", "8px");
+  chatInput.style("padding", "3px");
   chatInput.style("border", "1px solid #444");
   chatInput.style("border-radius", "5px");
   chatInput.style("outline", "none");
@@ -887,6 +888,8 @@ function renderChatUI() {
   chatSendButton.style("background-color", "#4caf50");
   chatSendButton.style("color", "#fff");
   chatSendButton.style("cursor", "pointer");
+
+  chatSendButton.style("min-width", "5dvw");
   chatSendButton.mousePressed(() => {
     sendChatMessage();
     gameState = "playing";
