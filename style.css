@@ -59,7 +59,7 @@ button {
   font-weight: bold;
   font-size: 1rem;
   text-transform: uppercase;
-  color: var(--primary-color);
+  color: var(--text-glow);
   padding: 12px 30px;
   border-radius: 8px;
   background: transparent;
@@ -284,4 +284,94 @@ input:hover {
   background-color: rgba(0, 0, 0, 0.25);
   border: 1px solid #aaa;
   border-radius: 5px;
+}
+
+
+/* Example styling for inventory container */
+#inventory.container {
+  /* Provide a border, background, etc., if you like */
+  border: 2px solid cyan;
+  border-radius: 10px;
+  background: rgba(20,20,20,1);
+  box-shadow: 0 0 15px rgba(0,255,255,0.5);
+  /* You can also add a media query to ensure responsiveness on smaller devices */
+  max-width: 70%;
+  width: 65%;
+  max-height: 70%;
+  min-height: 50%;
+  height: auto;
+  overflow-y: scroll; /* or scroll if you need forced scrolling */
+}
+
+/* Title styling */
+.inventory-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-decoration: underline;
+  margin: 0 10px;
+}
+
+/* Tag bar styling */
+.tag-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  border-bottom: 2px solid black;
+  height: 2rem; /* or auto */
+}
+
+/* Example button styling */
+.tag-button {
+  /* Let the site’s theme / main CSS handle color 
+     or define your button style here if you prefer 
+  */
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  border: 1px solid #888;
+  cursor: pointer;
+  min-width: fit-content;
+  text-overflow: ellipsis;
+  text-size-adjust: 30%;
+}
+
+/* If you want a 'selected' style for the active category button */
+.tag-button.selected {
+  background-color: rgba(120,120,120, 0.8);
+}
+
+/* Bottom area (item listing + item details) */
+.bottom-area {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 1rem;
+  flex: 1;
+  /* or an explicit height if you prefer */
+}
+
+.item-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.item-details {
+  flex: 1;
+  border-left: 2px solid black;
+  overflow-y: auto;
+}
+
+/* Spacebar hotkey area */
+.spacebar-hotkey {
+  /* Example styling for the "spaceBarDiv" */
+  position: absolute;
+  top: 105%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  padding: 5px;
+  border: 2px solid black;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  /* background-color or color can be defined here */
 }

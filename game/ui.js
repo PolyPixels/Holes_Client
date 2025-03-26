@@ -1082,136 +1082,101 @@ var equipmentTag;
 var consumablesTag;
 var spaceBarDiv;
 function defineInvUI() {
+    // Main inventory container
     invDiv = createDiv();
     invDiv.id("inventory");
-    invDiv.class("container")
+    invDiv.class("container");
     
-    // Center the div
+    // Minimal inline styles – rely on CSS for the main visuals
     applyStyle(invDiv, {
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        display: "none",
-        width: "40%",
-        height: "75%",
-        border: "2px solid cyan",
-        borderRadius: "10px",
-        boxShadow: "0 0 15px rgba(0, 255, 255, 0.5)",
-        backgroundColor: "rgba(20,20,20,1)"
-    });
+      position: "absolute",
+      top: "45%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      display: "none",
 
-    // Top Bar (Title)
+    });
+  
+    // Top bar (title area)
     let topBar = createDiv().parent(invDiv);
+    // Let CSS handle sizing and layout. 
+    // We'll just give it an appropriate class if we want.
+    // e.g., topBar.class("top-bar");
     applyStyle(topBar, {
-        width: "100%",
-        height: "10%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
     });
-
+  
+    // Inventory Title
     let invTitle = createP("Inventory").parent(topBar);
-    applyStyle(invTitle, {
-        fontSize: "24px",
-        fontWeight: "bold",
-        color: "white",
-        textDecoration: "underline",
-        paddingRight: "10px",
-    });
-
+    invTitle.class("inventory-title");
+  
+    // Crafting Title
     let craftingTitle = createP("Crafting").parent(topBar);
-    applyStyle(craftingTitle, {
-        fontSize: "24px",
-        fontWeight: "bold",
-        color: "white",
-        textDecoration: "underline",
-        paddingLeft: "10px",
-    });
-
+    craftingTitle.class("inventory-title");
+  
     // Tag Bar (Category Buttons)
     let tagBar = createDiv().parent(invDiv);
-    applyStyle(tagBar, {
-        width: "100%",
-        height: "10%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        borderBottom: "2px solid black",
-        gap: "5px",
-    });
-
+    tagBar.class("tag-bar"); 
+    // If you want minimal inline style:
+    // applyStyle(tagBar, { gap: "5px", borderBottom: "2px solid black" });
+  
     // Define categories
     const categories = ["All", "Tools/Seeds", "Weapons", "Equipment", "Consumables"];
     let categoryButtons = {};
-
+  
     categories.forEach((category) => {
-        let button = createButton(category).parent(tagBar);
-        styleButton(button, "120px");
-
-        button.mousePressed(() => {
-            curPlayer.invBlock.curTag = category;
-            updateItemList();
-
-            // Highlight selected button
-            Object.values(categoryButtons).forEach((btn) => btn.style("background-color", "rgb(80,80,80)"));
-            button.style("background-color", "rgb(120,120,120)");
+      let button = createButton(category).parent(tagBar);
+      button.class("tag-button");
+      // If you want minimal inline styles:
+      // applyStyle(button, { width: "120px" });
+  
+      button.mousePressed(() => {
+        curPlayer.invBlock.curTag = category;
+        updateItemList();
+  
+        // Highlight the selected button
+        Object.values(categoryButtons).forEach((btn) => {
+          btn.removeClass("selected");
         });
-
-        categoryButtons[category] = button;
+        button.addClass("selected");
+      });
+  
+      categoryButtons[category] = button;
     });
-
+  
     // Default selection highlight
-    categoryButtons["All"].style("background-color", "rgb(120,120,120)");
-
-    // Bottom Area (Item List & Details)
+    categoryButtons["All"].addClass("selected");
+  
+    // Bottom area (item list + details)
     let bottomDiv = createDiv().parent(invDiv);
-    applyStyle(bottomDiv, {
-        width: "100%",
-        height: "80%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-    });
-
+    bottomDiv.class("bottom-area");
+  
+    // Item list
     itemListDiv = createDiv().parent(bottomDiv);
-    applyStyle(itemListDiv, {
-        width: "50%",
-        height: "100%",
-        overflowY: "auto",
-    });
-
+    itemListDiv.class("item-list");
+  
+    // Current item details
     curItemDiv = createDiv().parent(bottomDiv);
-    applyStyle(curItemDiv, {
-        width: "50%",
-        height: "100%",
-        borderLeft: "2px solid black",
-    });
-
+    curItemDiv.class("item-details");
+  
     // Spacebar Hotkey Div
     spaceBarDiv = createDiv("").parent(invDiv);
-    applyStyle(spaceBarDiv, {
-        position: "absolute",
-        top: "105%",
-        left: "50%",
-        transform: "translate(-50%, 0%)",
-        backgroundColor: "rgb(80,80,80)",
-        border: "2px solid black",
-        borderRadius: "10px",
-        padding: "5px",
-        fontSize: "20px",
-        color: "white",
-        cursor: "pointer",
-    });
-
+    spaceBarDiv.class("spacebar-hotkey");
+    spaceBarDiv.html("Hotkey: Space");
+  
     spaceBarDiv.mousePressed(() => {
-        curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem, curPlayer.invBlock.selectedHotBar);
+      curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem, curPlayer.invBlock.selectedHotBar);
     });
-
+  
     spaceBarDiv.hide();
+  
+    // Finally, populate items
     updateItemList();
     updatecurItemDiv();
-}
+  }
+  
 
 
 function updateItemList(){
