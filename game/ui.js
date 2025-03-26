@@ -1550,7 +1550,8 @@ function styleButton(button) {
 //     { type: "PlacedBomb", key: 56, params: { obj: curPlayer.obj } },
 //   ];
   
-  function defineBuildUI() {
+// 1) Set up the container DIV
+function defineBuildUI() {
     buildDiv = createDiv();
     buildDiv.class("container");
     buildDiv.style("position", "absolute");
@@ -1562,11 +1563,16 @@ function styleButton(button) {
     buildDiv.style("height", "60%");
     buildDiv.style("border", "2px solid black");
     buildDiv.style("border-radius", "10px");
-    buildDiv.style("text-align", "center");
     buildDiv.style("padding", "20px");
-
+  
+    // If you wanted smaller text, use font-size instead of text-size-adjusted
+    buildDiv.style("font-size", "80%");
+  
+    // Enable scrolling when content overflows
     buildDiv.style("overflow-y", "scroll");
   }
+  
+  // 2) Render your build options
   function renderBuildOptions() {
     // Clear any previous content
     buildDiv.html('');
@@ -1584,18 +1590,25 @@ function styleButton(button) {
       // Main list item
       const li = createElement('li');
       li.class("buildOption");
-      // Give some spacing around each "card"
-      li.style('margin', '15px 0');
-      
-      // This "card" wraps the entire layout for each build option
+      li.parent(ul);
+  
+      // This card wraps each build option
       const buildCard = createDiv();
       buildCard.style('display', 'flex');
       buildCard.style('align-items', 'flex-start');
-      buildCard.style('border', '2px solid #aaa');
-      buildCard.style('border-radius', '8px');
-      buildCard.style('padding', '10px');
       buildCard.style('background', 'rgba(0, 0, 0, 0.25)');
-      buildCard.parent(li); // attach to the li
+      buildCard.style('cursor', 'pointer'); // visually indicates it's clickable
+      buildCard.parent(li);
+  
+      // If this item is currently selected, highlight the card
+      if (ghostBuild.objName === option.type) {
+        buildCard.style('background-color', 'rgba(255, 255, 255, 0.2)');
+        buildCard.style('box-shadow', '0 4px 10px rgba(0, 0, 0, 0.5)');
+        buildCard.style('border', '3px solid #ffcc00');
+      }
+  
+      // You can also adjust text size if you want
+      buildCard.style('font-size', '0.9rem');
   
       // Left side: the image
       const imgDiv = createDiv();
@@ -1608,31 +1621,24 @@ function styleButton(button) {
       img.style('image-rendering', 'pixelated');
       img.parent(imgDiv);
   
-      // Right side: all text info goes here
+      // Right side: text info
       const infoDiv = createDiv();
       infoDiv.style('display', 'flex');
       infoDiv.style('flex-direction', 'column');
       infoDiv.style('flex-grow', '1');
       infoDiv.parent(buildCard);
   
-      // If this is the currently selected object, visually highlight the card
-      if (ghostBuild.objName === option.type) {
-        buildCard.style('background-color', 'rgba(255, 255, 255, 0.2)');
-        buildCard.style('box-shadow', '0 4px 10px rgba(0, 0, 0, 0.5)');
-        buildCard.style('border', '3px solid #ffcc00');
-      }
-  
-      // Title row with Key and Type
+      // Title row (key + object type)
       const titleDiv = createDiv(`${humanKey}: ${option.type}`);
       titleDiv.style('font-size', '1.1rem');
       titleDiv.style('font-weight', 'bold');
       titleDiv.style('margin-bottom', '8px');
       titleDiv.parent(infoDiv);
   
-      // Collect cost data
-      let canBuild = true;  // Start true, set false if any requirement not met
+      // Check if player can build (enough materials)
+      let canBuild = true;
       const costArray = objDic[option.type].cost; 
-      // costArray is e.g. [ ['dirt', 20], ['Rock', 5] ]
+      // costArray example: [ ["dirt", 20], ["Rock", 5] ]
   
       // This div will list each required material
       const costsDetailsDiv = createDiv();
@@ -1640,37 +1646,38 @@ function styleButton(button) {
       costsDetailsDiv.parent(infoDiv);
   
       costArray.forEach(([material, requiredAmount]) => {
-        const playerHas = curPlayer.invBlock.items[material] || 0;
-        if (playerHas < requiredAmount) {
-          canBuild = false;
-        }
+        const playerHas = curPlayer.invBlock.items[material] || material=="dirt" ? dirtInv : 0;
+        console.log(playerHas,  curPlayer.invBlock.items[material], curPlayer.invBlock, material )
+        // Create a line: "Material: X / Y"
+        const line = createDiv(`${material}:  ${playerHas} / ${requiredAmount}`);
         
-        // A line that says "Material: X (You have: Y)"
-        const line = createDiv(`${material}:  ${playerHas}/ ${requiredAmount},`);
-        // If not enough material, make the text red
+        // If not enough, color this line red, and set canBuild to false
         if (playerHas < requiredAmount) {
           line.style('color', 'red');
+          canBuild = false;
         } else {
           line.style('color', 'white');
         }
+  
         line.parent(costsDetailsDiv);
       });
   
-      // If the player can’t afford *any* of the materials, color the entire text section red
+      // If the player can’t afford ANY material, color the entire text red
       infoDiv.style('color', canBuild ? 'white' : 'red');
   
-      // Let them select the item, or block selection if you want
+      // Click the card -> set ghostBuild to this object
       buildCard.mouseClicked(() => {
-        // if (!canBuild) return;  // uncomment if you want to block the build entirely
-        ghostBuild = createObject(option.type, 0, 0, 0, curPlayer.color, " ", " ");
-
-
-        renderBuildOptions()
-      });
+        // If you want to prevent selection when not enough materials, uncomment:
+        // if (!canBuild) return;
   
-      ul.child(li);
+        ghostBuild = createObject(option.type, 0, 0, 0, curPlayer.color, " ", " ");
+        
+        // Re-render to highlight the newly selected item
+        renderBuildOptions();
+      });
     });
   }
+  
   
 
 // Helper function to translate key codes to human-friendly strings
