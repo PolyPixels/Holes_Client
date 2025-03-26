@@ -155,11 +155,6 @@ class Placeable{
       }
       
     update(){
-        if(this.hp < this.mhp){
-
-        this.renderHealthBar()
-        }
-
         if(this.hp <= 0){
             this.deleteTag = true;
 
@@ -170,6 +165,9 @@ class Placeable{
 
     render(t){
         push();
+        if(this.hp < this.mhp){
+            this.renderHealthBar()
+        }
         translate(-camera.x+(width/2)+this.pos.x, -camera.y+(height/2)+this.pos.y);
         rotate(this.rot);
         if(t == "green") tint(100, 200, 100, 100);
@@ -191,7 +189,7 @@ class Placeable{
         for(let j = 0; j < chunk.objects.length; j++){
             if(this.z == chunk.objects[j].z){
                 let d = chunk.objects[j].pos.dist(this.pos);
-                if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + (this.size.w+this.size.h)/2){
+                if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + (this.size.w+this.size.h)/2 - 30){
                     this.openBool = false;
                 }
             }
