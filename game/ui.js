@@ -395,7 +395,7 @@ function renderServerBrowser() {
 
 
 function fetchServerStatus(server, callback) {
-    fetch(`http://${server.ip}:3000/status`)
+    fetch(`https://${server.ip}/status`)
         .then(response => response.json())
         .then(data => {callback(data);})
         .catch(error => {
