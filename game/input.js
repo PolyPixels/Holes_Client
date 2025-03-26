@@ -277,7 +277,8 @@ function mouseWheel(event) {
 
 
   function updatePlayerHotBarOffset(){
-    if(gameState != "playing" && gameState != "inventory") return
+
+    if(gameState != "playing" && gameState != "inventory" ) return
 
     if(abs(curPlayer.invBlock.animationTimer) <= 0.1){
    

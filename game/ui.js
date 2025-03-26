@@ -57,7 +57,6 @@ let linkContainer, settingsContainer,settingsToggle, toggleButton,titleImage,mar
 let markeeText = [
     " This game is made with Hate not ♥ !!!",
     " DIG DIG DIG there is nothing else ",
-    " Shooting people is fun and easy ",
     "Your advert here , we gotta pay that AWS bill some how ",
     "Learn to Code &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ... OR ELSE",
     "Kill John's Lemons",
@@ -571,11 +570,7 @@ function drawSelection() {
         card.show();
     });
     // Enable the "Go" button only when a race is selected and a name is entered
-    if (raceSelected && nameEntered) {
-        goButton.removeAttribute("disabled");
-    } else {
-        goButton.attribute("disabled", true);
-    }
+
 }
 
 
@@ -742,7 +737,7 @@ function setupUI(){
     goButton.hide();
     // Position near the name input with a fixed offset
     goButton.position(width / 2 + 130, height * 0.7);
-    goButton.attribute("disabled", true);
+
     goButton.style("font-size", "20px");
     goButton.style("color", "#fff");
     goButton.style("border", "none");
@@ -761,26 +756,64 @@ function setupUI(){
     });
 
     goButton.mousePressed(() => {
-        if(!selectedServer) {
-            alert("issue with server retry");
+        console.log(raceSelected, "sasd")
+        if (!selectedServer) {
+            alert("Issue with server retry.");
             return;
         } 
-        if(!raceSelected) {
-            alert("Pick a race");
+        if (!raceSelected) {
+            alert("Pick a race.");
+            console.log("SDSD")
             return;
         }
-
-        if(!nameEntered) {
-            alert("pick a name");
+    
+        if (!nameEntered) {
+            alert("Pick a name.");
             return;
         }
-
-        if(!curPlayer) return;
-        curPlayer.name = nameInput.value();
+    
+        // 1) Pull the value from the name input.
+        const nameVal = nameInput.value().trim();
+    
+        // 2) Check length
+        if (nameVal.length === 0) {
+            alert("Name cannot be empty.");
+            return;
+        }
+        if (nameVal.length > 20) {
+            alert("Name is too long (max 20 chars).");
+            return;
+        }
+    
+        // 3) Disallow spaces
+        if (/\s/.test(nameVal)) {
+            alert("Name cannot contain spaces.");
+            return;
+        }
+    
+        // 4) Letters and digits only
+        if (!/^[A-Za-z0-9]+$/.test(nameVal)) {
+            alert("Name can only contain letters and digits.");
+            return;
+        }
+    
+        // 5) Check forbidden words
+        const badWords = ["badword", "someoffensiveword"];
+        for (let badWord of badWords) {
+            if (nameVal.toLowerCase().includes(badWord)) {
+                alert("Name contains forbidden content.");
+                return;
+            }
+        }
+    
+        // If all checks pass, assign the name and proceed
+        if (!curPlayer) return;
+        curPlayer.name = nameVal;
+    
         socket.emit("new_player", curPlayer);
         gameState = "playing";
         hideRaceSelect();
-
+    
         // Clear a small area around the player (example logic)
         for (let y = -5; y < 5; y++) {
             for (let x = -5; x < 5; x++) {
@@ -789,6 +822,7 @@ function setupUI(){
         }
         dirtInv = 0;
     });
+    
 }
 
 
@@ -1612,7 +1646,7 @@ function styleButton(button) {
         }
         
         // A line that says "Material: X (You have: Y)"
-        const line = createDiv(`${material}: ${requiredAmount}, / ${playerHas}`);
+        const line = createDiv(`${material}:  ${playerHas}/ ${requiredAmount},`);
         // If not enough material, make the text red
         if (playerHas < requiredAmount) {
           line.style('color', 'red');
@@ -1629,6 +1663,9 @@ function styleButton(button) {
       buildCard.mouseClicked(() => {
         // if (!canBuild) return;  // uncomment if you want to block the build entirely
         ghostBuild = createObject(option.type, 0, 0, 0, curPlayer.color, " ", " ");
+
+
+        renderBuildOptions()
       });
   
       ul.child(li);
