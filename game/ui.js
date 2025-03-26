@@ -978,13 +978,12 @@ function updateToggleChatButtonText() {
 
 // Function to update the player count display when players change
 function updatePlayerCount() {
-  if (playerCountDiv) {
 
   const playerCount = Object.keys(players).length + 1;
 
   const arrow = isChatOpen ? "▼" : "▲";
     toggleChatButton.html(`Chat (Players: ${playerCount}) ${arrow}`);
-  }
+  
 }
 
 // Function to send a chat message via socket
