@@ -376,7 +376,7 @@ function renderServerBrowser() {
         addServerSection.parent(serverBrowserContainer);
         connectButton.mousePressed(() => {
             if (selectedServer) {
-                socket = io.connect("http://" + selectedServer.ip + ":3000");
+                socket = io.connect(getServerUrl(selectedServer.ip));
                 socketSetup();
                 testMap = new Map();
                 ghostBuild = createObject("Wall", 0,0,0, 0, " ", " ");
@@ -391,6 +391,13 @@ function renderServerBrowser() {
     }
 }
 
+function getServerUrl(server) {
+    const isLocal = isLocalAddress(server.ip);
+    // Use HTTP with port 3000 for local, otherwise HTTPS with no extra port for production
+    const scheme = isLocal ? "http" : "https";
+    const port = isLocal ? ":3000" : "";
+    return `${scheme}://${server.ip}${port}`;
+  }
 
 function isLocalAddress(ipOrHost) {
     // Exact matches for localhost or loopback
@@ -402,29 +409,17 @@ function isLocalAddress(ipOrHost) {
         return /^\d{1,3}(?:\.\d{1,3}){3}$/.test(ipOrHost);
       
   }
-  
-
-  
-
-function fetchServerStatus(server, callback) {
-    // Check if the IP/host is localhost (or 127.0.0.1)
-    const isLocalhost = isLocalAddress(server.ip)
-
-    // Use "http://" for localhost, otherwise "https://"
-    const scheme = isLocalhost ? "http" : "https";
-    const port = isLocalhost ? ":3000" : ""
-    fetch(`${scheme}://${server.ip}${port}/status`)
-        .then(response => response.json())
-        .then(data => {
-            callback(data);
-        })
-        .catch(error => {
-            console.error(`Error fetching status from ${server.ip}:`, error);
-            // Return offline if the fetch fails
-            callback({ status: "Offline", playerCount: 0 });
-        });
-}
-
+    
+  function fetchServerStatus(server, callback) {
+    const url = getServerUrl(server) + "/status";
+    fetch(url)
+      .then(response => response.json())
+      .then(data => callback(data))
+      .catch(error => {
+        console.error(`Error fetching status from ${server.ip}:`, error);
+        callback({ status: "Offline", playerCount: 0 });
+      });
+  }
 
 function renderServerList() {
     let oldEntries = selectAll(".serverEntry");
