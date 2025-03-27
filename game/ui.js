@@ -392,17 +392,39 @@ function renderServerBrowser() {
 }
 
 
+function isLocalAddress(ipOrHost) {
+    // Exact matches for localhost or loopback
+    if (ipOrHost === 'localhost' || ipOrHost === '127.0.0.1') {
+      return true;
+    }
+  
+        // A simple regex for IPv4 addresses (it doesn't enforce 0-255 on each octet, but is sufficient for a basic check)
+        return /^\d{1,3}(?:\.\d{1,3}){3}$/.test(ipOrHost);
+      
+  }
+  
 
+  
 
 function fetchServerStatus(server, callback) {
-    fetch(`https://${server.ip}/status`)
+    // Check if the IP/host is localhost (or 127.0.0.1)
+    const isLocalhost = isLocalAddress(server.ip)
+
+    // Use "http://" for localhost, otherwise "https://"
+    const scheme = isLocalhost ? "http" : "https";
+    const port = isLocalhost ? ":3000" : ""
+    fetch(`${scheme}://${server.ip}${port}/status`)
         .then(response => response.json())
-        .then(data => {callback(data);})
+        .then(data => {
+            callback(data);
+        })
         .catch(error => {
             console.error(`Error fetching status from ${server.ip}:`, error);
+            // Return offline if the fetch fails
             callback({ status: "Offline", playerCount: 0 });
         });
 }
+
 
 function renderServerList() {
     let oldEntries = selectAll(".serverEntry");
@@ -472,8 +494,13 @@ function renderServerList() {
             playerCount.html(`Players: ${data.playerCount}`);
             serverLogo.attribute("src", data.image);
 
+
+
             // Optionally, adjust opacity to signal a disabled state
             serverEntry.style("opacity", data.status === "Online" ?"1": "0.5");
+
+            // server entry can not be clicked if status is not online 
+            serverEntry.style("pointer-events",data.status === "Online" ? "auto" : "none");
         });
 
         // Remove server button
@@ -488,11 +515,14 @@ function renderServerList() {
         removeButton.style("cursor", "pointer");
 
 
+        removeButton.style("pointer-events","auto");
 
 
         removeButton.mousePressed(() => {
             serverList.splice(index, 1);
             saveServers();
+            renderServerList();
+
             renderServerList();
         });
 
