@@ -376,11 +376,12 @@ function renderServerBrowser() {
         addServerSection.parent(serverBrowserContainer);
         connectButton.mousePressed(() => {
             if (selectedServer) {
-                socket = io.connect(getServerUrl(selectedServer.ip));
+                console.log(getServerUrl(selectedServer))
+                socket = io.connect(getServerUrl(selectedServer));
                 socketSetup();
                 testMap = new Map();
                 ghostBuild = createObject("Wall", 0,0,0, 0, " ", " ");
-                console.log("Connected to " + selectedServer.ip);
+                console.log("Connected to " + selectedServer, socket);
                 hideServerBrowser();
                 gameState = "race_selection";
                 renderedserverBrowserContainer = false;
@@ -645,6 +646,8 @@ function setupUI(){
 
     // Iterate over each race in the races array
     races.forEach((raceName, i) => {
+        var selectedItem = i || raceName;
+        console.log(selectedItem, i , raceName)
         // Create the card container for the race
         let card = createDiv();
         card.class("raceCard");
@@ -711,6 +714,8 @@ function setupUI(){
 
         // On click: deselect all cards, then select this one and update curPlayer
         card.mousePressed(() => {
+            
+        console.log(selectedItem, i , raceName)
             raceButtons.forEach((c) => {
                 c.selected = false;
                 c.style("background-color", "#404040");
@@ -718,8 +723,8 @@ function setupUI(){
             card.selected = true;
             card.style("background-color", "#4CAF50");
             raceSelected = true;
-            curPlayer.race = i; // Assuming a mapping by index
-            console.log("Race selected:", races[i]);
+            curPlayer.race = selectedItem; // Assuming a mapping by index
+            console.log("Race selected:", races[selectedItem]);
         });
 
         // Hide the card initially (only shown in the race selection state)
