@@ -39,6 +39,8 @@ function hideRaceSelect(){
 }
 
 let serverList = JSON.parse(localStorage.getItem("servers")) || [
+
+    { ip: "api.holesgame.com", name: "Holes Offical", status: "Online" },
     { ip: "localhost", name: "Local Server", status: "Online" },
     { ip: "54.91.39.132", name: "Remote Server", status: "Online" },
 ];
