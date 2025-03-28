@@ -7,6 +7,7 @@ var dirtBagImg;
 var dirtBagOpenImg;
 var hpBarImg;
 var manaBarImg;
+var edgeBloodImg;
 var objImgs = [];
 var itemImgs = [];
 
@@ -24,6 +25,7 @@ function preload() {
     dirtBagOpenImg = loadImage('images/ui/dirtbagopen.png');
     hpBarImg = loadImage('images/ui/healthbar.png');
     manaBarImg = loadImage('images/ui/manabar.png');
+    edgeBloodImg = loadImage('images/ui/edgeblood.png');
 
     //load obj imgs
     for(let i = 0; i < objImgPaths.length; i++){

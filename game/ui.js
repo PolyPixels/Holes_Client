@@ -23,6 +23,8 @@ function updateResponsiveDesign() {
 
     // Optionally update the race title font size for better scaling
     raceTitle?.style("font-size", "calc(1.5vw + 24px)");
+
+    dirtBagUI.pos = createVector(width-180-10, height-186-10);
 }
 
 function hideRaceSelect(){
@@ -649,7 +651,7 @@ function setupUI(){
 
     // Iterate over each race in the races array
     races.forEach((raceName, i) => {
-        var selectedItem = i || raceName;
+        var selectedItem = i;
         console.log(selectedItem, i , raceName)
         // Create the card container for the race
         let card = createDiv();
@@ -1678,8 +1680,15 @@ function defineBuildUI() {
       costsDetailsDiv.parent(infoDiv);
   
       costArray.forEach(([material, requiredAmount]) => {
-        const playerHas = curPlayer.invBlock.items[material] || material=="dirt" ? dirtInv : 0;
-        console.log(playerHas,  curPlayer.invBlock.items[material], curPlayer.invBlock, material )
+        let playerHas = 0;
+        if(material == "dirt"){
+            playerHas = dirtInv.toFixed(1);
+            console.log(playerHas, material);
+        }
+        else if (curPlayer.invBlock.items[material] != undefined) {
+            playerHas = curPlayer.invBlock.items[material].amount;
+            console.log(playerHas,  curPlayer.invBlock.items[material], material);
+        }
         // Create a line: "Material: X / Y"
         const line = createDiv(`${material}:  ${playerHas} / ${requiredAmount}`);
         

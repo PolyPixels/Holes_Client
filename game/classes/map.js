@@ -144,6 +144,11 @@ class Chunk{
                         corners[3] = testMap.chunks[this.cx+","+(this.cy+1)].data[x];
                     }
                 }
+                if(x == CHUNKSIZE-1 && y == CHUNKSIZE-1){
+                    if(testMap.chunks[(this.cx+1)+","+(this.cy+1)] != undefined){
+                        corners[2] = testMap.chunks[(this.cx+1)+","+(this.cy+1)].data[((y+1)/CHUNKSIZE)];
+                    }
+                }
                 for(let i=0; i < 4; i++){
                     if(corners[i] == -1) corners[i] = 1;
                     corners[i] += 0.7;

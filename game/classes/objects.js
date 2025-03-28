@@ -65,11 +65,31 @@ function turretUpdate(){
     }
 }
 defineCustomObj("Turret", ['tempturret0','tempturret1','tempturret2','tempturret3','tempturret4','tempturret5','tempturret6','tempturret7','tempturret8','tempturret9','tempturret10','tempturret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
-definePlant("Mushroom", ['tempmushroom1','tempmushroom2','tempmushroom3'], [["dirt", 20]], 60, 60, 100, 60, "edible_mushroom");
+definePlant("Mushroom", ['mushroom1','mushroom2','mushroom3'], [["dirt", 20]], 60, 60, 100, 60, "edible_mushroom");
 
 function bombUpdate(){
     //Fuse go down
     this.hp-=1;
+
+    if(this.color != 0 && this.color != 1){
+        this.color = 0;
+    }
+
+    if(this.bombTimer == undefined){
+        this.bombTimer = this.hp/10;
+    }
+    else{
+        this.bombTimer -= 1;
+        if(this.bombTimer <= 0){
+            if(this.color == 0){
+                this.color = 1;
+            }
+            else if(this.color == 1){
+                this.color = 0;
+            }
+            this.bombTimer = this.hp/10;
+        }
+    }
 
     if (this.hp <= 0) {
         
@@ -77,6 +97,7 @@ function bombUpdate(){
         if(this.pos.dist(curPlayer.pos) < -2+(this.size.w+this.size.h)/2){
             curPlayer.statBlock.stats.hp -= 20;
             camera.shake = {intensity: 20, length: 5};
+            camera.edgeBlood = 5;
             socket.emit("update_pos", curPlayer);
         }
 
@@ -305,6 +326,7 @@ class Trap extends Placeable{
                     this.deleteTag = true;
                     curPlayer.statBlock.stats.hp -= this.damage;
                     camera.shake = {intensity: this.damage, length: 5};
+                    camera.edgeBlood = 5;
                     socket.emit("update_pos", curPlayer);
                     let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
                     socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});

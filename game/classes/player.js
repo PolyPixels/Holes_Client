@@ -281,7 +281,6 @@ class Player {
         fill(255);       // white fill
         text(nameText, this.pos.x, this.pos.y - yOffset);
        
-        
         let raceName = races[this.race]
         // Select the correct image based on the direction and frame
         let imageToRender;

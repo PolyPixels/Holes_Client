@@ -31,6 +31,7 @@ function setup() {
     camera.pos = createVector(0, 0);
     camera.vel = createVector(0,0);
     camera.shake = {intensity: 0, length: 0};
+    camera.edgeBlood = 0;
 
     dirtBagUI.pos = createVector(width-180-10, height-186-10);
     dirtBagUI.vel = createVector(0,0);
@@ -56,6 +57,11 @@ function moveCamera(){
         camera.vel.setMag(camera.vel.mag()/10);
     }
     camera.pos.add(camera.vel);
+
+    if(camera.edgeBlood > 0){
+        camera.edgeBlood -= 1;
+        image(edgeBloodImg, 0, 0, width, height);
+    }
 }
 
 function windowResized() {
@@ -87,7 +93,7 @@ function draw() {
         //! Why call these in draw if they only need to be called once?
         hideRaceSelect();
         hideLinks();
-        renderChatUI()
+        renderChatUI();
         // ---- (Your original gameplay code) ----
         if (Object.keys(testMap.chunks).length > 0) {
             testMap.render();
