@@ -762,6 +762,12 @@ function setupUI(){
     nameInput.mouseOut(() => {
         nameInput.style("border", "3px solid #ccc");
     });
+    nameInput.elt.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          startGame();
+        }
+      });
+    
 
     // ---------------------------------------------------
     //   "Go" Button (centered, larger & responsive)
@@ -789,72 +795,8 @@ function setupUI(){
     });
 
     goButton.mousePressed(() => {
-        console.log(raceSelected, "sasd")
-        if (!selectedServer) {
-            alert("Issue with server retry.");
-            return;
-        } 
-        if (!raceSelected) {
-            alert("Pick a race.");
-            console.log("SDSD")
-            return;
-        }
-    
-        if (!nameEntered) {
-            alert("Pick a name.");
-            return;
-        }
-    
-        // 1) Pull the value from the name input.
-        const nameVal = nameInput.value().trim();
-    
-        // 2) Check length
-        if (nameVal.length === 0) {
-            alert("Name cannot be empty.");
-            return;
-        }
-        if (nameVal.length > 20) {
-            alert("Name is too long (max 20 chars).");
-            return;
-        }
-    
-        // 3) Disallow spaces
-        if (/\s/.test(nameVal)) {
-            alert("Name cannot contain spaces.");
-            return;
-        }
-    
-        // 4) Letters and digits only
-        if (!/^[A-Za-z0-9]+$/.test(nameVal)) {
-            alert("Name can only contain letters and digits.");
-            return;
-        }
-    
-        // 5) Check forbidden words
-        const badWords = ["badword", "someoffensiveword"];
-        for (let badWord of badWords) {
-            if (nameVal.toLowerCase().includes(badWord)) {
-                alert("Name contains forbidden content.");
-                return;
-            }
-        }
-    
-        // If all checks pass, assign the name and proceed
-        if (!curPlayer) return;
-        curPlayer.name = nameVal;
-    
-        socket.emit("new_player", curPlayer);
-        gameState = "playing";
-        hideRaceSelect();
-    
-        // Clear a small area around the player (example logic)
-        for (let y = -5; y < 5; y++) {
-            for (let x = -5; x < 5; x++) {
-                dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1);
-            }
-        }
-        dirtInv = 0;
-    });
+        startGame()
+    })
     
 }
 
@@ -995,6 +937,75 @@ function toggleChatDropdown() {
   isChatOpen = !isChatOpen;
   // Update the button text after toggling
   updateToggleChatButtonText();
+}
+
+
+function startGame(){
+    console.log(raceSelected, "sasd")
+    if (!selectedServer) {
+        alert("Issue with server retry.");
+        return;
+    } 
+    if (!raceSelected) {
+        alert("Pick a race.");
+        console.log("SDSD")
+        return;
+    }
+
+    if (!nameEntered) {
+        alert("Pick a name.");
+        return;
+    }
+
+    // 1) Pull the value from the name input.
+    const nameVal = nameInput.value().trim();
+
+    // 2) Check length
+    if (nameVal.length === 0) {
+        alert("Name cannot be empty.");
+        return;
+    }
+    if (nameVal.length > 20) {
+        alert("Name is too long (max 20 chars).");
+        return;
+    }
+
+    // 3) Disallow spaces
+    if (/\s/.test(nameVal)) {
+        alert("Name cannot contain spaces.");
+        return;
+    }
+
+    // 4) Letters and digits only
+    if (!/^[A-Za-z0-9]+$/.test(nameVal)) {
+        alert("Name can only contain letters and digits.");
+        return;
+    }
+
+    // 5) Check forbidden words
+    const badWords = ["badword", "someoffensiveword"];
+    for (let badWord of badWords) {
+        if (nameVal.toLowerCase().includes(badWord)) {
+            alert("Name contains forbidden content.");
+            return;
+        }
+    }
+
+    // If all checks pass, assign the name and proceed
+    if (!curPlayer) return;
+    curPlayer.name = nameVal;
+
+    socket.emit("new_player", curPlayer);
+    gameState = "playing";
+    hideRaceSelect();
+
+    // Clear a small area around the player (example logic)
+    for (let y = -5; y < 5; y++) {
+        for (let x = -5; x < 5; x++) {
+            dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1);
+        }
+    }
+    dirtInv = 0;
 }
 
 // ─────────────────────────────────────────────────────────
