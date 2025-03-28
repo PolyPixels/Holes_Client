@@ -44,13 +44,12 @@ function socketSetup(){
             200, //random(-200*TILESIZE, 200*TILESIZE)
             undefined,
             data.id,
-            0,
+            11,
             0,
             ''
         ); // Default race index 0
 
-        camera.x = curPlayer.pos.x;
-        camera.y = curPlayer.pos.y;
+        camera.pos = createVector(curPlayer.pos.x, curPlayer.pos.y);
 
         //load in some chunks for easy start
         let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
@@ -111,7 +110,7 @@ function socketSetup(){
     socket.on("NEW_OBJECT", (data) => {
         let chunk = testMap.chunks[data.cx+","+data.cy];
         if(chunk != undefined){
-            let temp = createObject(data.objName, data.pos.x, data.pos.y, data.rot, data.color, data.id, data.ownerName);
+            let temp = createObject(data.obj.objName, data.obj.pos.x, data.obj.pos.y, data.obj.rot, data.obj.color, data.obj.id, data.obj.ownerName);
             chunk.objects.push(temp);
             chunk.objects.sort((a,b) => a.z - b.z);
         }

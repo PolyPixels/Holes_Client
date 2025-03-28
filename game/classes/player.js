@@ -41,7 +41,7 @@ class Player {
         if(Debuging){
             push();
             fill(255);
-            circle(((x+(chunkPos.x*CHUNKSIZE))*TILESIZE)-camera.x+(width/2),((y+(chunkPos.y*CHUNKSIZE))*TILESIZE)-camera.y+(height/2), 10);
+            circle(((x+(chunkPos.x*CHUNKSIZE))*TILESIZE)-camera.pos.x+(width/2),((y+(chunkPos.y*CHUNKSIZE))*TILESIZE)-camera.pos.y+(height/2), 10);
             pop();
         }
         
@@ -158,7 +158,7 @@ class Player {
         if(testMap.chunks[chunkPos.x+","+chunkPos.y] == undefined) return;
 
         push();
-        translate(-camera.x+(width/2), -camera.y+(height/2));
+        translate(-camera.pos.x+(width/2), -camera.pos.y+(height/2));
         fill(255);
         textSize(10);
         textAlign(CENTER);
@@ -185,7 +185,7 @@ class Player {
 
     renderHealthBar() {
         push();
-        //translate(-camera.x+(width/2), -camera.y+(height/2));
+        //translate(-camera.pos.x+(width/2), -camera.pos.y+(height/2));
 
         // Draw health bar background
         fill(255, 0, 0);

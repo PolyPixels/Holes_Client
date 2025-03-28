@@ -7,7 +7,8 @@ var lastHolding;
 var projectiles = [];
 var collisionChecks = [];
 const races = BASE_STATS.map(item => item.name);
-var camera = { x: 0, y: 0 };
+var camera = {};
+var dirtBagUI = {};
 var Debuging = true;
 //console.log("Race names:", races);
 
@@ -26,6 +27,35 @@ function setup() {
     }
 
     setupUI();
+
+    camera.pos = createVector(0, 0);
+    camera.vel = createVector(0,0);
+    camera.shake = {intensity: 0, length: 0};
+
+    dirtBagUI.pos = createVector(width-180-10, height-186-10);
+    dirtBagUI.vel = createVector(0,0);
+    dirtBagUI.shake = {intensity: 0, length: 0};
+}
+
+function moveCamera(){
+    if(camera.shake.length > 0){
+        if(camera.vel.mag() < 1){
+            camera.vel.x = camera.shake.intensity;
+        }
+        camera.vel.setMag(camera.vel.mag()+camera.shake.intensity);
+        if(camera.vel.mag() > camera.shake.intensity*5){
+            camera.vel.setMag(camera.shake.intensity*5);
+        }
+        camera.vel.rotate(random(45, 180));
+        camera.shake.length -= 1;
+    }
+    else{
+        camera.shake.intensity = 0;
+        camera.vel.x = (curPlayer.pos.x-camera.pos.x);
+        camera.vel.y = (curPlayer.pos.y-camera.pos.y);
+        camera.vel.setMag(camera.vel.mag()/10);
+    }
+    camera.pos.add(camera.vel);
 }
 
 function windowResized() {
@@ -75,14 +105,13 @@ function draw() {
         }
 
         if (curPlayer) {
-            camera.x = curPlayer.pos.x;
-            camera.y = curPlayer.pos.y;
+            moveCamera();
 
             curPlayer.render();
             curPlayer.update();
             if(renderGhost){
-                ghostBuild.pos.x = mouseX + camera.x - width / 2;
-                ghostBuild.pos.y = mouseY + camera.y - height / 2;
+                ghostBuild.pos.x = mouseX + camera.pos.x - width / 2;
+                ghostBuild.pos.y = mouseY + camera.pos.y - height / 2;
                 if(ghostBuild.canRotate & wantRotate){
                     ghostBuild.rot = ghostBuild.pos.copy().sub(curPlayer.pos).heading();
                 }
@@ -122,7 +151,7 @@ function draw() {
 
         renderDirtBagUI();
     }
-    if (gameState === "inventory" || gameState === "pause" || gameState =="player_status") {
+    if (gameState === "inventory" || gameState === "pause" || gameState =="player_status" || gameState == "team_select") {
         //render the game in the background
         if (Object.keys(testMap.chunks).length > 0) {
             testMap.render();
@@ -132,14 +161,14 @@ function draw() {
         if (curPlayer) {
             curPlayer.render();
             curPlayer.update();
-            if(renderGhost){
-                ghostBuild.pos.x = mouseX + camera.x - width / 2;
-                ghostBuild.pos.y = mouseY + camera.y - height / 2;
-                if(ghostBuild.canRotate & wantRotate){
-                    ghostBuild.rot = ghostBuild.pos.copy().sub(curPlayer.pos).heading();
-                }
-                ghostBuild.ghostRender(createVector(ghostBuild.pos.x,ghostBuild.pos.y).dist(curPlayer.pos) < 200);
-            }
+            // if(renderGhost){
+            //     ghostBuild.pos.x = mouseX + camera.pos.x - width / 2;
+            //     ghostBuild.pos.y = mouseY + camera.pos.y - height / 2;
+            //     if(ghostBuild.canRotate & wantRotate){
+            //         ghostBuild.rot = ghostBuild.pos.copy().sub(curPlayer.pos).heading();
+            //     }
+            //     ghostBuild.ghostRender(createVector(ghostBuild.pos.x,ghostBuild.pos.y).dist(curPlayer.pos) < 200);
+            // }
         }
 
         let keys = Object.keys(players);
@@ -153,6 +182,7 @@ function draw() {
         }
 
         curPlayer.invBlock.renderHotBar();
+        renderPlayerCardUI();
         renderDirtBagUI();
     }
     if (gameState === "chating") {
@@ -166,8 +196,8 @@ function draw() {
             curPlayer.render();
             curPlayer.update();
             if(renderGhost){
-                ghostBuild.pos.x = mouseX + camera.x - width / 2;
-                ghostBuild.pos.y = mouseY + camera.y - height / 2;
+                ghostBuild.pos.x = mouseX + camera.pos.x - width / 2;
+                ghostBuild.pos.y = mouseY + camera.pos.y - height / 2;
                 if(ghostBuild.canRotate & wantRotate){
                     ghostBuild.rot = ghostBuild.pos.copy().sub(curPlayer.pos).heading();
                 }
@@ -186,6 +216,7 @@ function draw() {
         }
 
         curPlayer.invBlock.renderHotBar();
+        renderPlayerCardUI();
         renderDirtBagUI();
     }
 

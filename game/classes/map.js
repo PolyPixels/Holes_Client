@@ -39,8 +39,8 @@ class Map{
         let cpos = {};
         for(let yOff = -1; yOff < 2; yOff++){
             for(let xOff = -1; xOff < 2; xOff++){
-                cpos.x = ((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.x+(width/2);
-                cpos.y = ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.y+(height/2);
+                cpos.x = ((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.pos.x+(width/2);
+                cpos.y = ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.pos.y+(height/2);
                 image(dirtFloorImg, cpos.x, cpos.y, 1600, 1600 );
             }
         }
@@ -55,11 +55,11 @@ class Map{
                     noFill();
                     stroke(255,0,0);
                     strokeWeight(2);
-                    rect(((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.x+(width/2), ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.y+(height/2), CHUNKSIZE*TILESIZE, CHUNKSIZE*TILESIZE);
+                    rect(((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.pos.x+(width/2), ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.pos.y+(height/2), CHUNKSIZE*TILESIZE, CHUNKSIZE*TILESIZE);
                     fill(255);
                     noStroke();
                     textSize(15);
-                    text((chunkPos.x + xOff)+","+(chunkPos.y + yOff), ((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.x+(width/2)+5, ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.y+(height/2)+20);
+                    text((chunkPos.x + xOff)+","+(chunkPos.y + yOff), ((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.pos.x+(width/2)+5, ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.pos.y+(height/2)+20);
                     pop();
                 }
             }
@@ -79,8 +79,8 @@ class Chunk{
 
     cordToScreen(x,y){
         let val = {};
-        val.x = (x)*TILESIZE + (this.cx*CHUNKSIZE*TILESIZE)-camera.x+(width/2);
-        val.y = (y)*TILESIZE + (this.cy*CHUNKSIZE*TILESIZE)-camera.y+(height/2);
+        val.x = (x)*TILESIZE + (this.cx*CHUNKSIZE*TILESIZE)-camera.pos.x+(width/2);
+        val.y = (y)*TILESIZE + (this.cy*CHUNKSIZE*TILESIZE)-camera.pos.y+(height/2);
         return val;
     }
 
@@ -113,6 +113,11 @@ class Chunk{
     }
   
     render(){
+        for(let i = 0; i < this.objects.length; i++){
+            if(this.objects[i].z < 2){
+                this.objects[i].render("none");
+            }
+        }
         //rendered under other stuff to help hide collishion problems
         for(let i = 0; i < this.projectiles.length; i++){
             this.projectiles[i].render();
@@ -332,10 +337,12 @@ class Chunk{
         }
 
         endClip();
-        image(chunkDirtImg, this.cx*CHUNKSIZE*TILESIZE - camera.x + width/2, this.cy*CHUNKSIZE*TILESIZE - camera.y + height/2, 1600, 1600);
+        image(chunkDirtImg, this.cx*CHUNKSIZE*TILESIZE - camera.pos.x + width/2, this.cy*CHUNKSIZE*TILESIZE - camera.pos.y + height/2, 1600, 1600);
         pop();
         for(let i = 0; i < this.objects.length; i++){
-            this.objects[i].render("none");
+            if(this.objects[i].z >= 2){
+                this.objects[i].render("none");
+            }
         }
     }
 

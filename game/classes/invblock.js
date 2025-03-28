@@ -24,6 +24,7 @@ class InvBlock{
         }else{
             this.items[item].amount += amount;
         }
+        //added item popup?
     }
 
     equipItem(itemName){

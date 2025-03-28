@@ -304,7 +304,6 @@ function renderServerBrowser() {
                 socket = io.connect("http://" + selectedServer.ip + ":3000");
                 socketSetup();
                 testMap = new Map();
-                ghostBuild = createObject("Wall", 0,0,0, 0, " ", " ");
                 console.log("Connected to " + selectedServer.ip);
                 hideServerBrowser();
                 gameState = "race_selection";
@@ -530,6 +529,7 @@ function setupUI(){
     definePauseUI();
     defineBuildUI();
     definePlayerStatusDiv();
+    defineTeamPickUI();
     raceTitle = createDiv();
     // ---------------------------------------------------
     //  Create a container for race selection cards (centered)
@@ -1262,31 +1262,55 @@ function renderDirtBagUI(){
     // Dirt Inventory
     push();
     //should add an open and closed version
+
+    if(dirtBagUI.shake.length > 0){
+        if(dirtBagUI.vel.mag() < 1){
+            dirtBagUI.vel.x = dirtBagUI.shake.intensity;
+        }
+        dirtBagUI.vel.setMag(dirtBagUI.vel.mag()+dirtBagUI.shake.intensity);
+        if(dirtBagUI.vel.mag() > dirtBagUI.shake.intensity*5){
+            dirtBagUI.vel.setMag(dirtBagUI.shake.intensity*5);
+        }
+        dirtBagUI.vel.rotate(random(45, 180));
+        dirtBagUI.shake.length -= 1;
+    }
+    else{
+        dirtBagUI.shake.intensity = 0;
+        dirtBagUI.vel.x = ((width-180-10)-dirtBagUI.pos.x);
+        dirtBagUI.vel.y = ((height-186-10)-dirtBagUI.pos.y);
+        dirtBagUI.vel.setMag(dirtBagUI.vel.mag()/10);
+    }
+    dirtBagUI.pos.add(dirtBagUI.vel);
+
+    let dirtBagOpen = true;
     if(curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] == ""){
         if(dirtInv >= 150 - curPlayer.statBlock.stats.handDigSpeed){
-            image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
-        }
-        else{
-            image(dirtBagOpenImg, width - 180 - 10, height - 186 - 10, 180, 186);
+            dirtBagOpen = false;
         }
     }
     else if (curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Shovel"){
         if(dirtInv >= 150 - curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].digSpeed){
-            image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
-        }
-        else{
-            image(dirtBagOpenImg, width - 180 - 10, height - 186 - 10, 180, 186);
+            dirtBagOpen = false;
         }
     }
     else if(dirtInv >= 150 - DIGSPEED){
-        image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
+        dirtBagOpen = false;
     }
-    else{
-        image(dirtBagOpenImg, width - 180 - 10, height - 186 - 10, 180, 186);
-    }
-    
+
+    if(dirtBagOpen) image(dirtBagOpenImg, dirtBagUI.pos.x, dirtBagUI.pos.y, 180, 186);
+    else image(dirtBagImg, dirtBagUI.pos.x, dirtBagUI.pos.y, 180, 186);
+
     fill("#70443C");
-    rect(width - 180 + 20, height - 186 + 25 + (120 * (1-(dirtInv/150))), 120, 120 * (dirtInv/150));
+    rect(dirtBagUI.pos.x + 30, dirtBagUI.pos.y + 35 + (120 * (1-(dirtInv/150))), 120, 120 * (dirtInv/150));
+
+    if(!dirtBagOpen){
+        fill(255);
+        stroke(0);
+        strokeWeight(5);
+        textAlign(CENTER, CENTER);
+        textSize(50);
+        text("Full", dirtBagUI.pos.x + 90, dirtBagUI.pos.y + 100);
+    }
     pop();
 }
 
@@ -1454,7 +1478,7 @@ function keyCodeToHuman(keyCode) {
       li.style('align-items', 'center');
       
       // Create an image element for the option
-      const img = createImg(option.image, option.objName);
+      const img = createImg(option.images[curPlayer.color % option.images.length], option.objName);
       img.style('width', '50px');  // Adjust the size as needed
       img.style('height', '50px');
       img.style('image-rendering', 'pixelated');
@@ -1541,14 +1565,89 @@ function renderPlayerCardUI(){
     fill(255,0,0);
     stroke(255,0,0);
     text("HP:", width-530+6+30, 70);
-    fill(0,255,255);
-    stroke(0,255,255);
-    text("MP:", width-530+6+30, 100);
+    fill(255,255,0);
+    stroke(255,255,0);
+    text("AMMO:", width-530+6+15, 100);
     //fill with team color
+    fill(teamColors[curPlayer.color].r, teamColors[curPlayer.color].g, teamColors[curPlayer.color].b);
+    stroke(teamColors[curPlayer.color].r, teamColors[curPlayer.color].g, teamColors[curPlayer.color].b);
     textAlign(CENTER, CENTER);
     text(curPlayer.name, width-530+6+45+(350/2), 19);
 
     let box = gameUIFont.textBounds(curPlayer.name, width-530+6+45+(350/2), 19);
     line(box.x, box.y+box.h+4, box.x+box.w, box.y+box.h+4);
     pop();
+}
+
+var teamPickDiv;
+
+function defineTeamPickUI(){
+    teamPickDiv = createDiv();
+    teamPickDiv.class("container");
+    teamPickDiv.id("teamPickDiv");
+    teamPickDiv.style("position", "absolute");
+    teamPickDiv.style("top", "50%");
+    teamPickDiv.style("left", "50%");
+    teamPickDiv.style("transform", "translate(-50%, -50%)");
+    teamPickDiv.style("display", "none");
+    teamPickDiv.style("width", "25%");
+    teamPickDiv.style("height", "20%");
+    teamPickDiv.style("border", "2px solid black");
+    teamPickDiv.style("border-radius", "10px");
+    teamPickDiv.style("text-align", "center");
+    teamPickDiv.style("padding", "20px");
+
+    updateTeamPickUI();
+}
+
+function updateTeamPickUI(){
+    teamPickDiv.html("");
+
+    let teamPickTitle = createP("Pick Team");
+    teamPickTitle.style("font-size", "28px");
+    teamPickTitle.style("font-weight", "bold");
+    teamPickTitle.style("color", "white");
+    teamPickTitle.style("text-decoration", "underline");
+    teamPickTitle.style("margin", "0px");
+    teamPickTitle.parent(teamPickDiv);
+
+    //turn the team colors into buttons
+    for(let i = 0; i < teamColors.length; i++){
+        let teamButton = createButton("");
+
+        teamButton.style("width", "50px");
+        teamButton.style("height", "50px");
+        teamButton.style("background-color", "rgb("+teamColors[i].r+","+teamColors[i].g+","+teamColors[i].b+")");
+        teamButton.style("margin", "10px");
+        teamButton.style("padding", "0px");
+        teamButton.style("border-radius", "0px");
+        teamButton.style("border", "2px solid black");
+        teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128)");
+        teamButton.style("cursor", "pointer");
+        if(curPlayer == undefined){
+            if(i == 11){
+                teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128), 0 0 0 8px rgb(255, 255, 255)");
+            }
+        }
+        else{
+            if(curPlayer.color == i){
+                teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128), 0 0 0 8px rgb(255, 255, 255)");
+            }
+        }
+        if(i == 11){
+            teamButton.style("background-color", "rgb(0,0,0)");
+            teamButton.style("background-image", "url('images/ui/none.png')");
+            teamButton.style("background-size", "contain");
+            teamButton.style("background-repeat", "no-repeat");
+            teamButton.style("background-position", "center");
+        }
+
+        teamButton.mousePressed(() => {
+            curPlayer.color = i;
+            updateTeamPickUI();
+            teamPickDiv.hide();
+            gameState = "playing";
+        });
+        teamButton.parent(teamPickDiv);
+    }
 }

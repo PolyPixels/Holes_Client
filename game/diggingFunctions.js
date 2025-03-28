@@ -45,6 +45,10 @@ function playerDig(x,y, amount){
         if(digSpot2 != undefined) dig(((digSpot2.cx*CHUNKSIZE+digSpot2.x)*TILESIZE), ((digSpot2.cy*CHUNKSIZE+digSpot2.y)*TILESIZE), amount);
         if(digSpot3 != undefined) dig(((digSpot3.cx*CHUNKSIZE+digSpot3.x)*TILESIZE), ((digSpot3.cy*CHUNKSIZE+digSpot3.y)*TILESIZE), amount);
         
+        if(random() < 0.01){
+            if(random() < 0.05) curPlayer.invBlock.addItem("Gem", 1);
+            else curPlayer.invBlock.addItem("Rock", 1);
+        }
     }
 }
 
@@ -62,7 +66,7 @@ function dig(x, y, amt) {
     if(Debuging){
         push();
         fill(255);
-        circle(((chunkPos.x*CHUNKSIZE+x)*TILESIZE) - camera.x + (width/2), ((chunkPos.y*CHUNKSIZE+y)*TILESIZE) - camera.y + (height/2), TILESIZE/2);
+        circle(((chunkPos.x*CHUNKSIZE+x)*TILESIZE) - camera.pos.x + (width/2), ((chunkPos.y*CHUNKSIZE+y)*TILESIZE) - camera.pos.y + (height/2), TILESIZE/2);
         pop();
     }
 
@@ -102,7 +106,7 @@ function cast(x,y, angle, placeBool){
 
     if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 0) return {cx: chunkPos.x, cy: chunkPos.y, x: x, y: y};
 
-    let playerToMouse = curPlayer.pos.dist(createVector((mouseX + camera.x - (width / 2)), (mouseY + camera.y - (height / 2))));
+    let playerToMouse = curPlayer.pos.dist(createVector((mouseX + camera.pos.x - (width / 2)), (mouseY + camera.pos.y - (height / 2))));
     let playerToTile = curPlayer.pos.dist(createVector(((chunkPos.x*CHUNKSIZE+x)*TILESIZE), ((chunkPos.y*CHUNKSIZE+y)*TILESIZE)));
 
     while(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] == 0){
@@ -145,10 +149,10 @@ function cast(x,y, angle, placeBool){
     stroke(0,255,0);
     strokeWeight(3);
     line(
-        tempRay.x*TILESIZE -camera.x+(width/2), 
-        tempRay.y*TILESIZE -camera.y+(height/2), 
-        (chunkPos.x*CHUNKSIZE+floor(x))*TILESIZE -camera.x+(width/2), 
-        (chunkPos.y*CHUNKSIZE+floor(y))*TILESIZE -camera.y+(height/2)
+        tempRay.x*TILESIZE -camera.pos.x+(width/2), 
+        tempRay.y*TILESIZE -camera.pos.y+(height/2), 
+        (chunkPos.x*CHUNKSIZE+floor(x))*TILESIZE -camera.pos.x+(width/2), 
+        (chunkPos.y*CHUNKSIZE+floor(y))*TILESIZE -camera.pos.y+(height/2)
     );
     pop();
 
