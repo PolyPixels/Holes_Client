@@ -384,7 +384,7 @@ function renderServerBrowser() {
                 socket = io.connect(getServerUrl(selectedServer));
                 socketSetup();
                 testMap = new Map();
-                ghostBuild = createObject("Wall", 0,0,0, 0, " ", " ");
+                ghostBuild = createObject("Wall", 0,0,0, 11, " ", " ");
                 console.log("Connected to " + selectedServer, socket);
                 hideServerBrowser();
                 gameState = "race_selection";
@@ -1711,7 +1711,7 @@ function defineBuildUI() {
         // If you want to prevent selection when not enough materials, uncomment:
         // if (!canBuild) return;
   
-        ghostBuild = createObject(option.objName, 0, 0, 0, curPlayer.color, " ", " ");
+        ghostBuild = createObject(option.objName, 0, 0, 0, 11, " ", " ");
         
         // Re-render to highlight the newly selected item
         renderBuildOptions();

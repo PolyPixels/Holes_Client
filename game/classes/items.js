@@ -319,7 +319,7 @@ class Seed extends SimpleItem{
         //doesnt wait for useTimer, because it needs space to be placed
         if(ghostBuild.openBool){
             let chunkPos = testMap.globalToChunk(x,y);
-            let temp = createObject(this.plantName, ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color, curPlayer.id, curPlayer.name);
+            let temp = createObject(this.plantName, ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, curPlayer.color, curPlayer.id, curPlayer.name);
             testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(temp);
             testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
             socket.emit("new_object", {

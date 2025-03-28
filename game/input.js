@@ -14,7 +14,7 @@ function keyReleased() {
     }
     if(gameState == "playing"){
         if (keyCode === 82){ //r
-            ghostBuild = createObject("Wall", 0, 0, 0, curPlayer.color, curPlayer.id, curPlayer.name);
+            ghostBuild = createObject("Wall", 0, 0, 0, 11, curPlayer.id, curPlayer.name);
             buildMode = !buildMode;
             renderGhost = buildMode;
         }
@@ -45,7 +45,7 @@ function keyReleased() {
 
                 ghostBuild = createObject(
                     option.objName, 0, 0, 0, 
-                    curPlayer.color, curPlayer.id, curPlayer.name
+                    11, curPlayer.id, curPlayer.name
                 );
 
                 renderBuildOptions();
@@ -191,7 +191,7 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                                 }
                             }
                             let chunkPos = testMap.globalToChunk(x,y);
-                            let temp = createObject(ghostBuild.objName, ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, ghostBuild.color, curPlayer.id, curPlayer.name);
+                            let temp = createObject(ghostBuild.objName, ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, curPlayer.color, curPlayer.id, curPlayer.name);
                             testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(temp);
                             testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
                             socket.emit("new_object", {
