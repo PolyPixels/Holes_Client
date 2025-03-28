@@ -16,7 +16,7 @@ var itemDic = {};
 defineShovel("Basic Shovel", ["shovel1"], [["Plank",1],["Rock",1]], 1, 100, 0.12, 3, 1, "A basic shovel for digging dirt",true);
 defineShovel("Better Shovel", ["shovel1"], [], 1, 100, 0.18, 3, 1, "A better shovel for digging dirt",true);
 defineShovel("God Shovel", ["shovel1"], [], 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt",true);
-defineMelee("Basic Sword", ["tempSword"], [], 1, 100, 10, 50, 90, 10, false, "A basic sword for slashing",true);
+defineMelee("Basic Sword", ["tempSword"], [], 1, 100, 10, 50, 90, 20, false, "A basic sword for slashing",true);
 defineMelee("Better Sword", ["tempSword"], [], 1, 100, 10, 1, 90, 10, false, "A better sword for slashing",true);
 defineRanged("Basic SlingShot", ["sling"], [], 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
 defineRanged("Better SlingShot", ["sling"], [], 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);

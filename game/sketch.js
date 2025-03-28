@@ -130,7 +130,9 @@ function draw() {
             renderPlayerCardUI();
 
             if(curPlayer.statBlock.stats.hp <= 0){ //death
-                console.log("dead")
+                console.log("dead");
+
+                curPlayer.invBlock.dropAll();
                 curPlayer.pos.x = random(-200*TILESIZE, 200*TILESIZE);
                 curPlayer.pos.y = random(-200*TILESIZE, 200*TILESIZE);
 

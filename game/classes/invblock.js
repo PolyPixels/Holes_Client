@@ -56,11 +56,30 @@ class InvBlock{
     }
 
     dropItem(item,amount){
-        //spawn a bag?
+        let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 11, "", "");
+        itemBag.invBlock.addItem(item, amount);
+        this.items[item].decreaseAmount(amount);
     }
 
     dropAll(){
-        //spawn a bag?
+        //spawn in an item bag
+        let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 11, "", "");
+        let keys = Object.keys(this.items);
+        for(let i = 0; i < keys.length; i++){
+            let item = this.items[keys[i]];
+            if(item.amount > 0){
+                itemBag.invBlock.addItem(keys[i], item.amount);
+                item.decreaseAmount(item.amount);
+            }
+        }
+        let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+        testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(itemBag);
+        testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
+        socket.emit("new_object", {
+            cx: chunkPos.x, 
+            cy: chunkPos.y, 
+            obj: itemBag
+        });
     }
 
     renderHotBar() {
