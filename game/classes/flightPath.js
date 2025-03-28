@@ -5,7 +5,7 @@ defineFlightPath("Straight", "p*TILESIZE", "0", 0.01, true);
 defineFlightPath("Screw", "20*(cos((p*360*2)+180)+(p*3.5))", "20*sin(p*360*2)", 0.01, true);
 defineFlightPath("Stay", "0", "0", 1, true);
 defineFlightPath("Circle", "60*cos(p*360)", "60*sin(p*360)", 0.01, true);
-defineFlightPath("FollowMouse", "(mouseX-lpX+camera.x-(width/2))*p", "(mouseY-lpY+camera.y-(height/2))*p", 0.01, true);
+defineFlightPath("FollowMouse", "(mouseX-lpX+camera.pos.x-(width/2))*p", "(mouseY-lpY+camera.pos.y-(height/2))*p", 0.01, true);
 
 class FlightPath{
     constructor(sx,sy,a,eqX, eqY, calcRes, repeate = true){

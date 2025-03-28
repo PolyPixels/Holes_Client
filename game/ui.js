@@ -621,6 +621,7 @@ function setupUI(){
     definePauseUI();
     defineBuildUI();
     definePlayerStatusDiv();
+    defineTeamPickUI();
     raceTitle = createDiv();
     // ---------------------------------------------------
     //  Create a container for race selection cards (centered)
@@ -1457,31 +1458,55 @@ function renderDirtBagUI(){
     // Dirt Inventory
     push();
     //should add an open and closed version
+
+    if(dirtBagUI.shake.length > 0){
+        if(dirtBagUI.vel.mag() < 1){
+            dirtBagUI.vel.x = dirtBagUI.shake.intensity;
+        }
+        dirtBagUI.vel.setMag(dirtBagUI.vel.mag()+dirtBagUI.shake.intensity);
+        if(dirtBagUI.vel.mag() > dirtBagUI.shake.intensity*5){
+            dirtBagUI.vel.setMag(dirtBagUI.shake.intensity*5);
+        }
+        dirtBagUI.vel.rotate(random(45, 180));
+        dirtBagUI.shake.length -= 1;
+    }
+    else{
+        dirtBagUI.shake.intensity = 0;
+        dirtBagUI.vel.x = ((width-180-10)-dirtBagUI.pos.x);
+        dirtBagUI.vel.y = ((height-186-10)-dirtBagUI.pos.y);
+        dirtBagUI.vel.setMag(dirtBagUI.vel.mag()/10);
+    }
+    dirtBagUI.pos.add(dirtBagUI.vel);
+
+    let dirtBagOpen = true;
     if(curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] == ""){
         if(dirtInv >= 150 - curPlayer.statBlock.stats.handDigSpeed){
-            image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
-        }
-        else{
-            image(dirtBagOpenImg, width - 180 - 10, height - 186 - 10, 180, 186);
+            dirtBagOpen = false;
         }
     }
     else if (curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Shovel"){
         if(dirtInv >= 150 - curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].digSpeed){
-            image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
-        }
-        else{
-            image(dirtBagOpenImg, width - 180 - 10, height - 186 - 10, 180, 186);
+            dirtBagOpen = false;
         }
     }
     else if(dirtInv >= 150 - DIGSPEED){
-        image(dirtBagImg, width - 180 - 10, height - 186 - 10, 180, 186);
+        dirtBagOpen = false;
     }
-    else{
-        image(dirtBagOpenImg, width - 180 - 10, height - 186 - 10, 180, 186);
-    }
-    
+
+    if(dirtBagOpen) image(dirtBagOpenImg, dirtBagUI.pos.x, dirtBagUI.pos.y, 180, 186);
+    else image(dirtBagImg, dirtBagUI.pos.x, dirtBagUI.pos.y, 180, 186);
+
     fill("#70443C");
-    rect(width - 180 + 20, height - 186 + 25 + (120 * (1-(dirtInv/150))), 120, 120 * (dirtInv/150));
+    rect(dirtBagUI.pos.x + 30, dirtBagUI.pos.y + 35 + (120 * (1-(dirtInv/150))), 120, 120 * (dirtInv/150));
+
+    if(!dirtBagOpen){
+        fill(255);
+        stroke(0);
+        strokeWeight(5);
+        textAlign(CENTER, CENTER);
+        textSize(50);
+        text("Full", dirtBagUI.pos.x + 90, dirtBagUI.pos.y + 100);
+    }
     pop();
 }
 
@@ -1611,7 +1636,7 @@ function defineBuildUI() {
       imgDiv.style('margin-right', '15px');
       imgDiv.parent(buildCard);
   
-      const img = createImg(option.image, option.type);
+      const img = createImg(option.images[curPlayer.color % option.images.length], option.type);
       img.style('width', '64px');
       img.style('height', '64px');
       img.style('image-rendering', 'pixelated');

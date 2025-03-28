@@ -60,7 +60,7 @@ class SimpleProjectile{
 
     render(){
         push();
-        translate(-camera.x+(width/2), -camera.y+(height/2));
+        translate(-camera.pos.x+(width/2), -camera.pos.y+(height/2));
         image(projImgs[this.imgNum][0], this.pos.x, this.pos.y);
         pop();
     }
@@ -100,13 +100,14 @@ class SimpleProjectile{
         }
 
         //check collision with curPlayer
-        if(this.ownerName != curPlayer.name || this.color != curPlayer.color){
+        if((this.color == 11 && this.ownerName != curPlayer.name) || this.color != curPlayer.color){
             if(this.pos.dist(curPlayer.pos) < 29){
                 this.deleteTag = true;
                 //if player collishion tell server to set delete tag to true
                 socket.emit("delete_proj", this);
                 
                 curPlayer.statBlock.stats.hp -= this.damage;
+                camera.shake = {intensity: this.damage, length: 5};
                 socket.emit("update_pos", curPlayer);
             }
         }
@@ -133,7 +134,7 @@ class MeleeProjectile extends SimpleProjectile{
 
     render(){
         push();
-        translate(-camera.x+(width/2), -camera.y+(height/2));
+        translate(-camera.pos.x+(width/2), -camera.pos.y+(height/2));
         noFill();
         if(Debuging){
             stroke(200, 200, 215);
@@ -202,13 +203,14 @@ class MeleeProjectile extends SimpleProjectile{
         }
 
         //check collision with curPlayer
-        if(this.ownerName != curPlayer.name || this.color != curPlayer.color){
+        if((this.color == 11 && this.ownerName != curPlayer.name) || this.color != curPlayer.color){
             let d = curPlayer.pos.dist(this.pos);
-            if(d-29 < (this.range*2)+this.safeRange && d+29 > this.safeRange && 
+            if(d-5 < (this.range)+this.safeRange && d+64 > this.safeRange && 
                 curPlayer.pos.copy().sub(this.pos).heading() > this.flightPath.a-(this.angleWidth/2) &&
                 curPlayer.pos.copy().sub(this.pos).heading() < this.flightPath.a+(this.angleWidth/2)
             ){
                 curPlayer.statBlock.stats.hp -= this.damage;
+                camera.shake = {intensity: this.damage, length: 5};
                 socket.emit("update_pos", curPlayer);
             }
         }
@@ -265,7 +267,7 @@ function damageObj(chunk, obj, damage){
     obj.hp -= damage;
     socket.emit("upadate_obj", {
         cx: chunk.cx, cy: chunk.cy,
-        type: obj.type, 
+        objName: obj.objName, 
         pos: {x: obj.pos.x, y: obj.pos.y}, 
         z: obj.z, 
         update_name: "hp", 

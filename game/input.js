@@ -14,6 +14,7 @@ function keyReleased() {
     }
     if(gameState == "playing"){
         if (keyCode === 82){ //r
+            ghostBuild = createObject("Wall", 0, 0, 0, curPlayer.color, curPlayer.id, curPlayer.name);
             buildMode = !buildMode;
             renderGhost = buildMode;
         }
@@ -43,7 +44,7 @@ function keyReleased() {
             if (option) {
 
                 ghostBuild = createObject(
-                    option.type, 0, 0, 0, 
+                    option.objName, 0, 0, 0, 
                     curPlayer.color, curPlayer.id, curPlayer.name
                 );
 
@@ -102,31 +103,39 @@ function mouseReleased(){
     }
     if(gameState != "playing") return;
 
+    if(mouseButton === LEFT){
+        //if you click on the player card, open the team select ui
+        if(mouseX > width-530 && mouseX < width && mouseY > 0 && mouseY < 100){
+            gameState = "team_select";
+            teamPickDiv.show();
+        }
+    }
 
-    let x = mouseX + camera.x - width / 2;
-    let y = mouseY + camera.y - height / 2;
+    let x = mouseX + camera.pos.x - width / 2;
+    let y = mouseY + camera.pos.y - height / 2;
     let chunkPos = testMap.globalToChunk(x,y);
     let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
     if(!chunk?.objects) return
     for(let i = 0; i < chunk.objects.length; i++){
         if(chunk.objects[i].objName == "Door"){
             if(createVector(x,y).dist(chunk.objects[i].pos) < chunk.objects[i].size.h){
-                if(chunk.objects[i].ownerName != curPlayer.name && (chunk.objects[i].color != curPlayer.color || chunk.objects[i].color == 0)) return; //only team members and you can open your doors
-                if(chunk.objects[i].alpha == 255){
-                    chunk.objects[i].alpha = 100;
+                if(chunk.objects[i].ownerName == curPlayer.name || chunk.objects[i].color == curPlayer.color){ //only team members and you can open your doors
+                    if(chunk.objects[i].alpha == 255){
+                        chunk.objects[i].alpha = 100;
+                    }
+                    else{
+                        chunk.objects[i].alpha = 255;
+                    }
+                    let chunkPos = testMap.globalToChunk(chunk.objects[i].pos.x,chunk.objects[i].pos.y);
+                    socket.emit("update_obj", {
+                        cx: chunkPos.x, cy: chunkPos.y, 
+                        objName: chunk.objects[i].objName, 
+                        pos: {x: chunk.objects[i].pos.x, y: chunk.objects[i].pos.y}, 
+                        z: chunk.objects[i].z, 
+                        update_name: "alpha", 
+                        update_value: chunk.objects[i].alpha
+                    });
                 }
-                else{
-                    chunk.objects[i].alpha = 255;
-                }
-                let chunkPos = testMap.globalToChunk(chunk.objects[i].pos.x,chunk.objects[i].pos.y);
-                socket.emit("update_obj", {
-                    cx: chunkPos.x, cy: chunkPos.y, 
-                    objName: chunk.objects[i].objName, 
-                    pos: {x: chunk.objects[i].pos.x, y: chunk.objects[i].pos.y}, 
-                    z: chunk.objects[i].z, 
-                    update_name: "alpha", 
-                    update_value: chunk.objects[i].alpha
-                });
             }
         }
     }
@@ -135,8 +144,8 @@ function mouseReleased(){
 function continousMouseInput(){ //ran once every frame, good for anything like digging, or items
     if (mouseIsPressed) {
         //converts screen space to global space
-        let x = mouseX + camera.x - width / 2;
-        let y = mouseY + camera.y - height / 2;
+        let x = mouseX + camera.pos.x - width / 2;
+        let y = mouseY + camera.pos.y - height / 2;
 
         if (mouseButton === LEFT) {
             if(gameState == "playing"){
@@ -146,6 +155,7 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                     }
                     else{
                         if (dirtInv < 150 - DIGSPEED) playerDig(x, y, DIGSPEED);
+                        else dirtBagUI.shake = {intensity: dirtBagUI.shake.intensity + 0.1, length: 1};
                     }
                 }
                 else{
@@ -215,13 +225,17 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                     let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
                     for(let i = 0; i < chunk.objects.length; i++){
                         if(createVector(x,y).dist(chunk.objects[i].pos) < (chunk.objects[i].size.w+chunk.objects[i].size.h)/2){
-                            socket.emit("delete_obj", {
-                                cx: chunkPos.x, cy: chunkPos.y, 
-                                type: chunk.objects[i].type, 
-                                pos: {x: chunk.objects[i].pos.x, y: chunk.objects[i].pos.y}, 
-                                z: chunk.objects[i].z
-                            });
-                            chunk.objects.splice(i,1);
+                            if((chunk.objects[i].color == 11 && chunk.objects[i].ownerName == curPlayer.name) || (chunk.objects[i].color != 11 && chunk.objects[i].color == curPlayer.color)){ //only team members and you can delete your objects
+                                socket.emit("delete_obj", {
+                                    cx: chunkPos.x, cy: chunkPos.y, 
+                                    objName: chunk.objects[i].objName, 
+                                    pos: {x: chunk.objects[i].pos.x, y: chunk.objects[i].pos.y}, 
+                                    z: chunk.objects[i].z
+                                });
+                                chunk.objects.splice(i,1);
+
+                                i = chunk.objects.length+1;
+                            }
                         }
                     }
                 }

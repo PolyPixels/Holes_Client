@@ -5,6 +5,8 @@ var chunkDirtImg;
 var dirtFloorImg;
 var dirtBagImg;
 var dirtBagOpenImg;
+var hpBarImg;
+var manaBarImg;
 var objImgs = [];
 var itemImgs = [];
 
@@ -20,6 +22,8 @@ function preload() {
     dirtFloorImg = loadImage('images/floor.png');
     dirtBagImg = loadImage('images/ui/dirtbag.png');
     dirtBagOpenImg = loadImage('images/ui/dirtbagopen.png');
+    hpBarImg = loadImage('images/ui/healthbar.png');
+    manaBarImg = loadImage('images/ui/manabar.png');
 
     //load obj imgs
     for(let i = 0; i < objImgPaths.length; i++){
@@ -149,7 +153,8 @@ function loadRaceImages() {
             front: [],
             back: [],
             left: [],
-            right: []
+            right: [],
+            portrait: loadImage(`images/characters/${raceName}/${raceName}_portrait.png`)
         };
         
         // 0 is standing
