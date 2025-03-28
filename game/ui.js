@@ -1622,7 +1622,7 @@ function defineBuildUI() {
       buildCard.parent(li);
   
       // If this item is currently selected, highlight the card
-      if (ghostBuild.objName === option.type) {
+      if (ghostBuild.objName === option.objName) {
         buildCard.style('background-color', 'rgba(255, 255, 255, 0.2)');
         buildCard.style('box-shadow', '0 4px 10px rgba(0, 0, 0, 0.5)');
         buildCard.style('border', '3px solid #ffcc00');
@@ -1636,7 +1636,7 @@ function defineBuildUI() {
       imgDiv.style('margin-right', '15px');
       imgDiv.parent(buildCard);
   
-      const img = createImg(option.images[curPlayer.color % option.images.length], option.type);
+      const img = createImg(option.images[curPlayer.color % option.images.length], option.objName);
       img.style('width', '64px');
       img.style('height', '64px');
       img.style('image-rendering', 'pixelated');
@@ -1649,8 +1649,8 @@ function defineBuildUI() {
       infoDiv.style('flex-grow', '1');
       infoDiv.parent(buildCard);
   
-      // Title row (key + object type)
-      const titleDiv = createDiv(`${humanKey}: ${option.type}`);
+      // Title row (key + object objName)
+      const titleDiv = createDiv(`${humanKey}: ${option.objName}`);
       titleDiv.style('font-size', '1.1rem');
       titleDiv.style('font-weight', 'bold');
       titleDiv.style('margin-bottom', '8px');
@@ -1658,7 +1658,7 @@ function defineBuildUI() {
   
       // Check if player can build (enough materials)
       let canBuild = true;
-      const costArray = objDic[option.type].cost; 
+      const costArray = objDic[option.objName].cost; 
       // costArray example: [ ["dirt", 20], ["Rock", 5] ]
   
       // This div will list each required material
@@ -1691,7 +1691,7 @@ function defineBuildUI() {
         // If you want to prevent selection when not enough materials, uncomment:
         // if (!canBuild) return;
   
-        ghostBuild = createObject(option.type, 0, 0, 0, curPlayer.color, " ", " ");
+        ghostBuild = createObject(option.objName, 0, 0, 0, curPlayer.color, " ", " ");
         
         // Re-render to highlight the newly selected item
         renderBuildOptions();
@@ -1849,3 +1849,151 @@ function toggleSettings() {
     }
 }
 
+function renderPlayerCardUI(){
+    push();
+    fill(0);
+    noStroke();
+    rect(width-530, 0, 510, 125);
+
+    stroke(134);
+    strokeWeight(4);
+    rect(width-530+6, -20, 510-12, 120+20-6, 10);
+
+    strokeWeight(2);
+    line(width-30-115+6, 7, width-30-115+6, 120-6);
+    line(width-530+6+5, 42, width-30-115+6-5, 42);
+
+    noStroke();
+    fill(134);
+    rect(width-530+6+79, 52, 295, 21);
+    rect(width-530+6+79, 83, 295, 21);
+
+    fill(112, 68, 60);
+    rect(width-30-115+6+7, 7, 98, 98);
+
+    fill(0);
+    rect(width-530+91, 52, 36, 19);
+    rect(width-530+128, 52, 33, 19);
+    rect(width-530+163, 52, 34, 19);
+    rect(width-530+199, 52, 33, 19);
+    rect(width-530+233, 52, 35, 19);
+    rect(width-530+269, 52, 33, 19);
+    rect(width-530+304, 52, 34, 19);
+    rect(width-530+340, 52, 36, 19);
+
+    rect(width-530+91, 83, 36, 19);
+    rect(width-530+128, 83, 33, 19);
+    rect(width-530+163, 83, 34, 19);
+    rect(width-530+199, 83, 33, 19);
+    rect(width-530+233, 83, 35, 19);
+    rect(width-530+269, 83, 33, 19);
+    rect(width-530+304, 83, 34, 19);
+    rect(width-530+340, 83, 36, 19);
+
+    image(hpBarImg, width-530+93, 52, 281*(curPlayer.statBlock.stats.hp/curPlayer.statBlock.stats.mhp), 14, 0, 0, 281*(curPlayer.statBlock.stats.hp/curPlayer.statBlock.stats.mhp), 14);
+    image(manaBarImg, width-530+93, 83, 281*(1), 14);
+
+    let raceName = races[curPlayer.race];
+    image(raceImages[raceName].portrait, width-30-115+6+7, 7, 98, 98);
+
+    textFont(gameUIFont);
+    textSize(20);
+    strokeWeight(1);
+    fill(134);
+    stroke(134);
+    text("lvl", width-530+6+10+10, 35);
+    fill(0,255,0);
+    stroke(0,255,0);
+    text(curPlayer.statBlock.level, width-530+6+30+10+5, 35);
+    fill(255,0,0);
+    stroke(255,0,0);
+    text("HP:", width-530+6+30, 70);
+    // fill(0,255,255);
+    // stroke(0,255,255);
+    // text("MP:", width-530+6+30, 100);
+    fill(255,255,0);
+    stroke(255,255,0);
+    text("AMMO:", width-530+6+15, 100);
+    //fill with team color
+    fill(teamColors[curPlayer.color].r, teamColors[curPlayer.color].g, teamColors[curPlayer.color].b);
+    stroke(teamColors[curPlayer.color].r, teamColors[curPlayer.color].g, teamColors[curPlayer.color].b);
+    textAlign(CENTER, CENTER);
+    text(curPlayer.name, width-530+6+45+(350/2), 19);
+
+    let box = gameUIFont.textBounds(curPlayer.name, width-530+6+45+(350/2), 19);
+    line(box.x, box.y+box.h+4, box.x+box.w, box.y+box.h+4);
+    pop();
+}
+
+var teamPickDiv;
+ 
+function defineTeamPickUI(){
+    teamPickDiv = createDiv();
+    teamPickDiv.class("container");
+    teamPickDiv.id("teamPickDiv");
+    teamPickDiv.style("position", "absolute");
+    teamPickDiv.style("top", "50%");
+    teamPickDiv.style("left", "50%");
+    teamPickDiv.style("transform", "translate(-50%, -50%)");
+    teamPickDiv.style("display", "none");
+    teamPickDiv.style("width", "25%");
+    teamPickDiv.style("height", "20%");
+    teamPickDiv.style("border", "2px solid black");
+    teamPickDiv.style("border-radius", "10px");
+    teamPickDiv.style("text-align", "center");
+    teamPickDiv.style("padding", "20px");
+ 
+    updateTeamPickUI();
+}
+ 
+function updateTeamPickUI(){
+    teamPickDiv.html("");
+
+    let teamPickTitle = createP("Pick Team");
+    teamPickTitle.style("font-size", "28px");
+    teamPickTitle.style("font-weight", "bold");
+    teamPickTitle.style("color", "white");
+    teamPickTitle.style("text-decoration", "underline");
+    teamPickTitle.style("margin", "0px");
+    teamPickTitle.parent(teamPickDiv);
+
+    //turn the team colors into buttons
+    for(let i = 0; i < teamColors.length; i++){
+        let teamButton = createButton("");
+
+        teamButton.style("width", "50px");
+        teamButton.style("height", "50px");
+        teamButton.style("background-color", "rgb("+teamColors[i].r+","+teamColors[i].g+","+teamColors[i].b+")");
+        teamButton.style("margin", "10px");
+        teamButton.style("padding", "0px");
+        teamButton.style("border-radius", "0px");
+        teamButton.style("border", "2px solid black");
+        teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128)");
+        teamButton.style("cursor", "pointer");
+        if(curPlayer == undefined){
+            if(i == 11){
+                teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128), 0 0 0 8px rgb(255, 255, 255)");
+            }
+        }
+        else{
+            if(curPlayer.color == i){
+                teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128), 0 0 0 8px rgb(255, 255, 255)");
+            }
+        }
+        if(i == 11){
+            teamButton.style("background-color", "rgb(0,0,0)");
+            teamButton.style("background-image", "url('images/ui/none.png')");
+            teamButton.style("background-size", "contain");
+            teamButton.style("background-repeat", "no-repeat");
+            teamButton.style("background-position", "center");
+        }
+
+        teamButton.mousePressed(() => {
+            curPlayer.color = i;
+            updateTeamPickUI();
+            teamPickDiv.hide();
+            gameState = "playing";
+        });
+        teamButton.parent(teamPickDiv);
+    }
+}

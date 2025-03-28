@@ -133,11 +133,11 @@ class Player {
         if(Debuging){
             push();
             fill(255);
-            circle(((x+(chunkPos.x*CHUNKSIZE))*TILESIZE)-camera.x+(width/2),((y+(chunkPos.y*CHUNKSIZE))*TILESIZE)-camera.y+(height/2), 10);
-            circle(((x2+(chunkPos2.x*CHUNKSIZE))*TILESIZE)-camera.x+(width/2),((y2+(chunkPos2.y*CHUNKSIZE))*TILESIZE)-camera.y+(height/2), 10);
+            circle(((x+(chunkPos.x*CHUNKSIZE))*TILESIZE)-camera.pos.x+(width/2),((y+(chunkPos.y*CHUNKSIZE))*TILESIZE)-camera.pos.y+(height/2), 10);
+            circle(((x2+(chunkPos2.x*CHUNKSIZE))*TILESIZE)-camera.pos.x+(width/2),((y2+(chunkPos2.y*CHUNKSIZE))*TILESIZE)-camera.pos.y+(height/2), 10);
 
             fill(255,0,0);
-            circle(((midpoint.x+(chunkPos2.x*CHUNKSIZE))*TILESIZE)-camera.x+(width/2),((midpoint.y+(chunkPos2.y*CHUNKSIZE))*TILESIZE)-camera.y+(height/2), 10);
+            circle(((midpoint.x+(chunkPos2.x*CHUNKSIZE))*TILESIZE)-camera.pos.x+(width/2),((midpoint.y+(chunkPos2.y*CHUNKSIZE))*TILESIZE)-camera.pos.y+(height/2), 10);
             pop();
         }
 
@@ -254,7 +254,7 @@ class Player {
         if(testMap.chunks[chunkPos.x+","+chunkPos.y] == undefined) return;
         push();
         // Move relative to the camera
-        translate(-camera.x + width/2, -camera.y + height/2);
+        translate(-camera.pos.x + width/2, -camera.pos.y + height/2);
         
         // Decide how far above the character we want the label
         // For a "larger z" effect, increase this from 40 to e.g. 60 or 80
