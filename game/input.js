@@ -154,7 +154,7 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                         curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].use(x, y, mouseButton);
                     }
                     else{
-                        if (dirtInv < 150 - DIGSPEED) playerDig(x, y, DIGSPEED);
+                        if (dirtInv < maxDirtInv - DIGSPEED) playerDig(x, y, DIGSPEED);
                         else dirtBagUI.shake = {intensity: dirtBagUI.shake.intensity + 0.1, length: 1};
                     }
                 }

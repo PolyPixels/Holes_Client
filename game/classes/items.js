@@ -96,7 +96,7 @@ class Shovel extends SimpleItem{
     use(x,y,mouseButton){
         //doesnt wait for useTimer, because it is a continuous action
         if(mouseButton == LEFT){ //dig dirt
-            if (dirtInv < 150 - this.digSpeed) playerDig(x, y, this.digSpeed);
+            if (dirtInv < maxDirtInv - this.digSpeed) playerDig(x, y, this.digSpeed);
             else dirtBagUI.shake = {intensity: dirtBagUI.shake.intensity + 0.01, length: 1};
         }
         else if(mouseButton == RIGHT){ //place dirt

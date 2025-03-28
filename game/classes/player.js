@@ -7,6 +7,7 @@ var players = {}; //other players
 
 //player globals
 var dirtInv = 0;
+var maxDirtInv = 300;
 var buildMode = false;
 var renderGhost = false;
 var wantRotate = true;

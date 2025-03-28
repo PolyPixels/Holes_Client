@@ -1493,16 +1493,16 @@ function renderDirtBagUI(){
 
     let dirtBagOpen = true;
     if(curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] == ""){
-        if(dirtInv >= 150 - curPlayer.statBlock.stats.handDigSpeed){
+        if(dirtInv >= maxDirtInv - curPlayer.statBlock.stats.handDigSpeed){
             dirtBagOpen = false;
         }
     }
     else if (curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Shovel"){
-        if(dirtInv >= 150 - curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].digSpeed){
+        if(dirtInv >= maxDirtInv - curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].digSpeed){
             dirtBagOpen = false;
         }
     }
-    else if(dirtInv >= 150 - DIGSPEED){
+    else if(dirtInv >= maxDirtInv - DIGSPEED){
         dirtBagOpen = false;
     }
 
@@ -1510,7 +1510,7 @@ function renderDirtBagUI(){
     else image(dirtBagImg, dirtBagUI.pos.x, dirtBagUI.pos.y, 180, 186);
 
     fill("#70443C");
-    rect(dirtBagUI.pos.x + 30, dirtBagUI.pos.y + 35 + (120 * (1-(dirtInv/150))), 120, 120 * (dirtInv/150));
+    rect(dirtBagUI.pos.x + 30, dirtBagUI.pos.y + 35 + (120 * (1-(dirtInv/maxDirtInv))), 120, 120 * (dirtInv/maxDirtInv));
 
     if(!dirtBagOpen){
         fill(255);
