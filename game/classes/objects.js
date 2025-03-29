@@ -351,26 +351,32 @@ class InvObj extends Placeable{
 
     update(){
         super.update();
-        if(mouseIsPressed){
-            if(createVector(mouseX + camera.pos.x - width / 2, mouseY + camera.pos.y - height / 2).dist(this.pos) < (this.size.w+this.size.h)/2){ //if mouse is over the obj
-                if(mouseButton == LEFT){ //open inv
-                    if(this.locked){ //when locked only owner can open
-                        if(curPlayer.name == this.ownerName && curPlayer.id == this.id){
-                            //openInv(this.inv);
-                            console.log("open Inv");
-                        }
-                    }
-                    else{ //when unlocked all team members can open
-                        if(curPlayer.color == this.color){
-                            //openInv(this.inv);
-                            console.log("open Inv");
-                        }
+        if(gameState != "playing") return;
+        if(!mouseIsPressed) return;
+        if(createVector(mouseX + camera.pos.x - width / 2, mouseY + camera.pos.y - height / 2).dist(this.pos) < (this.size.w+this.size.h)/2){ //if mouse is over the obj
+            if(mouseButton == LEFT){ //open inv
+                if(this.locked){ //when locked only owner can open
+                    if(curPlayer.name == this.ownerName && curPlayer.id == this.id){
+                        gameState = "swap_inv";
+                        curPlayer.otherInv = this.invBlock;
+                        updateSwapItemLists(this.invBlock);
+                        swapInvDiv.show();
+                        console.log("open Inv");
                     }
                 }
-                else if(mouseButton == RIGHT){ //right click to lock or unlock this chest
-                    if(curPlayer.name == this.ownerName && curPlayer.id == this.id){
-                        this.locked = !this.locked;
+                else{ //when unlocked all team members can open
+                    if(curPlayer.color == this.color){
+                        gameState = "swap_inv";
+                        curPlayer.otherInv = this.invBlock;
+                        updateSwapItemLists(this.invBlock);
+                        swapInvDiv.show();
+                        console.log("open Inv");
                     }
+                }
+            }
+            else if(mouseButton == RIGHT){ //right click to lock or unlock this chest
+                if(curPlayer.name == this.ownerName && curPlayer.id == this.id){
+                    this.locked = !this.locked;
                 }
             }
         }

@@ -300,7 +300,7 @@ input:hover {
   max-height: 70%;
   min-height: 50%;
   height: auto;
-  overflow-y: scroll; /* or scroll if you need forced scrolling */
+  overflow-y: clip; /* CR - I want the pieces inside to deal with their overflow not the entire container */
 }
 
 /* Title styling */
@@ -353,12 +353,14 @@ input:hover {
 .item-list {
   flex: 1;
   overflow-y: auto;
+  height: 65vh;
 }
 
 .item-details {
   flex: 1;
   border-left: 2px solid black;
-  overflow-y: auto;
+  overflow-y: clip;
+  height: 65vh;
 }
 
 /* Spacebar hotkey area */

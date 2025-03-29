@@ -60,21 +60,6 @@ class SimpleItem{
         image(itemImgs[this.imgNum][0], x,y, 60, 60);
     }
 
-    decreaseAmount(amount){
-        this.amount -= amount;
-        if(this.amount <= 0){
-            for(let i=0; i<curPlayer.invBlock.hotbar.length; i++){ //remove item from hotbar
-                if(curPlayer.invBlock.hotbar[i] == this.itemName){
-                    curPlayer.invBlock.hotbar[i] = "";
-                }
-            }
-            if(!buildMode){
-                renderGhost = false;
-            }
-            delete curPlayer.invBlock.items[this.itemName]; //remove item from inventory
-        }
-    }
-
     getStats(){
         return [
             ["Durability", this.durability], 
@@ -190,7 +175,7 @@ class Ranged extends SimpleItem{
                         //tell the server you made a projectile
                         socket.emit("new_proj", proj);
                         this.bulletsLeft --;
-                        curPlayer.invBlock.items[this.ammoName].decreaseAmount(1);
+                        curPlayer.invBlock.decreaseAmount(this.ammoName, 1);
                         curPlayer.invBlock.useTimer = this.fireRate;
                     }
                 }
@@ -243,7 +228,7 @@ class Food extends SimpleItem{
         } else if(curPlayer.invBlock.useTimer <= 0){
             curPlayer.statBlock.heal(this.heal);
             curPlayer.invBlock.useTimer = this.eatWait;
-            this.decreaseAmount(1);
+            curPlayer.invBlock.decreaseAmount(this.itemName, 1);
         }
     }
 
@@ -270,7 +255,7 @@ class Potion extends SimpleItem{
         if(curPlayer.invBlock.useTimer <= 0){
             console.log("Drink");
             curPlayer.invBlock.useTimer = 60;
-            this.decreaseAmount(1);
+            curPlayer.invBlock.decreaseAmount(this.itemName, 1);
         }
     }
 
@@ -335,7 +320,7 @@ class Seed extends SimpleItem{
             curPlayer.animationCreate("put");
             socket.emit("update_pos", curPlayer);
 
-            this.decreaseAmount(1);
+            curPlayer.invBlock.decreaseAmount(this.itemName, 1);
         }
     }
 }

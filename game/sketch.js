@@ -165,7 +165,7 @@ function draw() {
 
         renderDirtBagUI();
     }
-    if (gameState === "inventory" || gameState === "pause" || gameState =="player_status" || gameState == "team_select") {
+    if (gameState === "inventory" || gameState === "swap_inv" || gameState === "pause" || gameState =="player_status" || gameState == "team_select") {
         //render the game in the background
         if (Object.keys(testMap.chunks).length > 0) {
             testMap.render();

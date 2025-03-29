@@ -27,6 +27,21 @@ class InvBlock{
         //added item popup?
     }
 
+    decreaseAmount(item, amount){
+        this.items[item].amount -= amount;
+        if(this.items[item].amount <= 0){
+            for(let i=0; i<this.hotbar.length; i++){ //remove item from hotbar
+                if(this.hotbar[i] == item){
+                    this.hotbar[i] = "";
+                }
+            }
+            if(!buildMode){
+                renderGhost = false;
+            }
+            delete this.items[item]; //remove item from inventory
+        }
+    }
+
     equipItem(itemName){
         if(this.items[itemName].type == "Equipment"){
             if(this.equiped[this.items[itemName].slot] != "") this.unEquipItem(this.items[itemName].slot);
@@ -58,7 +73,7 @@ class InvBlock{
     dropItem(item,amount){
         let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 11, "", "");
         itemBag.invBlock.addItem(item, amount);
-        this.items[item].decreaseAmount(amount);
+        this.decreaseAmount(item, amount);
     }
 
     dropAll(){
@@ -69,7 +84,7 @@ class InvBlock{
             let item = this.items[keys[i]];
             if(item.amount > 0){
                 itemBag.invBlock.addItem(keys[i], item.amount);
-                item.decreaseAmount(item.amount);
+                this.decreaseAmount(item, item.amount);
             }
         }
         let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);

@@ -624,6 +624,7 @@ function setupUI(){
     defineBuildUI();
     definePlayerStatusDiv();
     defineTeamPickUI();
+    defineSwapInvUI();
     raceTitle = createDiv();
     // ---------------------------------------------------
     //  Create a container for race selection cards (centered)
@@ -1320,7 +1321,7 @@ function updatecurItemDiv(){
     itemImgDiv.style("height", "100%");
     itemImgDiv.style("border", "2px solid black");
     itemImgDiv.style("border-radius", "10px");
-    console.log(itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]);
+    //console.log(itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]);
     itemImgDiv.style("background-image", "url("+itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]+")");
     itemImgDiv.style("background-size", "contain");
     itemImgDiv.style("background-repeat", "no-repeat");
@@ -2021,4 +2022,289 @@ function updateTeamPickUI(){
         });
         teamButton.parent(teamPickDiv);
     }
+}
+
+var swapInvDiv;
+var itemListDivLeft;
+var itemListDivRight;
+var curSwapItemDiv;
+
+function defineSwapInvUI(){
+    swapInvDiv = createDiv();
+    swapInvDiv.id("inventory");
+    swapInvDiv.class("container");
+    swapInvDiv.style("position", "absolute");
+    swapInvDiv.style("position", "absolute");
+    swapInvDiv.style("top", "50%");
+    swapInvDiv.style("left", "50%");
+    swapInvDiv.style("transform", "translate(-50%, -50%)");
+
+    let swapInvDivInnerds = createDiv();
+    swapInvDivInnerds.parent(swapInvDiv);
+    swapInvDivInnerds.style("display", "flex");
+    swapInvDivInnerds.style("flex-direction", "row");
+    swapInvDivInnerds.style("justify-content", "space-evenly");
+    swapInvDivInnerds.style("align-items", "start");
+
+
+    //Left Item list
+    itemListDivLeft = createDiv().parent(swapInvDivInnerds);
+    itemListDivLeft.class("item-list");
+  
+    // Current item details
+    curSwapItemDiv = createDiv().parent(swapInvDivInnerds);
+    curSwapItemDiv.class("item-details");
+
+    //Right Item list
+    itemListDivRight = createDiv().parent(swapInvDivInnerds);
+    itemListDivRight.class("item-list");
+
+    swapInvDiv.hide();
+}
+
+function updateSwapItemLists(otherInv){
+    if(curPlayer == undefined) return;
+
+    itemListDivLeft.html("");
+    //create a div for each item in the inventory
+    let arr = Object.keys(curPlayer.invBlock.items);
+
+    for(let i = 0; i < arr.length; i++){
+        let itemName = arr[i];
+        let itemDiv = createDiv();
+        itemDiv.style("width", "100%");
+        itemDiv.style("height", "50px");
+        itemDiv.style("display", "flex");
+        itemDiv.style("align-items", "center");
+        itemDiv.style("justify-content", "center");
+        itemDiv.style("border-bottom", "2px solid black");
+        if(curPlayer.invBlock.curItem == itemName) itemDiv.style("background-color", "rgb(120, 120, 120)");
+        if(curPlayer.invBlock.curItem == itemName) itemDiv.style("font-style", "italic");
+        itemDiv.style("cursor", "pointer");
+        itemDiv.parent(itemListDivLeft);
+        itemDiv.mousePressed(() => {
+            curPlayer.invBlock.curItem = itemName;
+            otherInv.curItem = "";
+            updateSwapItemLists(otherInv);
+            updatecurSwapItemDiv(otherInv);
+        });
+
+        let itemInfoDiv = createDiv();
+        itemInfoDiv.style("width", "80%");
+        itemInfoDiv.style("height", "50px");
+        itemInfoDiv.style("display", "flex");
+        itemInfoDiv.style("align-items", "center");
+        itemInfoDiv.style("justify-content", "space-between");
+        itemInfoDiv.parent(itemDiv);
+
+        let itemNameP = createP((itemName == curPlayer.invBlock.curItem ? "* ":"") + itemName);
+        itemNameP.style("font-size", "20px");
+        itemNameP.style("color", "white");
+        itemNameP.parent(itemInfoDiv);
+
+        let itemAmount = createP(curPlayer.invBlock.items[itemName].amount);
+        itemAmount.style("font-size", "20px");
+        itemAmount.style("color", "white");
+        itemAmount.parent(itemInfoDiv);
+    }
+
+    itemListDivRight.html("");
+    arr = Object.keys(otherInv.items);
+    for(let i=0; i<arr.length; i++){
+        let itemName = arr[i];
+        let itemDiv = createDiv();
+        itemDiv.style("width", "100%");
+        itemDiv.style("height", "50px");
+        itemDiv.style("display", "flex");
+        itemDiv.style("align-items", "center");
+        itemDiv.style("justify-content", "center");
+        itemDiv.style("border-bottom", "2px solid black");
+        if(otherInv.curItem == itemName) itemDiv.style("background-color", "rgb(120, 120, 120)");
+        if(otherInv.curItem == itemName) itemDiv.style("font-style", "italic");
+        itemDiv.style("cursor", "pointer");
+        itemDiv.parent(itemListDivRight);
+        itemDiv.mousePressed(() => {
+            curPlayer.invBlock.curItem = "";
+            otherInv.curItem = itemName;
+            updateSwapItemLists(otherInv);
+            updatecurSwapItemDiv(otherInv);
+        });
+
+        let itemInfoDiv = createDiv();
+        itemInfoDiv.style("width", "80%");
+        itemInfoDiv.style("height", "50px");
+        itemInfoDiv.style("display", "flex");
+        itemInfoDiv.style("align-items", "center");
+        itemInfoDiv.style("justify-content", "space-between");
+        itemInfoDiv.parent(itemDiv);
+
+        let itemNameP = createP((itemName == otherInv.curItem ? "* ":"") + itemName);
+        itemNameP.style("font-size", "20px");
+        itemNameP.style("color", "white");
+        itemNameP.parent(itemInfoDiv);
+
+        let itemAmount = createP(otherInv.items[itemName].amount);
+        itemAmount.style("font-size", "20px");
+        itemAmount.style("color", "white");
+        itemAmount.parent(itemInfoDiv);
+    }
+}
+
+
+function updatecurSwapItemDiv(otherInv){
+    if(curPlayer == undefined) return;
+    let curSwapItem;
+    if(curPlayer.invBlock.curItem != ""){
+        curSwapItem = curPlayer.invBlock.items[curPlayer.invBlock.curItem];
+    }
+    else if (otherInv.curItem != ""){
+        curSwapItem = otherInv.items[otherInv.curItem];
+    }
+
+    //clear the div
+    curSwapItemDiv.html("");
+
+    let itemCardDiv = createDiv();
+    itemCardDiv.style("width", "100%");
+    itemCardDiv.style("height", "30%");
+    itemCardDiv.style("display", "flex");
+    itemCardDiv.style("margin-bottom", "20px");
+    itemCardDiv.parent(curSwapItemDiv);
+
+    let itemImgDiv = createDiv();
+    itemImgDiv.style("width", "50%");
+    itemImgDiv.style("border", "2px solid black");
+    itemImgDiv.style("border-radius", "10px");
+    //console.log(itemImgPaths[curSwapItem.imgNum][0]);
+    itemImgDiv.style("background-image", "url("+itemImgPaths[curSwapItem.imgNum][0]+")");
+    itemImgDiv.style("background-size", "contain");
+    itemImgDiv.style("background-repeat", "no-repeat");
+    itemImgDiv.style("background-position", "center");
+    itemImgDiv.style("image-rendering", "pixelated");
+    itemImgDiv.parent(itemCardDiv);
+
+    let itemNameDescDiv = createDiv();
+    itemNameDescDiv.style("width", "calc(50% - 8px)");
+    itemNameDescDiv.style("height", "100%");
+    itemNameDescDiv.parent(itemCardDiv);
+
+    let itemNameDiv = createDiv();
+    itemNameDiv.style("width", "100%");
+    itemNameDiv.style("height", "20%");
+    itemNameDiv.style("border", "2px solid black");
+    itemNameDiv.style("border-radius", "10px");
+    itemNameDiv.parent(itemNameDescDiv);
+
+    let itemNameP = createP(curSwapItem.itemName);
+    itemNameP.style("font-size", "20px");
+    itemNameP.style("color", "white");
+    itemNameP.style("margin", "5px");
+    itemNameP.parent(itemNameDiv);
+
+    //create a div for the description
+    let itemDescDiv = createDiv();
+    itemDescDiv.style("width", "100%");
+    itemDescDiv.style("height", "calc(80% - 5px)");
+    itemDescDiv.style("border", "2px solid black");
+    itemDescDiv.style("border-radius", "10px");
+    itemDescDiv.parent(itemNameDescDiv);
+
+    let itemDescP = createP(curSwapItem.desc);
+    itemDescP.style("font-size", "20px");
+    itemDescP.style("color", "white");
+    itemDescP.style("margin", "5px");
+    itemDescP.parent(itemDescDiv);
+
+    let itemStatsDiv = createDiv();
+    itemStatsDiv.style("width", "100%");
+    itemStatsDiv.style("height", "calc(70% - 10px)");
+    itemStatsDiv.parent(curSwapItemDiv);
+  
+    if(curSwapItem.type != "Simple"){
+
+        let durabilityDiv = createDiv();
+        durabilityDiv.style("width", "calc(100% - 14px)");
+        durabilityDiv.style("height", "10%");
+        durabilityDiv.style("padding", "5px");
+        durabilityDiv.style("border", "2px solid black");
+        durabilityDiv.style("border-radius", "10px");
+        durabilityDiv.style("display", "flex");
+        durabilityDiv.style("align-items", "center");
+        durabilityDiv.style("justify-content", "center");
+        durabilityDiv.style("margin-bottom", "5px");
+        durabilityDiv.parent(itemStatsDiv);
+        
+        let durabilityText = createP("Durability:");
+        durabilityText.style("font-size", "20px");
+        durabilityText.style("color", "white");
+        durabilityText.parent(durabilityDiv);
+        
+        let durabilityBar = createDiv();
+        durabilityBar.style("width", "80%");
+        durabilityBar.style("height", "20px");
+        durabilityBar.style("background-color", "red");
+        durabilityBar.style("border", "2px solid black");
+        durabilityBar.style("border-radius", "10px");
+        durabilityBar.parent(durabilityDiv);
+        
+        let durabilityFill = createDiv();
+        durabilityFill.style("width", ((curSwapItem.durability/curSwapItem.maxDurability)*100)+"%");
+        durabilityFill.style("height", "100%");
+        durabilityFill.style("background-color", "green");
+        durabilityFill.style("border-radius", "10px");
+        durabilityFill.parent(durabilityBar);
+    }
+
+    let statsText = createDiv("Stats");
+    statsText.style("font-size", "20px");
+    statsText.style("color", "white");
+    statsText.style("text-align", "center");
+    statsText.style("border", "2px solid black");
+    statsText.style("border-radius", "10px");
+    statsText.style("padding", "10px");
+    statsText.style("margin-bottom", "5px");
+    statsText.parent(itemStatsDiv);
+
+    let statsList = createDiv();
+    statsList.style("width", "100%");
+    statsList.style("height", "calc(90% - 10px)");
+    statsList.style("overflow-y", "auto");
+    statsList.parent(itemStatsDiv);
+
+    let stats = curSwapItem.getStats();
+    stats.forEach(stat => {
+        if(stat[0] == "Durability"){}
+        else{
+            let statDiv = createDiv();
+            statDiv.style("width", "100%");
+            statDiv.style("height", "20px");
+            statDiv.style("display", "flex");
+            statDiv.style("margin-bottom", "12px");
+            statDiv.parent(statsList);
+
+            let statNameDiv = createDiv(stat[0]+":");
+            statNameDiv.style("width", "50%");
+            statNameDiv.style("height", "100%");
+            statNameDiv.style("color", "white");
+            statNameDiv.style("text-align", "center");
+            statNameDiv.style("font-size", "20px");
+            statNameDiv.style("border", "2px solid black");
+            statNameDiv.style("border-radius", "10px");
+            statNameDiv.style("padding", "5px");
+            statNameDiv.parent(statDiv);
+
+            let statNumDiv = createDiv(stat[1]);
+            statNumDiv.style("width", "50%");
+            statNumDiv.style("height", "100%");
+            statNumDiv.style("color", "white");
+            statNumDiv.style("text-align", "center");
+            statNumDiv.style("font-size", "20px");
+            statNumDiv.style("border", "2px solid black");
+            statNumDiv.style("border-radius", "10px");
+            statNumDiv.style("padding", "5px");
+            statNumDiv.parent(statDiv);
+        }
+    });
+
+    updateSpaceBarDiv();
 }

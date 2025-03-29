@@ -65,6 +65,36 @@ function keyReleased() {
             invDiv.hide();
         }
     }
+    else if(gameState == "swap_inv"){
+        if (keyCode === 32) { //space
+            console.log("swap?");
+            if(curPlayer.invBlock.curItem != ""){
+                curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem,1);
+                curPlayer.otherInv.addItem(curPlayer.invBlock.curItem, 1);
+
+                if(curPlayer.invBlock.items[curPlayer.invBlock.curItem] == undefined){
+                    curPlayer.otherInv.curItem = curPlayer.invBlock.curItem;
+                    curPlayer.invBlock.curItem = "";
+                }
+            }
+            else if(curPlayer.otherInv.curItem != ""){
+                curPlayer.otherInv.decreaseAmount(curPlayer.otherInv.curItem, 1);
+                curPlayer.invBlock.addItem(curPlayer.otherInv.curItem, 1);
+
+                if(curPlayer.otherInv.items[curPlayer.otherInv.curItem] == undefined){
+                    curPlayer.invBlock.curItem = curPlayer.otherInv.curItem;
+                    curPlayer.otherInv.curItem = "";
+                }
+            }
+
+            updateSwapItemLists(curPlayer.otherInv);
+            updatecurSwapItemDiv(curPlayer.otherInv);
+        }
+        if(keyCode == 73){ //i
+            gameState = "playing";
+            swapInvDiv.hide();
+        }
+    }
 
     else if (gameState =="pause") {
         if(keyCode == 80 || keyCode ==27){ //p or ESC
@@ -187,7 +217,7 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                                     dirtInv -= objDic[ghostBuild.objName].cost[i][1];
                                 }
                                 else{
-                                    curPlayer.invBlock.items[objDic[ghostBuild.objName].cost[i][0]].decreaseAmount(objDic[ghostBuild.objName].cost[i][1]);
+                                    curPlayer.invBlock.decreaseAmount(objDic[ghostBuild.objName].cost[i][0], objDic[ghostBuild.objName].cost[i][1]);
                                 }
                             }
                             let chunkPos = testMap.globalToChunk(x,y);
