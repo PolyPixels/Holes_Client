@@ -104,6 +104,8 @@ function draw() {
         for (let i = 0; i < keys.length; i++) {
             if(curPlayer){ //only render other players once your current player exists
                 if(players[keys[i]].pos.dist(curPlayer.pos) < TILESIZE*CHUNKSIZE*2){
+                    
+
                     players[keys[i]].render();
                     players[keys[i]].update();
                 }
@@ -130,7 +132,9 @@ function draw() {
             renderPlayerCardUI();
 
             if(curPlayer.statBlock.stats.hp <= 0){ //death
-                console.log("dead");
+                console.log("dead",curPlayer.attackingOBJ);
+                let dealthData = {x:curPlayer.pos.x , y : curPlayer.pos.y, name : curPlayer.name, id:curPlayer.id, attacker : curPlayer.attackingOBJ ? curPlayer.attackingOBJ.ownerName : " Some thing Ominous"}
+                socket.emit("player_dies", dealthData   )
 
                 curPlayer.invBlock.dropAll();
                 curPlayer.pos.x = random(-200*TILESIZE, 200*TILESIZE);

@@ -109,6 +109,7 @@ class SimpleProjectile{
                 curPlayer.statBlock.stats.hp -= this.damage;
                 camera.shake = {intensity: this.damage, length: 5};
                 camera.edgeBlood = 5;
+                curPlayer.attackingOBJ = this;
                 socket.emit("update_pos", curPlayer);
             }
         }
@@ -210,6 +211,8 @@ class MeleeProjectile extends SimpleProjectile{
                 curPlayer.pos.copy().sub(this.pos).heading() > this.flightPath.a-(this.angleWidth/2) &&
                 curPlayer.pos.copy().sub(this.pos).heading() < this.flightPath.a+(this.angleWidth/2)
             ){
+
+                curPlayer.attackingOBJ = this;
                 curPlayer.statBlock.stats.hp -= this.damage;
                 camera.shake = {intensity: this.damage, length: 5};
                 camera.edgeBlood = 5;

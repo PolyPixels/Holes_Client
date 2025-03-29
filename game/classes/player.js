@@ -32,6 +32,8 @@ class Player {
         this.direction = 'down'; // Default direction
         this.animationFrame = 0;
         this.animationType = ""; // Name of current animation
+
+        this.attackingOBJ = {}
     }
 
     newCollisionPoint(xOffset, yOffset, direction) {

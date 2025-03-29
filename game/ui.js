@@ -1076,6 +1076,11 @@ function sendChatMessage() {
 
 // Helper function to add a chat message to the messages box
 function addChatMessage(chatMsg) {
+    console.log(chatMsg)
+
+    if(!chatMsg.user) {
+        chatMsg.user = "SERVER"
+    }
     // If your 'chatMsg' object doesn't have a time property, you can generate one:
     // let timeString = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     // Otherwise, if 'chatMsg.time' is already set, you can do:
