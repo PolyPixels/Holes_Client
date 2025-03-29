@@ -5,12 +5,13 @@ Proj Dic is a full dictanary of every projectile that can exist, falling into on
 */
 var projDic = {};
 
-defineSimpleProjectile("Rock", 0, 20, 5, "Straight", 5, 10);
+defineSimpleProjectile("Rock", 0, 20, 5, 20, "Straight", 5, 10);
 
 class SimpleProjectile{
-    constructor(name, damage, flightPath, speed, lifespan, ownerName, color, imgNum){
+    constructor(name, damage, knockback, flightPath, speed, lifespan, ownerName, color, imgNum){
         this.name = name;
         this.damage = damage;
+        this.knockback = knockback;
         this.flightPath = flightPath;
         //this.flightPath.l = 1;
         this.pos = this.flightPath.calc(0);
@@ -106,6 +107,9 @@ class SimpleProjectile{
                 //if player collishion tell server to set delete tag to true
                 socket.emit("delete_proj", this);
                 
+                let tempV = createVector(this.knockback,0);
+                tempV.setHeading(curPlayer.pos.copy().sub(this.pos).heading());
+                curPlayer.vel.add(tempV);
                 curPlayer.statBlock.stats.hp -= this.damage;
                 camera.shake = {intensity: this.damage, length: 5};
                 camera.edgeBlood = 5;
@@ -117,8 +121,8 @@ class SimpleProjectile{
 }
 
 class MeleeProjectile extends SimpleProjectile{
-    constructor(name, damage, x,y,a, lifespan, range, safeRange, angleWidth, ownerName, color, imgNum){
-        super(name, damage/(lifespan*60), createFlightPath("Stay", x,y,a), 0, lifespan, ownerName, color, imgNum);
+    constructor(name, damage, knockback, x,y,a, lifespan, range, safeRange, angleWidth, ownerName, color, imgNum){
+        super(name, damage/(lifespan*60), knockback, createFlightPath("Stay", x,y,a), 0, lifespan, ownerName, color, imgNum);
         
         this.range = range;
         this.safeRange = safeRange;
@@ -211,7 +215,9 @@ class MeleeProjectile extends SimpleProjectile{
                 curPlayer.pos.copy().sub(this.pos).heading() > this.flightPath.a-(this.angleWidth/2) &&
                 curPlayer.pos.copy().sub(this.pos).heading() < this.flightPath.a+(this.angleWidth/2)
             ){
-
+                let tempV = createVector(this.knockback,0);
+                tempV.setHeading(curPlayer.pos.copy().sub(this.pos).heading());
+                curPlayer.vel.add(tempV);
                 curPlayer.attackingOBJ = this;
                 curPlayer.statBlock.stats.hp -= this.damage;
                 camera.shake = {intensity: this.damage, length: 5};
@@ -227,30 +233,31 @@ function createProjectile(name,owner,color, x,y,a){
         throw new Error(`Projectile with name: ${name}, does not exist`);
     }
     if(projDic[name].type == "SimpleProj"){
-        return new SimpleProjectile(name, projDic[name].damage, createFlightPath(projDic[name].fpn, x,y,a), projDic[name].speed, projDic[name].lifespan, owner, color, projDic[name].imgNum);
+        return new SimpleProjectile(name, projDic[name].damage, projDic[name].knockback, createFlightPath(projDic[name].fpn, x,y,a), projDic[name].speed, projDic[name].lifespan, owner, color, projDic[name].imgNum);
     }
     if(projDic[name].type == "MeleeProj"){
-        return new MeleeProjectile(name, projDic[name].damage, x,y,a, projDic[name].lifespan, projDic[name].r, projDic[name].sr, projDic[name].aw, owner, color, projDic[name].imgNum);
+        return new MeleeProjectile(name, projDic[name].damage, projDic[name].knockback, x,y,a, projDic[name].lifespan, projDic[name].r, projDic[name].sr, projDic[name].aw, owner, color, projDic[name].imgNum);
     }
 }
 
 
-function defineSimpleProjectile(name,imgNum,radius,damage,flightPathName,speed,lifespan){
-    checkParams(arguments, getParamNames(defineSimpleProjectile), ["string","int","int","int","string","int","number"]);
+function defineSimpleProjectile(name,imgNum,radius,damage,knockback,flightPathName,speed,lifespan){
+    checkParams(arguments, getParamNames(defineSimpleProjectile), ["string","int","int","int","int","string","int","number"]);
     projDic[name] = {
         type: "SimpleProj",
         name: name,
         imgNum: imgNum,
         r: radius,
         damage: damage,
+        knockback: knockback,
         fpn: flightPathName,
         speed: speed,
         lifespan: lifespan
     };
 }
 
-function defineMeleeProjectile(name,imgNum,range,safeRange,angleWidth,damage,lifespan){
-    checkParams(arguments, getParamNames(defineMeleeProjectile), ["string","int","int","int","int","int","number"]);
+function defineMeleeProjectile(name,imgNum,range,safeRange,angleWidth,damage,knockback,lifespan){
+    checkParams(arguments, getParamNames(defineMeleeProjectile), ["string","int","int","int","int","int","int","number"]);
     projDic[name] = {
         type: "MeleeProj",
         name: name,
@@ -259,6 +266,7 @@ function defineMeleeProjectile(name,imgNum,range,safeRange,angleWidth,damage,lif
         sr: safeRange,
         aw: angleWidth,
         damage: damage,
+        knockback: knockback,
         lifespan: lifespan
     };
 }

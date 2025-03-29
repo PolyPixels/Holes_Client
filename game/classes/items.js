@@ -16,8 +16,8 @@ var itemDic = {};
 defineShovel("Basic Shovel", ["shovel1"], [["Plank",1],["Rock",1]], 1, 100, 0.12, 3, 1, "A basic shovel for digging dirt",true);
 defineShovel("Better Shovel", ["shovel1"], [], 1, 100, 0.18, 3, 1, "A better shovel for digging dirt",true);
 defineShovel("God Shovel", ["shovel1"], [], 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt",true);
-defineMelee("Basic Sword", ["tempSword"], [], 1, 100, 10, 50, 90, 20, false, "A basic sword for slashing",true);
-defineMelee("Better Sword", ["tempSword"], [], 1, 100, 10, 1, 90, 10, false, "A better sword for slashing",true);
+defineMelee("Basic Sword", ["tempSword"], [], 1, 100, 10, 5, 50, 90, 20, false, "A basic sword for slashing",true);
+defineMelee("Better Sword", ["tempSword"], [], 1, 100, 10, 5, 1, 90, 10, false, "A better sword for slashing",true);
 defineRanged("Basic SlingShot", ["sling"], [], 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
 defineRanged("Better SlingShot", ["sling"], [], 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);
 defineSimpleItem("Rock", ["temprock"], [], 1, "A rock for your slingshot",false);
@@ -476,14 +476,14 @@ function defineShovel(name, imgPaths, cost, weight, durability, digSpeed, digSiz
  * @param {boolean} magicBool if the weapon does magic damage
  * @param {string} desc the description of the item
 */
-function defineMelee(name,imgPaths, cost, weight, durability, damage, range, angle, swingSpeed, magicBool, desc, inCraftList){
+function defineMelee(name,imgPaths, cost, weight, durability, damage, knockback, range, angle, swingSpeed, magicBool, desc, inCraftList){
     defineItemSuper("Melee", name, imgPaths, cost, weight, durability, desc, inCraftList);
 
     let paramNames = getParamNames(defineMelee);
     checkParams(
-        [arguments[5], arguments[6], arguments[7], arguments[8], arguments[9]],
-        [paramNames[5], paramNames[6], paramNames[7], paramNames[8], paramNames[9]],
-        ["int","int","int","int","boolean"]
+        [arguments[5], arguments[6], arguments[7], arguments[8], arguments[9], arguments[10]],
+        [paramNames[5], paramNames[6], paramNames[7], paramNames[8], paramNames[9], paramNames[10]],
+        ["int","int","int","int","int","boolean"]
     );
     
     itemDic[name].damage = damage;
@@ -492,7 +492,7 @@ function defineMelee(name,imgPaths, cost, weight, durability, damage, range, ang
     itemDic[name].swingSpeed = swingSpeed;
     itemDic[name].magicBool = magicBool;
 
-    defineMeleeProjectile(name+" Slash", 0, range, 60, angle, damage, 0.5);
+    defineMeleeProjectile(name+" Slash", 0, range, 60, angle, damage, knockback, 0.5);
 }
 
 /**

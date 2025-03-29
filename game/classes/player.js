@@ -18,6 +18,7 @@ class Player {
     constructor(x, y, health, id, color,race, name ) {
         this.id = id; // socket ID
         this.pos = createVector(x, y);
+        this.vel = createVector(0,0);
         this.holding = { w: false, a: false, s: false, d: false }; // Movement keys state
         this.race = race; // Race index
         this.name = name;
@@ -159,17 +160,16 @@ class Player {
         let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
         if(testMap.chunks[chunkPos.x+","+chunkPos.y] == undefined) return;
         
-        let oldPos = this.pos.copy();
         let collisionChecks = [];
         this.moving = (this.holding.w || this.holding.a || this.holding.s || this.holding.d);
         if (this.holding.w) {
-            this.pos.y += -BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
+            this.vel.y += -BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'up';
             collisionChecks.push(this.newCollisionPoint( 0, 1, this.direction));
             collisionChecks.push(this.newCollisionPoint( 1, 1, this.direction));
         }
         if (this.holding.a) {
-            this.pos.x += -BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
+            this.vel.x += -BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'left';
             collisionChecks.push(this.newCollisionPoint( 0,  1, this.direction));
             if(this.holding.w){
@@ -180,13 +180,13 @@ class Player {
             }
         }
         if (this.holding.s) {
-            this.pos.y += BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
+            this.vel.y += BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'down';
             collisionChecks.push(this.newCollisionPoint( 0, 1, this.direction));
             collisionChecks.push(this.newCollisionPoint( 1, 1, this.direction));
         }
         if (this.holding.d) {
-            this.pos.x += BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
+            this.vel.x += BASE_SPEED*this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'right';
 
             collisionChecks.push(this.newCollisionPoint( 1,  1, this.direction));
@@ -197,6 +197,9 @@ class Player {
                 collisionChecks.push(this.newCollisionPoint( 1,  0, this.direction));
             }
         }
+
+        let oldPos = this.pos.copy();
+        this.pos.add(this.vel);
 
         // Handle collisions
         let chunk = testMap.chunks[chunkPos.x+","+chunkPos.y];
@@ -249,6 +252,8 @@ class Player {
             this.animationFrame = 0;
             this.currentFrame = 0; // Reset to standing frame when not moving
         }
+
+        this.vel = createVector(0,0);
     }
 
     render() {
