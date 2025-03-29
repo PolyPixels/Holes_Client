@@ -236,9 +236,9 @@ class Food extends SimpleItem{
     }
 
     use(x,y,mouseButton){
-        console.log("!!!!!!!",curPlayer.statBlock.stats ,curPlayer.statBlock.mhp )
+        console.log("!!!!!!!",curPlayer.statBlock.stats.hp ,curPlayer.statBlock.stats.mhp )
 
-        if(curPlayer.statBlock.stats.hp <=  curPlayer.statBlock.stats.mhp ) {
+        if(curPlayer.statBlock.stats.hp >=  curPlayer.statBlock.stats.mhp) {
             return
         } else if(curPlayer.invBlock.useTimer <= 0){
             curPlayer.statBlock.heal(this.heal);

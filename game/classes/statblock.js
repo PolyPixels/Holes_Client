@@ -62,10 +62,10 @@ class StatBlock{
     }
 
     heal(amount) {
-        this.hp = this.hp + amount;
+        this.stats.hp = this.stats.hp + amount;
 
-        if(this.hp > this.mhp) {
-            this.hp = this.mhp
+        if(this.stats.hp > this.stats.mhp) {
+            this.stats.hp = this.stats.mhp;
         }
     }
 
