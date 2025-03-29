@@ -67,23 +67,40 @@ function keyReleased() {
     }
     else if(gameState == "swap_inv"){
         if (keyCode === 32) { //space
-            console.log("swap?");
-            if(curPlayer.invBlock.curItem != ""){
-                curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem,1);
-                curPlayer.otherInv.addItem(curPlayer.invBlock.curItem, 1);
-
-                if(curPlayer.invBlock.items[curPlayer.invBlock.curItem] == undefined){
+            if(keyIsDown(16)){
+                if(curPlayer.invBlock.curItem != ""){
+                    curPlayer.otherInv.addItem(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount);
+                    curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount);
+    
                     curPlayer.otherInv.curItem = curPlayer.invBlock.curItem;
                     curPlayer.invBlock.curItem = "";
                 }
-            }
-            else if(curPlayer.otherInv.curItem != ""){
-                curPlayer.otherInv.decreaseAmount(curPlayer.otherInv.curItem, 1);
-                curPlayer.invBlock.addItem(curPlayer.otherInv.curItem, 1);
-
-                if(curPlayer.otherInv.items[curPlayer.otherInv.curItem] == undefined){
+                else if(curPlayer.otherInv.curItem != ""){
+                    curPlayer.invBlock.addItem(curPlayer.otherInv.curItem, curPlayer.otherInv.items[curPlayer.otherInv.curItem].amount);
+                    curPlayer.otherInv.decreaseAmount(curPlayer.otherInv.curItem, curPlayer.otherInv.items[curPlayer.otherInv.curItem].amount);
+    
                     curPlayer.invBlock.curItem = curPlayer.otherInv.curItem;
                     curPlayer.otherInv.curItem = "";
+                }
+            }
+            else{
+                if(curPlayer.invBlock.curItem != ""){
+                    curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem,1);
+                    curPlayer.otherInv.addItem(curPlayer.invBlock.curItem, 1);
+    
+                    if(curPlayer.invBlock.items[curPlayer.invBlock.curItem] == undefined){
+                        curPlayer.otherInv.curItem = curPlayer.invBlock.curItem;
+                        curPlayer.invBlock.curItem = "";
+                    }
+                }
+                else if(curPlayer.otherInv.curItem != ""){
+                    curPlayer.otherInv.decreaseAmount(curPlayer.otherInv.curItem, 1);
+                    curPlayer.invBlock.addItem(curPlayer.otherInv.curItem, 1);
+    
+                    if(curPlayer.otherInv.items[curPlayer.otherInv.curItem] == undefined){
+                        curPlayer.invBlock.curItem = curPlayer.otherInv.curItem;
+                        curPlayer.otherInv.curItem = "";
+                    }
                 }
             }
 
