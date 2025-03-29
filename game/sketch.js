@@ -158,6 +158,8 @@ function draw() {
                 dirtInv = 0;
                 
                 curPlayer.statBlock.stats.hp = 100;
+
+                socket.emit("update_pos", curPlayer);
             }
         }
 

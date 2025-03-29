@@ -339,7 +339,7 @@ class Trap extends Placeable{
 
 class InvObj extends Placeable{
     constructor(objName,x,y,w,h,color,health,imgNum,id,ownerName,maxWeight,canRotate){
-        super(objName,x,y,w,h,0,2,color,health,imgNum,canRotate);
+        super(objName,x,y,w,h,0,1,color,health,imgNum,canRotate);
         this.id = id;
         this.ownerName = ownerName;
         this.maxWeight = maxWeight;
