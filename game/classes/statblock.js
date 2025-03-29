@@ -61,6 +61,14 @@ class StatBlock{
         this.xpNeeded = 10;
     }
 
+    heal(amount) {
+        this.hp = this.hp + amount;
+
+        if(this.hp > this.mhp) {
+            this.hp = this.mhp
+        }
+    }
+
     addXP(amount){
         this.xp += amount;
         if(this.xp > this.xpNeeded){

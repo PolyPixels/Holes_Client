@@ -236,8 +236,12 @@ class Food extends SimpleItem{
     }
 
     use(x,y,mouseButton){
-        if(curPlayer.invBlock.useTimer <= 0){
-            curPlayer.statBlock.stats.hp += this.heal;
+        console.log("!!!!!!!",curPlayer.statBlock.stats ,curPlayer.statBlock.mhp )
+
+        if(curPlayer.statBlock.stats.hp <=  curPlayer.statBlock.stats.mhp ) {
+            return
+        } else if(curPlayer.invBlock.useTimer <= 0){
+            curPlayer.statBlock.heal(this.heal);
             curPlayer.invBlock.useTimer = this.eatWait;
             this.decreaseAmount(1);
         }
