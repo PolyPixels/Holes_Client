@@ -89,6 +89,7 @@ class Chunk{
             this.objects[i].update();
             if(this.objects[i].deleteTag){
                 this.objects.splice(i, 1);
+                this.objects.sort((a,b) => a.z - b.z);
             }
         }
         for(let i = this.projectiles.length-1; i >= 0; i--){
