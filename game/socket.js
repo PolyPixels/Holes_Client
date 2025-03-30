@@ -111,6 +111,13 @@ function socketSetup(){
         let chunk = testMap.chunks[data.cx+","+data.cy];
         if(chunk != undefined){
             let temp = createObject(data.obj.objName, data.obj.pos.x, data.obj.pos.y, data.obj.rot, data.obj.color, data.obj.id, data.obj.ownerName);
+
+            if(temp.type == "InvObj"){
+                let keys = Object.keys(data.obj.invBlock.items);
+                for(let i=0; i<keys.length; i++){
+                    temp.invBlock.addItem(keys[i], data.obj.invBlock.items[keys[i]].amount);
+                }
+            }
             chunk.objects.push(temp);
             chunk.objects.sort((a,b) => a.z - b.z);
         }

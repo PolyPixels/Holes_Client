@@ -30,9 +30,8 @@ defineTrap("LandMine", ['bomb1'], [["dirt", 20]], 52, 36, 100, 40, 40, false, 10
 function turretUpdate(){
     if(this.hp <= 0){
         this.deleteTag = true;
-
         let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
-        socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
+        socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, cost: objDic[this.objName].cost});
     }
     if(curPlayer.name != this.ownerName){
         this.rot = curPlayer.pos.copy().sub(this.pos).heading();
@@ -65,10 +64,10 @@ function turretUpdate(){
     }
 }
 defineCustomObj("Turret", ['tempturret0','tempturret1','tempturret2','tempturret3','tempturret4','tempturret5','tempturret6','tempturret7','tempturret8','tempturret9','tempturret10','tempturret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
-definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [], 60, 60, 100, 60, "edible_mushroom");
-definePlant("AppleTree", ['tempappletree'], [], 120, 120, 100, 60, "Apple");
+definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 100, 60, "edible_mushroom");
+definePlant("AppleTree", ['apple_tree'], [], 120, 120, 100, 60, "Apple");
 defineInvObj("Chest", ['chest'], [['dirt', 20]], 14*4, 15*4, 100, 100, false, true);
-defineInvObj("ItemBag", ['itembag1'], [], 12*3, 13*3, 100, 100, false, false);
+defineInvObj("ItemBag", ['item_bag1'], [], 12*3, 13*3, 100, 100, false, false);
 
 function bombUpdate(){
     //Fuse go down
@@ -154,9 +153,8 @@ class Placeable{
     update(){
         if(this.hp <= 0){
             this.deleteTag = true;
-
             let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
-            socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
+            socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, cost: objDic[this.objName].cost});
         }
     }
 
@@ -351,6 +349,16 @@ class InvObj extends Placeable{
 
     update(){
         super.update();
+
+        if(this.objName == "ItemBag"){
+            if(Object.keys(this.invBlock.items).length <= 0){
+                this.hp = 0;
+                if(gameState == "swap_inv"){
+                    gameState = "playing";
+                    swapInvDiv.hide();
+                }
+            }
+        }
         if(gameState != "playing") return;
         if(!mouseIsPressed) return;
         if(createVector(mouseX + camera.pos.x - width / 2, mouseY + camera.pos.y - height / 2).dist(this.pos) < (this.size.w+this.size.h)/2){ //if mouse is over the obj
