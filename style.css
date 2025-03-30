@@ -296,7 +296,7 @@ input:hover {
   box-shadow: 0 0 15px rgba(0,255,255,0.5);
   /* You can also add a media query to ensure responsiveness on smaller devices */
   max-width: 70%;
-  width: 65%;
+  width: 59%;
   max-height: 70%;
   min-height: 50%;
   height: auto;
