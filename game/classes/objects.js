@@ -65,9 +65,9 @@ function turretUpdate(){
 }
 defineCustomObj("Turret", ['tempturret0','tempturret1','tempturret2','tempturret3','tempturret4','tempturret5','tempturret6','tempturret7','tempturret8','tempturret9','tempturret10','tempturret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
 definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 100, 60, "edible_mushroom");
-definePlant("AppleTree", ['tempappletree'], [], 120, 120, 100, 60, "Apple");
+definePlant("AppleTree", ['apple_tree'], [], 120, 120, 100, 60, "Apple");
 defineInvObj("Chest", ['chest'], [['dirt', 20]], 14*4, 15*4, 100, 100, false, true);
-defineInvObj("ItemBag", ['itembag1'], [], 12*3, 13*3, 100, 100, false, false);
+defineInvObj("ItemBag", ['item_bag1'], [], 12*3, 13*3, 100, 100, false, false);
 
 function bombUpdate(){
     //Fuse go down
