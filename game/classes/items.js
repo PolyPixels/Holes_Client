@@ -26,8 +26,8 @@ defineSimpleItem("Plank", ["temprock"], [], 1, "A wooden plank",false);
 defineSimpleItem("Gay Goo", ["temprock"], [], 1, "A gooey substance",false);
 defineFood("Apple", ["apple"], [], 1, 100, 10, "A juicy apple",false);
 defineFood("Mushroom", ["images/structures/tempmushroom3"], [], 1, 100, 10, "A tasty mushroom",false);
-defineSeed("Mushroom Seed", ["tempmushroomseed"], [["Mushroom", 1]], 1, "Mushroom", 0.5, "Some mushroom spores",true);
-defineSeed("Apple Seed", ["tempmushroomseed"], [["Apple", 1]], 1, "Mushroom", 0.5, "A seed for growing apples",true);
+defineSeed("Mushroom Seed", ["temp_mushroomseed"], [["Mushroom", 1]], 1, "Mushroom", 0.5, "Some mushroom spores",true);
+defineSeed("Apple Seed", ["temp_mushroomseed"], [["Apple", 1]], 1, "Mushroom", 0.5, "A seed for growing apples",true);
 
 class SimpleItem{
     constructor(itemName, weight, durability, imgNum, desc){
