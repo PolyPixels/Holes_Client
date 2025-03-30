@@ -47,7 +47,13 @@ class SimpleProjectile{
             }
             
             this.deleteTag = true;
-            socket.emit("delete_proj", this);
+            socket.emit("delete_proj", {
+                id: this.id,
+                cPos: { x: this.cPos.x, y: this.cPos.y },
+                name: this.name,
+                ownerName: this.ownerName,
+                lifespan: this.lifespan
+            });
         }
 
         this.lifespan -= 1/60;
