@@ -32,7 +32,7 @@ function keyReleased() {
 
         if(keyCode == 9){ //TAB
             gameState = "player_status";
-            player_status_container.show();
+            togglePlayerStatusTable()
         }
 
         if (buildMode) { // Assuming buildMode is a boolean flag, yes it is
@@ -123,7 +123,7 @@ function keyReleased() {
     else if(gameState == "player_status" ) {
         if(keyCode== 9) { //TAB
             gameState = "playing";
-            player_status_container.hide();
+            togglePlayerStatusTable()
         }
     }
 

@@ -622,7 +622,7 @@ function setupUI(){
     defineInvUI();
     definePauseUI();
     defineBuildUI();
-    definePlayerStatusDiv();
+    togglePlayerStatusTable();
     defineTeamPickUI();
     defineSwapInvUI();
     raceTitle = createDiv();
@@ -1538,29 +1538,6 @@ var optionsButton;
 
 var player_status_container;
 
-function definePlayerStatusDiv() {
-    player_status_container = createDiv();
-    player_status_container.id("player_status_container");
-    player_status_container.style("position", "absolute");
-    player_status_container.style("top", "50%");
-    player_status_container.style("left", "50%");
-    player_status_container.style("transform", "translate(-50%, -50%)");
-    player_status_container.style("display", "none");
-    player_status_container.style("width", "30%");
-    player_status_container.style("height", "40%");
-    player_status_container.style("border", "2px solid black");
-    player_status_container.style("border-radius", "10px");
-    player_status_container.style("text-align", "center");
-    player_status_container.style("padding", "20px");
-
-    let pauseTitle = createP("Paused");
-    pauseTitle.style("font-size", "28px");
-    pauseTitle.style("font-weight", "bold");
-    pauseTitle.style("color", "white");
-    pauseTitle.style("text-decoration", "underline");
-    pauseTitle.parent(player_status_container);
-
-}
 
 function styleButton(button) {
     button.style("width", "80%");
@@ -1572,6 +1549,79 @@ function styleButton(button) {
     button.style("color", "white");
 }
 
+function togglePlayerStatusTable() {
+    // If the container doesn't exist, create and style it
+    if (!player_status_container) {
+        player_status_container = createDiv();
+        player_status_container.id("player_status_container");
+        player_status_container.class("container");
+        player_status_container.style("position", "absolute");
+        player_status_container.style("top", "50%");
+        player_status_container.style("left", "50%");
+        player_status_container.style("transform", "translate(-50%, -50%)");
+        player_status_container.style("width", "30%");
+        player_status_container.style("height", "40%");
+        player_status_container.style("border", "2px solid black");
+        player_status_container.style("border-radius", "10px");
+        player_status_container.style("text-align", "center");
+        player_status_container.style("padding", "20px");
+        player_status_container.style("overflow", "hidden"); // clip if needed
+        player_status_container.style("background-color", "#222");
+        player_status_container.style("z-index", "999");
+        player_status_container.hide();
+    }
+
+    // Toggle visibility
+    const isVisible = player_status_container.style("display") !== "none";
+    if (isVisible) {
+        player_status_container.hide();
+        return;
+    }
+
+    // Clear and fetch fresh data
+    player_status_container.html("");
+
+    const title = createP("Players").parent(player_status_container);
+    title.style("font-size", "28px");
+    title.style("font-weight", "bold");
+    title.style("color", "white");
+    title.style("text-decoration", "underline");
+
+    if(gameState == "player_status") {
+        fetch(getServerUrl(selectedServer) + "/playerinfo")
+        .then(res => res.json())
+        .then(players => {
+            let tableWrapper = createDiv().parent(player_status_container);
+            tableWrapper.style("overflow-y", "auto");
+            tableWrapper.style("max-height", "70%");
+            tableWrapper.style("margin-top", "10px");
+
+            let table = createElement("table").parent(tableWrapper);
+            table.style("width", "100%");
+            table.style("color", "white");
+            table.style("border-collapse", "collapse");
+            table.style("font-size", "1rem");
+
+            let thead = createElement("thead").parent(table);
+            thead.html("<tr><th>Name</th><th>Kills</th><th>Ping</th></tr>");
+            thead.elt.style.backgroundColor = "#333";
+
+            let tbody = createElement("tbody").parent(table);
+            players.forEach(p => {
+                const row = createElement("tr").parent(tbody);
+                row.html(`<td>${p.name}</td><td>${p.kills}</td><td>${p.ping}</td>`);
+                row.elt.style.borderBottom = "1px solid #444";
+            });
+
+            player_status_container.show();
+        })
+        .catch(err => {
+            console.error("Failed to fetch player info:", err);
+            player_status_container.html("❌ Failed to load player data.");
+            player_status_container.show();
+        });
+    }
+}
 
 
   
