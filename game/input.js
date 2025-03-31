@@ -117,13 +117,22 @@ function keyReleased() {
         if(keyCode == 80 || keyCode ==27){ //p or ESC
             gameState = "playing";
             pauseDiv.hide();
+
+            curPlayer.holding = {} 
         }
+
+        curPlayer.holding = { w: false, a: false, s: false, d: false };
     }
 
     else if(gameState == "player_status" ) {
         if(keyCode== 9) { //TAB
             gameState = "playing";
             togglePlayerStatusTable()
+
+            curPlayer.holding = {}
+        }else {
+
+            curPlayer.holding = { w: false, a: false, s: false, d: false };
         }
     }
 
@@ -319,6 +328,11 @@ function continousKeyBoardInput(){
         if (keyIsDown(65)){} //A
         if (keyIsDown(83)){} //S
         if (keyIsDown(68)){} //D
+    }else {
+        if(curPlayer ) {
+
+        curPlayer.holding = { w: false, a: false, s: false, d: false };
+        }
     }
 }
 
