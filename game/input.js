@@ -22,6 +22,8 @@ function keyReleased() {
             gameState = "inventory";
             updateItemList();
             invDiv.show();
+            
+            curPlayer.holding = { w: false, a: false, s: false, d: false };
         }
         if( (keyCode == 80 ||  keyCode ==27) && gameState != "initial"){ //p
             gameState = "pause";
@@ -56,6 +58,8 @@ function keyReleased() {
      
     }
     else if(gameState == "inventory"){
+
+        curPlayer.holding = { w: false, a: false, s: false, d: false };
         if (keyCode === 32) { //space
             curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem, curPlayer.invBlock.selectedHotBar);
             updateSpaceBarDiv();
@@ -117,8 +121,6 @@ function keyReleased() {
         if(keyCode == 80 || keyCode ==27){ //p or ESC
             gameState = "playing";
             pauseDiv.hide();
-
-            curPlayer.holding = {} 
         }
 
         curPlayer.holding = { w: false, a: false, s: false, d: false };
@@ -129,7 +131,6 @@ function keyReleased() {
             gameState = "playing";
             togglePlayerStatusTable()
 
-            curPlayer.holding = {}
         }else {
 
             curPlayer.holding = { w: false, a: false, s: false, d: false };
@@ -330,8 +331,7 @@ function continousKeyBoardInput(){
         if (keyIsDown(68)){} //D
     }else {
         if(curPlayer ) {
-
-        curPlayer.holding = { w: false, a: false, s: false, d: false };
+            curPlayer.holding = { w: false, a: false, s: false, d: false };
         }
     }
 }
