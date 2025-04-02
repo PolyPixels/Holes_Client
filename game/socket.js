@@ -101,6 +101,9 @@ function socketSetup(){
     socket.on("UPDATE_NODE", (data) => {
         if(testMap.chunks[data.chunkPos] != undefined) testMap.chunks[data.chunkPos].data[data.index] = data.val;
     });
+    socket.on("change_name", (data) => {
+        curPlayer.name = data
+    });
 
     socket.on('REMOVE_PLAYER', (data) => {
         delete players[data];
