@@ -90,10 +90,12 @@ function draw() {
     }
     
     if (gameState === "playing") {
+        timerDiv.show()
         //! Why call these in draw if they only need to be called once?
         hideRaceSelect();
         hideLinks();
         renderChatUI();
+
         // ---- (Your original gameplay code) ----
         if (Object.keys(testMap.chunks).length > 0) {
             testMap.render();
@@ -163,10 +165,13 @@ function draw() {
             }
         }
 
+        renderTimeUI()
         renderDirtBagUI();
     }
     if (gameState === "inventory" || gameState === "swap_inv" || gameState === "pause" || gameState =="player_status" || gameState == "team_select") {
         //render the game in the background
+
+        renderTimeUI()
         if (Object.keys(testMap.chunks).length > 0) {
             testMap.render();
             testMap.update();
@@ -198,6 +203,7 @@ function draw() {
         curPlayer.invBlock.renderHotBar();
         renderPlayerCardUI();
         renderDirtBagUI();
+
     }
     if (gameState === "chating") {
         //render the game in the background

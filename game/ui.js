@@ -24,10 +24,10 @@ function updateResponsiveDesign() {
     // Optionally update the race title font size for better scaling
     raceTitle?.style("font-size", "calc(1.5vw + 24px)");
 
-    dirtBagUI.pos = createVector(width-180-10, height-186-10);
+    dirtBagUI.pos = createVector(width - 180 - 10, height - 186 - 10);
 }
 
-function hideRaceSelect(){
+function hideRaceSelect() {
     // Hide UI elements during gameplay
     nameInput.hide();
     goButton.hide();
@@ -56,7 +56,7 @@ function saveServers() {
 }
 
 let linksRendered = false; // Flag to prevent duplicate rendering
-let linkContainer, settingsContainer,settingsToggle, toggleButton,titleImage,markee; // Store references for hiding
+let linkContainer, settingsContainer, settingsToggle, toggleButton, titleImage, markee; // Store references for hiding
 
 let markeeText = [
     " This game is made with Hate not ♥ !!!",
@@ -78,7 +78,7 @@ function renderLinks() {
     // draw title image 
 
     titleImage = createImg("./images/ui/title.png");
-    
+
     // Apply styles to the image using .style()
     titleImage.style("width", "20dvw"); // Set the width of the image
     titleImage.style("height", "10dvw"); // Automatically adjust the height
@@ -87,16 +87,16 @@ function renderLinks() {
     titleImage.style("margin", "20px auto");
     titleImage.style("padding-bottom", "40px auto");
     titleImage.style("top", "0")
-    titleImage.style("position", "absolute");let randItem1 = Math.floor(Math.random() * markeeText.length);
-   // Suppose we want 5 distinct random items
+    titleImage.style("position", "absolute"); let randItem1 = Math.floor(Math.random() * markeeText.length);
+    // Suppose we want 5 distinct random items
     let chosenItems = [];
     while (chosenItems.length < markeeText.length) {
-    let r = Math.floor(Math.random() * markeeText.length);
-    if (!chosenItems.includes(r)) chosenItems.push(r); 
+        let r = Math.floor(Math.random() * markeeText.length);
+        if (!chosenItems.includes(r)) chosenItems.push(r);
     }
     // Now join them with a spacer or delimiter
     let marqueeContent = chosenItems
-    .map(i => markeeText[i]).join("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+        .map(i => markeeText[i]).join("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
 
 
     markee = createElement("marquee", marqueeContent);
@@ -108,7 +108,7 @@ function renderLinks() {
     markee.style("color", "white");
 
     markee.style("scrolldelay", "0");
-    
+
     // Parent container for buttons (Bottom Right)
     linkContainer = createDiv();
     linkContainer.class("container")
@@ -210,15 +210,15 @@ function createLinkItem(parent, text, url, emoji) {
 
 // Toggle function to show/hide links
 function hideLinks() {
-    if(renderLinks){
+    if (renderLinks) {
         if (linkContainer.style("display") === "none") {
             linkContainer.style("display", "flex");
             settingsToggle.style("display", "flex")
-            markee.style("display","flex")
+            markee.style("display", "flex")
             titleImage.style("display", "flex");
         } else {
             linkContainer.style("display", "none");
-            markee.style("display","none")
+            markee.style("display", "none")
             titleImage.style("display", "none");
             settingsToggle.style("display", "none")
             renderLinks = false
@@ -248,11 +248,11 @@ function createLinkItem(parent, text, url, emoji) {
 function renderServerBrowser() {
     if (!renderedserverBrowserContainer) {
         renderedserverBrowserContainer = true;
-        
+
         serverBrowserContainer = createDiv();
         serverBrowserContainer.id("serverBrowserContainer");
         serverBrowserContainer.class("container");
-        serverBrowserContainer.style("overflow-y","scroll")
+        serverBrowserContainer.style("overflow-y", "scroll")
         // Main container styling
         serverBrowserContainer.style("width", "50dvw");
         serverBrowserContainer.style("max-height", "50dvh");
@@ -355,7 +355,7 @@ function renderServerBrowser() {
         // Toggle display of addServerContent on header click
         let dropdownOpen = false;
         addServerTitle.mousePressed(() => {
-            dropdownOpen = !dropdownOpen; 
+            dropdownOpen = !dropdownOpen;
             addServerContent.style("display", dropdownOpen ? "block" : "none");
             // Optionally change the arrow: "▼" for open or "►" for closed
             addServerTitle.html(dropdownOpen ? "Add New Server ▼" : "Add New Server ►");
@@ -384,7 +384,7 @@ function renderServerBrowser() {
                 socket = io.connect(getServerUrl(selectedServer));
                 socketSetup();
                 testMap = new Map();
-                ghostBuild = createObject("Wall", 0,0,0, 11, " ", " ");
+                ghostBuild = createObject("Wall", 0, 0, 0, 11, " ", " ");
                 console.log("Connected to " + selectedServer, socket);
                 hideServerBrowser();
                 gameState = "race_selection";
@@ -402,29 +402,29 @@ function getServerUrl(server) {
     const scheme = isLocal ? "http" : "https";
     const port = isLocal ? ":3000" : "";
     return `${scheme}://${server.ip}${port}`;
-  }
+}
 
 function isLocalAddress(ipOrHost) {
     // Exact matches for localhost or loopback
     if (ipOrHost === 'localhost' || ipOrHost === '127.0.0.1') {
-      return true;
+        return true;
     }
-  
-        // A simple regex for IPv4 addresses (it doesn't enforce 0-255 on each octet, but is sufficient for a basic check)
-        return /^\d{1,3}(?:\.\d{1,3}){3}$/.test(ipOrHost);
-      
-  }
-    
-  function fetchServerStatus(server, callback) {
+
+    // A simple regex for IPv4 addresses (it doesn't enforce 0-255 on each octet, but is sufficient for a basic check)
+    return /^\d{1,3}(?:\.\d{1,3}){3}$/.test(ipOrHost);
+
+}
+
+function fetchServerStatus(server, callback) {
     const url = getServerUrl(server) + "/status";
     fetch(url)
-      .then(response => response.json())
-      .then(data => callback(data))
-      .catch(error => {
-        console.error(`Error fetching status from ${server.ip}:`, error);
-        callback({ status: "Offline", playerCount: 0 });
-      });
-  }
+        .then(response => response.json())
+        .then(data => callback(data))
+        .catch(error => {
+            console.error(`Error fetching status from ${server.ip}:`, error);
+            callback({ status: "Offline", playerCount: 0 });
+        });
+}
 
 function renderServerList() {
     let oldEntries = selectAll(".serverEntry");
@@ -435,7 +435,7 @@ function renderServerList() {
     serverList.forEach((server, index) => {
         let serverEntry = createDiv();
         serverEntry.class("serverEntry");
-        serverEntry.style("font-size","1em")
+        serverEntry.style("font-size", "1em")
         serverEntry.style("padding", "10px");
         serverEntry.style("margin-bottom", "10px");
         serverEntry.style("border-radius", "8px");
@@ -452,40 +452,40 @@ function renderServerList() {
         logoContainer.style("display", "flex");
         logoContainer.style("border-radius", "50%"); // Circular logo
         logoContainer.style("overflow", "hidden"); // Prevent overflow of the image
-        
+
         let serverLogo = createImg(server.image);
         serverLogo.style("width", "100%");
         serverLogo.style("height", "100%");
         serverLogo.style("object-fit", "cover"); // Ensures it fits without distortion
         serverLogo.parent(logoContainer);
         logoContainer.parent(serverEntry);
-      
+
         // Create a container for text details
         let textContainer = createDiv();
         textContainer.style("display", "flex");
         textContainer.style("flex-direction", "column");
         textContainer.style("justify-content", "center");
         textContainer.style("flex-grow", "1"); // Allows text to take available space
-        
+
         let serverName = createDiv(server.name);
         serverName.style("font-weight", "bold");
         serverName.style("color", "#FFFFFF");
         serverName.parent(textContainer);
-        
+
         let serverIP = createDiv(`IP: ${server.ip}`);
         serverIP.style("color", "#AAAAAA");
         serverIP.parent(textContainer);
-        
+
         let serverStatus = createDiv("Status: Loading...");
         serverStatus.style("color", "#FFD700");
         serverStatus.parent(textContainer);
-        
+
         let playerCount = createDiv("Players: Loading...");
         playerCount.style("color", "#00FFFF");
         playerCount.parent(textContainer);
-        
+
         textContainer.parent(serverEntry);
-      
+
         // Fetch server status
         fetchServerStatus(server, (data) => {
             serverStatus.html(`Status: ${data.status}`);
@@ -497,10 +497,10 @@ function renderServerList() {
 
 
             // Optionally, adjust opacity to signal a disabled state
-            serverEntry.style("opacity", data.status === "Online" ?"1": "0.5");
+            serverEntry.style("opacity", data.status === "Online" ? "1" : "0.5");
 
             // server entry can not be clicked if status is not online 
-            serverEntry.style("pointer-events",data.status === "Online" ? "auto" : "none");
+            serverEntry.style("pointer-events", data.status === "Online" ? "auto" : "none");
         });
 
         // Remove server button
@@ -515,7 +515,7 @@ function renderServerList() {
         removeButton.style("cursor", "pointer");
 
 
-        removeButton.style("pointer-events","auto");
+        removeButton.style("pointer-events", "auto");
 
 
         removeButton.mousePressed(() => {
@@ -559,7 +559,7 @@ function drawSelection() {
     //  Create Title (centered, larger & responsive)
     // ---------------------------------------------------
     raceTitle.id("raceTitle");
-    raceTitle.elt.innerHTML =  "Select Your Race"
+    raceTitle.elt.innerHTML = "Select Your Race"
     raceTitle.style("position", "absolute");
     raceTitle.style("top", "22dvh");
     raceTitle.style("left", "50%");
@@ -587,8 +587,8 @@ function drawSelection() {
     race_back_button.style("border-radius", "8px");
     race_back_button.style("position", "absolute");
     race_back_button.style("top", "60dvh");
-  
-    race_back_button.mousePressed(()=>{
+
+    race_back_button.mousePressed(() => {
         console.log("pressed")
         hideRaceSelect()
         gameState = "initial"
@@ -603,10 +603,9 @@ function drawSelection() {
 
 }
 
+let timerDiv;
 
-  
-  
-function setupUI(){
+function setupUI() {
     // ----------------------------
     // (Socket setup and raceImages flipping omitted for brevity)
     // ----------------------------
@@ -618,13 +617,22 @@ function setupUI(){
             raceImages[raceName].left[i] = flipImage(raceImages[raceName].right[i]);
         }
     }
-    
+
     defineInvUI();
     definePauseUI();
     defineBuildUI();
     togglePlayerStatusTable();
     defineTeamPickUI();
     defineSwapInvUI();
+
+    timerDiv = createDiv("⏳ 15:00");
+    timerDiv.position(width / 2 - 50, 10); // adjust as needed
+    timerDiv.style("font-size", "32px");
+    timerDiv.style("color", "white");
+    timerDiv.style("text-align", "center");
+    timerDiv.style("width", "100px");
+    timerDiv.style("z-index", "10");
+    timerDiv.hide();
     raceTitle = createDiv();
     // ---------------------------------------------------
     //  Create a container for race selection cards (centered)
@@ -644,7 +652,7 @@ function setupUI(){
     raceContainer.style("background-color", "rgba(0, 0, 0, 0.3)");
     raceContainer.style("padding", "0px");
     raceContainer.style("border-radius", "10px");
-    raceContainer.style("min-width","100dvw")
+    raceContainer.style("min-width", "100dvw")
     // ---------------------------------------------------
     //  Create cards for each race (with responsive sizing)
     // Allowed stats to display
@@ -653,7 +661,7 @@ function setupUI(){
     // Iterate over each race in the races array
     races.forEach((raceName, i) => {
         var selectedItem = i;
-        console.log(selectedItem, i , raceName)
+        console.log(selectedItem, i, raceName)
         // Create the card container for the race
         let card = createDiv();
         card.class("raceCard");
@@ -686,7 +694,7 @@ function setupUI(){
         let statsText = allowedStats
             .map(stat => `${stat}: ${raceStats[stat]}`)
             .join(" <br> ");
-    
+
         // Create a label for the stats
         let raceStatsLbl = createP(statsText);
         raceStatsLbl.style("color", "#fff");
@@ -720,8 +728,8 @@ function setupUI(){
 
         // On click: deselect all cards, then select this one and update curPlayer
         card.mousePressed(() => {
-            
-        console.log(selectedItem, i , raceName)
+
+            console.log(selectedItem, i, raceName)
             raceButtons.forEach((c) => {
                 c.selected = false;
                 c.style("background-color", "#404040");
@@ -767,10 +775,10 @@ function setupUI(){
     });
     nameInput.elt.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
-          startGame();
+            startGame();
         }
-      });
-    
+    });
+
 
     // ---------------------------------------------------
     //   "Go" Button (centered, larger & responsive)
@@ -800,7 +808,7 @@ function setupUI(){
     goButton.mousePressed(() => {
         startGame()
     })
-    
+
 }
 
 
@@ -812,115 +820,115 @@ let inputContainer;   // Reference to hide/show input container
 let isChatOpen = true; // Track whether the chat is currently open or collapsed
 
 function renderChatUI() {
-  if (chatRendered) return;
-  chatRendered = true;
+    if (chatRendered) return;
+    chatRendered = true;
 
-  // Create chat container positioned at bottom-left
-  chatContainer = createDiv();
-  chatContainer.class("container");
-  chatContainer.style("position", "fixed");
-  chatContainer.style("bottom", "0dvh");
-  chatContainer.style("left", "0dvw");
-  chatContainer.style("z-index", "1000");
-  chatContainer.style("min-width", "25dvh");
-  chatContainer.style("background", "rgba(34, 34, 34, 0.8)"); // Semi-transparent dark background
-  chatContainer.style("padding", "10px");
-  chatContainer.style("border-radius", "8px");
-  chatContainer.style("box-shadow", "0 4px 12px rgba(0, 0, 0, 0.4)"); // Soft shadow
-  chatContainer.style("backdrop-filter", "blur(5px)"); // Blurred background (if supported)
-  chatContainer.style("pointer-events", "auto"); // Ensure clicks go through
+    // Create chat container positioned at bottom-left
+    chatContainer = createDiv();
+    chatContainer.class("container");
+    chatContainer.style("position", "fixed");
+    chatContainer.style("bottom", "0dvh");
+    chatContainer.style("left", "0dvw");
+    chatContainer.style("z-index", "1000");
+    chatContainer.style("min-width", "25dvh");
+    chatContainer.style("background", "rgba(34, 34, 34, 0.8)"); // Semi-transparent dark background
+    chatContainer.style("padding", "10px");
+    chatContainer.style("border-radius", "8px");
+    chatContainer.style("box-shadow", "0 4px 12px rgba(0, 0, 0, 0.4)"); // Soft shadow
+    chatContainer.style("backdrop-filter", "blur(5px)"); // Blurred background (if supported)
+    chatContainer.style("pointer-events", "auto"); // Ensure clicks go through
 
-  // ─────────────────────────────────────────────────────────
-  // Toggle Button (Collapses/Expands the chat area)
-  // ─────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────
+    // Toggle Button (Collapses/Expands the chat area)
+    // ─────────────────────────────────────────────────────────
 
-  toggleChatButton = createButton(""); 
-  toggleChatButton.parent(chatContainer);
-  toggleChatButton.style("width", "100%");
-  toggleChatButton.style("background", "#555");
-  toggleChatButton.style("color", "#fff");
-  toggleChatButton.style("border", "none");
-  toggleChatButton.style("border-radius", "5px");
-  toggleChatButton.style("cursor", "pointer");
-  toggleChatButton.style("margin-bottom", "5px");
-  toggleChatButton.style("padding", "6px");
-  toggleChatButton.mousePressed(toggleChatDropdown);
+    toggleChatButton = createButton("");
+    toggleChatButton.parent(chatContainer);
+    toggleChatButton.style("width", "100%");
+    toggleChatButton.style("background", "#555");
+    toggleChatButton.style("color", "#fff");
+    toggleChatButton.style("border", "none");
+    toggleChatButton.style("border-radius", "5px");
+    toggleChatButton.style("cursor", "pointer");
+    toggleChatButton.style("margin-bottom", "5px");
+    toggleChatButton.style("padding", "6px");
+    toggleChatButton.mousePressed(toggleChatDropdown);
 
-  // Update the button text immediately on creation
-  updateToggleChatButtonText();
+    // Update the button text immediately on creation
+    updateToggleChatButtonText();
 
-  // ─────────────────────────────────────────────────────────
-  // Container for messages
-  // ─────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────
+    // Container for messages
+    // ─────────────────────────────────────────────────────────
 
-  chatMessagesBox = createDiv();
-  chatMessagesBox.style("height", "15dvh");
-  chatMessagesBox.style("overflow-y", "auto");
-  chatMessagesBox.style("background-color", "#333");
-  chatMessagesBox.style("color", "#fff");
-  chatMessagesBox.style("padding", "8px");
-  chatMessagesBox.style("border-radius", "5px");
-  chatMessagesBox.style("margin-bottom", "10px");
-  chatMessagesBox.style("justify-content", "left");
+    chatMessagesBox = createDiv();
+    chatMessagesBox.style("height", "15dvh");
+    chatMessagesBox.style("overflow-y", "auto");
+    chatMessagesBox.style("background-color", "#333");
+    chatMessagesBox.style("color", "#fff");
+    chatMessagesBox.style("padding", "8px");
+    chatMessagesBox.style("border-radius", "5px");
+    chatMessagesBox.style("margin-bottom", "10px");
+    chatMessagesBox.style("justify-content", "left");
 
-  // ─────────────────────────────────────────────────────────
-  // Input Field
-  // ─────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────
+    // Input Field
+    // ─────────────────────────────────────────────────────────
 
-  chatInput = createInput("");
-  chatInput.attribute("placeholder", "Type your message...");
-  chatInput.style("flex", "1");
-  chatInput.style("padding", "3px");
-  chatInput.style("border", "1px solid #444");
-  chatInput.style("border-radius", "5px");
-  chatInput.style("outline", "none");
-  chatInput.style("color", "#fff");
-  chatInput.style("background-color", "#222");
-  chatInput.style("margin-right", "5px");
-  chatInput.mousePressed(() => {
-    gameState = "chating";
-  });
-  chatInput.elt.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      sendChatMessage();
-      gameState = "playing";
-    }
-  });
+    chatInput = createInput("");
+    chatInput.attribute("placeholder", "Type your message...");
+    chatInput.style("flex", "1");
+    chatInput.style("padding", "3px");
+    chatInput.style("border", "1px solid #444");
+    chatInput.style("border-radius", "5px");
+    chatInput.style("outline", "none");
+    chatInput.style("color", "#fff");
+    chatInput.style("background-color", "#222");
+    chatInput.style("margin-right", "5px");
+    chatInput.mousePressed(() => {
+        gameState = "chating";
+    });
+    chatInput.elt.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            sendChatMessage();
+            gameState = "playing";
+        }
+    });
 
-  // ─────────────────────────────────────────────────────────
-  // Send Button
-  // ─────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────
+    // Send Button
+    // ─────────────────────────────────────────────────────────
 
-  chatSendButton = createButton("Send");
-  chatSendButton.style("padding", "8px 14px");
-  chatSendButton.style("border", "none");
-  chatSendButton.style("border-radius", "5px");
-  chatSendButton.style("background-color", "#4caf50");
-  chatSendButton.style("color", "#fff");
-  chatSendButton.style("cursor", "pointer");
+    chatSendButton = createButton("Send");
+    chatSendButton.style("padding", "8px 14px");
+    chatSendButton.style("border", "none");
+    chatSendButton.style("border-radius", "5px");
+    chatSendButton.style("background-color", "#4caf50");
+    chatSendButton.style("color", "#fff");
+    chatSendButton.style("cursor", "pointer");
 
-  chatSendButton.style("min-width", "5dvw");
-  chatSendButton.mousePressed(() => {
-    sendChatMessage();
-    gameState = "playing";
-  });
+    chatSendButton.style("min-width", "5dvw");
+    chatSendButton.mousePressed(() => {
+        sendChatMessage();
+        gameState = "playing";
+    });
 
-  // ─────────────────────────────────────────────────────────
-  // Input Container (holds input + button)
-  // ─────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────
+    // Input Container (holds input + button)
+    // ─────────────────────────────────────────────────────────
 
-  inputContainer = createDiv();
-  inputContainer.style("display", "flex");
-  inputContainer.style("align-items", "center");
-  inputContainer.child(chatInput);
-  inputContainer.child(chatSendButton);
+    inputContainer = createDiv();
+    inputContainer.style("display", "flex");
+    inputContainer.style("align-items", "center");
+    inputContainer.child(chatInput);
+    inputContainer.child(chatSendButton);
 
-  // Append everything to the main chat container
-  chatContainer.child(chatMessagesBox);
-  chatContainer.child(inputContainer);
+    // Append everything to the main chat container
+    chatContainer.child(chatMessagesBox);
+    chatContainer.child(inputContainer);
 
-  // Finally, append chat container to the document body
-  chatContainer.parent(document.body);
+    // Finally, append chat container to the document body
+    chatContainer.parent(document.body);
 }
 
 // ─────────────────────────────────────────────────────────
@@ -928,27 +936,27 @@ function renderChatUI() {
 // ─────────────────────────────────────────────────────────
 
 function toggleChatDropdown() {
-  if (isChatOpen) {
-    // Hide the messages box and input
-    chatMessagesBox.hide();
-    inputContainer.hide();
-  } else {
-    // Show the messages box and input
-    chatMessagesBox.show();
-    inputContainer.show();
-  }
-  isChatOpen = !isChatOpen;
-  // Update the button text after toggling
-  updateToggleChatButtonText();
+    if (isChatOpen) {
+        // Hide the messages box and input
+        chatMessagesBox.hide();
+        inputContainer.hide();
+    } else {
+        // Show the messages box and input
+        chatMessagesBox.show();
+        inputContainer.show();
+    }
+    isChatOpen = !isChatOpen;
+    // Update the button text after toggling
+    updateToggleChatButtonText();
 }
 
 
-function startGame(){
+function startGame() {
     console.log(raceSelected, "sasd")
     if (!selectedServer) {
         alert("Issue with server retry.");
         return;
-    } 
+    }
     if (!raceSelected) {
         alert("Pick a race.");
         console.log("SDSD")
@@ -1016,83 +1024,85 @@ function startGame(){
 // ─────────────────────────────────────────────────────────
 
 function updateToggleChatButtonText() {
-  // Calculate player count
-  const playerCount = Object.keys(players).length + 1;
-  // Set arrow and text depending on state
-  const arrow = isChatOpen ? "▼" : "▲";
-  toggleChatButton.html(`Chat (Players: ${playerCount}) ${arrow}`);
+    // Calculate player count
+    const playerCount = Object.keys(players).length + 1;
+    // Set arrow and text depending on state
+    const arrow = isChatOpen ? "▼" : "▲";
+    toggleChatButton.html(`Chat (Players: ${playerCount}) ${arrow}`);
 }
 
 // Function to update the player count display when players change
 function updatePlayerCount() {
 
-  const playerCount = Object.keys(players).length + 1;
+    const playerCount = Object.keys(players).length + 1;
 
-  const arrow = isChatOpen ? "▼" : "▲";
+    const arrow = isChatOpen ? "▼" : "▲";
     toggleChatButton.html(`Chat (Players: ${playerCount}) ${arrow}`);
-  
+
 }
 
 // Function to send a chat message via socket
 function sendChatMessage() {
-  let message = chatInput.value();
-  if (message.trim() === "") return; // Avoid sending empty messages
+    let message = chatInput.value();
+    if (message.trim() === "") return; // Avoid sending empty messages
 
-  // Retrieve player position (adjust if you store the player's position differently)
-  let x = curPlayer && curPlayer.pos ? curPlayer.pos.x : 0;
-  let y = curPlayer && curPlayer.pos ? curPlayer.pos.y : 0;
+    // Retrieve player position (adjust if you store the player's position differently)
+    let x = curPlayer && curPlayer.pos ? curPlayer.pos.x : 0;
+    let y = curPlayer && curPlayer.pos ? curPlayer.pos.y : 0;
 
-  // Format data: "x,y,message"
-  let data = `${x},${y},${message}`;
+    // Format data: "x,y,message"
+    let data = `${x},${y},${message}`;
 
-  // Emit the chat message to the server
-  if (socket) {
-    socket.emit("send_message", data);
-  }
+    // Emit the chat message to the server
+    if (socket) {
+        socket.emit("send_message", data);
+    }
 
-  // Clear the input after sending
-  chatInput.value("");
+    // Clear the input after sending
+    chatInput.value("");
 }
 
 
 // Function to send a chat message via socket
 function sendChatMessage() {
-  let message = chatInput.value();
-  if (message.trim() === "") return; // Avoid sending empty messages
+    let message = chatInput.value();
+    if (message.trim() === "") return; // Avoid sending empty messages
 
-  // Retrieve player position (adjust if you store the player's position differently)
-  let x = curPlayer && curPlayer.pos ? curPlayer.pos.x : 0;
-  let y = curPlayer && curPlayer.pos ? curPlayer.pos.y : 0;
+    // Retrieve player position (adjust if you store the player's position differently)
+    let x = curPlayer && curPlayer.pos ? curPlayer.pos.x : 0;
+    let y = curPlayer && curPlayer.pos ? curPlayer.pos.y : 0;
 
-  // Format data: "x,y,message"
-  let data = `${x},${y},${message}`;
+    // Format data: "x,y,message"
+    let data = `${x},${y},${message}`;
 
-  // Emit the chat message to the server
-  if (socket) {
-    socket.emit("send_message", data);
-  }
-  // Clear the input after sending
-  chatInput.value("");
+    // Emit the chat message to the server
+    if (socket) {
+        socket.emit("send_message", data);
+    }
+    // Clear the input after sending
+    chatInput.value("");
 }
 
 // Helper function to add a chat message to the messages box
 function addChatMessage(chatMsg) {
+    if(!chatContainer) return
+
     console.log(chatMsg)
 
-    if(!chatMsg.user) {
+    if (!chatMsg.user) {
         chatMsg.user = "SERVER"
     }
     // If your 'chatMsg' object doesn't have a time property, you can generate one:
     // let timeString = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     // Otherwise, if 'chatMsg.time' is already set, you can do:
-    const timeString = chatMsg.time || new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-  
+    const timeString = chatMsg.time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
     // Create a container for the entire message (text + time)
     let msgContainer = createDiv();
     msgContainer.style("display", "flex");
     msgContainer.style("align-items", "center");
     msgContainer.style("margin-bottom", "6px");
-  
+
     // Create a text container with the user & message
     let textContainer = createDiv(`<strong>${chatMsg.user}:</strong> ${chatMsg.message}`);
     textContainer.style("color", "#fff");
@@ -1101,7 +1111,7 @@ function addChatMessage(chatMsg) {
     textContainer.style("border-radius", "5px 0 0 5px"); // Rounded left corners
     textContainer.style("flex", "1"); // Let this container expand
     textContainer.style("font-size", "0.9em");
-  
+
     // Create a time container in a smaller box
     let timeDiv = createDiv(timeString);
     timeDiv.style("background-color", "#555");
@@ -1111,18 +1121,18 @@ function addChatMessage(chatMsg) {
     timeDiv.style("margin-left", "4px");
     timeDiv.style("font-size", "0.8em");
     timeDiv.style("white-space", "nowrap"); // Ensure the time doesn't wrap to a new line
-  
+
     // Add both containers to the main message container
     msgContainer.child(textContainer);
     msgContainer.child(timeDiv);
-  
+
     // Add the message container to the messages box
     chatMessagesBox.child(msgContainer);
-  
+
     // Scroll to the bottom of the messages box
     chatMessagesBox.elt.scrollTop = chatMessagesBox.elt.scrollHeight;
-  }
-  
+}
+
 var invDiv;
 var itemListDiv;
 var curItemDiv;
@@ -1137,126 +1147,126 @@ function defineInvUI() {
     invDiv = createDiv();
     invDiv.id("inventory");
     invDiv.class("container");
-    
+
     // Minimal inline styles – rely on CSS for the main visuals
     applyStyle(invDiv, {
-      position: "absolute",
-      top: "45%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      display: "none",
+        position: "absolute",
+        top: "45%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        display: "none",
 
     });
-  
+
     // Top bar (title area)
     let topBar = createDiv().parent(invDiv);
     // Let CSS handle sizing and layout. 
     // We'll just give it an appropriate class if we want.
     // e.g., topBar.class("top-bar");
     applyStyle(topBar, {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
     });
-  
+
     // Inventory Title
     let invTitle = createP("Inventory").parent(topBar);
     invTitle.class("inventory-title");
-  
+
     // Crafting Title
     let craftingTitle = createP("Crafting").parent(topBar);
     craftingTitle.class("inventory-title");
-  
+
     // Tag Bar (Category Buttons)
     let tagBar = createDiv().parent(invDiv);
-    tagBar.class("tag-bar"); 
+    tagBar.class("tag-bar");
     // If you want minimal inline style:
     // applyStyle(tagBar, { gap: "5px", borderBottom: "2px solid black" });
-  
+
     // Define categories
     const categories = ["All", "Tools/Seeds", "Weapons", "Equipment", "Consumables"];
     let categoryButtons = {};
-  
+
     categories.forEach((category) => {
-      let button = createButton(category).parent(tagBar);
-      button.class("tag-button");
-      // If you want minimal inline styles:
-      // applyStyle(button, { width: "120px" });
-  
-      button.mousePressed(() => {
-        curPlayer.invBlock.curTag = category;
-        updateItemList();
-  
-        // Highlight the selected button
-        Object.values(categoryButtons).forEach((btn) => {
-          btn.removeClass("selected");
+        let button = createButton(category).parent(tagBar);
+        button.class("tag-button");
+        // If you want minimal inline styles:
+        // applyStyle(button, { width: "120px" });
+
+        button.mousePressed(() => {
+            curPlayer.invBlock.curTag = category;
+            updateItemList();
+
+            // Highlight the selected button
+            Object.values(categoryButtons).forEach((btn) => {
+                btn.removeClass("selected");
+            });
+            button.addClass("selected");
         });
-        button.addClass("selected");
-      });
-  
-      categoryButtons[category] = button;
+
+        categoryButtons[category] = button;
     });
-  
+
     // Default selection highlight
     categoryButtons["All"].addClass("selected");
-  
+
     // Bottom area (item list + details)
     let bottomDiv = createDiv().parent(invDiv);
     bottomDiv.class("bottom-area");
-  
+
     // Item list
     itemListDiv = createDiv().parent(bottomDiv);
     itemListDiv.class("item-list");
-  
+
     // Current item details
     curItemDiv = createDiv().parent(bottomDiv);
     curItemDiv.class("item-details");
-  
+
     // Spacebar Hotkey Div
     spaceBarDiv = createDiv("").parent(invDiv);
     spaceBarDiv.class("spacebar-hotkey");
     spaceBarDiv.html("Hotkey: Space");
-  
+
     spaceBarDiv.mousePressed(() => {
-      curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem, curPlayer.invBlock.selectedHotBar);
+        curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem, curPlayer.invBlock.selectedHotBar);
     });
-  
+
     spaceBarDiv.hide();
-  
+
     // Finally, populate items
     updateItemList();
     updatecurItemDiv();
-  }
-  
+}
 
 
-function updateItemList(){
-    if(curPlayer == undefined) return;
+
+function updateItemList() {
+    if (curPlayer == undefined) return;
 
     itemListDiv.html("");
     //create a div for each item in the inventory
     let arr = Object.keys(curPlayer.invBlock.items);
     arr = arr.filter((itemName) => {
-        if(curPlayer.invBlock.curTag == "All"){
+        if (curPlayer.invBlock.curTag == "All") {
             return true;
         }
-        else if(curPlayer.invBlock.curTag == "Tools/Seeds"){
-            if(curPlayer.invBlock.items[itemName].type == "Shovel" || curPlayer.invBlock.items[itemName].type == "Seed"){
+        else if (curPlayer.invBlock.curTag == "Tools/Seeds") {
+            if (curPlayer.invBlock.items[itemName].type == "Shovel" || curPlayer.invBlock.items[itemName].type == "Seed") {
                 return true;
             }
         }
-        else if(curPlayer.invBlock.curTag == "Weapons"){
-            if(curPlayer.invBlock.items[itemName].type == "Melee" || curPlayer.invBlock.items[itemName].type == "Ranged"){
+        else if (curPlayer.invBlock.curTag == "Weapons") {
+            if (curPlayer.invBlock.items[itemName].type == "Melee" || curPlayer.invBlock.items[itemName].type == "Ranged") {
                 return true;
             }
         }
-        else if(curPlayer.invBlock.curTag == "Equipment"){
-            if(curPlayer.invBlock.items[itemName].type == "Equipment"){
+        else if (curPlayer.invBlock.curTag == "Equipment") {
+            if (curPlayer.invBlock.items[itemName].type == "Equipment") {
                 return true;
             }
         }
-        else if(curPlayer.invBlock.curTag == "Consumables"){
-            if(curPlayer.invBlock.items[itemName].type == "Food" || curPlayer.invBlock.items[itemName].type == "Potion"){
+        else if (curPlayer.invBlock.curTag == "Consumables") {
+            if (curPlayer.invBlock.items[itemName].type == "Food" || curPlayer.invBlock.items[itemName].type == "Potion") {
                 return true;
             }
         }
@@ -1264,7 +1274,7 @@ function updateItemList(){
         return false;
     });
 
-    for(let i = 0; i < arr.length; i++){
+    for (let i = 0; i < arr.length; i++) {
         let itemName = arr[i];
         let itemDiv = createDiv();
         itemDiv.style("width", "100%");
@@ -1273,8 +1283,8 @@ function updateItemList(){
         itemDiv.style("align-items", "center");
         itemDiv.style("justify-content", "center");
         itemDiv.style("border-bottom", "2px solid black");
-        if(curPlayer.invBlock.curItem == itemName) itemDiv.style("background-color", "rgb(120, 120, 120)");
-        if(curPlayer.invBlock.curItem == itemName) itemDiv.style("font-style", "italic");
+        if (curPlayer.invBlock.curItem == itemName) itemDiv.style("background-color", "rgb(120, 120, 120)");
+        if (curPlayer.invBlock.curItem == itemName) itemDiv.style("font-style", "italic");
         itemDiv.style("cursor", "pointer");
         itemDiv.parent(itemListDiv);
         itemDiv.mousePressed(() => {
@@ -1291,7 +1301,7 @@ function updateItemList(){
         itemInfoDiv.style("justify-content", "space-between");
         itemInfoDiv.parent(itemDiv);
 
-        let itemNameP = createP((itemName == curPlayer.invBlock.curItem ? "* ":"") + itemName);
+        let itemNameP = createP((itemName == curPlayer.invBlock.curItem ? "* " : "") + itemName);
         itemNameP.style("font-size", "20px");
         itemNameP.style("color", "white");
         itemNameP.parent(itemInfoDiv);
@@ -1303,8 +1313,8 @@ function updateItemList(){
     }
 }
 
-function updatecurItemDiv(){
-    if(curPlayer == undefined) return;
+function updatecurItemDiv() {
+    if (curPlayer == undefined) return;
 
     //clear the div
     curItemDiv.html("");
@@ -1322,7 +1332,7 @@ function updatecurItemDiv(){
     itemImgDiv.style("border", "2px solid black");
     itemImgDiv.style("border-radius", "10px");
     //console.log(itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]);
-    itemImgDiv.style("background-image", "url("+itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]+")");
+    itemImgDiv.style("background-image", "url(" + itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0] + ")");
     itemImgDiv.style("background-size", "contain");
     itemImgDiv.style("background-repeat", "no-repeat");
     itemImgDiv.style("background-position", "center");
@@ -1365,8 +1375,8 @@ function updatecurItemDiv(){
     itemStatsDiv.style("width", "100%");
     itemStatsDiv.style("height", "calc(70% - 10px)");
     itemStatsDiv.parent(curItemDiv);
-  
-    if(curPlayer.invBlock.items[curPlayer.invBlock.curItem].type != "Simple"){
+
+    if (curPlayer.invBlock.items[curPlayer.invBlock.curItem].type != "Simple") {
         let durabilityDiv = createDiv();
         durabilityDiv.style("width", "calc(100% - 14px)");
         durabilityDiv.style("height", "10%");
@@ -1378,12 +1388,12 @@ function updatecurItemDiv(){
         durabilityDiv.style("justify-content", "center");
         durabilityDiv.style("margin-bottom", "5px");
         durabilityDiv.parent(itemStatsDiv);
-        
+
         let durabilityText = createP("Durability:");
         durabilityText.style("font-size", "20px");
         durabilityText.style("color", "white");
         durabilityText.parent(durabilityDiv);
-        
+
         let durabilityBar = createDiv();
         durabilityBar.style("width", "80%");
         durabilityBar.style("height", "20px");
@@ -1391,9 +1401,9 @@ function updatecurItemDiv(){
         durabilityBar.style("border", "2px solid black");
         durabilityBar.style("border-radius", "10px");
         durabilityBar.parent(durabilityDiv);
-        
+
         let durabilityFill = createDiv();
-        durabilityFill.style("width", ((curPlayer.invBlock.items[curPlayer.invBlock.curItem].durability/curPlayer.invBlock.items[curPlayer.invBlock.curItem].maxDurability)*100)+"%");
+        durabilityFill.style("width", ((curPlayer.invBlock.items[curPlayer.invBlock.curItem].durability / curPlayer.invBlock.items[curPlayer.invBlock.curItem].maxDurability) * 100) + "%");
         durabilityFill.style("height", "100%");
         durabilityFill.style("background-color", "green");
         durabilityFill.style("border-radius", "10px");
@@ -1418,8 +1428,8 @@ function updatecurItemDiv(){
 
     let stats = curPlayer.invBlock.items[curPlayer.invBlock.curItem].getStats();
     stats.forEach(stat => {
-        if(stat[0] == "Durability"){}
-        else{
+        if (stat[0] == "Durability") { }
+        else {
             let statDiv = createDiv();
             statDiv.style("width", "100%");
             statDiv.style("height", "20px");
@@ -1427,7 +1437,7 @@ function updatecurItemDiv(){
             statDiv.style("margin-bottom", "12px");
             statDiv.parent(statsList);
 
-            let statNameDiv = createDiv(stat[0]+":");
+            let statNameDiv = createDiv(stat[0] + ":");
             statNameDiv.style("width", "50%");
             statNameDiv.style("height", "100%");
             statNameDiv.style("color", "white");
@@ -1454,71 +1464,71 @@ function updatecurItemDiv(){
     updateSpaceBarDiv();
 }
 
-function updateSpaceBarDiv(){
-    if(curPlayer.invBlock.curItem == "") return;
+function updateSpaceBarDiv() {
+    if (curPlayer.invBlock.curItem == "") return;
 
-    if(curPlayer.invBlock.items[curPlayer.invBlock.curItem].type == "Simple"){
+    if (curPlayer.invBlock.items[curPlayer.invBlock.curItem].type == "Simple") {
         spaceBarDiv.hide();
     }
-    else{
+    else {
         spaceBarDiv.show();
         let msg = "";
-        if(curPlayer.invBlock.curItem == curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]){
+        if (curPlayer.invBlock.curItem == curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]) {
             msg = "(SpaceBar) - remove from hotbar";
         }
-        else{
+        else {
             msg = "(SpaceBar) - put in hotbar";
         }
         spaceBarDiv.html(msg);
     }
 }
 
-function renderDirtBagUI(){
+function renderDirtBagUI() {
     // Dirt Inventory
     push();
     //should add an open and closed version
 
-    if(dirtBagUI.shake.length > 0){
-        if(dirtBagUI.vel.mag() < 1){
+    if (dirtBagUI.shake.length > 0) {
+        if (dirtBagUI.vel.mag() < 1) {
             dirtBagUI.vel.x = dirtBagUI.shake.intensity;
         }
-        dirtBagUI.vel.setMag(dirtBagUI.vel.mag()+dirtBagUI.shake.intensity);
-        if(dirtBagUI.vel.mag() > dirtBagUI.shake.intensity*5){
-            dirtBagUI.vel.setMag(dirtBagUI.shake.intensity*5);
+        dirtBagUI.vel.setMag(dirtBagUI.vel.mag() + dirtBagUI.shake.intensity);
+        if (dirtBagUI.vel.mag() > dirtBagUI.shake.intensity * 5) {
+            dirtBagUI.vel.setMag(dirtBagUI.shake.intensity * 5);
         }
         dirtBagUI.vel.rotate(random(45, 180));
         dirtBagUI.shake.length -= 1;
     }
-    else{
+    else {
         dirtBagUI.shake.intensity = 0;
-        dirtBagUI.vel.x = ((width-180-10)-dirtBagUI.pos.x);
-        dirtBagUI.vel.y = ((height-186-10)-dirtBagUI.pos.y);
-        dirtBagUI.vel.setMag(dirtBagUI.vel.mag()/10);
+        dirtBagUI.vel.x = ((width - 180 - 10) - dirtBagUI.pos.x);
+        dirtBagUI.vel.y = ((height - 186 - 10) - dirtBagUI.pos.y);
+        dirtBagUI.vel.setMag(dirtBagUI.vel.mag() / 10);
     }
     dirtBagUI.pos.add(dirtBagUI.vel);
 
     let dirtBagOpen = true;
-    if(curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] == ""){
-        if(dirtInv >= maxDirtInv - curPlayer.statBlock.stats.handDigSpeed){
+    if (curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] == "") {
+        if (dirtInv >= maxDirtInv - curPlayer.statBlock.stats.handDigSpeed) {
             dirtBagOpen = false;
         }
     }
-    else if (curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Shovel"){
-        if(dirtInv >= maxDirtInv - curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].digSpeed){
+    else if (curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Shovel") {
+        if (dirtInv >= maxDirtInv - curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].digSpeed) {
             dirtBagOpen = false;
         }
     }
-    else if(dirtInv >= maxDirtInv - DIGSPEED){
+    else if (dirtInv >= maxDirtInv - DIGSPEED) {
         dirtBagOpen = false;
     }
 
-    if(dirtBagOpen) image(dirtBagOpenImg, dirtBagUI.pos.x, dirtBagUI.pos.y, 180, 186);
+    if (dirtBagOpen) image(dirtBagOpenImg, dirtBagUI.pos.x, dirtBagUI.pos.y, 180, 186);
     else image(dirtBagImg, dirtBagUI.pos.x, dirtBagUI.pos.y, 180, 186);
 
     fill("#70443C");
-    rect(dirtBagUI.pos.x + 30, dirtBagUI.pos.y + 35 + (120 * (1-(dirtInv/maxDirtInv))), 120, 120 * (dirtInv/maxDirtInv));
+    rect(dirtBagUI.pos.x + 30, dirtBagUI.pos.y + 35 + (120 * (1 - (dirtInv / maxDirtInv))), 120, 120 * (dirtInv / maxDirtInv));
 
-    if(!dirtBagOpen){
+    if (!dirtBagOpen) {
         fill(255);
         stroke(0);
         strokeWeight(5);
@@ -1573,6 +1583,7 @@ function togglePlayerStatusTable() {
 
     // Toggle visibility
     const isVisible = player_status_container.style("display") !== "none";
+    console.log(isVisible)
     if (isVisible) {
         player_status_container.hide();
         return;
@@ -1587,46 +1598,46 @@ function togglePlayerStatusTable() {
     title.style("color", "white");
     title.style("text-decoration", "underline");
 
-    if(gameState == "player_status") {
+    if (gameState == "player_status") {
         fetch(getServerUrl(selectedServer) + "/playerinfo")
-        .then(res => res.json())
-        .then(players => {
-            let tableWrapper = createDiv().parent(player_status_container);
-            tableWrapper.style("overflow-y", "auto");
-            tableWrapper.style("max-height", "70%");
-            tableWrapper.style("margin-top", "10px");
+            .then(res => res.json())
+            .then(players => {
+                let tableWrapper = createDiv().parent(player_status_container);
+                tableWrapper.style("overflow-y", "auto");
+                tableWrapper.style("max-height", "70%");
+                tableWrapper.style("margin-top", "10px");
 
-            let table = createElement("table").parent(tableWrapper);
-            table.style("width", "100%");
-            table.style("color", "white");
-            table.style("border-collapse", "collapse");
-            table.style("font-size", "1rem");
+                let table = createElement("table").parent(tableWrapper);
+                table.style("width", "100%");
+                table.style("color", "white");
+                table.style("border-collapse", "collapse");
+                table.style("font-size", "1rem");
 
-            let thead = createElement("thead").parent(table);
-            thead.html("<tr><th>Name</th><th>Kills</th><th>Ping</th></tr>");
-            thead.elt.style.backgroundColor = "#333";
+                let thead = createElement("thead").parent(table);
+                thead.html("<tr><th>Name</th><th>Kills</th><th>Ping</th></tr>");
+                thead.elt.style.backgroundColor = "#333";
 
-            let tbody = createElement("tbody").parent(table);
-            players.forEach(p => {
-                const row = createElement("tr").parent(tbody);
-                row.html(`<td>${p.name}</td><td>${p.kills}</td><td>${p.ping}</td>`);
-                row.elt.style.borderBottom = "1px solid #444";
+                let tbody = createElement("tbody").parent(table);
+                players.forEach(p => {
+                    const row = createElement("tr").parent(tbody);
+                    row.html(`<td>${p.name}</td><td>${p.kills}</td><td>${p.ping}</td>`);
+                    row.elt.style.borderBottom = "1px solid #444";
+                });
+
+                player_status_container.show();
+            })
+            .catch(err => {
+                console.error("Failed to fetch player info:", err);
+                player_status_container.html("❌ Failed to load player data.");
+                player_status_container.show();
             });
-
-            player_status_container.show();
-        })
-        .catch(err => {
-            console.error("Failed to fetch player info:", err);
-            player_status_container.html("❌ Failed to load player data.");
-            player_status_container.show();
-        });
     }
 }
 
 
-  
-  // Render build UI container
-  var buildDiv;
+
+// Render build UI container
+var buildDiv;
 
 
 //   var buildOptions = [
@@ -1639,7 +1650,7 @@ function togglePlayerStatusTable() {
 //     { type: "Turret", key: 55, params: { obj: curPlayer.obj } },
 //     { type: "PlacedBomb", key: 56, params: { obj: curPlayer.obj } },
 //   ];
-  
+
 // 1) Set up the container DIV
 function defineBuildUI() {
     buildDiv = createDiv();
@@ -1654,209 +1665,209 @@ function defineBuildUI() {
     buildDiv.style("border", "2px solid black");
     buildDiv.style("border-radius", "10px");
     buildDiv.style("padding", "20px");
-  
+
     // If you wanted smaller text, use font-size instead of text-size-adjusted
     buildDiv.style("font-size", "80%");
-  
+
     // Enable scrolling when content overflows
     buildDiv.style("overflow-y", "scroll");
-  }
-  
-  // 2) Render your build options
-  function renderBuildOptions() {
+}
+
+// 2) Render your build options
+function renderBuildOptions() {
     // Clear any previous content
     buildDiv.html('');
-  
+
     // Create an unordered list to hold build options
     const ul = createElement('ul');
     ul.style('list-style', 'none');
     ul.style('padding', '0');
     ul.style('margin', '0 auto');
     ul.parent(buildDiv);
-  
+
     buildOptions.forEach(option => {
-      const humanKey = keyCodeToHuman(option.key);
-  
-      // Main list item
-      const li = createElement('li');
-      li.class("buildOption");
-      li.parent(ul);
-  
-      // This card wraps each build option
-      const buildCard = createDiv();
-      buildCard.style('display', 'flex');
-      buildCard.style('align-items', 'flex-start');
-      buildCard.style('background', 'rgba(0, 0, 0, 0.25)');
-      buildCard.style('cursor', 'pointer'); // visually indicates it's clickable
-      buildCard.parent(li);
-  
-      // If this item is currently selected, highlight the card
-      if (ghostBuild.objName === option.objName) {
-        buildCard.style('background-color', 'rgba(255, 255, 255, 0.2)');
-        buildCard.style('box-shadow', '0 4px 10px rgba(0, 0, 0, 0.5)');
-        buildCard.style('border', '3px solid #ffcc00');
-      }
-  
-      // You can also adjust text size if you want
-      buildCard.style('font-size', '0.9rem');
-  
-      // Left side: the image
-      const imgDiv = createDiv();
-      imgDiv.style('margin-right', '15px');
-      imgDiv.parent(buildCard);
-  
-      const img = createImg(option.images[curPlayer.color % option.images.length], option.objName);
-      img.style('width', '64px');
-      img.style('height', '64px');
-      img.style('image-rendering', 'pixelated');
-      img.parent(imgDiv);
-  
-      // Right side: text info
-      const infoDiv = createDiv();
-      infoDiv.style('display', 'flex');
-      infoDiv.style('flex-direction', 'column');
-      infoDiv.style('flex-grow', '1');
-      infoDiv.parent(buildCard);
-  
-      // Title row (key + object objName)
-      const titleDiv = createDiv(`${humanKey}: ${option.objName}`);
-      titleDiv.style('font-size', '1.1rem');
-      titleDiv.style('font-weight', 'bold');
-      titleDiv.style('margin-bottom', '8px');
-      titleDiv.parent(infoDiv);
-  
-      // Check if player can build (enough materials)
-      let canBuild = true;
-      const costArray = objDic[option.objName].cost; 
-      // costArray example: [ ["dirt", 20], ["Rock", 5] ]
-  
-      // This div will list each required material
-      const costsDetailsDiv = createDiv();
-      costsDetailsDiv.style('font-size', '0.9rem');
-      costsDetailsDiv.parent(infoDiv);
-  
-      costArray.forEach(([material, requiredAmount]) => {
-        let playerHas = 0;
-        if(material == "dirt"){
-            playerHas = dirtInv.toFixed(1);
-            console.log(playerHas, material);
+        const humanKey = keyCodeToHuman(option.key);
+
+        // Main list item
+        const li = createElement('li');
+        li.class("buildOption");
+        li.parent(ul);
+
+        // This card wraps each build option
+        const buildCard = createDiv();
+        buildCard.style('display', 'flex');
+        buildCard.style('align-items', 'flex-start');
+        buildCard.style('background', 'rgba(0, 0, 0, 0.25)');
+        buildCard.style('cursor', 'pointer'); // visually indicates it's clickable
+        buildCard.parent(li);
+
+        // If this item is currently selected, highlight the card
+        if (ghostBuild.objName === option.objName) {
+            buildCard.style('background-color', 'rgba(255, 255, 255, 0.2)');
+            buildCard.style('box-shadow', '0 4px 10px rgba(0, 0, 0, 0.5)');
+            buildCard.style('border', '3px solid #ffcc00');
         }
-        else if (curPlayer.invBlock.items[material] != undefined) {
-            playerHas = curPlayer.invBlock.items[material].amount;
-            console.log(playerHas,  curPlayer.invBlock.items[material], material);
-        }
-        // Create a line: "Material: X / Y"
-        const line = createDiv(`${material}:  ${playerHas} / ${requiredAmount}`);
-        
-        // If not enough, color this line red, and set canBuild to false
-        if (playerHas < requiredAmount) {
-          line.style('color', 'red');
-          canBuild = false;
-        } else {
-          line.style('color', 'white');
-        }
-  
-        line.parent(costsDetailsDiv);
-      });
-  
-      // If the player can’t afford ANY material, color the entire text red
-      infoDiv.style('color', canBuild ? 'white' : 'red');
-  
-      // Click the card -> set ghostBuild to this object
-      buildCard.mouseClicked(() => {
-        // If you want to prevent selection when not enough materials, uncomment:
-        // if (!canBuild) return;
-  
-        ghostBuild = createObject(option.objName, 0, 0, 0, 11, " ", " ");
-        
-        // Re-render to highlight the newly selected item
-        renderBuildOptions();
-      });
+
+        // You can also adjust text size if you want
+        buildCard.style('font-size', '0.9rem');
+
+        // Left side: the image
+        const imgDiv = createDiv();
+        imgDiv.style('margin-right', '15px');
+        imgDiv.parent(buildCard);
+
+        const img = createImg(option.images[curPlayer.color % option.images.length], option.objName);
+        img.style('width', '64px');
+        img.style('height', '64px');
+        img.style('image-rendering', 'pixelated');
+        img.parent(imgDiv);
+
+        // Right side: text info
+        const infoDiv = createDiv();
+        infoDiv.style('display', 'flex');
+        infoDiv.style('flex-direction', 'column');
+        infoDiv.style('flex-grow', '1');
+        infoDiv.parent(buildCard);
+
+        // Title row (key + object objName)
+        const titleDiv = createDiv(`${humanKey}: ${option.objName}`);
+        titleDiv.style('font-size', '1.1rem');
+        titleDiv.style('font-weight', 'bold');
+        titleDiv.style('margin-bottom', '8px');
+        titleDiv.parent(infoDiv);
+
+        // Check if player can build (enough materials)
+        let canBuild = true;
+        const costArray = objDic[option.objName].cost;
+        // costArray example: [ ["dirt", 20], ["Rock", 5] ]
+
+        // This div will list each required material
+        const costsDetailsDiv = createDiv();
+        costsDetailsDiv.style('font-size', '0.9rem');
+        costsDetailsDiv.parent(infoDiv);
+
+        costArray.forEach(([material, requiredAmount]) => {
+            let playerHas = 0;
+            if (material == "dirt") {
+                playerHas = dirtInv.toFixed(1);
+                console.log(playerHas, material);
+            }
+            else if (curPlayer.invBlock.items[material] != undefined) {
+                playerHas = curPlayer.invBlock.items[material].amount;
+                console.log(playerHas, curPlayer.invBlock.items[material], material);
+            }
+            // Create a line: "Material: X / Y"
+            const line = createDiv(`${material}:  ${playerHas} / ${requiredAmount}`);
+
+            // If not enough, color this line red, and set canBuild to false
+            if (playerHas < requiredAmount) {
+                line.style('color', 'red');
+                canBuild = false;
+            } else {
+                line.style('color', 'white');
+            }
+
+            line.parent(costsDetailsDiv);
+        });
+
+        // If the player can’t afford ANY material, color the entire text red
+        infoDiv.style('color', canBuild ? 'white' : 'red');
+
+        // Click the card -> set ghostBuild to this object
+        buildCard.mouseClicked(() => {
+            // If you want to prevent selection when not enough materials, uncomment:
+            // if (!canBuild) return;
+
+            ghostBuild = createObject(option.objName, 0, 0, 0, 11, " ", " ");
+
+            // Re-render to highlight the newly selected item
+            renderBuildOptions();
+        });
     });
-  }
-  
-  
+}
+
+
 
 // Helper function to translate key codes to human-friendly strings
 function keyCodeToHuman(keyCode) {
     if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 90)) {
-      return String.fromCharCode(keyCode);
+        return String.fromCharCode(keyCode);
     }
     switch (keyCode) {
-      case 32:
-        return "Space";
-      default:
-        return keyCode.toString();
+        case 32:
+            return "Space";
+        default:
+            return keyCode.toString();
     }
-  }
-  
-   
+}
+
+
 
 
 function definePauseUI() {
 
- // Create a container div for the settings
- settingsContainer = createDiv();
- settingsContainer.class("container");
- settingsContainer.style("position", "absolute")
- // Style the container (similar to your CSS)
- settingsContainer.style("font-family", "Arial, sans-serif");
- settingsContainer.style("margin", "0 auto");
- settingsContainer.style("width", "300px");
- settingsContainer.style("background-color", "#222");
- settingsContainer.style("color", "white");
- settingsContainer.style("padding", "20px");
- settingsContainer.style("border-radius", "10px");
- settingsContainer.style("display", "none");
- settingsContainer.style("flex-direction", "column");
- settingsContainer.style("align-items", "center");
- settingsContainer.style("z-index", "999")
+    // Create a container div for the settings
+    settingsContainer = createDiv();
+    settingsContainer.class("container");
+    settingsContainer.style("position", "absolute")
+    // Style the container (similar to your CSS)
+    settingsContainer.style("font-family", "Arial, sans-serif");
+    settingsContainer.style("margin", "0 auto");
+    settingsContainer.style("width", "300px");
+    settingsContainer.style("background-color", "#222");
+    settingsContainer.style("color", "white");
+    settingsContainer.style("padding", "20px");
+    settingsContainer.style("border-radius", "10px");
+    settingsContainer.style("display", "none");
+    settingsContainer.style("flex-direction", "column");
+    settingsContainer.style("align-items", "center");
+    settingsContainer.style("z-index", "999")
 
- // Title
- let title = createElement("h2", "Settings");
- title.parent(settingsContainer);
+    // Title
+    let title = createElement("h2", "Settings");
+    title.parent(settingsContainer);
 
- // Create slider container
- let sliderContainer = createDiv();
- sliderContainer.parent(settingsContainer);
- sliderContainer.style("margin", "20px 0");
+    // Create slider container
+    let sliderContainer = createDiv();
+    sliderContainer.parent(settingsContainer);
+    sliderContainer.style("margin", "20px 0");
 
- // Label
- let volumeLabel = createElement("label", "Volume:");
- volumeLabel.parent(sliderContainer);
- volumeLabel.style("font-size", "16px");
- volumeLabel.style("margin-right", "10px");
+    // Label
+    let volumeLabel = createElement("label", "Volume:");
+    volumeLabel.parent(sliderContainer);
+    volumeLabel.style("font-size", "16px");
+    volumeLabel.style("margin-right", "10px");
 
- // p5 slider
- volumeSlider = createSlider(0, 100, 50);
- volumeSlider.parent(sliderContainer);
- volumeSlider.style("width", "150px");
+    // p5 slider
+    volumeSlider = createSlider(0, 100, 50);
+    volumeSlider.parent(sliderContainer);
+    volumeSlider.style("width", "150px");
 
- // Retrieve saved volume from localStorage
- const savedVolume = localStorage.getItem("volume");
- if (savedVolume) {
-   volumeSlider.value(savedVolume);
- }
+    // Retrieve saved volume from localStorage
+    const savedVolume = localStorage.getItem("volume");
+    if (savedVolume) {
+        volumeSlider.value(savedVolume);
+    }
 
- // Save button
- saveButton = createButton("Save");
- saveButton.parent(settingsContainer);
- saveButton.class("button"); // For your reference, you can define .button in CSS if desired
- saveButton.style("padding", "10px");
- saveButton.style("margin-top", "20px");
- saveButton.style("background-color", "#444");
- saveButton.style("border", "none");
- saveButton.style("color", "white");
- saveButton.style("border-radius", "5px");
- saveButton.style("cursor", "pointer");
+    // Save button
+    saveButton = createButton("Save");
+    saveButton.parent(settingsContainer);
+    saveButton.class("button"); // For your reference, you can define .button in CSS if desired
+    saveButton.style("padding", "10px");
+    saveButton.style("margin-top", "20px");
+    saveButton.style("background-color", "#444");
+    saveButton.style("border", "none");
+    saveButton.style("color", "white");
+    saveButton.style("border-radius", "5px");
+    saveButton.style("cursor", "pointer");
 
- // Save button logic
- saveButton.mousePressed(() => {
-   // Save volume setting to localStorage
-   localStorage.setItem("volume", volumeSlider.value());
-   
-   toggleSettings()
- });
+    // Save button logic
+    saveButton.mousePressed(() => {
+        // Save volume setting to localStorage
+        localStorage.setItem("volume", volumeSlider.value());
+
+        toggleSettings()
+    });
 
     pauseDiv = createDiv();
     pauseDiv.class("container")
@@ -1864,17 +1875,17 @@ function definePauseUI() {
     pauseDiv.style("top", "50%");
     pauseDiv.style("left", "50%");
     pauseDiv.style("transform", "translate(-50%, -50%)");
-    pauseDiv.style("display", "none"); 
-    pauseDiv.style("flex-direction", "column"); 
-    pauseDiv.style("align-items", "center"); 
-    pauseDiv.style("justify-content", "space-evenly"); 
+    pauseDiv.style("display", "none");
+    pauseDiv.style("flex-direction", "column");
+    pauseDiv.style("align-items", "center");
+    pauseDiv.style("justify-content", "space-evenly");
     pauseDiv.style("width", "30%");
     pauseDiv.style("height", "40%");
     pauseDiv.style("border", "2px solid black");
     pauseDiv.style("border-radius", "10px");
     pauseDiv.style("text-align", "center");
     pauseDiv.style("padding", "20px");
-    
+
 
     let pauseTitle = createP("Paused");
     pauseTitle.style("font-size", "28px");
@@ -1925,85 +1936,85 @@ function toggleSettings() {
     }
 }
 
-function renderPlayerCardUI(){
+function renderPlayerCardUI() {
     push();
     fill(0);
     noStroke();
-    rect(width-530, 0, 510, 125);
+    rect(width - 530, 0, 510, 125);
 
     stroke(134);
     strokeWeight(4);
-    rect(width-530+6, -20, 510-12, 120+20-6, 10);
+    rect(width - 530 + 6, -20, 510 - 12, 120 + 20 - 6, 10);
 
     strokeWeight(2);
-    line(width-30-115+6, 7, width-30-115+6, 120-6);
-    line(width-530+6+5, 42, width-30-115+6-5, 42);
+    line(width - 30 - 115 + 6, 7, width - 30 - 115 + 6, 120 - 6);
+    line(width - 530 + 6 + 5, 42, width - 30 - 115 + 6 - 5, 42);
 
     noStroke();
     fill(134);
-    rect(width-530+6+79, 52, 295, 21);
-    rect(width-530+6+79, 83, 295, 21);
+    rect(width - 530 + 6 + 79, 52, 295, 21);
+    rect(width - 530 + 6 + 79, 83, 295, 21);
 
     fill(112, 68, 60);
-    rect(width-30-115+6+7, 7, 98, 98);
+    rect(width - 30 - 115 + 6 + 7, 7, 98, 98);
 
     fill(0);
-    rect(width-530+91, 52, 36, 19);
-    rect(width-530+128, 52, 33, 19);
-    rect(width-530+163, 52, 34, 19);
-    rect(width-530+199, 52, 33, 19);
-    rect(width-530+233, 52, 35, 19);
-    rect(width-530+269, 52, 33, 19);
-    rect(width-530+304, 52, 34, 19);
-    rect(width-530+340, 52, 36, 19);
+    rect(width - 530 + 91, 52, 36, 19);
+    rect(width - 530 + 128, 52, 33, 19);
+    rect(width - 530 + 163, 52, 34, 19);
+    rect(width - 530 + 199, 52, 33, 19);
+    rect(width - 530 + 233, 52, 35, 19);
+    rect(width - 530 + 269, 52, 33, 19);
+    rect(width - 530 + 304, 52, 34, 19);
+    rect(width - 530 + 340, 52, 36, 19);
 
-    rect(width-530+91, 83, 36, 19);
-    rect(width-530+128, 83, 33, 19);
-    rect(width-530+163, 83, 34, 19);
-    rect(width-530+199, 83, 33, 19);
-    rect(width-530+233, 83, 35, 19);
-    rect(width-530+269, 83, 33, 19);
-    rect(width-530+304, 83, 34, 19);
-    rect(width-530+340, 83, 36, 19);
+    rect(width - 530 + 91, 83, 36, 19);
+    rect(width - 530 + 128, 83, 33, 19);
+    rect(width - 530 + 163, 83, 34, 19);
+    rect(width - 530 + 199, 83, 33, 19);
+    rect(width - 530 + 233, 83, 35, 19);
+    rect(width - 530 + 269, 83, 33, 19);
+    rect(width - 530 + 304, 83, 34, 19);
+    rect(width - 530 + 340, 83, 36, 19);
 
-    image(hpBarImg, width-530+93, 52, 281*(curPlayer.statBlock.stats.hp/curPlayer.statBlock.stats.mhp), 14, 0, 0, 281*(curPlayer.statBlock.stats.hp/curPlayer.statBlock.stats.mhp), 14);
-    image(manaBarImg, width-530+93, 83, 281*(1), 14);
+    image(hpBarImg, width - 530 + 93, 52, 281 * (curPlayer.statBlock.stats.hp / curPlayer.statBlock.stats.mhp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.hp / curPlayer.statBlock.stats.mhp), 14);
+    image(manaBarImg, width - 530 + 93, 83, 281 * (1), 14);
 
     let raceName = races[curPlayer.race];
-    image(raceImages[raceName].portrait, width-30-115+6+7, 7, 98, 98);
+    image(raceImages[raceName].portrait, width - 30 - 115 + 6 + 7, 7, 98, 98);
 
     textFont(gameUIFont);
     textSize(20);
     strokeWeight(1);
     fill(134);
     stroke(134);
-    text("lvl", width-530+6+10+10, 35);
-    fill(0,255,0);
-    stroke(0,255,0);
-    text(curPlayer.statBlock.level, width-530+6+30+10+5, 35);
-    fill(255,0,0);
-    stroke(255,0,0);
-    text("HP:", width-530+6+30, 70);
+    text("lvl", width - 530 + 6 + 10 + 10, 35);
+    fill(0, 255, 0);
+    stroke(0, 255, 0);
+    text(curPlayer.statBlock.level, width - 530 + 6 + 30 + 10 + 5, 35);
+    fill(255, 0, 0);
+    stroke(255, 0, 0);
+    text("HP:", width - 530 + 6 + 30, 70);
     // fill(0,255,255);
     // stroke(0,255,255);
     // text("MP:", width-530+6+30, 100);
-    fill(255,255,0);
-    stroke(255,255,0);
-    text("AMMO:", width-530+6+15, 100);
+    fill(255, 255, 0);
+    stroke(255, 255, 0);
+    text("AMMO:", width - 530 + 6 + 15, 100);
     //fill with team color
     fill(teamColors[curPlayer.color].r, teamColors[curPlayer.color].g, teamColors[curPlayer.color].b);
     stroke(teamColors[curPlayer.color].r, teamColors[curPlayer.color].g, teamColors[curPlayer.color].b);
     textAlign(CENTER, CENTER);
-    text(curPlayer.name, width-530+6+45+(350/2), 19);
+    text(curPlayer.name, width - 530 + 6 + 45 + (350 / 2), 19);
 
-    let box = gameUIFont.textBounds(curPlayer.name, width-530+6+45+(350/2), 19);
-    line(box.x, box.y+box.h+4, box.x+box.w, box.y+box.h+4);
+    let box = gameUIFont.textBounds(curPlayer.name, width - 530 + 6 + 45 + (350 / 2), 19);
+    line(box.x, box.y + box.h + 4, box.x + box.w, box.y + box.h + 4);
     pop();
 }
 
 var teamPickDiv;
- 
-function defineTeamPickUI(){
+
+function defineTeamPickUI() {
     teamPickDiv = createDiv();
     teamPickDiv.class("container");
     teamPickDiv.id("teamPickDiv");
@@ -2018,11 +2029,11 @@ function defineTeamPickUI(){
     teamPickDiv.style("border-radius", "10px");
     teamPickDiv.style("text-align", "center");
     teamPickDiv.style("padding", "20px");
- 
+
     updateTeamPickUI();
 }
- 
-function updateTeamPickUI(){
+
+function updateTeamPickUI() {
     teamPickDiv.html("");
 
     let teamPickTitle = createP("Pick Team");
@@ -2034,29 +2045,29 @@ function updateTeamPickUI(){
     teamPickTitle.parent(teamPickDiv);
 
     //turn the team colors into buttons
-    for(let i = 0; i < teamColors.length; i++){
+    for (let i = 0; i < teamColors.length; i++) {
         let teamButton = createButton("");
 
         teamButton.style("width", "50px");
         teamButton.style("height", "50px");
-        teamButton.style("background-color", "rgb("+teamColors[i].r+","+teamColors[i].g+","+teamColors[i].b+")");
+        teamButton.style("background-color", "rgb(" + teamColors[i].r + "," + teamColors[i].g + "," + teamColors[i].b + ")");
         teamButton.style("margin", "10px");
         teamButton.style("padding", "0px");
         teamButton.style("border-radius", "0px");
         teamButton.style("border", "2px solid black");
         teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128)");
         teamButton.style("cursor", "pointer");
-        if(curPlayer == undefined){
-            if(i == 11){
+        if (curPlayer == undefined) {
+            if (i == 11) {
                 teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128), 0 0 0 8px rgb(255, 255, 255)");
             }
         }
-        else{
-            if(curPlayer.color == i){
+        else {
+            if (curPlayer.color == i) {
                 teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128), 0 0 0 8px rgb(255, 255, 255)");
             }
         }
-        if(i == 11){
+        if (i == 11) {
             teamButton.style("background-color", "rgb(0,0,0)");
             teamButton.style("background-image", "url('images/ui/none.png')");
             teamButton.style("background-size", "contain");
@@ -2079,7 +2090,7 @@ var itemListDivLeft;
 var itemListDivRight;
 var curSwapItemDiv;
 
-function defineSwapInvUI(){
+function defineSwapInvUI() {
     swapInvDiv = createDiv();
     swapInvDiv.id("inventory");
     swapInvDiv.class("container");
@@ -2100,7 +2111,7 @@ function defineSwapInvUI(){
     //Left Item list
     itemListDivLeft = createDiv().parent(swapInvDivInnerds);
     itemListDivLeft.class("item-list");
-  
+
     // Current item details
     curSwapItemDiv = createDiv().parent(swapInvDivInnerds);
     curSwapItemDiv.class("item-details");
@@ -2112,14 +2123,14 @@ function defineSwapInvUI(){
     swapInvDiv.hide();
 }
 
-function updateSwapItemLists(otherInv){
-    if(curPlayer == undefined) return;
+function updateSwapItemLists(otherInv) {
+    if (curPlayer == undefined) return;
 
     itemListDivLeft.html("");
     //create a div for each item in the inventory
     let arr = Object.keys(curPlayer.invBlock.items);
 
-    for(let i = 0; i < arr.length; i++){
+    for (let i = 0; i < arr.length; i++) {
         let itemName = arr[i];
         let itemDiv = createDiv();
         itemDiv.style("width", "100%");
@@ -2128,8 +2139,8 @@ function updateSwapItemLists(otherInv){
         itemDiv.style("align-items", "center");
         itemDiv.style("justify-content", "center");
         itemDiv.style("border-bottom", "2px solid black");
-        if(curPlayer.invBlock.curItem == itemName) itemDiv.style("background-color", "rgb(120, 120, 120)");
-        if(curPlayer.invBlock.curItem == itemName) itemDiv.style("font-style", "italic");
+        if (curPlayer.invBlock.curItem == itemName) itemDiv.style("background-color", "rgb(120, 120, 120)");
+        if (curPlayer.invBlock.curItem == itemName) itemDiv.style("font-style", "italic");
         itemDiv.style("cursor", "pointer");
         itemDiv.parent(itemListDivLeft);
         itemDiv.mousePressed(() => {
@@ -2147,7 +2158,7 @@ function updateSwapItemLists(otherInv){
         itemInfoDiv.style("justify-content", "space-between");
         itemInfoDiv.parent(itemDiv);
 
-        let itemNameP = createP((itemName == curPlayer.invBlock.curItem ? "* ":"") + itemName);
+        let itemNameP = createP((itemName == curPlayer.invBlock.curItem ? "* " : "") + itemName);
         itemNameP.style("font-size", "20px");
         itemNameP.style("color", "white");
         itemNameP.parent(itemInfoDiv);
@@ -2160,7 +2171,7 @@ function updateSwapItemLists(otherInv){
 
     itemListDivRight.html("");
     arr = Object.keys(otherInv.items);
-    for(let i=0; i<arr.length; i++){
+    for (let i = 0; i < arr.length; i++) {
         let itemName = arr[i];
         let itemDiv = createDiv();
         itemDiv.style("width", "100%");
@@ -2169,8 +2180,8 @@ function updateSwapItemLists(otherInv){
         itemDiv.style("align-items", "center");
         itemDiv.style("justify-content", "center");
         itemDiv.style("border-bottom", "2px solid black");
-        if(otherInv.curItem == itemName) itemDiv.style("background-color", "rgb(120, 120, 120)");
-        if(otherInv.curItem == itemName) itemDiv.style("font-style", "italic");
+        if (otherInv.curItem == itemName) itemDiv.style("background-color", "rgb(120, 120, 120)");
+        if (otherInv.curItem == itemName) itemDiv.style("font-style", "italic");
         itemDiv.style("cursor", "pointer");
         itemDiv.parent(itemListDivRight);
         itemDiv.mousePressed(() => {
@@ -2188,7 +2199,7 @@ function updateSwapItemLists(otherInv){
         itemInfoDiv.style("justify-content", "space-between");
         itemInfoDiv.parent(itemDiv);
 
-        let itemNameP = createP((itemName == otherInv.curItem ? "* ":"") + itemName);
+        let itemNameP = createP((itemName == otherInv.curItem ? "* " : "") + itemName);
         itemNameP.style("font-size", "20px");
         itemNameP.style("color", "white");
         itemNameP.parent(itemInfoDiv);
@@ -2201,13 +2212,13 @@ function updateSwapItemLists(otherInv){
 }
 
 
-function updatecurSwapItemDiv(otherInv){
-    if(curPlayer == undefined) return;
+function updatecurSwapItemDiv(otherInv) {
+    if (curPlayer == undefined) return;
     let curSwapItem;
-    if(curPlayer.invBlock.curItem != ""){
+    if (curPlayer.invBlock.curItem != "") {
         curSwapItem = curPlayer.invBlock.items[curPlayer.invBlock.curItem];
     }
-    else if (otherInv.curItem != ""){
+    else if (otherInv.curItem != "") {
         curSwapItem = otherInv.items[otherInv.curItem];
     }
 
@@ -2226,7 +2237,7 @@ function updatecurSwapItemDiv(otherInv){
     itemImgDiv.style("border", "2px solid black");
     itemImgDiv.style("border-radius", "10px");
     //console.log(itemImgPaths[curSwapItem.imgNum][0]);
-    itemImgDiv.style("background-image", "url("+itemImgPaths[curSwapItem.imgNum][0]+")");
+    itemImgDiv.style("background-image", "url(" + itemImgPaths[curSwapItem.imgNum][0] + ")");
     itemImgDiv.style("background-size", "contain");
     itemImgDiv.style("background-repeat", "no-repeat");
     itemImgDiv.style("background-position", "center");
@@ -2269,8 +2280,8 @@ function updatecurSwapItemDiv(otherInv){
     itemStatsDiv.style("width", "100%");
     itemStatsDiv.style("height", "calc(70% - 10px)");
     itemStatsDiv.parent(curSwapItemDiv);
-  
-    if(curSwapItem.type != "Simple"){
+
+    if (curSwapItem.type != "Simple") {
 
         let durabilityDiv = createDiv();
         durabilityDiv.style("width", "calc(100% - 14px)");
@@ -2283,12 +2294,12 @@ function updatecurSwapItemDiv(otherInv){
         durabilityDiv.style("justify-content", "center");
         durabilityDiv.style("margin-bottom", "5px");
         durabilityDiv.parent(itemStatsDiv);
-        
+
         let durabilityText = createP("Durability:");
         durabilityText.style("font-size", "20px");
         durabilityText.style("color", "white");
         durabilityText.parent(durabilityDiv);
-        
+
         let durabilityBar = createDiv();
         durabilityBar.style("width", "80%");
         durabilityBar.style("height", "20px");
@@ -2296,9 +2307,9 @@ function updatecurSwapItemDiv(otherInv){
         durabilityBar.style("border", "2px solid black");
         durabilityBar.style("border-radius", "10px");
         durabilityBar.parent(durabilityDiv);
-        
+
         let durabilityFill = createDiv();
-        durabilityFill.style("width", ((curSwapItem.durability/curSwapItem.maxDurability)*100)+"%");
+        durabilityFill.style("width", ((curSwapItem.durability / curSwapItem.maxDurability) * 100) + "%");
         durabilityFill.style("height", "100%");
         durabilityFill.style("background-color", "green");
         durabilityFill.style("border-radius", "10px");
@@ -2323,8 +2334,8 @@ function updatecurSwapItemDiv(otherInv){
 
     let stats = curSwapItem.getStats();
     stats.forEach(stat => {
-        if(stat[0] == "Durability"){}
-        else{
+        if (stat[0] == "Durability") { }
+        else {
             let statDiv = createDiv();
             statDiv.style("width", "100%");
             statDiv.style("height", "20px");
@@ -2332,7 +2343,7 @@ function updatecurSwapItemDiv(otherInv){
             statDiv.style("margin-bottom", "12px");
             statDiv.parent(statsList);
 
-            let statNameDiv = createDiv(stat[0]+":");
+            let statNameDiv = createDiv(stat[0] + ":");
             statNameDiv.style("width", "50%");
             statNameDiv.style("height", "100%");
             statNameDiv.style("color", "white");
@@ -2357,4 +2368,33 @@ function updatecurSwapItemDiv(otherInv){
     });
 
     updateSpaceBarDiv();
+}
+
+//render timer on the top of the screen 
+let timerRemaining = 15 * 60; // in seconds
+let lastUpdateTime = 0;
+
+let timerDisplay = "15:00"; 
+function setTimeUI(data) {
+    timerRemaining = data.minutes * 60 + data.seconds;
+    updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
+    const m = Math.floor(timerRemaining / 60).toString().padStart(2, '0');
+    const s = (timerRemaining % 60).toString().padStart(2, '0');
+    timerDisplay = `${m}:${s}`;
+}
+
+function renderTimeUI() {
+    if (millis() - lastUpdateTime >= 1000) {
+        if (timerRemaining > 0) {
+            timerRemaining--;
+            updateTimerDisplay();
+        }
+        lastUpdateTime = millis();
+    }
+    if (timerDiv) {
+        timerDiv.html("⏳ " + timerDisplay);
+    }
 }

@@ -194,5 +194,18 @@ function socketSetup(){
         addChatMessage(data);
     });
 
-  
+    socket.on("sync_time", (data) => {
+        setTimeUI(data)
+    });
+
+    socket.on("server_ended", () => {
+
+        gameState = "player_status"
+        togglePlayerStatusTable()
+
+        // After 20 seconds, reload once
+        setTimeout(() => {
+            window.location.reload();
+        }, 5000);
+    });
 }
