@@ -12,8 +12,8 @@ function updateResponsiveDesign() {
     const inputWidth = 220; // as defined in style
     const spacing = 20;
 
-    nameInput?.position(width / 2 - inputWidth / 2, height * 0.7);
-    goButton?.position(width / 2 + inputWidth / 2 + spacing, height * 0.7);
+    nameInput?.position(width / 2 - inputWidth / 2, height * 0.8);
+    goButton?.position(width / 2 + inputWidth / 2 + spacing, height * 0.8);
 
     // Update race card widths responsively
     let newCardWidth = constrain(width * 0.15, 150, 300);
@@ -68,7 +68,9 @@ let markeeText = [
     "According to all known laws of aviation, there is no way a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway because bees don't care what humans think is impossible. ",
     "This game probably cures cancer ",
     "Remember V the Media Lies",
-    "If the government could be trusted Jesus would have died of natural causes"
+    "If the government could be trusted Jesus would have died of natural causes",
+    "The Simpson's did it !",
+
 
 ]
 // Function to render buttons instead of links
@@ -80,8 +82,8 @@ function renderLinks() {
     titleImage = createImg("./images/ui/title.png");
 
     // Apply styles to the image using .style()
-    titleImage.style("width", "20dvw"); // Set the width of the image
-    titleImage.style("height", "10dvw"); // Automatically adjust the height
+    titleImage.style("width", "30dvw"); // Set the width of the image
+    titleImage.style("height", "15dvw"); // Automatically adjust the height
     titleImage.style("border", "5px solid #000"); // Add a border
     titleImage.style("display", "block"); // Make it a block element (to prevent inline styling)
     titleImage.style("margin", "20px auto");
@@ -267,7 +269,7 @@ function renderServerBrowser() {
 
         // Position the container in the center
         serverBrowserContainer.style("position", "fixed");
-        serverBrowserContainer.style("top", "50%");
+        serverBrowserContainer.style("top", "58%");
         serverBrowserContainer.style("left", "50%");
         serverBrowserContainer.style("transform", "translate(-50%, -50%)");
 
@@ -575,7 +577,7 @@ function drawSelection() {
     raceTitle.id("raceTitle");
     raceTitle.elt.innerHTML = "Select Your Race"
     raceTitle.style("position", "absolute");
-    raceTitle.style("top", "22dvh");
+    raceTitle.style("top", "35dvh");
     raceTitle.style("left", "50%");
     raceTitle.style("transform", "translateX(-50%)");
     // Responsive font size (combining viewport and fixed pixels)
@@ -655,7 +657,7 @@ function setupUI() {
     race_back_button = createButton("<- Go Back")
     raceContainer.id("raceContainer");
     raceContainer.style("position", "absolute");
-    raceContainer.style("top", "30dvh");
+    raceContainer.style("top", "45dvh");
     raceContainer.style("left", "50%");
     raceContainer.style("transform", "translateX(-50%)");
     raceContainer.style("display", "none");
@@ -687,16 +689,15 @@ function setupUI() {
         let cardWidth = constrain(width * 0.15, 150, 300);
         card.style("width", cardWidth + "px");
         card.style("border-radius", "10px");
-        card.style("padding", "15px");
+        card.style("padding", "25px");
         card.style("cursor", "pointer");
-        card.style("transition", "transform 0.2s, background-color 0.2s, box-shadow 0.2s");
         card.selected = false; // custom property for selection
 
         // Create an image element for the race portrait
         let raceImgPath = `images/characters/${raceName}/${raceName}_portrait.png`;
         let raceImg = createImg(raceImgPath, `${raceName} image`);
-        raceImg.style("max-width", "10dvw");
-        raceImg.style("height", "10dvh");
+        raceImg.style("max-width", "15dvw");
+        raceImg.style("height", "15dvh");
         raceImg.style("image-rendering", "pixelated");
         raceImg.parent(card);
 
@@ -759,7 +760,7 @@ function setupUI() {
     nameInput = createInput("");
     nameInput.hide();
     // Positioning using canvas width and a fixed width of 220px
-    nameInput.position(width / 2 - 110, height * 0.7);
+    nameInput.position(width / 2 - 110, height * 0.8);
     nameInput.style("font-size", "20px");
     nameInput.style("border-radius", "8px");
     nameInput.style("padding", "10px");
@@ -789,7 +790,7 @@ function setupUI() {
     goButton = createButton("Go");
     goButton.hide();
     // Position near the name input with a fixed offset
-    goButton.position(width / 2 + 130, height * 0.7);
+    goButton.position(width / 2 + 130, height * 0.8);
 
     goButton.style("font-size", "20px");
     goButton.style("color", "#fff");
