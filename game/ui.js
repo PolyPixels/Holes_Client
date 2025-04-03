@@ -104,6 +104,8 @@ function renderLinks() {
     markee.style("bottom", "0px");
     markee.style("width", "80%");
 
+    markee.style("margin-right", "4%");
+
     markee.style("font-size", "1.5rem");
     markee.style("color", "white");
 
@@ -167,7 +169,6 @@ function styleButton(button) {
         borderRadius: "5px",
         backgroundColor: "#333",
         color: "white",
-        border: "2px solid cyan",
         cursor: "pointer",
         transition: "0.3s ease-in-out",
     });
@@ -672,8 +673,6 @@ function setupUI() {
         // Responsive card width: based on canvas width, constrained between 150 and 300px
         let cardWidth = constrain(width * 0.15, 150, 300);
         card.style("width", cardWidth + "px");
-
-        card.style("border", "3px solid #fff");
         card.style("border-radius", "10px");
         card.style("padding", "15px");
         card.style("cursor", "pointer");
@@ -697,8 +696,7 @@ function setupUI() {
 
         // Create a label for the stats
         let raceStatsLbl = createP(statsText);
-        raceStatsLbl.style("color", "#fff");
-        raceStatsLbl.style("font-size", "calc(0.5vw + 12px)");
+        raceStatsLbl.style("font-size", "calc(0.5vw + 2px)");
         raceStatsLbl.style("font-weight", "bold");
         raceStatsLbl.style("margin", "0");
         raceStatsLbl.style("align-self", "flex-end");
@@ -707,19 +705,12 @@ function setupUI() {
 
         // Create a race name label
         let raceLbl = createP(raceName.toUpperCase());
-        raceLbl.style("color", "#fff");
         raceLbl.style("font-size", "calc(0.5vw + 16px)");
         raceLbl.style("font-weight", "bold");
         raceLbl.style("margin", "10px 0 0 0");
         raceLbl.style("text-align", "center");
         raceLbl.parent(card);
 
-        // Add a hover effect: subtle scale & shadow
-        card.mouseOver(() => {
-            card.style("background-color", "#525252");
-            card.style("transform", "scale(1.03)");
-            card.style("box-shadow", "0 8px 16px rgba(0,0,0,0.3)");
-        });
         card.mouseOut(() => {
             card.style("transform", "scale(1)");
             card.style("box-shadow", "none");
@@ -757,7 +748,6 @@ function setupUI() {
     // Positioning using canvas width and a fixed width of 220px
     nameInput.position(width / 2 - 110, height * 0.7);
     nameInput.style("font-size", "20px");
-    nameInput.style("border", "3px solid #ccc");
     nameInput.style("border-radius", "8px");
     nameInput.style("padding", "10px");
     nameInput.style("width", "220px");
@@ -768,7 +758,7 @@ function setupUI() {
         checkName();
     });
     nameInput.mouseOver(() => {
-        nameInput.style("border", "3px solid #4CAF50");
+        nameInput.style("border", "3px black #4CAF50");
     });
     nameInput.mouseOut(() => {
         nameInput.style("border", "3px solid #ccc");
@@ -830,7 +820,7 @@ function renderChatUI() {
     chatContainer.style("bottom", "0dvh");
     chatContainer.style("left", "0dvw");
     chatContainer.style("z-index", "1000");
-    chatContainer.style("min-width", "25dvh");
+    chatContainer.style("min-width", "10dvw");
     chatContainer.style("background", "rgba(34, 34, 34, 0.8)"); // Semi-transparent dark background
     chatContainer.style("padding", "10px");
     chatContainer.style("border-radius", "8px");
@@ -879,7 +869,6 @@ function renderChatUI() {
     chatInput.attribute("placeholder", "Type your message...");
     chatInput.style("flex", "1");
     chatInput.style("padding", "3px");
-    chatInput.style("border", "1px solid #444");
     chatInput.style("border-radius", "5px");
     chatInput.style("outline", "none");
     chatInput.style("color", "#fff");
