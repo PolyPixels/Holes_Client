@@ -2,7 +2,7 @@
 function keyReleased() {
 
 
-    if(keyCode == 27 && gameState != "pause" && gameState != "initial"){ //ESC
+    if(keyCode == 27 && gameState != "pause" && gameState != "initial" && gameState != "race_selection"){ //ESC
         gameState = "playing";
         pauseDiv.hide();
         invDiv.hide();
