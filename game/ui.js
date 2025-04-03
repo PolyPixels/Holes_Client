@@ -602,7 +602,7 @@ function drawSelection() {
     race_back_button.style("border", "none");
     race_back_button.style("border-radius", "8px");
     race_back_button.style("position", "absolute");
-    race_back_button.style("top", "40dvh");
+    race_back_button.style("top", "50dvh");
 
     race_back_button.mousePressed(() => {
         console.log("pressed")
@@ -760,7 +760,7 @@ function setupUI() {
     nameInput = createInput("");
     nameInput.hide();
     // Positioning using canvas width and a fixed width of 220px
-    nameInput.position(width / 2 - 110, height * 0.9);
+    nameInput.position(width / 2 - 110, height * 0.8);
     nameInput.style("font-size", "20px");
     nameInput.style("border-radius", "8px");
     nameInput.style("padding", "10px");
@@ -790,7 +790,7 @@ function setupUI() {
     goButton = createButton("Go");
     goButton.hide();
     // Position near the name input with a fixed offset
-    goButton.position(width / 2 + 130, height * 0.9);
+    goButton.position(width / 2 + 130, height * 0.8);
 
     goButton.style("font-size", "20px");
     goButton.style("color", "#fff");
