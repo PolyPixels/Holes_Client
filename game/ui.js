@@ -439,7 +439,7 @@ function renderServerList() {
     serverList.forEach((server, index) => {
         let serverEntry = createDiv();
         serverEntry.class("serverEntry");
-        
+
         // Basic layout styling
         serverEntry.style("font-size", "2rem");
         serverEntry.style("padding", "12px");
@@ -450,7 +450,7 @@ function renderServerList() {
         serverEntry.style("align-items", "center"); // align items horizontally centered
         serverEntry.style("gap", "12px");
         serverEntry.style("transition", "transform 0.15s ease-in-out");
-        
+
         // === Logo Container ===
         let logoContainer = createDiv();
         logoContainer.style("width", "100px");
@@ -459,14 +459,14 @@ function renderServerList() {
         logoContainer.style("border-radius", "8px"); // blocky-pixel style instead of circular
         logoContainer.style("overflow", "hidden");
         logoContainer.style("border", "2px solid var(--color-dirt-clay)");
-        
+
         let serverLogo = createImg(server.image);
         serverLogo.style("width", "100%");
         serverLogo.style("height", "100%");
         serverLogo.style("object-fit", "cover");
         serverLogo.parent(logoContainer);
         logoContainer.parent(serverEntry);
-        
+
         // === Text Details Container ===
         let textContainer = createDiv();
         textContainer.style("display", "flex");
@@ -474,7 +474,7 @@ function renderServerList() {
         textContainer.style("justify-content", "center");
         textContainer.style("flex-grow", "1");
         textContainer.style("font-size", "1.2rem");
-        
+
         // Server Name
         let serverName = createDiv(server.name);
         serverName.style("font-weight", "bold");
@@ -499,9 +499,9 @@ function renderServerList() {
         playerCount.style("color", "#00ffff"); // neon cyan stands out nicely
         playerCount.style("margin-bottom", "5px")
         playerCount.parent(textContainer);
-        
+
         textContainer.parent(serverEntry);
-        
+
 
         // Fetch server status
         fetchServerStatus(server, (data) => {
@@ -692,15 +692,15 @@ function setupUI() {
         card.style("padding", "25px");
         card.style("cursor", "pointer");
         card.selected = false; // custom property for selection
-        
-              // Create a race name label
-              let raceLbl = createP(raceName.toUpperCase());
-              raceLbl.style("font-size", "calc(0.5vw + 16px)");
-              raceLbl.style("font-weight", "bold");
-              raceLbl.style("margin", "10px 0 0 0");
-              raceLbl.style("text-align", "center");
-           
-      
+
+        // Create a race name label
+        let raceLbl = createP(raceName.toUpperCase());
+        raceLbl.style("font-size", "calc(0.5vw + 16px)");
+        raceLbl.style("font-weight", "bold");
+        raceLbl.style("margin", "10px 0 0 0");
+        raceLbl.style("text-align", "center");
+
+
         raceLbl.parent(card);
         // Create an image element for the race portrait
         let raceImgPath = `images/characters/${raceName}/${raceName}_portrait.png`;
@@ -726,25 +726,34 @@ function setupUI() {
         raceStatsLbl.style("text-align", "right");
         raceStatsLbl.parent(card);
 
-  
-        card.mouseOut(() => {
-            card.style("transform", "scale(1)");
-            card.style("box-shadow", "none");
-            card.style("background-color", card.selected ? "#4CAF50" : "#404040");
-        });
+// Hover out styling
+card.mouseOut(() => {
+    card.style("transform", "scale(1)");
+    card.style("box-shadow", "none");
 
-        // On click: deselect all cards, then select this one and update curPlayer
-        card.mousePressed(() => {
+    card.style("background-color", card.selected ? "#4CAF50" : "#222");
+});
 
-            console.log(selectedItem, i, raceName)
-            raceButtons.forEach((c) => {
-                c.selected = false;
-            });
-            card.selected = true;
-            raceSelected = true;
-            curPlayer.race = selectedItem; // Assuming a mapping by index
-            console.log("Race selected:", races[selectedItem]);
-        });
+// On click: deselect all cards, select only this one
+card.mousePressed(() => {
+    console.log(selectedItem, i, raceName);
+
+    // Deselect all cards
+    raceButtons.forEach((c) => {
+        c.selected = false;
+        c.style("background-color", "#222"); // reset background for all
+    });
+
+    // Select this card
+    card.selected = true;
+    card.style("background-color", "#4CAF50");
+
+    raceSelected = true;
+    curPlayer.race = selectedItem;
+
+    console.log("Race selected:", races[selectedItem]);
+});
+
 
         // Hide the card initially (only shown in the race selection state)
         card.hide();
@@ -1088,7 +1097,7 @@ function sendChatMessage() {
 
 // Helper function to add a chat message to the messages box
 function addChatMessage(chatMsg) {
-    if(!chatContainer) return
+    if (!chatContainer) return
 
     console.log(chatMsg)
 
@@ -2377,7 +2386,7 @@ function updatecurSwapItemDiv(otherInv) {
 let timerRemaining = 15 * 60; // in seconds
 let lastUpdateTime = 0;
 
-let timerDisplay = "15:00"; 
+let timerDisplay = "15:00";
 function setTimeUI(data) {
     timerRemaining = data.minutes * 60 + data.seconds;
     updateTimerDisplay();
