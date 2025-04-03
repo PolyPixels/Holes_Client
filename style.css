@@ -237,6 +237,12 @@ body {
   background-size: 128px 128px; /* Adjust based on your image */
   animation: scrollDirt 20s linear infinite;
 }
+
+@keyframes scrollDirt {
+  from { background-position: 0 0; }
+  to { background-position: 512px 512px; }
+}
+
 @keyframes scrollDirt {
   0% {
     background-position: 0 0;
@@ -257,21 +263,21 @@ canvas {
 }
 
 
-/* Button hover and active effects */
-button:hover {
-  background: var(--color-dirt-dark);
-  color: #000;
-  border: 2px solid #000;
-}
 
 button:active {
-  transform: translateY(2px) scale(0.95); /* Slight press in */
-  border-bottom: none;                   /* Remove bottom border to fake 'depression' */
+  animation: buttonPress 0.1s forwards;
   font-weight: 900;
+  border-bottom: none;
 }
+
 
 button:hover::before {
   left: 100%;
+}
+@keyframes buttonPress {
+  0% { transform: scale(1) translateY(0); }
+  50% { transform: scale(0.96) translateY(2px); }
+  100% { transform: scale(0.95) translateY(2px); }
 }
 
 

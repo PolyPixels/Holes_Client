@@ -256,7 +256,7 @@ function renderServerBrowser() {
         serverBrowserContainer.style("overflow-y", "scroll")
         // Main container styling
         serverBrowserContainer.style("width", "50dvw");
-        serverBrowserContainer.style("max-height", "50dvh");
+        serverBrowserContainer.style("max-height", "60dvh");
         serverBrowserContainer.style("overflow-y", "hide");
         serverBrowserContainer.style("padding", "25px");
         serverBrowserContainer.style("margin-top", "25px");
@@ -436,56 +436,64 @@ function renderServerList() {
     serverList.forEach((server, index) => {
         let serverEntry = createDiv();
         serverEntry.class("serverEntry");
-        serverEntry.style("font-size", "1em")
-        serverEntry.style("padding", "10px");
-        serverEntry.style("margin-bottom", "10px");
-        serverEntry.style("border-radius", "8px");
-        serverEntry.style("background-color", "#404040");
+        
+        // Basic layout styling
+        serverEntry.style("font-size", "2rem");
+        serverEntry.style("padding", "12px");
+        serverEntry.style("margin-bottom", "12px");
+        serverEntry.style("background-color", "var(--color-dirt-dark)");
         serverEntry.style("cursor", "pointer");
         serverEntry.style("display", "flex");
-        serverEntry.style("align-items", "left"); // Align items vertically
-        serverEntry.style("gap", "10px"); // Add spacing between elements
-
-        // Create a container for the logo
+        serverEntry.style("align-items", "center"); // align items horizontally centered
+        serverEntry.style("gap", "12px");
+        serverEntry.style("transition", "transform 0.15s ease-in-out");
+        
+        // === Logo Container ===
         let logoContainer = createDiv();
-        logoContainer.style("width", "60px"); // Fixed width for uniformity
-        logoContainer.style("height", "60px");
+        logoContainer.style("width", "100px");
+        logoContainer.style("height", "100px");
         logoContainer.style("display", "flex");
-        logoContainer.style("border-radius", "50%"); // Circular logo
-        logoContainer.style("overflow", "hidden"); // Prevent overflow of the image
-
+        logoContainer.style("border-radius", "8px"); // blocky-pixel style instead of circular
+        logoContainer.style("overflow", "hidden");
+        logoContainer.style("border", "2px solid var(--color-dirt-clay)");
+        
         let serverLogo = createImg(server.image);
         serverLogo.style("width", "100%");
         serverLogo.style("height", "100%");
-        serverLogo.style("object-fit", "cover"); // Ensures it fits without distortion
+        serverLogo.style("object-fit", "cover");
         serverLogo.parent(logoContainer);
         logoContainer.parent(serverEntry);
-
-        // Create a container for text details
+        
+        // === Text Details Container ===
         let textContainer = createDiv();
         textContainer.style("display", "flex");
         textContainer.style("flex-direction", "column");
         textContainer.style("justify-content", "center");
-        textContainer.style("flex-grow", "1"); // Allows text to take available space
-
+        textContainer.style("flex-grow", "1");
+        textContainer.style("font-size", "1.5rem");
+        
+        // Server Name
         let serverName = createDiv(server.name);
         serverName.style("font-weight", "bold");
-        serverName.style("color", "#FFFFFF");
         serverName.parent(textContainer);
-
+        
+        // IP
         let serverIP = createDiv(`IP: ${server.ip}`);
-        serverIP.style("color", "#AAAAAA");
+        serverIP.style("color", "var(--color-beige)");
         serverIP.parent(textContainer);
-
+        
+        // Status
         let serverStatus = createDiv("Status: Loading...");
-        serverStatus.style("color", "#FFD700");
+        serverStatus.style("color", "var(--color-gold)");
         serverStatus.parent(textContainer);
-
+        
+        // Player Count
         let playerCount = createDiv("Players: Loading...");
-        playerCount.style("color", "#00FFFF");
+        playerCount.style("color", "#00ffff"); // neon cyan stands out nicely
         playerCount.parent(textContainer);
-
+        
         textContainer.parent(serverEntry);
+        
 
         // Fetch server status
         fetchServerStatus(server, (data) => {
@@ -523,7 +531,6 @@ function renderServerList() {
             serverList.splice(index, 1);
             saveServers();
             renderServerList();
-
             renderServerList();
         });
 
