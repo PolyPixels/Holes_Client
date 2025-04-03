@@ -577,7 +577,7 @@ function drawSelection() {
     raceTitle.id("raceTitle");
     raceTitle.elt.innerHTML = "Select Your Race"
     raceTitle.style("position", "absolute");
-    raceTitle.style("top", "35dvh");
+    raceTitle.style("top", "30dvh");
     raceTitle.style("left", "50%");
     raceTitle.style("transform", "translateX(-50%)");
     // Responsive font size (combining viewport and fixed pixels)
@@ -657,7 +657,7 @@ function setupUI() {
     race_back_button = createButton("<- Back")
     raceContainer.id("raceContainer");
     raceContainer.style("position", "absolute");
-    raceContainer.style("top", "45dvh");
+    raceContainer.style("top", "40dvh");
     raceContainer.style("left", "50%");
     raceContainer.style("transform", "translateX(-50%)");
     raceContainer.style("display", "none");
@@ -686,13 +686,22 @@ function setupUI() {
         card.style("align-items", "center");
 
         // Responsive card width: based on canvas width, constrained between 150 and 300px
-        let cardWidth = constrain(width * 0.15, 150, 300);
+        let cardWidth = constrain(width * 0.15, 150, 400);
         card.style("width", cardWidth + "px");
         card.style("border-radius", "10px");
         card.style("padding", "25px");
         card.style("cursor", "pointer");
         card.selected = false; // custom property for selection
-
+        
+              // Create a race name label
+              let raceLbl = createP(raceName.toUpperCase());
+              raceLbl.style("font-size", "calc(0.5vw + 16px)");
+              raceLbl.style("font-weight", "bold");
+              raceLbl.style("margin", "10px 0 0 0");
+              raceLbl.style("text-align", "center");
+           
+      
+        raceLbl.parent(card);
         // Create an image element for the race portrait
         let raceImgPath = `images/characters/${raceName}/${raceName}_portrait.png`;
         let raceImg = createImg(raceImgPath, `${raceName} image`);
@@ -706,25 +715,18 @@ function setupUI() {
         // Build a text string for only the allowed stats
         let statsText = allowedStats
             .map(stat => `${stat}: ${raceStats[stat]}`)
-            .join(" <br> ");
+            .join(" <br/><br/> ");
 
         // Create a label for the stats
         let raceStatsLbl = createP(statsText);
-        raceStatsLbl.style("font-size", "calc(0.5vw + 2px)");
+        raceStatsLbl.style("font-size", "calc(0.6vw + 2px)");
         raceStatsLbl.style("font-weight", "bold");
         raceStatsLbl.style("margin", "0");
         raceStatsLbl.style("align-self", "flex-end");
         raceStatsLbl.style("text-align", "right");
         raceStatsLbl.parent(card);
 
-        // Create a race name label
-        let raceLbl = createP(raceName.toUpperCase());
-        raceLbl.style("font-size", "calc(0.5vw + 16px)");
-        raceLbl.style("font-weight", "bold");
-        raceLbl.style("margin", "10px 0 0 0");
-        raceLbl.style("text-align", "center");
-        raceLbl.parent(card);
-
+  
         card.mouseOut(() => {
             card.style("transform", "scale(1)");
             card.style("box-shadow", "none");
@@ -737,10 +739,8 @@ function setupUI() {
             console.log(selectedItem, i, raceName)
             raceButtons.forEach((c) => {
                 c.selected = false;
-                c.style("background-color", "#404040");
             });
             card.selected = true;
-            card.style("background-color", "#4CAF50");
             raceSelected = true;
             curPlayer.race = selectedItem; // Assuming a mapping by index
             console.log("Race selected:", races[selectedItem]);
@@ -760,7 +760,7 @@ function setupUI() {
     nameInput = createInput("");
     nameInput.hide();
     // Positioning using canvas width and a fixed width of 220px
-    nameInput.position(width / 2 - 110, height * 0.8);
+    nameInput.position(width / 2 - 110, height * 0.9);
     nameInput.style("font-size", "20px");
     nameInput.style("border-radius", "8px");
     nameInput.style("padding", "10px");
@@ -790,7 +790,7 @@ function setupUI() {
     goButton = createButton("Go");
     goButton.hide();
     // Position near the name input with a fixed offset
-    goButton.position(width / 2 + 130, height * 0.8);
+    goButton.position(width / 2 + 130, height * 0.9);
 
     goButton.style("font-size", "20px");
     goButton.style("color", "#fff");
