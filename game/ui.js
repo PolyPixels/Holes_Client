@@ -595,14 +595,14 @@ function drawSelection() {
 
 
     //back to server selection button
-    race_back_button.innerHTML = " <- Go Back"
+    race_back_button.innerHTML = " <- Back"
 
     race_back_button.style("font-size", "20px");
     race_back_button.style("color", "#fff");
     race_back_button.style("border", "none");
     race_back_button.style("border-radius", "8px");
     race_back_button.style("position", "absolute");
-    race_back_button.style("top", "60dvh");
+    race_back_button.style("top", "40dvh");
 
     race_back_button.mousePressed(() => {
         console.log("pressed")
@@ -654,7 +654,7 @@ function setupUI() {
     //  Create a container for race selection cards (centered)
     // ---------------------------------------------------
     raceContainer = createDiv();
-    race_back_button = createButton("<- Go Back")
+    race_back_button = createButton("<- Back")
     raceContainer.id("raceContainer");
     raceContainer.style("position", "absolute");
     raceContainer.style("top", "45dvh");
