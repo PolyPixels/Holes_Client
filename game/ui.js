@@ -273,7 +273,7 @@ function renderServerBrowser() {
 
         // Title
         let title = createDiv("Select A Server");
-        title.style("font-size", "3em");
+        title.style("font-size", "2.5em");
         title.style("font-weight", "bold");
         title.style("margin-bottom", "15px");
         title.style("text-align", "center");
@@ -296,8 +296,9 @@ function renderServerBrowser() {
         // ➕ Add Server Title (CLICKABLE)
         // Use a downward arrow (▼) or "V" to indicate it's a dropdown
         let addServerTitle = createDiv("Add New Server ▼");
+
         addServerTitle.style("font-weight", "bold");
-        addServerTitle.style("font-size", "2em");
+        addServerTitle.style("font-size", "1.8em");
         addServerTitle.style("margin-bottom", "10px");
         addServerTitle.style("text-align", "center");
         addServerTitle.style("cursor", "pointer"); // Indicate it can be clicked
@@ -470,26 +471,31 @@ function renderServerList() {
         textContainer.style("flex-direction", "column");
         textContainer.style("justify-content", "center");
         textContainer.style("flex-grow", "1");
-        textContainer.style("font-size", "1.5rem");
+        textContainer.style("font-size", "1.2rem");
         
         // Server Name
         let serverName = createDiv(server.name);
         serverName.style("font-weight", "bold");
+        serverName.style("color", "white");
+        serverName.style("margin-bottom", "20px");
         serverName.parent(textContainer);
-        
+
         // IP
         let serverIP = createDiv(`IP: ${server.ip}`);
-        serverIP.style("color", "var(--color-beige)");
+        serverIP.style("color", "yellow");
+        serverIP.style("margin-bottom", "15px");
         serverIP.parent(textContainer);
-        
+
         // Status
         let serverStatus = createDiv("Status: Loading...");
         serverStatus.style("color", "var(--color-gold)");
+        serverStatus.style("margin-bottom", "15px");
         serverStatus.parent(textContainer);
-        
+
         // Player Count
         let playerCount = createDiv("Players: Loading...");
         playerCount.style("color", "#00ffff"); // neon cyan stands out nicely
+        playerCount.style("margin-bottom", "5px")
         playerCount.parent(textContainer);
         
         textContainer.parent(serverEntry);
