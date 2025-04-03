@@ -53,6 +53,10 @@ input[type=submit] {
   border-bottom: var(--color-ui-dark2) 4px solid !important;
 }
 
+div{
+
+  font-family: 'Press Start 2P', cursive !important;
+}
 
 
 button:hover,
