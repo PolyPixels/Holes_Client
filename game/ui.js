@@ -665,7 +665,6 @@ function setupUI() {
     raceContainer.style("justify-content", "center");
     raceContainer.style("align-items", "center");
     raceContainer.style("gap", "30px");
-    raceContainer.style("background-color", "rgba(0, 0, 0, 0.3)");
     raceContainer.style("padding", "0px");
     raceContainer.style("border-radius", "10px");
     raceContainer.style("min-width", "100dvw")
