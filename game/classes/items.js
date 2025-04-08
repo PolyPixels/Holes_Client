@@ -13,21 +13,25 @@ Item Dic is a full dictanary of every item that can exist, falling into one of t
 var itemImgPaths = [];
 var itemDic = {};
 
-defineShovel("Basic Shovel", ["shovel1"], [["Plank",1],["Rock",1]], 1, 100, 0.12, 3, 1, "A basic shovel for digging dirt",true);
+defineShovel("Basic Shovel", ["shovel1"], [["Log",1],["Rock",1]], 1, 100, 0.12, 3, 1, "A basic shovel for digging dirt",true);
 defineShovel("Better Shovel", ["shovel2"], [], 1, 100, 0.18, 3, 1, "A better shovel for digging dirt",true);
-defineShovel("God Shovel", ["shovel3"], [], 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt",true);
-defineMelee("Basic Sword", ["sword1"], [], 1, 100, 10, 5, 50, 90, 20, false, "A basic sword for slashing",true);
-defineMelee("Better Sword", ["sword2"], [], 1, 100, 10, 5, 1, 90, 10, false, "A better sword for slashing",true);
-defineRanged("Basic SlingShot", ["sling"], [], 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
-defineRanged("Better SlingShot", ["sling"], [], 1, 100, 5, 5, "None", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);
+defineShovel("God Shovel", ["shovel3"], [], 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt",false);
+defineMelee("Basic Sword", ["sword1"], [["Log",1],["Rock",2]], 1, 100, 10, 5, 50, 90, 20, false, "A basic sword for slashing",true);
+defineMelee("Better Sword", ["sword2"], [["Rock",1],["Gem",2]], 1, 100, 10, 5, 1, 90, 10, false, "A better sword for slashing",true);
+defineMelee("Evil Apple on Stick", ["evil_apple_on_stick"], [["Bad Apple",1],["Log",1]], 1, 100, 10, 5, 2, 20, 10, false, "Now it'll bite your opponets",true);
+defineRanged("Basic SlingShot", ["sling"], [], 1, 100, 5, 5, "Rock", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
+defineRanged("Better SlingShot", ["sling"], [], 1, 100, 5, 5, "Rock", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);
+defineRanged("Dirt Ball", ["dirtball"], ["Dirt", 5], 1, 1, 0, 5, "Dirt", "Dirt Ball", 10, 10, 60, false, "A ball of dirt to push people around",true);
 defineSimpleItem("Rock", ["rock"], [], 1, "A rock for your slingshot",false);
 defineSimpleItem("Gem", ["gem"], [], 1, "A pretty gem",false);
-defineSimpleItem("Plank", ["temprock"], [], 1, "A wooden plank",false);
-defineSimpleItem("Gay Goo", ["temprock"], [], 1, "A gooey substance",false);
+defineSimpleItem("Dark Gem", ["black_gem"], [], 1, "A dull gem",false);
+defineSimpleItem("Philosopher Stone", ["philosopher_stone"], [], 1, "A gem with emence power flowing out of it",false);
+defineSimpleItem("Log", ["log"], [], 1, "A wooden log",false);
+defineSimpleItem("Tech", ["circuit"], [], 1, "Some piece of technology",false);
 defineFood("Apple", ["apple"], [], 1, 100, 10, "A juicy apple",false);
-defineFood("Mushroom", ["images/structures/tempmushroom3"], [], 1, 100, 10, "A tasty mushroom",false);
-defineSeed("Mushroom Seed", ["temp_mushroomseed"], [["Mushroom", 1]], 1, "Mushroom", 0.5, "Some mushroom spores",true);
-defineSeed("Apple Seed", ["temp_mushroomseed"], [["Apple", 1]], 1, "Mushroom", 0.5, "A seed for growing apples",true);
+defineFood("Bad Apple", ["bad_apple"], [], 1, 100, 5, "Looks like this apple would bite back",false);
+defineFood("Mushroom", ["images/structures/mushroom1"], [], 1, 100, 10, "A tasty mushroom",false);
+defineSeed("Mushroom Seed", ["mushroom_spores"], [["Mushroom", 1]], 1, "Mushroom", 0.5, "Some mushroom spores",true);
 
 class SimpleItem{
     constructor(itemName, weight, durability, imgNum, desc){
@@ -164,7 +168,7 @@ class Ranged extends SimpleItem{
                         let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
                         let toMouse = createVector(x,y).sub(curPlayer.pos).setMag(50);
                         let proj = createProjectile(
-                            this.ammoName, curPlayer.name, curPlayer.color,
+                            this.projName, curPlayer.name, curPlayer.color,
                             curPlayer.pos.x + toMouse.x - 20,
                             curPlayer.pos.y + toMouse.y,
                             toMouse.heading()

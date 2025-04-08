@@ -21,6 +21,8 @@ function preload() {
     //Dirt floor and wall images
     chunkDirtImg = loadImage('images/dirt_walls.png');
     dirtFloorImg = loadImage('images/floor.png');
+
+    //Ui Images
     dirtBagImg = loadImage('images/ui/dirtbag.png');
     dirtBagOpenImg = loadImage('images/ui/dirtbagopen.png');
     hpBarImg = loadImage('images/ui/healthbar.png');
@@ -36,34 +38,6 @@ function preload() {
         objImgs.push(temp);
     }
 
-    // wallImg = loadImage('images/structures/tempwall1.png');
-    // doorImg = loadImage('images/structures/tempdoor1.png');
-    // floorImg = loadImage('images/structures/tempfloor1.png');
-    // rugImg = loadImage('images/structures/temprug1.png');
-    // mugImg = loadImage('images/structures/tempmug.png');
-    // bearTrapImg = loadImage('images/structures/beartrap1.png');
-    // landMineImg = loadImage('images/structures/bomb1.png');
-    // turretImg = loadImage('images/structures/tempturret1.png');
-    // mushroomImg3 = loadImage('images/structures/tempmushroom1.png');
-    // mushroomImg2 = loadImage('images/structures/tempmushroom2.png');
-    // mushroomImg1 = loadImage('images/structures/tempmushroom3.png');
-    // bombImg = loadImage('images/structures/bomb1.png');
-    // bombFlareImg = loadImage('images/structures/bomb2.png');
-
-    // //sort obj imgs
-    // objImgs = [
-    // /*0*/   [wallImg],
-    // /*1*/   [doorImg],
-    // /*2*/   [floorImg],
-    // /*3*/   [rugImg],
-    // /*4*/   [mugImg],
-    // /*5*/   [bearTrapImg],
-    // /*6*/   [landMineImg],
-    // /*7*/   [turretImg],
-    // /*8*/   [mushroomImg1, mushroomImg2, mushroomImg3],
-    // /*9*/   [bombImg,bombFlareImg]
-    // ];
-
     //load item imgs
     for(let i = 0; i < itemImgPaths.length; i++){
         let temp = [];
@@ -72,35 +46,14 @@ function preload() {
         }
         itemImgs.push(temp);
     }
-    
-    // basicShovelImg = loadImage("images/items/shovel1.png");
-    // swordImg = loadImage("images/items/tempSword.png");
-    // slingShotImg = loadImage("images/items/sling.png");
-    rockImg = loadImage("images/items/temprock.png");
-    // appleImg = loadImage("images/items/apple.png");
-    // mushroomSeedImg = loadImage("images/items/tempmushroomseed.png");
 
-    // itemImgs = [
-    // /*0*/ [basicShovelImg],
-    // /*1*/ [swordImg],
-    // /*2*/ [slingShotImg],
-    // /*3*/ [rockImg],
-    // /*4*/ [appleImg],
-    // /*5*/ [mushroomSeedImg],
-    // ];
-
-    //used for inventory rendering, cause html is booty
-    // itemImgNames = [
-    // /*0*/ ["shovel1"],
-    // /*1*/ ["tempSword"],
-    // /*2*/ ["sling"],
-    // /*3*/ ["temprock"],
-    // /*4*/ ["apple"],
-    // /*5*/ ["tempmushroomseed"]
-    // ]
+    //Projectile imgs still using the old method
+    rockImg = loadImage("images/items/rock.png");
+    dirtBallImg = loadImage("images/items/dirtball.png");
 
     projImgs = [
-        [rockImg]
+        [rockImg],
+        [dirtBallImg]
     ];
 
     playerCardImg = loadImage('images/ui/playercard.png');

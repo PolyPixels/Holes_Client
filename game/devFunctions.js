@@ -107,23 +107,28 @@ function giveDefaultItems(){
 
 function giveAllItems(){
     curPlayer.invBlock.addItem("Basic Shovel", 1);
-    curPlayer.invBlock.hotbarItem("Basic Shovel", 0);
-    curPlayer.invBlock.addItem("Basic Sword", 1);
-    curPlayer.invBlock.hotbarItem("Basic Sword", 1);
-    curPlayer.invBlock.addItem("Basic SlingShot", 1);
-    curPlayer.invBlock.hotbarItem("Basic SlingShot", 2);
-    curPlayer.invBlock.addItem("Apple", 3);
-    curPlayer.invBlock.hotbarItem("Apple", 3);
-    curPlayer.invBlock.addItem("Mushroom Seed", 3);
-    curPlayer.invBlock.hotbarItem("Mushroom Seed", 4);
     curPlayer.invBlock.addItem("Better Shovel", 1);
-    curPlayer.invBlock.addItem("Better Sword", 1);
-    curPlayer.invBlock.addItem("Better SlingShot", 1);
-    curPlayer.invBlock.addItem("Mushroom", 3);
-    curPlayer.invBlock.addItem("Apple Seed", 3);
-    curPlayer.invBlock.addItem("Rock", 15);
-    curPlayer.invBlock.addItem("Gem", 15);
-    curPlayer.invBlock.addItem("Plank", 15);
-    curPlayer.invBlock.addItem("Gay Goo", 15);
     curPlayer.invBlock.addItem("God Shovel", 1);
+    curPlayer.invBlock.addItem("Basic Sword", 1);
+    curPlayer.invBlock.addItem("Better Sword", 1);
+    curPlayer.invBlock.addItem("Basic SlingShot", 1);
+    curPlayer.invBlock.addItem("Better SlingShot", 1);
+    curPlayer.invBlock.addItem("Dirt Ball", 20);
+    curPlayer.invBlock.addItem("Dark Gem", 5);
+    curPlayer.invBlock.addItem("Philosopher Stone", 2);
+    curPlayer.invBlock.addItem("Mushroom Seed", 5);
+    curPlayer.invBlock.addItem("Evil Apple on Stick", 1);
+    curPlayer.invBlock.addItem("Rock", 20);
+    curPlayer.invBlock.addItem("Gem", 5);
+    curPlayer.invBlock.addItem("Log", 5);
+    curPlayer.invBlock.addItem("Tech", 5);
+    curPlayer.invBlock.addItem("Apple", 5);
+    curPlayer.invBlock.addItem("Mushroom", 5);
+    curPlayer.invBlock.addItem("Bad Apple", 5);
+
+    curPlayer.invBlock.hotbarItem("Basic Shovel", 0);
+    curPlayer.invBlock.hotbarItem("Basic Sword", 1);
+    curPlayer.invBlock.hotbarItem("Basic SlingShot", 2);
+    curPlayer.invBlock.hotbarItem("Apple", 3);
+    curPlayer.invBlock.hotbarItem("Mushroom Seed", 4);
 }

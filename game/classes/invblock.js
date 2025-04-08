@@ -35,6 +35,10 @@ class InvBlock{
                     this.hotbar[i] = "";
                 }
             }
+            if(this.curItem == item){
+                this.curItem = "";
+                updatecurItemDiv();
+            }
             if(!buildMode){
                 renderGhost = false;
             }

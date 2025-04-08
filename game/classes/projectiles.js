@@ -6,6 +6,7 @@ Proj Dic is a full dictanary of every projectile that can exist, falling into on
 var projDic = {};
 
 defineSimpleProjectile("Rock", 0, 20, 5, 20, "Straight", 5, 10);
+defineSimpleProjectile("Dirt", 1, 20, 0, 30, "Straight", 5, 10);
 
 class SimpleProjectile{
     constructor(name, damage, knockback, flightPath, speed, lifespan, ownerName, color, imgNum){
@@ -62,7 +63,7 @@ class SimpleProjectile{
     render(){
         push();
         translate(-camera.pos.x+(width/2), -camera.pos.y+(height/2));
-        image(projImgs[this.imgNum][0], this.pos.x, this.pos.y);
+        image(projImgs[this.imgNum][0], this.pos.x, this.pos.y, 40, 40);
         pop();
     }
 

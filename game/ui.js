@@ -1330,6 +1330,8 @@ function updatecurItemDiv() {
     //clear the div
     curItemDiv.html("");
 
+    if(curPlayer.invBlock.curItem == "") return;
+
     let itemCardDiv = createDiv();
     itemCardDiv.style("width", "100%");
     itemCardDiv.style("height", "30%");
@@ -1342,7 +1344,7 @@ function updatecurItemDiv() {
     itemImgDiv.style("height", "100%");
     itemImgDiv.style("border", "2px solid black");
     itemImgDiv.style("border-radius", "10px");
-    //console.log(itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]);
+    console.log(itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]);
     itemImgDiv.style("background-image", "url(" + itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0] + ")");
     itemImgDiv.style("background-size", "contain");
     itemImgDiv.style("background-repeat", "no-repeat");
