@@ -58,6 +58,10 @@ function moveCamera(){
     }
     camera.pos.add(camera.vel);
 
+    //fixes a visual bug where cracks would form in the dirt
+    camera.pos.x = round(camera.pos.x);
+    camera.pos.y = round(camera.pos.y);
+
     if(camera.edgeBlood > 0){
         camera.edgeBlood -= 1;
         image(edgeBloodImg, 0, 0, width, height);
