@@ -203,6 +203,9 @@ function socketSetup(){
 
     socket.on("server_ended", () => {
 
+        testMap.chunks = {};
+        testMap.chunkBools = {};
+        
         gameState = "player_status"
         togglePlayerStatusTable()
 
