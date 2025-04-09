@@ -3,7 +3,7 @@ Z heights:
     3=decorations (ex. mugs, plates, flowers, papers)
     2=walls,doors,tables,chairs,chests
     1=rugs,traps
-    0=floors
+    0=floors,plants
 */
 
 var buildOptions = []; //for ui, but defined here cause obj defines need it
@@ -65,7 +65,7 @@ function turretUpdate(){
 }
 defineCustomObj("Turret", ['tempturret0','tempturret1','tempturret2','tempturret3','tempturret4','tempturret5','tempturret6','tempturret7','tempturret8','tempturret9','tempturret10','tempturret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
 definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 100, 60, "edible_mushroom");
-definePlant("AppleTree", ['apple_tree'], [], 120, 120, 100, 60, "Apple");
+definePlant("AppleTree", ['apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 100, 60, "Apple");
 defineInvObj("Chest", ['chest'], [['dirt', 20]], 14*4, 15*4, 100, 100, false, true);
 defineInvObj("ItemBag", ['item_bag1'], [], 12*3, 13*3, 100, 100, false, false);
 
@@ -283,9 +283,19 @@ class Plant extends Placeable{
     }
 
     update(){
-        super.update();
+        if(this.hp <= 0){
+            this.deleteTag = true;
+            let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+            let bagInv = [];
+
+            if(this.stage == (objImgs[this.imgNum].length-1)){
+                bagInv = objDic[this.objName].cost;
+            }
+            
+            socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, cost: bagInv});
+        }
         if(this.growthTimer > this.growthRate){
-            if(this.stage < objImgs[this.imgNum].length-1){
+            if(this.stage < (objImgs[this.imgNum].length-1)){
                 this.stage ++;
                 this.growthTimer = 0;
             }
@@ -293,12 +303,15 @@ class Plant extends Placeable{
         this.growthTimer += 1/frameRate(); //growth timer goes up by 1 every second
     }
 
-    render(t, alpha){
+    render(t){
         push();
+        if(this.hp < this.mhp){
+            this.renderHealthBar()
+        }
         translate(-camera.pos.x+(width/2)+this.pos.x, -camera.pos.y+(height/2)+this.pos.y);
         rotate(this.rot);
-        if(t == "green") tint(100, 200, 100, alpha);
-        if(t == "red") tint(200, 100, 100, alpha);
+        if(t == "green") tint(100, 200, 100);
+        if(t == "red") tint(200, 100, 100);
         image(objImgs[this.imgNum][this.stage], -this.size.w/2,-this.size.h/2, this.size.w, this.size.h);
         pop();
     }

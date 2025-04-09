@@ -190,21 +190,14 @@ class MeleeProjectile extends SimpleProjectile{
 
         //check collision with objects
         for(let j = 0; j < chunk.objects.length; j++){
-            if(chunk.objects[j].z == 2){
+            if(chunk.objects[j].z == 2 || chunk.objects[j].z == 0){
                 
                 let d = chunk.objects[j].pos.dist(this.pos);
                 if(d-29 < (this.range*2)+this.safeRange && d+29 > this.safeRange && 
                     chunk.objects[j].pos.copy().sub(this.pos).heading() > this.flightPath.a-(this.angleWidth/2) &&
                     chunk.objects[j].pos.copy().sub(this.pos).heading() < this.flightPath.a+(this.angleWidth/2)
                 ){
-                    if(chunk.objects[j].objName == "Door"){
-                        if(chunk.objects[j].alpha == 255){
-                            damageObj(chunk, chunk.objects[j], this.damage);
-                        }
-                    }
-                    else{
-                        damageObj(chunk, chunk.objects[j], this.damage);
-                    }
+                    damageObj(chunk, chunk.objects[j], this.damage);
                 }
             }
         }
