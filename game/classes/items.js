@@ -42,6 +42,10 @@ class SimpleItem{
         this.imgNum = imgNum;
         this.desc = desc;
 
+        this.offset = createVector(0,0);
+        this.offVel = createVector(0,0); //offset velocity
+        this.shake = {intensity: 0, length: 0};
+
         this.amount = 1;
         this.type = "Simple";
     }
@@ -61,7 +65,26 @@ class SimpleItem{
     }
 
     renderImage(x,y){
-        image(itemImgs[this.imgNum][0], x,y, 60, 60);
+        image(itemImgs[this.imgNum][0], x+this.offset.x,y+this.offset.y, 60, 60);
+        
+        if(this.shake.length > 0){
+            if(this.offVel.mag() < 1){
+                this.offVel.x = this.shake.intensity;
+            }
+            this.offVel.setMag(this.offVel.mag()+this.shake.intensity);
+            if(this.offVel.mag() > this.shake.intensity*5){
+                this.offVel.setMag(this.shake.intensity*5);
+            }
+            this.offVel.rotate(random(45, 180));
+            this.shake.length -= 1;
+        }
+        else{
+            this.shake.intensity = 0;
+            this.offVel.x = -1*this.offset.x;
+            this.offVel.y = -1*this.offset.y;
+            this.offVel.setMag(this.offVel.mag()/10);
+        }
+        this.offset.add(this.offVel);
     }
 
     getStats(){
@@ -86,7 +109,10 @@ class Shovel extends SimpleItem{
         //doesnt wait for useTimer, because it is a continuous action
         if(mouseButton == LEFT){ //dig dirt
             if (dirtInv < maxDirtInv - this.digSpeed) playerDig(x, y, this.digSpeed);
-            else dirtBagUI.shake = {intensity: dirtBagUI.shake.intensity + 0.01, length: 1};
+            else{
+                dirtBagUI.shake = {intensity: dirtBagUI.shake.intensity + 0.01, length: 1};
+                this.shake = {intensity: 1, length: 2};
+            }
         }
         else if(mouseButton == RIGHT){ //place dirt
             if (dirtInv > this.digSpeed) playerDig(x, y, -this.digSpeed);
@@ -228,8 +254,8 @@ class Food extends SimpleItem{
         console.log("!!!!!!!",curPlayer.statBlock.stats.hp ,curPlayer.statBlock.stats.mhp )
 
         if(curPlayer.statBlock.stats.hp >=  curPlayer.statBlock.stats.mhp) {
-          
-            return
+            this.shake = {intensity: 1, length: 5};
+            return;
         } else if(curPlayer.invBlock.useTimer <= 0){
             curPlayer.statBlock.heal(this.heal);
             curPlayer.invBlock.useTimer = this.eatWait;
@@ -326,6 +352,9 @@ class Seed extends SimpleItem{
             socket.emit("update_pos", curPlayer);
 
             curPlayer.invBlock.decreaseAmount(this.itemName, 1);
+        }
+        else{
+            this.shake = {intensity: 1, length: 5};
         }
     }
 }
