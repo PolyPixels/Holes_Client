@@ -101,6 +101,68 @@ class InvBlock{
         });
     }
 
+    getItemStats(item){
+        if(this.items[item] != undefined){
+            if(this.items[item].type == "Simple" || this.items[item].type == "Seed" || this.items[item].type == "CustomItem"){
+                return [
+                    ["Durability", this.items[item].durability], 
+                    ["Weight", this.items[item].weight]
+                ];
+            }
+            else if(this.items[item].type == "Shovel"){
+                return [
+                    ["Durability", this.items[item].durability], 
+                    ["Weight", this.items[item].weight], 
+                    ["Dig Speed", this.items[item].digSpeed], 
+                    ["Dig Size", this.items[item].digSize], 
+                    ["Range", this.items[item].range]
+                ];
+            }
+            else if(this.items[item].type == "Melee"){
+                return [
+                    ["Durability", this.items[item].durability], 
+                    ["Weight", this.items[item].weight], 
+                    ["Damage", this.items[item].damage], 
+                    ["Range", this.items[item].range], 
+                    ["Angle", this.items[item].angle], 
+                    ["Swing Speed", (1/this.items[item].swingSpeed).toFixed(3)]
+                ];
+            }
+            else if(this.items[item].type == "Ranged"){
+                return [
+                    ["Durability", this.items[item].durability], 
+                    ["Weight", this.items[item].weight], 
+                    ["Damage", this.items[item].damage], 
+                    ["Spread", this.items[item].spread],
+                    ["Ammo Name", this.items[item].ammoName],
+                    ["Firerate", (1/this.items[item].fireRate).toFixed(3)],
+                    ["Round Size", this.items[item].roundSize],
+                    ["Reload Speed", (1/this.items[item].reloadSpeed).toFixed(3)]
+                ];
+            }
+            else if(this.items[item].type == "Food"){
+                return [
+                    ["Durability", this.items[item].durability], 
+                    ["Weight", this.items[item].weight], 
+                    ["Heal", this.items[item].heal]
+                ];
+            }
+            else if(this.items[item].type == "Potion"){
+                return [
+                    ["Durability", this.items[item].durability], 
+                    ["Weight", this.items[item].weight],
+                    ["Effect", this.items[item].statName],
+                    ["Effect Amount", this.items[item].statBoost], 
+                    ["Effect Time", this.items[item].time]
+                ];
+            }
+            else if(this.items[item].type == "Equipment"){
+                ["Durability", this.items[item].durability], 
+                ["Weight", this.items[item].weight]
+            }
+        }
+    }
+
     renderHotBar() {
         if (this.useTimer > 0) this.useTimer--;
         if (this.animationTimer > 0) this.animationTimer -= 0.1;

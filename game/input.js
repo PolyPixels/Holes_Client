@@ -17,6 +17,13 @@ function keyReleased() {
             ghostBuild = createObject("Wall", 0, 0, 0, 11, curPlayer.id, curPlayer.name);
             buildMode = !buildMode;
             renderGhost = buildMode;
+
+            if(!buildMode){
+                if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Seed"){
+                    ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
+                    renderGhost = true;
+                }
+            }
         }
         if(keyCode == 73){ //i
             gameState = "inventory";
@@ -73,43 +80,52 @@ function keyReleased() {
         if (keyCode === 32) { //space
             if(keyIsDown(16)){
                 if(curPlayer.invBlock.curItem != ""){
-                    curPlayer.otherInv.addItem(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount);
+                    curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount);
                     curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount);
     
-                    curPlayer.otherInv.curItem = curPlayer.invBlock.curItem;
+                    curPlayer.otherInv.invBlock.curItem = curPlayer.invBlock.curItem;
                     curPlayer.invBlock.curItem = "";
                 }
-                else if(curPlayer.otherInv.curItem != ""){
-                    curPlayer.invBlock.addItem(curPlayer.otherInv.curItem, curPlayer.otherInv.items[curPlayer.otherInv.curItem].amount);
-                    curPlayer.otherInv.decreaseAmount(curPlayer.otherInv.curItem, curPlayer.otherInv.items[curPlayer.otherInv.curItem].amount);
+                else if(curPlayer.otherInv.invBlock.curItem != ""){
+                    curPlayer.invBlock.addItem(curPlayer.otherInv.invBlock.curItem, curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem].amount);
+                    curPlayer.otherInv.invBlock.decreaseAmount(curPlayer.otherInv.invBlock.curItem, curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem].amount);
     
-                    curPlayer.invBlock.curItem = curPlayer.otherInv.curItem;
-                    curPlayer.otherInv.curItem = "";
+                    curPlayer.invBlock.curItem = curPlayer.otherInv.invBlock.curItem;
+                    curPlayer.otherInv.invBlock.curItem = "";
                 }
             }
             else{
                 if(curPlayer.invBlock.curItem != ""){
+                    console.log(curPlayer.otherInv);
+                    curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, 1);
                     curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem,1);
-                    curPlayer.otherInv.addItem(curPlayer.invBlock.curItem, 1);
     
                     if(curPlayer.invBlock.items[curPlayer.invBlock.curItem] == undefined){
-                        curPlayer.otherInv.curItem = curPlayer.invBlock.curItem;
+                        curPlayer.otherInv.invBlock.curItem = curPlayer.invBlock.curItem;
                         curPlayer.invBlock.curItem = "";
                     }
                 }
-                else if(curPlayer.otherInv.curItem != ""){
-                    curPlayer.otherInv.decreaseAmount(curPlayer.otherInv.curItem, 1);
-                    curPlayer.invBlock.addItem(curPlayer.otherInv.curItem, 1);
+                else if(curPlayer.otherInv.invBlock.curItem != ""){
+                    curPlayer.invBlock.addItem(curPlayer.otherInv.invBlock.curItem, 1);
+                    curPlayer.otherInv.invBlock.decreaseAmount(curPlayer.otherInv.invBlock.curItem, 1);
     
-                    if(curPlayer.otherInv.items[curPlayer.otherInv.curItem] == undefined){
-                        curPlayer.invBlock.curItem = curPlayer.otherInv.curItem;
-                        curPlayer.otherInv.curItem = "";
+                    if(curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem] == undefined){
+                        curPlayer.invBlock.curItem = curPlayer.otherInv.invBlock.curItem;
+                        curPlayer.otherInv.invBlock.curItem = "";
                     }
                 }
             }
 
-            updateSwapItemLists(curPlayer.otherInv);
-            updatecurSwapItemDiv(curPlayer.otherInv);
+            let chunkPos = testMap.globalToChunk(curPlayer.otherInv.pos.x,curPlayer.otherInv.pos.y);
+            socket.emit("update_inv", {
+                cx: chunkPos.x, cy: chunkPos.y, 
+                objName: curPlayer.otherInv.objName, 
+                pos: {x: curPlayer.otherInv.pos.x, y: curPlayer.otherInv.pos.y}, 
+                z: curPlayer.otherInv.z,
+                items: curPlayer.otherInv.invBlock.items
+            });
+            updateSwapItemLists(curPlayer.otherInv.invBlock);
+            updatecurSwapItemDiv(curPlayer.otherInv.invBlock);
         }
         if(keyCode == 73){ //i
             gameState = "playing";
@@ -371,17 +387,19 @@ function mouseWheel(event) {
         curPlayer.invBlock.selectedHotBar = slot;
         curPlayer.invBlock.animationTimer = hotBarOffset;
 
-        if(curPlayer.invBlock.hotbar[slot] != ""){
-            if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].type == "Seed"){
-                ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
-                renderGhost = true; //this is seperate from buildMode, because this is a placable item, not something you can find in buildMode
+        if(!buildMode){
+            if(curPlayer.invBlock.hotbar[slot] != ""){
+                if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].type == "Seed"){
+                    ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[slot]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
+                    renderGhost = true; //this is seperate from buildMode, because this is a placable item, not something you can find in buildMode
+                }
+                else{
+                    renderGhost = false;
+                }
             }
             else{
                 renderGhost = false;
             }
-        }
-        else{
-            renderGhost = false;
         }
         mouseWheelMoved = false
         updateSpaceBarDiv();

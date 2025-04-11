@@ -148,6 +148,18 @@ function socketSetup(){
         }
     })
 
+    socket.on("UPDATE_INV", (data) =>{
+        let chunk = testMap.chunks[data.cx+","+data.cy];
+        if(chunk != undefined){
+            for(let i = chunk.objects.length-1; i >= 0; i--){
+                if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.objName == chunk.objects[i].objName){
+                    chunk.objects[i].invBlock.items = data.items;
+                    updateSwapItemLists(chunk.objects[i].invBlock);
+                }
+            }
+        }
+    })
+
     socket.on("NEW_PROJECTILE", (data) =>{
         let proj = createProjectile(data.name, data.ownerName, data.color, data.pos.x, data.pos.y, data.flightPath.a);
         proj.id = data.id;
@@ -179,6 +191,21 @@ function socketSetup(){
         testMap.chunkBools[data.x+","+data.y] = true;
         for(let i=0; i<data.objects.length; i++){
             let temp = createObject(data.objects[i].objName, data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color, data.objects[i].id, data.objects[i].ownerName);
+            
+            //fix some obj properties
+            if(temp.type == "InvObj"){
+                let keys = Object.keys(data.objects[i].invBlock.items);
+                for(let j=0; j<keys.length; j++){
+                    temp.invBlock.addItem(keys[j], data.objects[i].invBlock.items[keys[j]].amount);
+                    //TODO: fix durability
+                }
+            }
+            if(temp.type == "Plant"){
+                if(data.objects[i].stage == undefined) data.objects[i].stage = 0;
+                else temp.stage = data.objects[i].stage;
+            }
+            temp.hp = data.objects[i].hp;
+
             testMap.chunks[data.x+","+data.y].objects.push(temp);
             testMap.chunks[data.x+","+data.y].objects.sort((a,b) => a.z - b.z);
         }

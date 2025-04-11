@@ -132,7 +132,7 @@ var teamColors = [
 ]
 
 class Placeable{
-    constructor(objName,x,y,w,h,rot,z,color,health,imgNum,canRotate){
+    constructor(objName,x,y,w,h,rot,z,color,health,imgNum,id,ownerName,canRotate){
         this.objName = objName;
         this.pos = createVector(x,y);
         this.size = {w: w, h: h};
@@ -144,6 +144,8 @@ class Placeable{
         this.imgNum = imgNum;
         this.canRotate = canRotate;
         this.alpha = 255;
+        this.id = id;
+        this.ownerName = ownerName;
 
         this.openBool = true; //is object in an open spot?, used for ghost rendering
         this.deleteTag = false;
@@ -272,8 +274,8 @@ class Placeable{
 }
 
 class Plant extends Placeable{
-    constructor(objName,x,y,w,h,color,health,imgNum,growthRate,itemDrop){
-        super(objName,x,y,w,h,0,0,color,health,imgNum,false);
+    constructor(objName,x,y,w,h,color,health,imgNum,id,ownerName,growthRate,itemDrop){
+        super(objName,x,y,w,h,0,0,color,health,imgNum,id,ownerName,false);
         this.growthRate = growthRate;
         this.itemDrop = itemDrop;
         
@@ -298,6 +300,16 @@ class Plant extends Placeable{
             if(this.stage < (objImgs[this.imgNum].length-1)){
                 this.stage ++;
                 this.growthTimer = 0;
+
+                let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+                socket.emit("update_obj", {
+                    cx: chunkPos.x, cy: chunkPos.y, 
+                    objName: this.objName, 
+                    pos: {x: this.pos.x, y: this.pos.y}, 
+                    z: this.z,
+                    update_name: "stage", 
+                    update_value: this.stage
+                });
             }
         }
         this.growthTimer += 1/frameRate(); //growth timer goes up by 1 every second
@@ -319,9 +331,7 @@ class Plant extends Placeable{
 
 class Trap extends Placeable{
     constructor(objName,x,y,w,h,color,health,imgNum,id,ownerName,triggerRadius,damageRadius,digBool,damage){
-        super(objName,x,y,w,h,0,1,color,health,imgNum,false);
-        this.id = id;
-        this.ownerName = ownerName;
+        super(objName,x,y,w,h,0,1,color,health,imgNum,id,ownerName,false);
         this.triggerRadius = triggerRadius; //in pixels
         this.damage = damage; //how much it hurts players and objs
         this.damageRadius = damageRadius; //in pixels
@@ -350,9 +360,7 @@ class Trap extends Placeable{
 
 class InvObj extends Placeable{
     constructor(objName,x,y,w,h,color,health,imgNum,id,ownerName,maxWeight,canRotate){
-        super(objName,x,y,w,h,0,1,color,health,imgNum,canRotate);
-        this.id = id;
-        this.ownerName = ownerName;
+        super(objName,x,y,w,h,0,1,color,health,imgNum,id,ownerName,canRotate);
         this.maxWeight = maxWeight;
 
         this.locked = false;
@@ -379,7 +387,7 @@ class InvObj extends Placeable{
                 if(this.locked){ //when locked only owner can open
                     if(curPlayer.name == this.ownerName && curPlayer.id == this.id){
                         gameState = "swap_inv";
-                        curPlayer.otherInv = this.invBlock;
+                        curPlayer.otherInv = this;
                         updateSwapItemLists(this.invBlock);
                         swapInvDiv.show();
                         console.log("open Inv");
@@ -388,7 +396,7 @@ class InvObj extends Placeable{
                 else{ //when unlocked all team members can open
                     if(curPlayer.color == this.color){
                         gameState = "swap_inv";
-                        curPlayer.otherInv = this.invBlock;
+                        curPlayer.otherInv = this;
                         updateSwapItemLists(this.invBlock);
                         swapInvDiv.show();
                         console.log("open Inv");
@@ -406,9 +414,7 @@ class InvObj extends Placeable{
 
 class CustomObj extends Placeable{
     constructor(objName,x,y,w,h,rot,z,color,health,imgNum,id,ownerName,update,canRotate){
-        super(objName,x,y,w,h,rot,z,color,health,imgNum,canRotate);
-        this.id = id;
-        this.ownerName = ownerName;
+        super(objName,x,y,w,h,rot,z,color,health,imgNum,id,ownerName,canRotate);
         this.update = update;
         this.type = "Custom";
     }
@@ -423,10 +429,10 @@ function createObject(name, x, y, rot, color, id, ownerName){
     }
     else{
         if(objDic[name].type == "Placeable"){
-            return new Placeable(name, x, y, objDic[name].w, objDic[name].h, rot, objDic[name].z, color, objDic[name].hp, objDic[name].img, objDic[name].canRotate);
+            return new Placeable(name, x, y, objDic[name].w, objDic[name].h, rot, objDic[name].z, color, objDic[name].hp, objDic[name].img, id, ownerName, objDic[name].canRotate);
         }
         else if(objDic[name].type == "Plant"){
-            return new Plant(name, x, y, objDic[name].w, objDic[name].h, color, objDic[name].hp, objDic[name].img, objDic[name].gr, objDic[name].itemDrop);
+            return new Plant(name, x, y, objDic[name].w, objDic[name].h, color, objDic[name].hp, objDic[name].img, id, ownerName, objDic[name].gr, objDic[name].itemDrop);
         }
         else if(objDic[name].type == "Trap"){
             return new Trap(name, x, y, objDic[name].w, objDic[name].h, color, objDic[name].hp, objDic[name].img, id, ownerName, objDic[name].tr, objDic[name].dr, objDic[name].db, objDic[name].damage);
@@ -484,7 +490,7 @@ function defineObjSuper(type,name,imgPaths,cost,width,height,zLevel,health,canRo
  * @param {int} width the desired width of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} height the desired height of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} zLevel the place on the z axis this object should live and react to
- * - 0=floors 
+ * - 0=floors,plants
  * - 1=rugs,traps
  * - 2=walls,doors,tables,chairs,chests
  * - 3=decorations
@@ -580,7 +586,7 @@ function definePlant(name,imgNames,cost,width,height,health,growthRate,itemDrop)
  * @param {int} width the desired width of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} height the desired height of the obj, in pixels !Keep TILESIZE in mind!
  * @param {int} zLevel the place on the z axis this object should live and react to
- * - 0=floors 
+ * - 0=floors,plants
  * - 1=rugs,traps
  * - 2=walls,doors,tables,chairs,chests
  * - 3=decorations

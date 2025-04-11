@@ -106,7 +106,7 @@ function cast(x,y, angle, placeBool){
 
     if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 0) return {cx: chunkPos.x, cy: chunkPos.y, x: x, y: y};
 
-    let playerToMouse = curPlayer.pos.dist(createVector((mouseX + camera.pos.x - (width / 2)), (mouseY + camera.pos.y - (height / 2))));
+    let playerToMouse = (round(curPlayer.pos.dist(createVector((mouseX + camera.pos.x - (width / 2)), (mouseY + camera.pos.y - (height / 2))))/TILESIZE)+1)*TILESIZE;
     let playerToTile = curPlayer.pos.dist(createVector(((chunkPos.x*CHUNKSIZE+x)*TILESIZE), ((chunkPos.y*CHUNKSIZE+y)*TILESIZE)));
 
     while(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] == 0){

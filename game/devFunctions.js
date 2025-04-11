@@ -132,3 +132,15 @@ function giveAllItems(){
     curPlayer.invBlock.hotbarItem("Apple", 3);
     curPlayer.invBlock.hotbarItem("Mushroom Seed", 4);
 }
+
+function spawnObj(name, x, y, rot = 0, color = 11, id = "", ownerName = ""){
+    let chunkPos = testMap.globalToChunk(x,y);
+    let temp = createObject(name, x, y, rot, color, id, ownerName);
+    testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(temp);
+    testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
+    socket.emit("new_object", {
+        cx: chunkPos.x, 
+        cy: chunkPos.y, 
+        obj: temp
+    });
+}

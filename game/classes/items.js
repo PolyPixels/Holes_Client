@@ -337,7 +337,7 @@ class Seed extends SimpleItem{
 
     use(x,y,mouseButton){
         //doesnt wait for useTimer, because it needs space to be placed
-        if(ghostBuild.openBool){
+        if(ghostBuild.openBool && renderGhost){
             let chunkPos = testMap.globalToChunk(x,y);
             let temp = createObject(this.plantName, ghostBuild.pos.x, ghostBuild.pos.y, ghostBuild.rot, curPlayer.color, curPlayer.id, curPlayer.name);
             testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(temp);

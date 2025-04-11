@@ -2235,6 +2235,8 @@ function updatecurSwapItemDiv(otherInv) {
         curSwapItem = otherInv.items[otherInv.curItem];
     }
 
+    if (curSwapItem == undefined) return;
+
     //clear the div
     curSwapItemDiv.html("");
 
@@ -2345,7 +2347,14 @@ function updatecurSwapItemDiv(otherInv) {
     statsList.style("overflow-y", "auto");
     statsList.parent(itemStatsDiv);
 
-    let stats = curSwapItem.getStats();
+    let stats;
+    if (curPlayer.invBlock.curItem != "") {
+        stats = curPlayer.invBlock.getItemStats(curSwapItem.itemName);
+    }
+    else if (otherInv.curItem != "") {
+        stats = otherInv.getItemStats(curSwapItem.itemName);
+    }
+    console.log(curSwapItem.itemName);
     stats.forEach(stat => {
         if (stat[0] == "Durability") { }
         else {
