@@ -194,10 +194,14 @@ function socketSetup(){
             
             //fix some obj properties
             if(temp.type == "InvObj"){
-                let keys = Object.keys(data.objects[i].invBlock.items);
-                for(let j=0; j<keys.length; j++){
-                    temp.invBlock.addItem(keys[j], data.objects[i].invBlock.items[keys[j]].amount);
-                    //TODO: fix durability
+                if(data.objects[i].invBlock != undefined){
+                    if(data.objects[i].invBlock.items != undefined){
+                        let keys = Object.keys(data.objects[i].invBlock.items);
+                        for(let j=0; j<keys.length; j++){
+                            temp.invBlock.addItem(keys[j], data.objects[i].invBlock.items[keys[j]].amount);
+                            //TODO: fix durability
+                        }
+                    }
                 }
             }
             if(temp.type == "Plant"){
@@ -207,6 +211,7 @@ function socketSetup(){
             temp.hp = data.objects[i].hp;
 
             testMap.chunks[data.x+","+data.y].objects.push(temp);
+            testMap.chunks[data.x+","+data.y].objects.sort((a,b) => a.pos.y - b.pos.y);
             testMap.chunks[data.x+","+data.y].objects.sort((a,b) => a.z - b.z);
         }
         if(data.projectiles){

@@ -66,6 +66,7 @@ function turretUpdate(){
 defineCustomObj("Turret", ['tempturret0','tempturret1','tempturret2','tempturret3','tempturret4','tempturret5','tempturret6','tempturret7','tempturret8','tempturret9','tempturret10','tempturret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
 definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 100, 60, "edible_mushroom");
 definePlant("AppleTree", ['apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 100, 60, "Apple");
+definePlant("Tree", ['tree'], [["Log", 4]], 120, 120, 100, 60, "Log");
 defineInvObj("Chest", ['chest'], [['dirt', 20]], 14*4, 15*4, 100, 100, false, true);
 defineInvObj("ItemBag", ['item_bag1'], [], 12*3, 13*3, 100, 100, false, false);
 
@@ -139,6 +140,7 @@ class Placeable{
         this.rot = rot;
         this.z = z;
         this.color = color; //index to team colors
+        if(this.color == undefined) this.color = 11; //no team color
         this.hp = health;
         this.mhp = health;
         this.imgNum = imgNum;
