@@ -193,7 +193,7 @@ class MeleeProjectile extends SimpleProjectile{
             if(chunk.objects[j].z == 2 || chunk.objects[j].z == 0){
                 
                 let d = chunk.objects[j].pos.dist(this.pos);
-                if(d-29 < (this.range*2)+this.safeRange && d+29 > this.safeRange && 
+                if(d-29 < (this.range)+this.safeRange && d+29 > this.safeRange && 
                     chunk.objects[j].pos.copy().sub(this.pos).heading() > this.flightPath.a-(this.angleWidth/2) &&
                     chunk.objects[j].pos.copy().sub(this.pos).heading() < this.flightPath.a+(this.angleWidth/2)
                 ){

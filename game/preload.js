@@ -60,6 +60,15 @@ function preload() {
 
     gameUIFont = loadFont('CalibrationGothicNbpLatin-rYmy.ttf');
     console.log("font:", gameUIFont);
+
+    //load sounds
+    let keys = Object.keys(soundDic);
+    for(let i = 0; i < keys.length; i++){
+        for(let j = 1; j < soundDic[keys[i]].sounds.length; j++){
+            soundDic[keys[i]].sounds[j] = loadSound(soundDic[keys[i]].sounds[j]);
+            soundDic[keys[i]].sounds[j].setVolume((j/20)*soundDic[keys[i]].volume);
+        }
+    }
 }
 
 function loadDefaultImage(){

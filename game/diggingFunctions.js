@@ -1,3 +1,5 @@
+var digSoundTimer = 0;
+
 function playerDig(x,y, amount){
     let ray = createVector(x-curPlayer.pos.x, y-curPlayer.pos.y);
 
@@ -45,6 +47,15 @@ function playerDig(x,y, amount){
         if(digSpot2 != undefined) dig(((digSpot2.cx*CHUNKSIZE+digSpot2.x)*TILESIZE), ((digSpot2.cy*CHUNKSIZE+digSpot2.y)*TILESIZE), amount);
         if(digSpot3 != undefined) dig(((digSpot3.cx*CHUNKSIZE+digSpot3.x)*TILESIZE), ((digSpot3.cy*CHUNKSIZE+digSpot3.y)*TILESIZE), amount);
         
+        if(digSoundTimer <= 0){
+            let temp = new SoundObj("digging.mp3", ((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE));
+            testMap.chunks[digSpot.cx+","+digSpot.cy].soundObjs.push(temp);
+            socket.emit("new_sound", {sound: "digging.mp3", cPos: {x: digSpot.cx, y: digSpot.cy}, pos:{x: ((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), y: ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE)}, id: temp.id});
+            digSoundTimer = 0.7;
+        }
+        else{
+            digSoundTimer -= 1/60;
+        }
         if(random() < 0.01){
             if(random() < 0.05) curPlayer.invBlock.addItem("Gem", 1);
             else curPlayer.invBlock.addItem("Rock", 1);

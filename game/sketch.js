@@ -37,6 +37,14 @@ function setup() {
     dirtBagUI.pos = createVector(width-180-10, height-186-10);
     dirtBagUI.vel = createVector(0,0);
     dirtBagUI.shake = {intensity: 0, length: 0};
+
+    // Update the volume of all sounds
+    let keys = Object.keys(soundDic);
+    for(let i = 0; i < keys.length; i++){
+        for(let j = 1; j < soundDic[keys[i]].sounds.length; j++){
+            soundDic[keys[i]].sounds[j].setVolume((j/20)*soundDic[keys[i]].volume * (volumeSlider.value()/100));
+        }
+    }
 }
 
 function moveCamera(){

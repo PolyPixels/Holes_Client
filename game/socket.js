@@ -184,6 +184,14 @@ function socketSetup(){
         }
     });
 
+    socket.on("NEW_SOUND", (data) =>{
+        let sound = new SoundObj(data.sound, data.pos.x, data.pos.y);
+        sound.id = data.id;
+        if(testMap.chunks[data.cPos.x+','+data.cPos.y] != undefined){
+            testMap.chunks[data.cPos.x+','+data.cPos.y].sounds.push(sound);
+        }
+    });
+
     socket.on("GIVE_CHUNK", (data) => {
         testMap.chunks[data.x+","+data.y] = new Chunk(data.x, data.y);
         let keys = Object.keys(data.data);

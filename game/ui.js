@@ -1881,6 +1881,13 @@ function definePauseUI() {
         // Save volume setting to localStorage
         localStorage.setItem("volume", volumeSlider.value());
 
+        // Update the volume of all sounds
+        let keys = Object.keys(soundDic);
+        for(let i = 0; i < keys.length; i++){
+            for(let j = 1; j < soundDic[keys[i]].sounds.length; j++){
+                soundDic[keys[i]].sounds[j].setVolume((j/20)*soundDic[keys[i]].volume * (volumeSlider.value()/100));
+            }
+        }
         toggleSettings()
     });
 
