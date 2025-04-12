@@ -426,3 +426,44 @@ tag-bar:hover {
   overflow-y: clip;
   height: 65vh;
 }
+
+@media (max-width: 768px) {
+  body {
+    padding: 5px;
+  }
+
+  .tag-button,
+  .buildOption,
+  .raceCard,
+  .serverEntry {
+    font-size: 12px;
+    padding: 6px;
+  }
+  #raceTitle {
+    font-size: calc(1vw + 4px);
+    top: 20%;
+    padding: 6px 12px;
+  }
+
+  .inventory-title {
+    font-size: 1rem;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  button {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+  #inventory.container {
+    width: 95vw;
+    max-height: 80vh;
+    padding: 10px;
+    overflow-y: auto;
+  }
+}

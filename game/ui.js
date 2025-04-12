@@ -577,11 +577,19 @@ function drawSelection() {
     raceTitle.id("raceTitle");
     raceTitle.elt.innerHTML = "Select Your Race"
     raceTitle.style("position", "absolute");
-    raceTitle.style("top", "30dvh");
+    raceTitle.style("top", "min(25%, 30dvh)");
+
     raceTitle.style("left", "50%");
     raceTitle.style("transform", "translateX(-50%)");
+    raceTitle.style("max-width", "90vw");
+raceTitle.style("white-space", "normal");
+
     // Responsive font size (combining viewport and fixed pixels)
-    raceTitle.style("font-size", "calc(1.5vw + 24px)");
+    raceTitle.style("font-size", "calc(1.5vw + 12px)");
+    if (window.innerWidth < 480) {
+        raceTitle.style("font-size", "calc(1vw + 10px)");
+      }
+      
     raceTitle.style("font-weight", "bold");
     raceTitle.style("color", "#fff");
     raceTitle.style("text-shadow", "1px 1px 2px #000");
@@ -768,12 +776,28 @@ card.mousePressed(() => {
     // ---------------------------------------------------
     nameInput = createInput("");
     nameInput.hide();
-    // Positioning using canvas width and a fixed width of 220px
-    nameInput.position(width / 2 - 110, height * 0.8);
-    nameInput.style("font-size", "20px");
+    let inputWidth = constrain(width * 0.5, 100, 200); // Responsive width
+    let inputX = (width - inputWidth) / 2;
+    let inputY = height * 0.85;
+    
+    nameInput.size(inputWidth, AUTO); // Auto height from padding
+    nameInput.position(inputX, inputY);
+    
+    // Responsive styling
+    nameInput.style("font-size", width < 500 ? "14px" : "18px");
     nameInput.style("border-radius", "8px");
     nameInput.style("padding", "10px");
-    nameInput.style("width", "220px");
+    nameInput.style("outline", "none");
+    nameInput.style("transition", "border 0.2s");
+    nameInput.style("width", inputWidth + "px");
+    nameInput.attribute("placeholder", "Name :");
+    
+    // Optional shadow or backdrop (optional UX polish)
+    nameInput.style("background-color", "rgba(255, 255, 255, 0.9)");
+    nameInput.style("box-shadow", "2px 2px 4px rgba(0, 0, 0, 0.3)");
+    
+
+    nameInput.style("padding", "10px");
     nameInput.style("outline", "none");
     nameInput.attribute('placeholder', 'Name :');
     nameInput.style("transition", "border 0.2s");
@@ -798,8 +822,12 @@ card.mousePressed(() => {
     // ---------------------------------------------------
     goButton = createButton("Go");
     goButton.hide();
-    // Position near the name input with a fixed offset
-    goButton.position(width / 2 + 130, height * 0.8);
+        // Position near the name input with a fixed offset
+    goButton.style("position", "absolute");
+    goButton.style("left", "calc(50% + 130px)");
+    goButton.style("top", "85dvh"); // or "80%" if more stable
+    goButton.style("transform", "translateX(-50%)");
+
 
     goButton.style("font-size", "20px");
     goButton.style("color", "#fff");
