@@ -188,7 +188,7 @@ function socketSetup(){
         let sound = new SoundObj(data.sound, data.pos.x, data.pos.y);
         sound.id = data.id;
         if(testMap.chunks[data.cPos.x+','+data.cPos.y] != undefined){
-            testMap.chunks[data.cPos.x+','+data.cPos.y].sounds.push(sound);
+            testMap.chunks[data.cPos.x+','+data.cPos.y].soundObjs.push(sound);
         }
     });
 
