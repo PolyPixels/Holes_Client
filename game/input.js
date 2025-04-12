@@ -32,6 +32,13 @@ function keyReleased() {
             
             curPlayer.holding = { w: false, a: false, s: false, d: false };
         }
+        if(keyCode == 67){ //c
+            gameState = "crafting";
+            updateCraftList();
+            craftDiv.show();
+            
+            curPlayer.holding = { w: false, a: false, s: false, d: false };
+        }
         if( (keyCode == 80 ||  keyCode ==27) && gameState != "initial"){ //p
             gameState = "pause";
             pauseDiv.show();
@@ -74,6 +81,27 @@ function keyReleased() {
         if(keyCode == 73){ //i
             gameState = "playing";
             invDiv.hide();
+        }
+        if(keyCode == 67){ //c
+            gameState = "crafting";
+            craftDiv.show();
+        }
+    }
+    else if(gameState == "crafting"){
+
+        curPlayer.holding = { w: false, a: false, s: false, d: false };
+        if (keyCode === 32) { //space
+            //check cost
+            //add item to inv
+        }
+        if(keyCode == 67){ //c
+            gameState = "playing";
+            craftDiv.hide();
+        }
+        if(keyCode == 73){ //i
+            gameState = "inventory";
+            invDiv.show();
+            craftDiv.hide();
         }
     }
     else if(gameState == "swap_inv"){

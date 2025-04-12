@@ -16,6 +16,7 @@ function setup() {
     // Create a responsive canvas
     let cnv = createCanvas(innerWidth - 10, innerHeight - 8);
     cnv.parent("canvas-container");
+    document.getElementById("canvas-container").style.display = "none";
     noSmooth();
     background(220);
     angleMode(DEGREES);
@@ -172,7 +173,7 @@ function draw() {
         renderTimeUI()
         renderDirtBagUI();
     }
-    if (gameState === "inventory" || gameState === "swap_inv" || gameState === "pause" || gameState =="player_status" || gameState == "team_select") {
+    if (gameState === "inventory" || gameState === "crafting" || gameState === "swap_inv" || gameState === "pause" || gameState =="player_status" || gameState == "team_select") {
         //render the game in the background
 
         renderTimeUI()

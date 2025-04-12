@@ -163,6 +163,24 @@ class InvBlock{
         }
     }
 
+    craftCheck(itemName){
+        for(let i=0; i<itemDic[itemName].cost.length; i++){
+            let item = itemDic[itemName].cost[i][0];
+            let amount = itemDic[itemName].cost[i][1];
+            if(item == "Dirt"){
+                if(dirtInv < amount){
+                    return false;
+                }
+            }
+            else{
+                if(this.items[item] == undefined || this.items[item].amount < amount){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     renderHotBar() {
         if (this.useTimer > 0) this.useTimer--;
         if (this.animationTimer > 0) this.animationTimer -= 0.1;

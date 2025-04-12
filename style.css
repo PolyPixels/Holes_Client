@@ -238,7 +238,7 @@ body {
   overflow: hidden;
   background-image: url('./game/images/floor.png'); /* Your tileable dirt texture */
   background-repeat: repeat;
-  background-size: 128px 128px; /* Adjust based on your image */
+  background-size: 400px 400px; /* Adjust based on your image */
   animation: scrollDirt 20s linear infinite;
 }
 

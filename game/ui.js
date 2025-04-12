@@ -82,8 +82,8 @@ function renderLinks() {
     titleImage = createImg("./images/ui/title.png");
 
     // Apply styles to the image using .style()
-    titleImage.style("width", "30dvw"); // Set the width of the image
-    titleImage.style("height", "15dvw"); // Automatically adjust the height
+    titleImage.style("width", "28dvw"); // Set the width of the image
+    titleImage.style("height", "13dvw"); // Automatically adjust the height
     titleImage.style("border", "5px solid #000"); // Add a border
     titleImage.style("display", "block"); // Make it a block element (to prevent inline styling)
     titleImage.style("margin", "20px auto");
@@ -640,6 +640,7 @@ function setupUI() {
     togglePlayerStatusTable();
     defineTeamPickUI();
     defineSwapInvUI();
+    defineCraftingUI();
 
     timerDiv = createDiv("⏳ 15:00");
     timerDiv.position(width / 2 - 50, 10); // adjust as needed
@@ -818,7 +819,7 @@ card.mousePressed(() => {
     });
 
     goButton.mousePressed(() => {
-        startGame()
+        startGame();
     })
 
 }
@@ -1017,6 +1018,7 @@ function startGame() {
     if (!curPlayer) return;
     curPlayer.name = nameVal;
 
+    document.getElementById("canvas-container").style.display = "block";
     socket.emit("new_player", curPlayer);
     gameState = "playing";
     hideRaceSelect();
@@ -1344,7 +1346,7 @@ function updatecurItemDiv() {
     itemImgDiv.style("height", "100%");
     itemImgDiv.style("border", "2px solid black");
     itemImgDiv.style("border-radius", "10px");
-    console.log(itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]);
+    //console.log(itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]);
     itemImgDiv.style("background-image", "url(" + itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0] + ")");
     itemImgDiv.style("background-size", "contain");
     itemImgDiv.style("background-repeat", "no-repeat");
@@ -2418,5 +2420,311 @@ function renderTimeUI() {
     }
     if (timerDiv) {
         timerDiv.html("⏳ " + timerDisplay);
+    }
+}
+
+var craftDiv;
+var craftListDiv;
+var curCraftItemDiv;
+
+function defineCraftingUI(){
+    // Main inventory container
+    craftDiv = createDiv();
+    craftDiv.id("inventory");
+    craftDiv.class("container");
+
+    // Minimal inline styles – rely on CSS for the main visuals
+    applyStyle(craftDiv, {
+        position: "absolute",
+        top: "45%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        display: "none",
+
+    });
+
+    // Top bar (title area)
+    let topBar = createDiv().parent(craftDiv);
+    // Let CSS handle sizing and layout. 
+    // We'll just give it an appropriate class if we want.
+    // e.g., topBar.class("top-bar");
+    applyStyle(topBar, {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    });
+
+    // Inventory Title
+    let invTitle = createP("Inventory").parent(topBar);
+    invTitle.class("inventory-title");
+
+    // Crafting Title
+    let craftingTitle = createP("Crafting").parent(topBar);
+    craftingTitle.class("inventory-title");
+
+    // Tag Bar (Category Buttons)
+    let tagBar = createDiv().parent(craftDiv);
+    tagBar.class("tag-bar");
+    // If you want minimal inline style:
+    // applyStyle(tagBar, { gap: "5px", borderBottom: "2px solid black" });
+
+    // Define categories
+    const categories = ["All", "Tools/Seeds", "Weapons", "Equipment", "Consumables"];
+    let categoryButtons = {};
+
+    categories.forEach((category) => {
+        let button = createButton(category).parent(tagBar);
+        button.class("tag-button");
+        // If you want minimal inline styles:
+        // applyStyle(button, { width: "120px" });
+
+        button.mousePressed(() => {
+            curPlayer.invBlock.curTag = category;
+            updateCraftList();
+
+            // Highlight the selected button
+            Object.values(categoryButtons).forEach((btn) => {
+                btn.removeClass("selected");
+            });
+            button.addClass("selected");
+        });
+
+        categoryButtons[category] = button;
+    });
+
+    // Default selection highlight
+    categoryButtons["All"].addClass("selected");
+
+    // Bottom area (item list + details)
+    let bottomDiv = createDiv().parent(craftDiv);
+    bottomDiv.class("bottom-area");
+
+    // Item list
+    craftListDiv = createDiv().parent(bottomDiv);
+    craftListDiv.class("item-list");
+
+    // Current item details
+    curCraftItemDiv = createDiv().parent(bottomDiv);
+    curCraftItemDiv.class("item-details");
+
+    // Finally, populate items
+    updateCraftList();
+    updatecurItemDiv();
+}
+
+function updateCraftList(){
+    if (curPlayer == undefined) return;
+
+    craftListDiv.html("");
+    //create a div for each item in the inventory
+    let arr = JSON.parse(JSON.stringify(craftOptions));
+    arr = arr.filter((itemName) => {
+        if (curPlayer.invBlock.curTag == "All") {
+            return true;
+        }
+        else if (curPlayer.invBlock.curTag == "Tools/Seeds") {
+            if (curPlayer.invBlock.items[itemName].type == "Shovel" || curPlayer.invBlock.items[itemName].type == "Seed") {
+                return true;
+            }
+        }
+        else if (curPlayer.invBlock.curTag == "Weapons") {
+            if (curPlayer.invBlock.items[itemName].type == "Melee" || curPlayer.invBlock.items[itemName].type == "Ranged") {
+                return true;
+            }
+        }
+        else if (curPlayer.invBlock.curTag == "Equipment") {
+            if (curPlayer.invBlock.items[itemName].type == "Equipment") {
+                return true;
+            }
+        }
+        else if (curPlayer.invBlock.curTag == "Consumables") {
+            if (curPlayer.invBlock.items[itemName].type == "Food" || curPlayer.invBlock.items[itemName].type == "Potion") {
+                return true;
+            }
+        }
+
+        return false;
+    });
+
+    for (let i = 0; i < arr.length; i++) {
+        let itemName = arr[i].itemName;
+        let itemDiv = createDiv();
+        itemDiv.style("width", "100%");
+        itemDiv.style("height", "50px");
+        itemDiv.style("display", "flex");
+        itemDiv.style("align-items", "center");
+        itemDiv.style("justify-content", "center");
+        itemDiv.style("border-bottom", "2px solid black");
+        if (curPlayer.invBlock.curItem == itemName) itemDiv.style("background-color", "rgb(120, 120, 120)");
+        if (curPlayer.invBlock.curItem == itemName) itemDiv.style("font-style", "italic");
+        itemDiv.style("cursor", "pointer");
+        itemDiv.parent(craftListDiv);
+        itemDiv.mousePressed(() => {
+            curPlayer.invBlock.curItem = itemName;
+            updateCraftList();
+            updatecurCraftItemDiv();
+        });
+
+        let itemInfoDiv = createDiv();
+        itemInfoDiv.style("width", "80%");
+        itemInfoDiv.style("height", "50px");
+        itemInfoDiv.style("display", "flex");
+        itemInfoDiv.style("align-items", "center");
+        itemInfoDiv.style("justify-content", "space-between");
+        itemInfoDiv.parent(itemDiv);
+
+        let itemNameP = createP((itemName == curPlayer.invBlock.curItem ? "* " : "") + itemName);
+        itemNameP.style("font-size", "20px");
+        itemNameP.style("color", "white");
+        itemNameP.parent(itemInfoDiv);
+
+        let craftCheckText = createP(curPlayer.invBlock.craftCheck(itemName) ? "✔" : "✘");
+        craftCheckText.style("font-size", "20px");
+        craftCheckText.style("color", "white");
+        craftCheckText.parent(itemInfoDiv);
+    }
+}
+
+function updatecurCraftItemDiv(){
+    if (curPlayer == undefined) return;
+
+    //clear the div
+    curCraftItemDiv.html("");
+
+    if(curPlayer.invBlock.curItem == "") return;
+
+    let itemCardDiv = createDiv();
+    itemCardDiv.style("width", "100%");
+    itemCardDiv.style("height", "30%");
+    itemCardDiv.style("display", "flex");
+    itemCardDiv.style("margin-bottom", "20px");
+    itemCardDiv.parent(curCraftItemDiv);
+
+    let itemImgDiv = createDiv();
+    itemImgDiv.style("width", "50%");
+    itemImgDiv.style("height", "100%");
+    itemImgDiv.style("border", "2px solid black");
+    itemImgDiv.style("border-radius", "10px");
+    //console.log(itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]);
+    itemImgDiv.style("background-image", "url(" + itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0] + ")");
+    itemImgDiv.style("background-size", "contain");
+    itemImgDiv.style("background-repeat", "no-repeat");
+    itemImgDiv.style("background-position", "center");
+    itemImgDiv.style("image-rendering", "pixelated");
+    itemImgDiv.parent(itemCardDiv);
+
+    let itemNameDescDiv = createDiv();
+    itemNameDescDiv.style("width", "calc(50% - 8px)");
+    itemNameDescDiv.style("height", "100%");
+    itemNameDescDiv.parent(itemCardDiv);
+
+    let itemNameDiv = createDiv();
+    itemNameDiv.style("width", "100%");
+    itemNameDiv.style("height", "20%");
+    itemNameDiv.style("border", "2px solid black");
+    itemNameDiv.style("border-radius", "10px");
+    itemNameDiv.parent(itemNameDescDiv);
+
+    let itemNameP = createP(curPlayer.invBlock.curItem);
+    itemNameP.style("font-size", "20px");
+    itemNameP.style("color", "white");
+    itemNameP.style("margin", "5px");
+    itemNameP.parent(itemNameDiv);
+
+    //create a div for the description
+    let itemDescDiv = createDiv();
+    itemDescDiv.style("width", "100%");
+    itemDescDiv.style("height", "calc(80% - 5px)");
+    itemDescDiv.style("border", "2px solid black");
+    itemDescDiv.style("border-radius", "10px");
+    itemDescDiv.parent(itemNameDescDiv);
+
+    let itemDescP = createP(curPlayer.invBlock.items[curPlayer.invBlock.curItem].desc);
+    itemDescP.style("font-size", "20px");
+    itemDescP.style("color", "white");
+    itemDescP.style("margin", "5px");
+    itemDescP.parent(itemDescDiv);
+
+    let itemCostDiv = createDiv();
+    itemCostDiv.style("width", "100%");
+    itemCostDiv.style("height", "calc(70% - 10px)");
+    itemCostDiv.parent(curCraftItemDiv);
+
+    let craftButton = createButton("Craft");
+    craftButton.style("height", "15%");
+    craftButton.style("font-size", "25px");
+    craftButton.style("padding", "5px");
+    craftButton.style("border", "2px solid black");
+    craftButton.style("border-radius", "10px");
+    craftButton.style("align-items", "center");
+    craftButton.style("justify-content", "center");
+    craftButton.style("margin-bottom", "5px");
+    if(!curPlayer.invBlock.craftCheck(curPlayer.invBlock.curItem)){
+        craftButton.elt.disabled = true;
+    }
+    craftButton.parent(itemCostDiv);
+    craftButton.mousePressed(() => {
+        if (curPlayer.invBlock.craftCheck(curPlayer.invBlock.curItem)) {
+            curPlayer.invBlock.addItem(curPlayer.invBlock.curItem, 1);
+            for(let i=0; i<itemDic[curPlayer.invBlock.curItem].cost.length; i++){
+                console.log(itemDic[curPlayer.invBlock.curItem].cost[i]);
+                if(itemDic[curPlayer.invBlock.curItem].cost[i][0] == "Dirt"){
+                    dirtInv -= itemDic[curPlayer.invBlock.curItem].cost[i][1];
+                }
+                else{
+                    curPlayer.invBlock.decreaseAmount(itemDic[curPlayer.invBlock.curItem].cost[i][0], itemDic[curPlayer.invBlock.curItem].cost[i][1]);
+                }
+            }
+            
+            updateCraftList();
+            updatecurCraftItemDiv();
+        }
+    });
+
+    let costText = createDiv("Cost");
+    costText.style("font-size", "20px");
+    costText.style("color", "white");
+    costText.style("text-align", "center");
+    costText.style("border", "2px solid black");
+    costText.style("border-radius", "10px");
+    costText.style("padding", "10px");
+    costText.style("margin-bottom", "5px");
+    costText.parent(itemCostDiv);
+
+    let costList = createDiv();
+    costList.style("width", "100%");
+    costList.style("height", "calc(90% - 10px)");
+    costList.style("overflow-y", "auto");
+    costList.parent(itemCostDiv);
+
+    for(let i=0; i<itemDic[curPlayer.invBlock.curItem].cost.length; i++){
+        let costDiv = createDiv();
+        costDiv.style("width", "100%");
+        costDiv.style("height", "20px");
+        costDiv.style("display", "flex");
+        costDiv.style("margin-bottom", "12px");
+        costDiv.parent(costList);
+
+        let itemNameDiv = createDiv(itemDic[curPlayer.invBlock.curItem].cost[i][0] + ":");
+        itemNameDiv.style("width", "50%");
+        itemNameDiv.style("height", "100%");
+        itemNameDiv.style("color", "white");
+        itemNameDiv.style("text-align", "center");
+        itemNameDiv.style("font-size", "20px");
+        itemNameDiv.style("border", "2px solid black");
+        itemNameDiv.style("border-radius", "10px");
+        itemNameDiv.style("padding", "5px");
+        itemNameDiv.parent(costDiv);
+
+        let itemAmountDiv = createDiv(itemDic[curPlayer.invBlock.curItem].cost[i][1]);
+        itemAmountDiv.style("width", "50%");
+        itemAmountDiv.style("height", "100%");
+        itemAmountDiv.style("color", "white");
+        itemAmountDiv.style("text-align", "center");
+        itemAmountDiv.style("font-size", "20px");
+        itemAmountDiv.style("border", "2px solid black");
+        itemAmountDiv.style("border-radius", "10px");
+        itemAmountDiv.style("padding", "5px");
+        itemAmountDiv.parent(costDiv);
     }
 }

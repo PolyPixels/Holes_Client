@@ -12,6 +12,7 @@ Item Dic is a full dictanary of every item that can exist, falling into one of t
 
 var itemImgPaths = [];
 var itemDic = {};
+var craftOptions = [];
 
 defineShovel("Basic Shovel", ["shovel1"], [["Log",1],["Rock",1]], 1, 100, 0.12, 3, 1, "A basic shovel for digging dirt",true);
 defineShovel("Better Shovel", ["shovel2"], [], 1, 100, 0.18, 3, 1, "A better shovel for digging dirt",true);
@@ -21,7 +22,7 @@ defineMelee("Better Sword", ["sword2"], [["Rock",1],["Gem",2]], 1, 100, 10, 5, 5
 defineMelee("Evil Apple on Stick", ["evil_apple_on_stick"], [["Bad Apple",1],["Log",1]], 1, 100, 10, 5, 100, 20, 10, false, "Now it'll bite your opponets",true);
 defineRanged("Basic SlingShot", ["sling"], [], 1, 100, 5, 5, "Rock", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
 defineRanged("Better SlingShot", ["sling"], [], 1, 100, 5, 5, "Rock", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);
-defineRanged("Dirt Ball", ["dirtball"], ["Dirt", 5], 1, 1, 0, 5, "Dirt", "Dirt Ball", 10, 10, 60, false, "A ball of dirt to push people around",true);
+defineRanged("Dirt Ball", ["dirtball"], [["Dirt", 5]], 1, 1, 0, 5, "Dirt", "Dirt Ball", 10, 10, 60, false, "A ball of dirt to push people around",true);
 defineSimpleItem("Rock", ["rock"], [], 1, "A rock for your slingshot",false);
 defineSimpleItem("Gem", ["gem"], [], 1, "A pretty gem",false);
 defineSimpleItem("Dark Gem", ["black_gem"], [], 1, "A dull gem",false);
@@ -433,7 +434,7 @@ function defineItemSuper(type,name,imgPaths,cost,weight,durability,desc,inCraftL
     };
 
     if(inCraftList){
-        //craftOptions.push({type: name, image: imgPaths[0], cost: cost});
+        craftOptions.push({type: type, itemName: name, image: imgPaths[0], cost: cost});
     }
 }
 
