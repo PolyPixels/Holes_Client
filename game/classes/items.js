@@ -194,7 +194,7 @@ class Ranged extends SimpleItem{
             if(curPlayer.invBlock.useTimer <= 0){
                 if(this.bulletsLeft > 0){
                     if(curPlayer.invBlock.items[this.ammoName] != undefined){ //if you have item used for ammo
-                        console.log("Shoot");
+                        //console.log("Shoot");
                         let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
                         let toMouse = createVector(x,y).sub(curPlayer.pos).setMag(50);
                         let proj = createProjectile(
@@ -214,7 +214,7 @@ class Ranged extends SimpleItem{
                     }
                 }
                 else{
-                    console.log("Reload");
+                    //console.log("Reload");
                     
                     //TODO: check for the ammo item first and reduce amount of it in inv
                     curPlayer.invBlock.useTimer = this.reloadSpeed;
@@ -223,7 +223,7 @@ class Ranged extends SimpleItem{
             }
         }
         else if(mouseButton == RIGHT){
-            console.log("Force Reload");
+            //console.log("Force Reload");
 
             //TODO: check for the ammo item first and reduce amount of it in inv
             curPlayer.invBlock.useTimer = this.reloadSpeed;
@@ -255,7 +255,7 @@ class Food extends SimpleItem{
     }
 
     use(x,y,mouseButton){
-        console.log("!!!!!!!",curPlayer.statBlock.stats.hp ,curPlayer.statBlock.stats.mhp )
+        //console.log("!!!!!!!",curPlayer.statBlock.stats.hp ,curPlayer.statBlock.stats.mhp )
 
         if(curPlayer.statBlock.stats.hp >=  curPlayer.statBlock.stats.mhp) {
             this.shake = {intensity: 1, length: 5};
@@ -288,7 +288,7 @@ class Potion extends SimpleItem{
 
     use(x,y,mouseButton){
         if(curPlayer.invBlock.useTimer <= 0){
-            console.log("Drink");
+            //console.log("Drink");
             curPlayer.invBlock.useTimer = 60;
             curPlayer.invBlock.decreaseAmount(this.itemName, 1);
         }
@@ -405,7 +405,7 @@ function createItem(name){
             return new CustomItem(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].use);
         }
         else{
-            console.log(itemDic[name]);
+            //console.log(itemDic[name]);
             throw new Error(`Item type: ${itemDic[name].type}, does not exist.`);
         }
     }

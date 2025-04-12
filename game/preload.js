@@ -59,7 +59,7 @@ function preload() {
     playerCardImg = loadImage('images/ui/playercard.png');
 
     gameUIFont = loadFont('CalibrationGothicNbpLatin-rYmy.ttf');
-    console.log("font:", gameUIFont);
+    //console.log("font:", gameUIFont);
 
     //load sounds
     let keys = Object.keys(soundDic);
@@ -75,7 +75,7 @@ function loadDefaultImage(){
     defaultImage = loadImage(
         'images/default_front_walk.png',
         function (img) {
-            console.log('Default image loaded successfully.');
+            //console.log('Default image loaded successfully.');
         },
         function (err) {
             console.error('Failed to load the default image.');

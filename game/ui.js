@@ -384,12 +384,12 @@ function renderServerBrowser() {
         addServerSection.parent(serverBrowserContainer);
         connectButton.mousePressed(() => {
             if (selectedServer) {
-                console.log(getServerUrl(selectedServer))
+                //console.log(getServerUrl(selectedServer))
                 socket = io.connect(getServerUrl(selectedServer));
                 socketSetup();
                 testMap = new Map();
                 ghostBuild = createObject("Wall", 0, 0, 0, 11, " ", " ");
-                console.log("Connected to " + selectedServer, socket);
+                //console.log("Connected to " + selectedServer, socket);
                 hideServerBrowser();
                 gameState = "race_selection";
                 renderedserverBrowserContainer = false;
@@ -550,7 +550,7 @@ function renderServerList() {
             }
             serverEntry.style("background-color", "#4CAF50");
             selectedServer = server;
-            console.log("Server selected:", selectedServer);
+            //console.log("Server selected:", selectedServer);
         });
 
         serverEntry.parent(serverBrowserContainer);
@@ -605,7 +605,7 @@ function drawSelection() {
     race_back_button.style("top", "50dvh");
 
     race_back_button.mousePressed(() => {
-        console.log("pressed")
+        //console.log("pressed")
         hideRaceSelect()
         gameState = "initial"
     })
@@ -677,7 +677,7 @@ function setupUI() {
     // Iterate over each race in the races array
     races.forEach((raceName, i) => {
         var selectedItem = i;
-        console.log(selectedItem, i, raceName)
+        //console.log(selectedItem, i, raceName)
         // Create the card container for the race
         let card = createDiv();
         card.class("raceCard");
@@ -736,7 +736,7 @@ card.mouseOut(() => {
 
 // On click: deselect all cards, select only this one
 card.mousePressed(() => {
-    console.log(selectedItem, i, raceName);
+    //console.log(selectedItem, i, raceName);
 
     // Deselect all cards
     raceButtons.forEach((c) => {
@@ -751,7 +751,7 @@ card.mousePressed(() => {
     raceSelected = true;
     curPlayer.race = selectedItem;
 
-    console.log("Race selected:", races[selectedItem]);
+    //console.log("Race selected:", races[selectedItem]);
 });
 
 
@@ -964,14 +964,14 @@ function toggleChatDropdown() {
 
 
 function startGame() {
-    console.log(raceSelected, "sasd")
+    //console.log(raceSelected, "sasd")
     if (!selectedServer) {
         alert("Issue with server retry.");
         return;
     }
     if (!raceSelected) {
         alert("Pick a race.");
-        console.log("SDSD")
+        //console.log("SDSD")
         return;
     }
 
@@ -1100,7 +1100,7 @@ function sendChatMessage() {
 function addChatMessage(chatMsg) {
     if (!chatContainer) return
 
-    console.log(chatMsg)
+    //console.log(chatMsg)
 
     if (!chatMsg.user) {
         chatMsg.user = "SERVER"
@@ -1598,7 +1598,7 @@ function togglePlayerStatusTable() {
 
     // Toggle visibility
     const isVisible = player_status_container.style("display") !== "none";
-    console.log(isVisible)
+    //console.log(isVisible)
     if (isVisible) {
         player_status_container.hide();
         return;
@@ -1765,11 +1765,11 @@ function renderBuildOptions() {
             let playerHas = 0;
             if (material == "dirt") {
                 playerHas = dirtInv.toFixed(1);
-                console.log(playerHas, material);
+                //console.log(playerHas, material);
             }
             else if (curPlayer.invBlock.items[material] != undefined) {
                 playerHas = curPlayer.invBlock.items[material].amount;
-                console.log(playerHas, curPlayer.invBlock.items[material], material);
+                //console.log(playerHas, curPlayer.invBlock.items[material], material);
             }
             // Create a line: "Material: X / Y"
             const line = createDiv(`${material}:  ${playerHas} / ${requiredAmount}`);
@@ -2363,7 +2363,7 @@ function updatecurSwapItemDiv(otherInv) {
     else if (otherInv.curItem != "") {
         stats = otherInv.getItemStats(curSwapItem.itemName);
     }
-    console.log(curSwapItem.itemName);
+    //console.log(curSwapItem.itemName);
     stats.forEach(stat => {
         if (stat[0] == "Durability") { }
         else {
@@ -2676,7 +2676,7 @@ function updatecurCraftItemDiv(){
         if (curPlayer.invBlock.craftCheck(curPlayer.invBlock.curItem)) {
             curPlayer.invBlock.addItem(curPlayer.invBlock.curItem, 1);
             for(let i=0; i<itemDic[curPlayer.invBlock.curItem].cost.length; i++){
-                console.log(itemDic[curPlayer.invBlock.curItem].cost[i]);
+                //console.log(itemDic[curPlayer.invBlock.curItem].cost[i]);
                 if(itemDic[curPlayer.invBlock.curItem].cost[i][0] == "Dirt"){
                     dirtInv -= itemDic[curPlayer.invBlock.curItem].cost[i][1];
                 }

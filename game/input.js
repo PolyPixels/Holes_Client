@@ -124,7 +124,7 @@ function keyReleased() {
             }
             else{
                 if(curPlayer.invBlock.curItem != ""){
-                    console.log(curPlayer.otherInv);
+                    //console.log(curPlayer.otherInv);
                     curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, 1);
                     curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem,1);
     
