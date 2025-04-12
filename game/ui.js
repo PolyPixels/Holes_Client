@@ -2660,9 +2660,9 @@ function updatecurCraftItemDiv(){
     craftButton.style("justify-content", "center");
     craftButton.style("margin-bottom", "5px");
     if(!curPlayer.invBlock.craftCheck(curPlayer.invBlock.curItem)){
-        //!AHHHHHHHHH
-        craftButton.elt.disabled = true;
-        //!AHHHHHHHHH
+        craftButton.style("opacity", "0.5");
+        craftButton.style("background-color", "red");
+        craftButton.style("pointer-events", "none");
     }
     craftButton.parent(itemCostDiv);
     craftButton.mousePressed(() => {
