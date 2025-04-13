@@ -48,9 +48,9 @@ function playerDig(x,y, amount){
         if(digSpot3 != undefined) dig(((digSpot3.cx*CHUNKSIZE+digSpot3.x)*TILESIZE), ((digSpot3.cy*CHUNKSIZE+digSpot3.y)*TILESIZE), amount);
         
         if(digSoundTimer <= 0){
-            let temp = new SoundObj("digging.mp3", ((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE));
+            let temp = new SoundObj("digging.ogg", ((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE));
             testMap.chunks[digSpot.cx+","+digSpot.cy].soundObjs.push(temp);
-            socket.emit("new_sound", {sound: "digging.mp3", cPos: {x: digSpot.cx, y: digSpot.cy}, pos:{x: ((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), y: ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE)}, id: temp.id});
+            socket.emit("new_sound", {sound: "digging.ogg", cPos: {x: digSpot.cx, y: digSpot.cy}, pos:{x: ((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), y: ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE)}, id: temp.id});
             digSoundTimer = 0.7;
         }
         else{
