@@ -28,7 +28,6 @@ class InvBlock{
     }
 
     decreaseAmount(item, amount){
-        console.log(item + "-=" + amount);
         this.items[item].amount -= amount;
         if(this.items[item].amount <= 0){
             for(let i=0; i<this.hotbar.length; i++){ //remove item from hotbar
@@ -87,10 +86,9 @@ class InvBlock{
         let keys = Object.keys(this.items);
         for(let i = 0; i < keys.length; i++){
             let item = this.items[keys[i]];
-            console.log(item.amount);
             if(item.amount > 0){
                 itemBag.invBlock.addItem(keys[i], item.amount);
-                this.decreaseAmount(item, item.amount);
+                this.decreaseAmount(keys[i], item.amount);
             }
         }
         let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);

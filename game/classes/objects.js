@@ -392,7 +392,7 @@ class InvObj extends Placeable{
                         curPlayer.otherInv = this;
                         updateSwapItemLists(this.invBlock);
                         swapInvDiv.show();
-                        console.log("open Inv");
+                        //console.log("open Inv");
                     }
                 }
                 else{ //when unlocked all team members can open
@@ -401,7 +401,7 @@ class InvObj extends Placeable{
                         curPlayer.otherInv = this;
                         updateSwapItemLists(this.invBlock);
                         swapInvDiv.show();
-                        console.log("open Inv");
+                        //console.log("open Inv");
                     }
                 }
             }
