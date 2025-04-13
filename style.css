@@ -91,6 +91,7 @@ input:focus,
 textarea:focus,
 select:focus {
   outline: 1px dotted var(--color-gold);
+  
 }
 
 /* ===== Inventory Panel ===== */

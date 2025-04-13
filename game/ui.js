@@ -12,8 +12,6 @@ function updateResponsiveDesign() {
     const inputWidth = 220; // as defined in style
     const spacing = 20;
 
-    nameInput?.position(width / 2 - inputWidth / 2, height * 0.8);
-    goButton?.position(width / 2 + inputWidth / 2 + spacing, height * 0.8);
 
     // Update race card widths responsively
     let newCardWidth = constrain(width * 0.15, 150, 300);
@@ -779,18 +777,34 @@ card.mousePressed(() => {
     let inputWidth = constrain(width * 0.5, 100, 200); // Responsive width
     let inputX = (width - inputWidth) / 2;
     let inputY = height * 0.85;
-    
     nameInput.size(inputWidth, AUTO); // Auto height from padding
-    nameInput.position(inputX, inputY);
-    
-    // Responsive styling
-    nameInput.style("font-size", width < 500 ? "14px" : "18px");
-    nameInput.style("border-radius", "8px");
-    nameInput.style("padding", "10px");
-    nameInput.style("outline", "none");
-    nameInput.style("transition", "border 0.2s");
-    nameInput.style("width", inputWidth + "px");
-    nameInput.attribute("placeholder", "Name :");
+nameInput.position(inputX, inputY);
+
+// Responsive base styling
+nameInput.style("font-size", width < 500 ? "14px" : "18px");
+nameInput.style("border-radius", "8px");
+nameInput.style("padding", "10px");
+nameInput.style("outline", "none");
+nameInput.style("transition", "border 0.2s, box-shadow 0.2s");
+nameInput.style("width", inputWidth + "px");
+nameInput.attribute("placeholder", "Name :");
+nameInput.style("border", "2px solid #ccc"); // base border
+
+// Focus style
+nameInput.elt.addEventListener("focus", () => {
+  nameInput.style("border", "2px solid var(--color-gold)");
+  nameInput.style("box-shadow", "0 0 6px rgba(255, 215, 0, 0.6)");
+
+
+nameInput.attribute("placeholder", "");
+});
+
+// Revert on blur
+nameInput.elt.addEventListener("blur", () => {
+  nameInput.style("border", "2px solid #ccc");
+  nameInput.style("box-shadow", "none");
+});
+
     
     // Optional shadow or backdrop (optional UX polish)
     nameInput.style("background-color", "rgba(255, 255, 255, 0.9)");
