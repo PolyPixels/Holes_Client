@@ -1,8 +1,8 @@
 
 var soundDic = {};
 
-defineSound("digging.mp3", 0.5);
-defineSound("swing.wav", 0.5);
+defineSound("digging.ogg", 0.5);
+defineSound("swing.ogg", 0.5);
 
 class SoundObj{
     constructor(sound, x, y){
