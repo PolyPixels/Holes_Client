@@ -826,7 +826,6 @@ card.mousePressed(() => {
     goButton.style("position", "absolute");
     goButton.style("left", "calc(50% + 130px)");
     goButton.style("top", "85dvh"); // or "80%" if more stable
-    goButton.style("transform", "translateX(-50%)");
 
 
     goButton.style("font-size", "20px");
