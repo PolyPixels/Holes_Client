@@ -897,6 +897,7 @@ function renderChatUI() {
     // ─────────────────────────────────────────────────────────
 
     toggleChatButton = createButton("");
+    toggleChatButton.id("chatToggle")
     toggleChatButton.parent(chatContainer);
     toggleChatButton.style("width", "100%");
     toggleChatButton.style("background", "#555");

@@ -470,3 +470,11 @@ tag-bar:hover {
     overflow-y: auto;
   }
 }
+
+
+#chatToggle:hover {
+  animation:none !important;
+  transform: translateY(0px) rotate(0deg) !important; 
+  background-color: var(--color-ui-dark2);
+  border: white 1px solid;
+}
