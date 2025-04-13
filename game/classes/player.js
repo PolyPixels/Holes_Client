@@ -291,7 +291,7 @@ class Player {
         // Now draw text with a stroke
         stroke(0);       // black stroke around letters
         strokeWeight(2);
-        fill(255);       // white fill
+        fill(teamColors[curPlayer.color].r, teamColors[curPlayer.color].g, teamColors[curPlayer.color].b);
         text(nameText, this.pos.x, this.pos.y - yOffset);
 
         let raceName = races[this.race]
