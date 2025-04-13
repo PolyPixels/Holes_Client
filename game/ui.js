@@ -1288,6 +1288,25 @@ function defineInvUI() {
 
     spaceBarDiv.hide();
 
+        // Close Button
+    let closeButton = createButton("X").parent(topBar);
+    closeButton.class("close-button"); // Style it in CSS
+    applyStyle(closeButton, {
+        marginLeft: "auto",  // Pushes it to the right
+        position:"absolute",
+        fontSize: "18px",
+        right:"0",
+        color:"white",
+        cursor: "pointer",
+        background: "none",
+        border: "none",
+    });
+
+    closeButton.mousePressed(() => {
+        gameState = "playing"
+        invDiv.hide(); // Hides the inventory when clicked
+    });
+
     // Finally, populate items
     updateItemList();
     updatecurItemDiv();
@@ -2163,6 +2182,23 @@ function defineSwapInvUI() {
     swapInvDiv.style("top", "50%");
     swapInvDiv.style("left", "50%");
     swapInvDiv.style("transform", "translate(-50%, -50%)");
+    let closeButton = createButton("X").parent(swapInvDiv);
+    closeButton.class("close-button"); // Style it in CSS
+    applyStyle(closeButton, {
+        marginLeft: "90%",  // Pushes it to the right
+
+        fontSize: "18px",
+        color:"white",
+        cursor: "pointer",
+        background: "none",
+        border: "none",
+    });
+
+    closeButton.mousePressed(() => {
+        gameState = "playing"
+        swapInvDiv.hide(); // Hides the inventory when clicked
+    });
+
 
     let swapInvDivInnerds = createDiv();
     swapInvDivInnerds.parent(swapInvDiv);
@@ -2183,6 +2219,8 @@ function defineSwapInvUI() {
     //Right Item list
     itemListDivRight = createDiv().parent(swapInvDivInnerds);
     itemListDivRight.class("item-list");
+
+
 
     swapInvDiv.hide();
 }
@@ -2555,7 +2593,23 @@ function defineCraftingUI(){
     // Current item details
     curCraftItemDiv = createDiv().parent(bottomDiv);
     curCraftItemDiv.class("item-details");
+    let closeButton = createButton("X").parent(topBar);
+    closeButton.class("close-button"); // Style it in CSS
+    applyStyle(closeButton, {
+        marginLeft: "auto",  // Pushes it to the right
+        position:"absolute",
+        right:"0",
+        fontSize: "18px",
+        cursor: "pointer",
+        background: "none",
+        color:"white",
+        border: "none",
+    });
 
+    closeButton.mousePressed(() => {
+        gameState = "playing"
+        craftDiv.hide(); // Hides the inventory when clicked
+    });
     // Finally, populate items
     updateCraftList();
     updatecurItemDiv();
