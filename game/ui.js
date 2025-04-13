@@ -776,7 +776,7 @@ card.mousePressed(() => {
     nameInput.hide();
     let inputWidth = constrain(width * 0.5, 100, 200); // Responsive width
     let inputX = (width - inputWidth) / 2;
-    let inputY = height * 0.85;
+    let inputY = height * 0.86;
     nameInput.size(inputWidth, AUTO); // Auto height from padding
 nameInput.position(inputX, inputY);
 
@@ -2506,7 +2506,12 @@ function renderTimeUI() {
         lastUpdateTime = millis();
     }
     if (timerDiv) {
-        timerDiv.html("⏳ " + timerDisplay);
+        timerDiv.html(" ⏳ " + timerDisplay);
+        applyStyle(timerDiv, {
+            position: "absolute",
+            width:"auto"
+    
+        });
     }
 }
 
