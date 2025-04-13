@@ -154,9 +154,9 @@ class Melee extends SimpleItem{
             //tell the server you made a projectile
             socket.emit("new_proj", proj);
 
-            let temp = new SoundObj("swing.ogg", curPlayer.pos.x, curPlayer.pos.y);
+            let temp = new SoundObj("swing.wav", curPlayer.pos.x, curPlayer.pos.y);
             testMap.chunks[chunkPos.x+','+chunkPos.y].soundObjs.push(temp);
-            socket.emit("new_sound", {sound: "swing.ogg", cPos: chunkPos, pos: {x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
+            socket.emit("new_sound", {sound: "swing.wav", cPos: chunkPos, pos: {x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
             curPlayer.invBlock.useTimer = this.swingSpeed;
         }
     }
