@@ -419,7 +419,7 @@ class InvObj extends Placeable{
                     }
                 }
                 else{ //when unlocked all team members can open
-                    if(curPlayer.color == this.color){
+                    if(curPlayer.color == this.color || (this.ownerName == "" && this.id == "")){
                         gameState = "swap_inv";
                         curPlayer.otherInv = this;
                         updateSwapItemLists(this.invBlock);
