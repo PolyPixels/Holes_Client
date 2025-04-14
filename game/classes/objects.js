@@ -206,15 +206,25 @@ class Placeable{
         rotate(this.rot);
         
         this.openBool = ob;
+        let touchingObjs = [];
 
         let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
         let chunk = testMap.chunks[chunkPos.x+","+chunkPos.y];
         for(let j = 0; j < chunk.objects.length; j++){
             if(this.z == chunk.objects[j].z){
                 let d = chunk.objects[j].pos.dist(this.pos);
-                if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + (this.size.w+this.size.h)/2 - 30){
+                if(d < (chunk.objects[j].size.w+chunk.objects[j].size.h)/4 + (this.size.w+this.size.h)/4 - 10){
                     this.openBool = false;
+                    touchingObjs.push({pos: chunk.objects[j].pos, size: chunk.objects[j].size});
                 }
+            }
+        }
+
+        let keys = Object.keys(players);
+        for(let i = 0; i < keys.length; i++){
+            if(players[keys[i]].pos.dist(this.pos) < ((48.4+83.6)/4 + (this.size.w+this.size.h)/4)){
+                this.openBool = false;
+                touchingObjs.push({pos: players[keys[i]].pos, size: {w: 48.4, h: 83.6}});
             }
         }
 
@@ -243,6 +253,19 @@ class Placeable{
                     this.openBool = false;
                 }
             }
+        }
+
+        if(touchingObjs.length > 0){
+            fill(255,100);
+            circle(0,0, (this.size.w+this.size.h)/2);
+        }
+        
+        pop();
+
+        push();
+        fill(255,100);
+        for(let i=0; i<touchingObjs.length; i++){
+            circle(touchingObjs[i].pos.x-camera.pos.x+(width/2), touchingObjs[i].pos.y-camera.pos.y+(height/2), (touchingObjs[i].size.w+touchingObjs[i].size.h)/2);
         }
         pop();
 
