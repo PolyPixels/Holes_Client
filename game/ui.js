@@ -46,7 +46,7 @@ let serverList = JSON.parse(localStorage.getItem("servers")) || [
 ];
 
 let selectedServer = null;
-let serverBrowserContainer, inputName, inputIP, inputStatus, addServerButton;
+let serverBrowserContainer, inputName, inputIP, inputStatus, addServerButton, serverListDiv;
 let renderedserverBrowserContainer = false;
 
 function saveServers() {
@@ -279,6 +279,8 @@ function renderServerBrowser() {
         title.style("text-align", "center");
         title.parent(serverBrowserContainer);
 
+        serverListDiv = createDiv();
+        serverListDiv.parent(serverBrowserContainer);
         // Render the server list
         renderServerList();
 
@@ -537,7 +539,7 @@ function renderServerList() {
             serverList.splice(index, 1);
             saveServers();
             renderServerList();
-            renderServerList();
+            //renderServerList();
         });
 
         // Select a server
@@ -551,7 +553,7 @@ function renderServerList() {
             //console.log("Server selected:", selectedServer);
         });
 
-        serverEntry.parent(serverBrowserContainer);
+        serverEntry.parent(serverListDiv);
     });
 }
 
