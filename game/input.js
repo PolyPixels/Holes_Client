@@ -7,6 +7,8 @@ function keyReleased() {
         pauseDiv.hide();
         invDiv.hide();
         player_status_container.hide();
+        craftDiv.hide();
+        teamPickDiv.hide();
         buildMode = false;
        
         renderGhost = false;
@@ -197,9 +199,8 @@ function keyPressed(){ //prevents normal key related actions
 
 function mouseReleased(){
     if(gameState == "chating"){
-        if(mouseX > 260 || mouseY < height-310){
+        if(mouseX > 260 || mouseY < height-50){
             gameState = "playing";
-            toggleChatDropdown();
         }
     }
     if(gameState != "playing") return;

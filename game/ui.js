@@ -2626,27 +2626,27 @@ function updateCraftList(){
     craftListDiv.html("");
     //create a div for each item in the inventory
     let arr = JSON.parse(JSON.stringify(craftOptions));
-    arr = arr.filter((itemName) => {
+    arr = arr.filter((item) => {
         if (curPlayer.invBlock.curTag == "All") {
             return true;
         }
         else if (curPlayer.invBlock.curTag == "Tools/Seeds") {
-            if (curPlayer.invBlock.items[itemName].type == "Shovel" || curPlayer.invBlock.items[itemName].type == "Seed") {
+            if (item.type == "Shovel" || item.type == "Seed") {
                 return true;
             }
         }
         else if (curPlayer.invBlock.curTag == "Weapons") {
-            if (curPlayer.invBlock.items[itemName].type == "Melee" || curPlayer.invBlock.items[itemName].type == "Ranged") {
+            if (item.type == "Melee" || item.type == "Ranged") {
                 return true;
             }
         }
         else if (curPlayer.invBlock.curTag == "Equipment") {
-            if (curPlayer.invBlock.items[itemName].type == "Equipment") {
+            if (item.type == "Equipment") {
                 return true;
             }
         }
         else if (curPlayer.invBlock.curTag == "Consumables") {
-            if (curPlayer.invBlock.items[itemName].type == "Food" || curPlayer.invBlock.items[itemName].type == "Potion") {
+            if (item.type == "Food" || item.type == "Potion") {
                 return true;
             }
         }
