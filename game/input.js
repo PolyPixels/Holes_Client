@@ -30,6 +30,7 @@ function keyReleased() {
         if(keyCode == 73){ //i
             gameState = "inventory";
             updateItemList();
+            updatecurItemDiv();
             invDiv.show();
             
             curPlayer.holding = { w: false, a: false, s: false, d: false };
@@ -37,6 +38,7 @@ function keyReleased() {
         if(keyCode == 67){ //c
             gameState = "crafting";
             updateCraftList();
+            updatecurCraftItemDiv();
             craftDiv.show();
             
             curPlayer.holding = { w: false, a: false, s: false, d: false };
@@ -87,6 +89,8 @@ function keyReleased() {
         if(keyCode == 67){ //c
             gameState = "crafting";
             craftDiv.show();
+            updateCraftList();
+            invDiv.hide();
         }
     }
     else if(gameState == "crafting"){
@@ -103,6 +107,7 @@ function keyReleased() {
         if(keyCode == 73){ //i
             gameState = "inventory";
             invDiv.show();
+            updateItemList();
             craftDiv.hide();
         }
     }

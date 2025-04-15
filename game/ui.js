@@ -1252,10 +1252,18 @@ function defineInvUI() {
     // Inventory Title
     let invTitle = createP("Inventory").parent(topBar);
     invTitle.class("inventory-title");
+    invTitle.style("color", "yellow");
 
     // Crafting Title
     let craftingTitle = createP("Crafting").parent(topBar);
     craftingTitle.class("inventory-title");
+    craftingTitle.mousePressed(() => {
+        gameState = "crafting";
+        craftDiv.show();
+        updateCraftList();
+        invDiv.hide();
+    });
+    craftingTitle.style("cursor", "pointer");
 
     // Tag Bar (Category Buttons)
     let tagBar = createDiv().parent(invDiv);
@@ -1418,7 +1426,16 @@ function updatecurItemDiv() {
     //clear the div
     curItemDiv.html("");
 
-    if(curPlayer.invBlock.curItem == "") return;
+    if(curPlayer.invBlock.curItem == "") {
+        let curItemNone = createP("No Selected Item");
+        curItemNone.parent(curItemDiv);
+        curItemNone.class("inventory-title");
+        applyStyle(curItemNone, {
+            paddingTop: "7%",
+            textDecoration: "none"
+        });
+        return;
+    };
 
     let itemCardDiv = createDiv();
     itemCardDiv.style("width", "100%");
@@ -2214,23 +2231,30 @@ function defineSwapInvUI() {
     swapInvDiv.style("top", "50%");
     swapInvDiv.style("left", "50%");
     swapInvDiv.style("transform", "translate(-50%, -50%)");
-    let closeButton = createButton("X").parent(swapInvDiv);
-    closeButton.class("close-button"); // Style it in CSS
-    applyStyle(closeButton, {
-        marginLeft: "90%",  // Pushes it to the right
 
-        fontSize: "18px",
-        color:"white",
-        cursor: "pointer",
-        background: "none",
-        border: "none",
+    let swapInvTitleBar = createDiv();
+    swapInvTitleBar.parent(swapInvDiv);
+    applyStyle(swapInvTitleBar, {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingBottom: "15px",
+        borderBottom: "2px solid black"
     });
 
-    closeButton.mousePressed(() => {
-        gameState = "playing"
-        swapInvDiv.hide(); // Hides the inventory when clicked
-    });
+    let swapInvYourInvTittle = createP("Your Inventory");
+    swapInvYourInvTittle.parent(swapInvTitleBar);
+    swapInvYourInvTittle.class("inventory-title");
+    swapInvYourInvTittle.style("margin-left", "25px");
 
+    let swapInvCurItemTittle = createP("Selected Item");
+    swapInvCurItemTittle.parent(swapInvTitleBar);
+    swapInvCurItemTittle.class("inventory-title");
+
+    let swapInvOtherInvTittle = createP("Other Inventory");
+    swapInvOtherInvTittle.parent(swapInvTitleBar);
+    swapInvOtherInvTittle.class("inventory-title");
+    swapInvOtherInvTittle.style("margin-right", "25px");
 
     let swapInvDivInnerds = createDiv();
     swapInvDivInnerds.parent(swapInvDiv);
@@ -2248,11 +2272,37 @@ function defineSwapInvUI() {
     curSwapItemDiv = createDiv().parent(swapInvDivInnerds);
     curSwapItemDiv.class("item-details");
 
+    let curSwapItemNone = createP("No Selected Item");
+    curSwapItemNone.parent(curSwapItemDiv);
+    curSwapItemNone.class("inventory-title");
+    applyStyle(curSwapItemNone, {
+        paddingTop: "7%",
+        textDecoration: "none"
+    });
+
     //Right Item list
     itemListDivRight = createDiv().parent(swapInvDivInnerds);
     itemListDivRight.class("item-list");
+    itemListDivRight.style("border-left", "2px solid black");
 
+    // Close Button
+    let closeButton = createButton("X").parent(swapInvTitleBar);
+    closeButton.class("close-button"); // Style it in CSS
+    applyStyle(closeButton, {
+        marginLeft: "auto",  // Pushes it to the right
+        position:"absolute",
+        fontSize: "18px",
+        right:"0",
+        color:"white",
+        cursor: "pointer",
+        background: "none",
+        border: "none",
+    });
 
+    closeButton.mousePressed(() => {
+        gameState = "playing"
+        swapInvDiv.hide(); // Hides the inventory when clicked
+    });
 
     swapInvDiv.hide();
 }
@@ -2581,10 +2631,18 @@ function defineCraftingUI(){
     // Inventory Title
     let invTitle = createP("Inventory").parent(topBar);
     invTitle.class("inventory-title");
+    invTitle.mousePressed(() => {
+        gameState = "inventory";
+        invDiv.show();
+        updateItemList();
+        craftDiv.hide();
+    });
+    invTitle.style("cursor", "pointer");
 
     // Crafting Title
     let craftingTitle = createP("Crafting").parent(topBar);
     craftingTitle.class("inventory-title");
+    craftingTitle.style("color", "yellow");
 
     // Tag Bar (Category Buttons)
     let tagBar = createDiv().parent(craftDiv);
@@ -2649,7 +2707,7 @@ function defineCraftingUI(){
     });
     // Finally, populate items
     updateCraftList();
-    updatecurItemDiv();
+    updatecurCraftItemDiv();
 }
 
 function updateCraftList(){
@@ -2731,7 +2789,16 @@ function updatecurCraftItemDiv(){
     //clear the div
     curCraftItemDiv.html("");
 
-    if(curPlayer.invBlock.curItem == "") return;
+    if(curPlayer.invBlock.curItem == "") {
+        let curCraftItemNone = createP("No Selected Item");
+        curCraftItemNone.parent(curCraftItemDiv);
+        curCraftItemNone.class("inventory-title");
+        applyStyle(curCraftItemNone, {
+            paddingTop: "7%",
+            textDecoration: "none"
+        });
+        return;
+    };
 
     let itemCardDiv = createDiv();
     itemCardDiv.style("width", "100%");
