@@ -24,6 +24,8 @@ function updateResponsiveDesign() {
     raceTitle?.style("font-size", "calc(1.5vw + 24px)");
 
     dirtBagUI.pos = createVector(width - 180 - 10, height - 186 - 10);
+
+    timerDiv.position(width / 2 - 50, 10);
 }
 
 function hideRaceSelect() {
@@ -650,6 +652,7 @@ function setupUI() {
     defineTeamPickUI();
     defineSwapInvUI();
     defineCraftingUI();
+    defineDeathUI();
 
     timerDiv = createDiv("⏳ 15:00");
     timerDiv.position(width / 2 - 50, 10); // adjust as needed
@@ -2866,4 +2869,76 @@ function updatecurCraftItemDiv(){
         itemAmountDiv.style("padding", "5px");
         itemAmountDiv.parent(costDiv);
     }
+}
+
+var deathDiv;
+
+function defineDeathUI(){
+    deathDiv = createDiv();
+    deathDiv.id("deathDiv");
+    deathDiv.class("container");
+    deathDiv.style("position", "absolute");
+    deathDiv.style("top", "50%");
+    deathDiv.style("left", "50%");
+    deathDiv.style("transform", "translate(-50%, -50%)");
+    deathDiv.style("display", "none");
+    deathDiv.style("width", "25%");
+    deathDiv.style("height", "20%");
+    deathDiv.style("border", "2px solid black");
+    deathDiv.style("border-radius", "10px");
+    deathDiv.style("text-align", "center");
+    deathDiv.style("padding", "20px");
+
+    let title = createP("Dead").parent(deathDiv);
+    title.style("font-size", "28px");
+    title.style("font-weight", "bold");
+    title.style("color", "white");
+
+    let respawnButton = createButton("Respawn").parent(deathDiv);
+    styleButton(respawnButton);
+    respawnButton.mousePressed(() => {
+        curPlayer.pos.x = random(-200*TILESIZE, 200*TILESIZE);
+        curPlayer.pos.y = random(-200*TILESIZE, 200*TILESIZE);
+
+        //load in some chunks for easy start
+        let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+        for(let yOff = -1; yOff < 2; yOff++){
+            for(let xOff = -1; xOff < 2; xOff++){
+                testMap.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
+            }
+        }
+        // Clear a small area around the player
+        for (let y = -5; y < 5; y++) {
+            for (let x = -5; x < 5; x++) {
+                dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1);
+            }
+        }
+        dirtInv = 0;
+        
+        curPlayer.statBlock.stats.hp = 100;
+
+        socket.emit("update_pos", {
+            id: curPlayer.id,
+            pos: curPlayer.pos,
+            holding: curPlayer.holding
+        });
+        socket.emit("update_player", {
+            id: curPlayer.id,
+            pos: curPlayer.pos,
+            holding: curPlayer.holding,
+            update_names: ["stats.hp"],
+            update_values: [curPlayer.statBlock.stats.hp]
+        });
+        
+        gameState = "playing";
+        deathDiv.hide();
+    });
+
+    //disconnect button
+    let disconnectButton = createButton("Disconnect").parent(deathDiv);
+    styleButton(disconnectButton);
+    disconnectButton.mousePressed(() => {
+        location.reload();
+        deathDiv.hide();
+    });
 }
