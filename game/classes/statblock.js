@@ -67,6 +67,14 @@ class StatBlock{
         if(this.stats.hp > this.stats.mhp) {
             this.stats.hp = this.stats.mhp;
         }
+
+        socket.emit("update_player", {
+            id: curPlayer.id,
+            pos: curPlayer.pos,
+            holding: curPlayer.holding,
+            update_names: ["stats.hp"],
+            update_values: [this.stats.hp]
+        });
     }
 
     addXP(amount){

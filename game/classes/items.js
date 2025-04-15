@@ -353,7 +353,13 @@ class Seed extends SimpleItem{
             });
 
             curPlayer.animationCreate("put");
-            socket.emit("update_pos", curPlayer);
+            socket.emit("update_player", {
+                id: curPlayer.id,
+                pos: curPlayer.pos,
+                holding: curPlayer.holding,
+                update_names: ["animationType", "animationFrame"],
+                update_values: [curPlayer.animationType, curPlayer.animationFrame]
+            });
 
             curPlayer.invBlock.decreaseAmount(this.itemName, 1);
         }

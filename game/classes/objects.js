@@ -97,11 +97,17 @@ function bombUpdate(){
     if (this.hp <= 0) {
         
         // Bomb hurts everyone nearby
-        if(this.pos.dist(curPlayer.pos) < -2+(this.size.w+this.size.h)/2){
+        if(this.pos.dist(curPlayer.pos) < 33+(3*(this.size.w+this.size.h)/4)){
             curPlayer.statBlock.stats.hp -= 20;
             camera.shake = {intensity: 20, length: 5};
             camera.edgeBlood = 5;
-            socket.emit("update_pos", curPlayer);
+            socket.emit("update_player", {
+                id: curPlayer.id,
+                pos: curPlayer.pos,
+                holding: curPlayer.holding,
+                update_names: ["stats.hp"],
+                update_values: [curPlayer.statBlock.stats.hp]
+            });
         }
 
         // if you made this bomb, when it eventually blows up, the 'damage' will be sent to server by bomb-placer
@@ -374,7 +380,13 @@ class Trap extends Placeable{
                     curPlayer.statBlock.stats.hp -= this.damage;
                     camera.shake = {intensity: this.damage, length: 5};
                     camera.edgeBlood = 5;
-                    socket.emit("update_pos", curPlayer);
+                    socket.emit("update_player", {
+                        id: curPlayer.id,
+                        pos: curPlayer.pos,
+                        holding: curPlayer.holding,
+                        update_names: ["stats.hp"],
+                        update_values: [curPlayer.statBlock.stats.hp]
+                    });
                     let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
                     socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
                 }

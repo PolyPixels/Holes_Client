@@ -1,5 +1,6 @@
 //globals for ui.js
 var raceSelected = false;
+var curRace;
 var nameEntered = false;
 var raceButtons = []; // now storing "card" divs instead of p5 buttons
 var goButton;
@@ -23,6 +24,8 @@ function updateResponsiveDesign() {
     raceTitle?.style("font-size", "calc(1.5vw + 24px)");
 
     dirtBagUI.pos = createVector(width - 180 - 10, height - 186 - 10);
+
+    timerDiv.position(width / 2 - 50, 10);
 }
 
 function hideRaceSelect() {
@@ -649,6 +652,7 @@ function setupUI() {
     defineTeamPickUI();
     defineSwapInvUI();
     defineCraftingUI();
+    defineDeathUI();
 
     timerDiv = createDiv("⏳ 15:00");
     timerDiv.position(width / 2 - 50, 10); // adjust as needed
@@ -757,7 +761,7 @@ card.mousePressed(() => {
     card.style("background-color", "#4CAF50");
 
     raceSelected = true;
-    curPlayer.race = selectedItem;
+    curRace = selectedItem;
 
     //console.log("Race selected:", races[selectedItem]);
 });
@@ -1058,9 +1062,28 @@ function startGame() {
         }
     }
 
-    // If all checks pass, assign the name and proceed
-    if (!curPlayer) return;
-    curPlayer.name = nameVal;
+    // If all checks pass, make their character and send it to the server
+    curPlayer = new Player(
+        200, //random(-200*TILESIZE, 200*TILESIZE)
+        200, //random(-200*TILESIZE, 200*TILESIZE)
+        undefined,
+        curID,
+        11,
+        curRace,
+        nameVal
+    ); // Default race index 0
+
+    camera.pos = createVector(curPlayer.pos.x, curPlayer.pos.y);
+
+    //load in some chunks for easy start
+    let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+    for(let yOff = -2; yOff < 3; yOff++){
+        for(let xOff = -2; xOff < 3; xOff++){
+            testMap.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
+        }
+    }
+
+    giveAllItems(); //TODO: give players starting gear not all items
 
     document.getElementById("canvas-container").style.display = "block";
     socket.emit("new_player", curPlayer);
@@ -1229,10 +1252,18 @@ function defineInvUI() {
     // Inventory Title
     let invTitle = createP("Inventory").parent(topBar);
     invTitle.class("inventory-title");
+    invTitle.style("color", "yellow");
 
     // Crafting Title
     let craftingTitle = createP("Crafting").parent(topBar);
     craftingTitle.class("inventory-title");
+    craftingTitle.mousePressed(() => {
+        gameState = "crafting";
+        craftDiv.show();
+        updateCraftList();
+        invDiv.hide();
+    });
+    craftingTitle.style("cursor", "pointer");
 
     // Tag Bar (Category Buttons)
     let tagBar = createDiv().parent(invDiv);
@@ -1395,7 +1426,16 @@ function updatecurItemDiv() {
     //clear the div
     curItemDiv.html("");
 
-    if(curPlayer.invBlock.curItem == "") return;
+    if(curPlayer.invBlock.curItem == "") {
+        let curItemNone = createP("No Selected Item");
+        curItemNone.parent(curItemDiv);
+        curItemNone.class("inventory-title");
+        applyStyle(curItemNone, {
+            paddingTop: "7%",
+            textDecoration: "none"
+        });
+        return;
+    };
 
     let itemCardDiv = createDiv();
     itemCardDiv.style("width", "100%");
@@ -2162,6 +2202,13 @@ function updateTeamPickUI() {
 
         teamButton.mousePressed(() => {
             curPlayer.color = i;
+            socket.emit("update_player", {
+                id: curPlayer.id,
+                pos: curPlayer.pos,
+                holding: curPlayer.holding,
+                update_names: ["color"],
+                update_values: [curPlayer.color]
+            });
             updateTeamPickUI();
             teamPickDiv.hide();
             gameState = "playing";
@@ -2184,23 +2231,30 @@ function defineSwapInvUI() {
     swapInvDiv.style("top", "50%");
     swapInvDiv.style("left", "50%");
     swapInvDiv.style("transform", "translate(-50%, -50%)");
-    let closeButton = createButton("X").parent(swapInvDiv);
-    closeButton.class("close-button"); // Style it in CSS
-    applyStyle(closeButton, {
-        marginLeft: "90%",  // Pushes it to the right
 
-        fontSize: "18px",
-        color:"white",
-        cursor: "pointer",
-        background: "none",
-        border: "none",
+    let swapInvTitleBar = createDiv();
+    swapInvTitleBar.parent(swapInvDiv);
+    applyStyle(swapInvTitleBar, {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingBottom: "15px",
+        borderBottom: "2px solid black"
     });
 
-    closeButton.mousePressed(() => {
-        gameState = "playing"
-        swapInvDiv.hide(); // Hides the inventory when clicked
-    });
+    let swapInvYourInvTittle = createP("Your Inventory");
+    swapInvYourInvTittle.parent(swapInvTitleBar);
+    swapInvYourInvTittle.class("inventory-title");
+    swapInvYourInvTittle.style("margin-left", "25px");
 
+    let swapInvCurItemTittle = createP("Selected Item");
+    swapInvCurItemTittle.parent(swapInvTitleBar);
+    swapInvCurItemTittle.class("inventory-title");
+
+    let swapInvOtherInvTittle = createP("Other Inventory");
+    swapInvOtherInvTittle.parent(swapInvTitleBar);
+    swapInvOtherInvTittle.class("inventory-title");
+    swapInvOtherInvTittle.style("margin-right", "25px");
 
     let swapInvDivInnerds = createDiv();
     swapInvDivInnerds.parent(swapInvDiv);
@@ -2218,11 +2272,37 @@ function defineSwapInvUI() {
     curSwapItemDiv = createDiv().parent(swapInvDivInnerds);
     curSwapItemDiv.class("item-details");
 
+    let curSwapItemNone = createP("No Selected Item");
+    curSwapItemNone.parent(curSwapItemDiv);
+    curSwapItemNone.class("inventory-title");
+    applyStyle(curSwapItemNone, {
+        paddingTop: "7%",
+        textDecoration: "none"
+    });
+
     //Right Item list
     itemListDivRight = createDiv().parent(swapInvDivInnerds);
     itemListDivRight.class("item-list");
+    itemListDivRight.style("border-left", "2px solid black");
 
+    // Close Button
+    let closeButton = createButton("X").parent(swapInvTitleBar);
+    closeButton.class("close-button"); // Style it in CSS
+    applyStyle(closeButton, {
+        marginLeft: "auto",  // Pushes it to the right
+        position:"absolute",
+        fontSize: "18px",
+        right:"0",
+        color:"white",
+        cursor: "pointer",
+        background: "none",
+        border: "none",
+    });
 
+    closeButton.mousePressed(() => {
+        gameState = "playing"
+        swapInvDiv.hide(); // Hides the inventory when clicked
+    });
 
     swapInvDiv.hide();
 }
@@ -2551,10 +2631,18 @@ function defineCraftingUI(){
     // Inventory Title
     let invTitle = createP("Inventory").parent(topBar);
     invTitle.class("inventory-title");
+    invTitle.mousePressed(() => {
+        gameState = "inventory";
+        invDiv.show();
+        updateItemList();
+        craftDiv.hide();
+    });
+    invTitle.style("cursor", "pointer");
 
     // Crafting Title
     let craftingTitle = createP("Crafting").parent(topBar);
     craftingTitle.class("inventory-title");
+    craftingTitle.style("color", "yellow");
 
     // Tag Bar (Category Buttons)
     let tagBar = createDiv().parent(craftDiv);
@@ -2619,7 +2707,7 @@ function defineCraftingUI(){
     });
     // Finally, populate items
     updateCraftList();
-    updatecurItemDiv();
+    updatecurCraftItemDiv();
 }
 
 function updateCraftList(){
@@ -2701,7 +2789,16 @@ function updatecurCraftItemDiv(){
     //clear the div
     curCraftItemDiv.html("");
 
-    if(curPlayer.invBlock.curItem == "") return;
+    if(curPlayer.invBlock.curItem == "") {
+        let curCraftItemNone = createP("No Selected Item");
+        curCraftItemNone.parent(curCraftItemDiv);
+        curCraftItemNone.class("inventory-title");
+        applyStyle(curCraftItemNone, {
+            paddingTop: "7%",
+            textDecoration: "none"
+        });
+        return;
+    };
 
     let itemCardDiv = createDiv();
     itemCardDiv.style("width", "100%");
@@ -2839,4 +2936,76 @@ function updatecurCraftItemDiv(){
         itemAmountDiv.style("padding", "5px");
         itemAmountDiv.parent(costDiv);
     }
+}
+
+var deathDiv;
+
+function defineDeathUI(){
+    deathDiv = createDiv();
+    deathDiv.id("deathDiv");
+    deathDiv.class("container");
+    deathDiv.style("position", "absolute");
+    deathDiv.style("top", "50%");
+    deathDiv.style("left", "50%");
+    deathDiv.style("transform", "translate(-50%, -50%)");
+    deathDiv.style("display", "none");
+    deathDiv.style("width", "25%");
+    deathDiv.style("height", "20%");
+    deathDiv.style("border", "2px solid black");
+    deathDiv.style("border-radius", "10px");
+    deathDiv.style("text-align", "center");
+    deathDiv.style("padding", "20px");
+
+    let title = createP("Dead").parent(deathDiv);
+    title.style("font-size", "28px");
+    title.style("font-weight", "bold");
+    title.style("color", "white");
+
+    let respawnButton = createButton("Respawn").parent(deathDiv);
+    styleButton(respawnButton);
+    respawnButton.mousePressed(() => {
+        curPlayer.pos.x = random(-200*TILESIZE, 200*TILESIZE);
+        curPlayer.pos.y = random(-200*TILESIZE, 200*TILESIZE);
+
+        //load in some chunks for easy start
+        let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+        for(let yOff = -1; yOff < 2; yOff++){
+            for(let xOff = -1; xOff < 2; xOff++){
+                testMap.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
+            }
+        }
+        // Clear a small area around the player
+        for (let y = -5; y < 5; y++) {
+            for (let x = -5; x < 5; x++) {
+                dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1);
+            }
+        }
+        dirtInv = 0;
+        
+        curPlayer.statBlock.stats.hp = 100;
+
+        socket.emit("update_pos", {
+            id: curPlayer.id,
+            pos: curPlayer.pos,
+            holding: curPlayer.holding
+        });
+        socket.emit("update_player", {
+            id: curPlayer.id,
+            pos: curPlayer.pos,
+            holding: curPlayer.holding,
+            update_names: ["stats.hp"],
+            update_values: [curPlayer.statBlock.stats.hp]
+        });
+        
+        gameState = "playing";
+        deathDiv.hide();
+    });
+
+    //disconnect button
+    let disconnectButton = createButton("Disconnect").parent(deathDiv);
+    styleButton(disconnectButton);
+    disconnectButton.mousePressed(() => {
+        location.reload();
+        deathDiv.hide();
+    });
 }

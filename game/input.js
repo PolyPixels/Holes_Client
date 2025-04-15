@@ -30,6 +30,7 @@ function keyReleased() {
         if(keyCode == 73){ //i
             gameState = "inventory";
             updateItemList();
+            updatecurItemDiv();
             invDiv.show();
             
             curPlayer.holding = { w: false, a: false, s: false, d: false };
@@ -37,6 +38,7 @@ function keyReleased() {
         if(keyCode == 67){ //c
             gameState = "crafting";
             updateCraftList();
+            updatecurCraftItemDiv();
             craftDiv.show();
             
             curPlayer.holding = { w: false, a: false, s: false, d: false };
@@ -87,6 +89,8 @@ function keyReleased() {
         if(keyCode == 67){ //c
             gameState = "crafting";
             craftDiv.show();
+            updateCraftList();
+            invDiv.hide();
         }
     }
     else if(gameState == "crafting"){
@@ -103,6 +107,7 @@ function keyReleased() {
         if(keyCode == 73){ //i
             gameState = "inventory";
             invDiv.show();
+            updateItemList();
             craftDiv.hide();
         }
     }
@@ -303,7 +308,13 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                             });
         
                             curPlayer.animationCreate("put");
-                            socket.emit("update_pos", curPlayer);
+                            socket.emit("update_player", {
+                                id: curPlayer.id,
+                                pos: curPlayer.pos,
+                                holding: curPlayer.holding,
+                                update_names: ["animationType","animationFrame"],
+                                update_values: [curPlayer.animationType,curPlayer.animationFrame]
+                            });
                         }
                     }
                 }
@@ -366,7 +377,11 @@ function continousKeyBoardInput(){
             lastHolding.s !== curPlayer.holding.s ||
             lastHolding.d !== curPlayer.holding.d
         ) {
-            socket.emit("update_pos", curPlayer);
+            socket.emit("update_pos", {
+                id: curPlayer.id,
+                pos: curPlayer.pos,
+                holding: curPlayer.holding
+            });
         }
     }
     else if(gameState == "inventory"){

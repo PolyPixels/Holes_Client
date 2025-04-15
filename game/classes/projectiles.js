@@ -115,7 +115,13 @@ class SimpleProjectile{
                 camera.shake = {intensity: this.damage, length: 5};
                 camera.edgeBlood = 5;
                 curPlayer.attackingOBJ = this;
-                socket.emit("update_pos", curPlayer);
+                socket.emit("update_player", {
+                    id: curPlayer.id,
+                    pos: curPlayer.pos,
+                    holding: curPlayer.holding,
+                    update_names: ["stats.hp"],
+                    update_values: [curPlayer.statBlock.stats.hp]
+                });
             }
         }
     }
@@ -216,7 +222,13 @@ class MeleeProjectile extends SimpleProjectile{
                 curPlayer.statBlock.stats.hp -= this.damage;
                 camera.shake = {intensity: this.damage, length: 5};
                 camera.edgeBlood = 5;
-                socket.emit("update_pos", curPlayer);
+                socket.emit("update_player", {
+                    id: curPlayer.id,
+                    pos: curPlayer.pos,
+                    holding: curPlayer.holding,
+                    update_names: ["stats.hp"],
+                    update_values: [curPlayer.statBlock.stats.hp]
+                });
             }
         }
     }

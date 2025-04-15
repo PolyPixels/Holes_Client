@@ -75,7 +75,11 @@ function createTestChunk(cx, cy){ //makes the dirt in a specific way to test the
 function teleportToChunk(cx,cy){ //teleports you to the top left corner of a chunk
     curPlayer.pos.x = cx*CHUNKSIZE*TILESIZE;
     curPlayer.pos.y = cy*CHUNKSIZE*TILESIZE;
-    socket.emit("update_pos", curPlayer);
+    socket.emit("update_pos", {
+        id: curPlayer.id,
+        pos: curPlayer.pos,
+        holding: curPlayer.holding
+    });
     return true;
 }
 
@@ -84,7 +88,11 @@ function teleportToPlayer(name){ //teleports you to another player
     for(let i = 0; i < keys.length; i++){
         if(players[keys[i]].name === name){
             curPlayer.pos = players[keys[i]].pos.copy();
-            socket.emit("update_pos", curPlayer);
+            socket.emit("update_pos", {
+                id: curPlayer.id,
+                pos: curPlayer.pos,
+                holding: curPlayer.holding
+            });
             return true;
         }
     }
