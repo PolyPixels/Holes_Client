@@ -95,7 +95,22 @@ function socketSetup(){
     })
 
     socket.on("UPDATE_NODE", (data) => {
-        if(testMap.chunks[data.chunkPos] != undefined) testMap.chunks[data.chunkPos].data[data.index] = data.val;
+        if(testMap.chunks[data.chunkPos] != undefined){
+            if(data.amt > 0){
+                if (testMap.chunks[data.chunkPos].data[data.index] > 0) testMap.chunks[data.chunkPos].data[data.index] -= data.amt;
+                if (testMap.chunks[data.chunkPos].data[data.index] < 0.3 && testMap.chunks[data.chunkPos].data[data.index] !== -1){
+                    testMap.chunks[data.chunkPos].data[data.index] = 0;
+                }
+            }
+            else{
+                if (testMap.chunks[data.chunkPos].data[data.index] < 1.3 && testMap.chunks[data.chunkPos].data[data.index] !== -1){
+                    testMap.chunks[data.chunkPos].data[data.index] -= data.amt;
+                }
+                if (testMap.chunks[data.chunkPos].data[data.index] > 1.3){
+                    testMap.chunks[data.chunkPos].data[data.index] = 1.3;
+                }
+            }
+        }
     });
     socket.on("change_name", (data) => {
         curPlayer.name = data
