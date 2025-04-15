@@ -303,7 +303,13 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                             });
         
                             curPlayer.animationCreate("put");
-                            socket.emit("update_pos", curPlayer);
+                            socket.emit("update_player", {
+                                id: curPlayer.id,
+                                pos: curPlayer.pos,
+                                holding: curPlayer.holding,
+                                update_names: ["animationType","animationFrame"],
+                                update_values: [curPlayer.animationType,curPlayer.animationFrame]
+                            });
                         }
                     }
                 }
@@ -366,7 +372,11 @@ function continousKeyBoardInput(){
             lastHolding.s !== curPlayer.holding.s ||
             lastHolding.d !== curPlayer.holding.d
         ) {
-            socket.emit("update_pos", curPlayer);
+            socket.emit("update_pos", {
+                id: curPlayer.id,
+                pos: curPlayer.pos,
+                holding: curPlayer.holding
+            });
         }
     }
     else if(gameState == "inventory"){

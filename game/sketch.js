@@ -174,7 +174,18 @@ function draw() {
                 
                 curPlayer.statBlock.stats.hp = 100;
 
-                socket.emit("update_pos", curPlayer);
+                socket.emit("update_pos", {
+                    id: curPlayer.id,
+                    pos: curPlayer.pos,
+                    holding: curPlayer.holding
+                });
+                socket.emit("update_player", {
+                    id: curPlayer.id,
+                    pos: curPlayer.pos,
+                    holding: curPlayer.holding,
+                    update_names: ["stats.hp"],
+                    update_values: [curPlayer.statBlock.stats.hp]
+                })
             }
         }
 

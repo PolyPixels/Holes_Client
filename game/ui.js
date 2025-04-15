@@ -1,5 +1,6 @@
 //globals for ui.js
 var raceSelected = false;
+var curRace;
 var nameEntered = false;
 var raceButtons = []; // now storing "card" divs instead of p5 buttons
 var goButton;
@@ -757,7 +758,7 @@ card.mousePressed(() => {
     card.style("background-color", "#4CAF50");
 
     raceSelected = true;
-    curPlayer.race = selectedItem;
+    curRace = selectedItem;
 
     //console.log("Race selected:", races[selectedItem]);
 });
@@ -1058,9 +1059,28 @@ function startGame() {
         }
     }
 
-    // If all checks pass, assign the name and proceed
-    if (!curPlayer) return;
-    curPlayer.name = nameVal;
+    // If all checks pass, make their character and send it to the server
+    curPlayer = new Player(
+        200, //random(-200*TILESIZE, 200*TILESIZE)
+        200, //random(-200*TILESIZE, 200*TILESIZE)
+        undefined,
+        curID,
+        11,
+        curRace,
+        nameVal
+    ); // Default race index 0
+
+    camera.pos = createVector(curPlayer.pos.x, curPlayer.pos.y);
+
+    //load in some chunks for easy start
+    let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+    for(let yOff = -2; yOff < 3; yOff++){
+        for(let xOff = -2; xOff < 3; xOff++){
+            testMap.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
+        }
+    }
+
+    giveAllItems(); //TODO: give players starting gear not all items
 
     document.getElementById("canvas-container").style.display = "block";
     socket.emit("new_player", curPlayer);
@@ -2162,6 +2182,13 @@ function updateTeamPickUI() {
 
         teamButton.mousePressed(() => {
             curPlayer.color = i;
+            socket.emit("update_player", {
+                id: curPlayer.id,
+                pos: curPlayer.pos,
+                holding: curPlayer.holding,
+                update_names: ["color"],
+                update_values: [curPlayer.color]
+            });
             updateTeamPickUI();
             teamPickDiv.hide();
             gameState = "playing";
