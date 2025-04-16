@@ -132,6 +132,15 @@ class Player {
             amt = (1 - val2) / (val - val2);
             midpoint.x = lerp(x2, x, amt);
         }
+        if(val == val2){
+            amt = 0.5;
+            if (direction == "up" || direction == "down") {
+                midpoint.y = lerp(y, y2, amt);
+            }
+            if (direction == "left" || direction == "right") {
+                midpoint.x = lerp(x2, x, amt);
+            }
+        }
 
 
         if (Debuging) {
