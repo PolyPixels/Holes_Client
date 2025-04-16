@@ -108,6 +108,11 @@ class SimpleProjectile{
                 //if player collishion tell server to set delete tag to true
                 socket.emit("delete_proj", this);
                 
+                let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+                //play hit noise and tell server
+                let temp = new SoundObj("hit.ogg", curPlayer.pos.x, curPlayer.pos.y);
+                testMap.chunks[chunkPos.x+","+chunkPos.y].soundObjs.push(temp);
+                socket.emit("new_sound", {sound: "hit.ogg", cPos: chunkPos, pos:{x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
                 let tempV = createVector(this.knockback,0);
                 tempV.setHeading(curPlayer.pos.copy().sub(this.pos).heading());
                 curPlayer.vel.add(tempV);
@@ -203,6 +208,12 @@ class MeleeProjectile extends SimpleProjectile{
                     chunk.objects[j].pos.copy().sub(this.pos).heading() > this.flightPath.a-(this.angleWidth/2) &&
                     chunk.objects[j].pos.copy().sub(this.pos).heading() < this.flightPath.a+(this.angleWidth/2)
                 ){
+                    if(this.lifespan >= projDic[this.name].lifespan - (1/60)){
+                        //play hit noise and tell server
+                        let temp = new SoundObj("hit.ogg", chunk.objects[j].pos.x, chunk.objects[j].pos.y);
+                        testMap.chunks[chunk.cx+","+chunk.cy].soundObjs.push(temp);
+                        socket.emit("new_sound", {sound: "hit.ogg", cPos: {x: chunk.cx, y: chunk.cy}, pos:{x: chunk.objects[j].pos.x, y: chunk.objects[j].pos.y}, id: temp.id});
+                    }
                     damageObj(chunk, chunk.objects[j], this.damage);
                 }
             }
@@ -215,6 +226,11 @@ class MeleeProjectile extends SimpleProjectile{
                 curPlayer.pos.copy().sub(this.pos).heading() > this.flightPath.a-(this.angleWidth/2) &&
                 curPlayer.pos.copy().sub(this.pos).heading() < this.flightPath.a+(this.angleWidth/2)
             ){
+                let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+                //play hit noise and tell server
+                let temp = new SoundObj("hit.ogg", curPlayer.pos.x, curPlayer.pos.y);
+                testMap.chunks[chunkPos.x+","+chunkPos.y].soundObjs.push(temp);
+                socket.emit("new_sound", {sound: "hit.ogg", cPos: chunkPos, pos:{x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
                 let tempV = createVector(this.knockback,0);
                 tempV.setHeading(curPlayer.pos.copy().sub(this.pos).heading());
                 curPlayer.vel.add(tempV);

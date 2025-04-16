@@ -1607,6 +1607,8 @@ function renderDirtBagUI() {
     //should add an open and closed version
 
     if (dirtBagUI.shake.length > 0) {
+        //dirt bag shake sound
+        if(!dirtBagShakeSound.isLooping()) dirtBagShakeSound.loop();
         if (dirtBagUI.vel.mag() < 1) {
             dirtBagUI.vel.x = dirtBagUI.shake.intensity;
         }
@@ -1618,6 +1620,8 @@ function renderDirtBagUI() {
         dirtBagUI.shake.length -= 1;
     }
     else {
+        //stop dirt bag shake sound
+        dirtBagShakeSound.stop();
         dirtBagUI.shake.intensity = 0;
         dirtBagUI.vel.x = ((width - 180 - 10) - dirtBagUI.pos.x);
         dirtBagUI.vel.y = ((height - 186 - 10) - dirtBagUI.pos.y);

@@ -376,6 +376,11 @@ class Trap extends Placeable{
         if(curPlayer.color != this.color || this.color == 11){ //not on the same team as the trap, or the trap belongs to no team
             if(this.id != curPlayer.id && this.ownerName != curPlayer.name){ //aka if you didnt make this trap
                 if(this.pos.dist(curPlayer.pos) < this.triggerRadius){
+                    let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+                    //play hit noise and tell server
+                    let temp = new SoundObj("hit.ogg", curPlayer.pos.x, curPlayer.pos.y);
+                    testMap.chunks[chunkPos.x+","+chunkPos.y].soundObjs.push(temp);
+                    socket.emit("new_sound", {sound: "hit.ogg", cPos: chunkPos, pos:{x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
                     this.deleteTag = true;
                     curPlayer.statBlock.stats.hp -= this.damage;
                     camera.shake = {intensity: this.damage, length: 5};
@@ -387,7 +392,7 @@ class Trap extends Placeable{
                         update_names: ["stats.hp"],
                         update_values: [curPlayer.statBlock.stats.hp]
                     });
-                    let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+                    
                     socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
                 }
             }

@@ -307,6 +307,10 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                                 obj: temp
                             });
         
+                            //play placing_structure sound and tell server
+                            let temp2 = new SoundObj("placing_structure.ogg", x, y);
+                            testMap.chunks[chunkPos.x+","+chunkPos.y].soundObjs.push(temp2);
+                            socket.emit("new_sound", {sound: "placing_structure.ogg", cPos: chunkPos, pos:{x: x, y: y}, id: temp.id});
                             curPlayer.animationCreate("put");
                             socket.emit("update_player", {
                                 id: curPlayer.id,

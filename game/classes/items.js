@@ -261,6 +261,12 @@ class Food extends SimpleItem{
             this.shake = {intensity: 1, length: 5};
             return;
         } else if(curPlayer.invBlock.useTimer <= 0){
+            //play eat sound and send to server
+            let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+            let temp = new SoundObj("eat.ogg", curPlayer.pos.x, curPlayer.pos.y);
+            testMap.chunks[chunkPos.x+','+chunkPos.y].soundObjs.push(temp);
+            socket.emit("new_sound", {sound: "eat.ogg", cPos: chunkPos, pos: {x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
+            
             curPlayer.statBlock.heal(this.heal);
             curPlayer.invBlock.useTimer = this.eatWait;
             curPlayer.invBlock.decreaseAmount(this.itemName, 1);
