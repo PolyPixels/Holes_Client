@@ -15,6 +15,7 @@ class InvBlock{
         this.curTag = "All"; //tag for sorting through items
         this.useTimer = 0; //for some items, so you cant spam them
         this.animationTimer = 0; //for hotbar animations
+        this.invId = random(100000);
     }
 
     addItem(item,amount){

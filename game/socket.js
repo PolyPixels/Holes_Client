@@ -127,6 +127,7 @@ function socketSetup(){
             let temp = createObject(data.obj.objName, data.obj.pos.x, data.obj.pos.y, data.obj.rot, data.obj.color, data.obj.id, data.obj.ownerName);
 
             if(temp.type == "InvObj"){
+                temp.invBlock.invId = data.obj.invBlock.invId;
                 let keys = Object.keys(data.obj.invBlock.items);
                 for(let i=0; i<keys.length; i++){
                     temp.invBlock.addItem(keys[i], data.obj.invBlock.items[keys[i]].amount);
@@ -165,7 +166,7 @@ function socketSetup(){
             for(let i = chunk.objects.length-1; i >= 0; i--){
                 if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.objName == chunk.objects[i].objName){
                     chunk.objects[i].invBlock.items = data.items;
-                    updateSwapItemLists(chunk.objects[i].invBlock);
+                    if(curPlayer.otherInv.invBlock.invId == chunk.objects[i].invBlock.invId) updateSwapItemLists(chunk.objects[i].invBlock);
                 }
             }
         }
@@ -214,6 +215,7 @@ function socketSetup(){
             //fix some obj properties
             if(temp.type == "InvObj"){
                 if(data.objects[i].invBlock != undefined){
+                    temp.invBlock.invId = data.objects[i].invBlock.invId;
                     if(data.objects[i].invBlock.items != undefined){
                         let keys = Object.keys(data.objects[i].invBlock.items);
                         for(let j=0; j<keys.length; j++){
