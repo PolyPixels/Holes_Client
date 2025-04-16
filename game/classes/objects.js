@@ -158,6 +158,10 @@ class Placeable{
         this.openBool = true; //is object in an open spot?, used for ghost rendering
         this.deleteTag = false;
         this.type = "Placeable";
+
+        this.offset = createVector(0,0);
+        this.offVel = createVector(0,0); //offset velocity
+        this.shake = {intensity: 0, length: 0};
     }
 
     update(){
@@ -194,16 +198,37 @@ class Placeable{
 
     render(t){
         push();
-        if(this.hp < this.mhp){
-            this.renderHealthBar()
+        
+        if(this.shake.length > 0){
+            if(this.offVel.mag() < 1){
+                this.offVel.x = this.shake.intensity;
+            }
+            this.offVel.setMag(this.offVel.mag()+this.shake.intensity);
+            if(this.offVel.mag() > this.shake.intensity*5){
+                this.offVel.setMag(this.shake.intensity*5);
+            }
+            this.offVel.rotate(random(0, 360));
+            this.shake.length -= 1;
         }
-        translate(-camera.pos.x+(width/2)+this.pos.x, -camera.pos.y+(height/2)+this.pos.y);
+        else{
+            this.shake.intensity = 0;
+            this.offVel.x = -1*this.offset.x;
+            this.offVel.y = -1*this.offset.y;
+            this.offVel.setMag(this.offVel.mag()/10);
+        }
+        this.offset.add(this.offVel);
+
+        translate(-camera.pos.x+(width/2)+this.pos.x+this.offset.x, -camera.pos.y+(height/2)+this.pos.y+this.offset.y);
         rotate(this.rot);
         if(t == "green") tint(100, 200, 100, 100);
         if(t == "red") tint(200, 100, 100, 100);
         if(this.alpha < 255) tint(255, this.alpha);
         image(objImgs[this.imgNum][this.color % (objImgs[this.imgNum].length)], -this.size.w/2,-this.size.h/2, this.size.w, this.size.h);
         pop();
+
+        if(this.hp < this.mhp){
+            this.renderHealthBar();
+        }
     }
 
     ghostRender(ob){
@@ -348,15 +373,35 @@ class Plant extends Placeable{
 
     render(t){
         push();
-        if(this.hp < this.mhp){
-            this.renderHealthBar()
+        if(this.shake.length > 0){
+            if(this.offVel.mag() < 1){
+                this.offVel.x = this.shake.intensity;
+            }
+            this.offVel.setMag(this.offVel.mag()+this.shake.intensity);
+            if(this.offVel.mag() > this.shake.intensity*5){
+                this.offVel.setMag(this.shake.intensity*5);
+            }
+            this.offVel.rotate(random(0, 360));
+            this.shake.length -= 1;
         }
-        translate(-camera.pos.x+(width/2)+this.pos.x, -camera.pos.y+(height/2)+this.pos.y);
+        else{
+            this.shake.intensity = 0;
+            this.offVel.x = -1*this.offset.x;
+            this.offVel.y = -1*this.offset.y;
+            this.offVel.setMag(this.offVel.mag()/10);
+        }
+        this.offset.add(this.offVel);
+
+        translate(-camera.pos.x+(width/2)+this.pos.x+this.offset.x, -camera.pos.y+(height/2)+this.pos.y+this.offset.y);
         rotate(this.rot);
         if(t == "green") tint(100, 200, 100);
         if(t == "red") tint(200, 100, 100);
         image(objImgs[this.imgNum][this.stage], -this.size.w/2,-this.size.h/2, this.size.w, this.size.h);
         pop();
+
+        if(this.hp < this.mhp){
+            this.renderHealthBar()
+        }
     }
 }
 

@@ -308,4 +308,15 @@ function damageObj(chunk, obj, damage){
         update_name: "hp", 
         update_value: obj.hp
     });
+
+    //shake the obj
+    obj.shake = {intensity: damage/2, length: 2};
+    socket.emit("upadate_obj", {
+        cx: chunk.cx, cy: chunk.cy,
+        objName: obj.objName, 
+        pos: {x: obj.pos.x, y: obj.pos.y}, 
+        z: obj.z, 
+        update_name: "shake", 
+        update_value: obj.shake
+    });
 }
