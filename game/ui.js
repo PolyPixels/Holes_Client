@@ -45,7 +45,7 @@ let serverList = JSON.parse(localStorage.getItem("servers")) || [
 
     { ip: "api.holesgame.com", name: "Holes Offical", status: "Online" },
     { ip: "localhost", name: "Local Server", status: "Online" },
-    { ip: "54.91.39.132", name: "Remote Server", status: "Online" },
+    { ip: "dig.holesgame.com", name: "Remote Server", status: "Online" },
 ];
 
 let selectedServer = null;
@@ -1953,17 +1953,19 @@ function definePauseUI() {
     let sliderContainer = createDiv();
     sliderContainer.parent(settingsContainer);
     sliderContainer.style("margin", "20px 0");
-
+    
     // Label
     let volumeLabel = createElement("label", "Volume:");
     volumeLabel.parent(sliderContainer);
     volumeLabel.style("font-size", "16px");
     volumeLabel.style("margin-right", "10px");
 
+
+
     // p5 slider
-    volumeSlider = createSlider(0, 100, 50);
-    volumeSlider.parent(sliderContainer);
+    volumeSlider = createSlider(0, 100, 50)
     volumeSlider.style("width", "150px");
+    volumeSlider.parent(sliderContainer)
 
     // Retrieve saved volume from localStorage
     const savedVolume = localStorage.getItem("volume");
@@ -1971,9 +1973,27 @@ function definePauseUI() {
         volumeSlider.value(savedVolume);
     }
 
+
+    removeData_button = createButton("Remove Data");
+    removeData_button.parent(sliderContainer);
+    removeData_button.class("button"); // For your reference, you can define .button in CSS if desired
+    removeData_button.style("padding", "10px");
+    removeData_button.style("margin-top", "20px");
+    removeData_button.style("background-color", "#444");
+    removeData_button.style("border", "none");
+    removeData_button.style("color", "white");
+    removeData_button.style("border-radius", "5px");
+    removeData_button.style("cursor", "pointer");
+
+    removeData_button.mousePressed(() => {
+        // Save volume setting to localStorage
+        localStorage.clear()
+    });
+
+    removeData_button.parent(sliderContainer)
+
     // Save button
     saveButton = createButton("Save");
-    saveButton.parent(settingsContainer);
     saveButton.class("button"); // For your reference, you can define .button in CSS if desired
     saveButton.style("padding", "10px");
     saveButton.style("margin-top", "20px");
@@ -1983,6 +2003,7 @@ function definePauseUI() {
     saveButton.style("border-radius", "5px");
     saveButton.style("cursor", "pointer");
 
+    saveButton.parent(settingsContainer);
     // Save button logic
     saveButton.mousePressed(() => {
         // Save volume setting to localStorage
