@@ -94,10 +94,24 @@ function bombUpdate(){
         }
     }
 
+    if(this.hp <= 3){
+        for(let i=0; i<100; i++){
+            push();
+            translate(
+                -camera.pos.x + (width / 2) + this.pos.x + random((33+(6*(this.size.w+this.size.h)/4))/-2, (33+(6*(this.size.w+this.size.h)/4))/2), 
+                -camera.pos.y + (height / 2) + this.pos.y + random((33+(6*(this.size.w+this.size.h)/4))/-2, (33+(6*(this.size.w+this.size.h)/4))/2)
+            );
+            rotate(random(0,360));
+            fill(random(150,255),random(0,255),0);
+            noStroke();
+            square(0, 0, random(20,50));
+            pop();
+        }
+    }
     if (this.hp <= 0) {
         
         // Bomb hurts everyone nearby
-        if(this.pos.dist(curPlayer.pos) < 33+(3*(this.size.w+this.size.h)/4)){
+        if(this.pos.dist(curPlayer.pos) < 33+(6*(this.size.w+this.size.h)/4)){
             curPlayer.statBlock.stats.hp -= 20;
             camera.shake = {intensity: 20, length: 5};
             camera.edgeBlood = 5;
