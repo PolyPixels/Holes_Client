@@ -391,7 +391,7 @@ function renderServerBrowser() {
                 socket = io.connect(getServerUrl(selectedServer));
                 socketSetup();
                 testMap = new Map();
-                ghostBuild = createObject("Wall", 0, 0, 0, 11, " ", " ");
+                ghostBuild = createObject("Wall", 0, 0, 0, 0, " ", " ");
                 //console.log("Connected to " + selectedServer, socket);
                 hideServerBrowser();
                 gameState = "race_selection";
@@ -1068,7 +1068,7 @@ function startGame() {
         200, //random(-200*TILESIZE, 200*TILESIZE)
         undefined,
         curID,
-        11,
+        0,
         curRace,
         nameVal
     ); // Default race index 0
@@ -1900,7 +1900,7 @@ function renderBuildOptions() {
             // If you want to prevent selection when not enough materials, uncomment:
             // if (!canBuild) return;
 
-            ghostBuild = createObject(option.objName, 0, 0, 0, 11, " ", " ");
+            ghostBuild = createObject(option.objName, 0, 0, 0, 0, " ", " ");
 
             // Re-render to highlight the newly selected item
             renderBuildOptions();
@@ -2173,8 +2173,8 @@ function defineTeamPickUI() {
     teamPickDiv.style("left", "50%");
     teamPickDiv.style("transform", "translate(-50%, -50%)");
     teamPickDiv.style("display", "none");
-    teamPickDiv.style("width", "25%");
-    teamPickDiv.style("height", "20%");
+    // teamPickDiv.style("width", "25%");
+    // teamPickDiv.style("height", "20%");
     teamPickDiv.style("border", "2px solid black");
     teamPickDiv.style("border-radius", "10px");
     teamPickDiv.style("text-align", "center");
@@ -2192,6 +2192,7 @@ function updateTeamPickUI() {
     teamPickTitle.style("color", "white");
     teamPickTitle.style("text-decoration", "underline");
     teamPickTitle.style("margin", "0px");
+    teamPickTitle.style("margin-bottom", "10px");
     teamPickTitle.parent(teamPickDiv);
 
     //turn the team colors into buttons
@@ -2208,7 +2209,7 @@ function updateTeamPickUI() {
         teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128)");
         teamButton.style("cursor", "pointer");
         if (curPlayer == undefined) {
-            if (i == 11) {
+            if (i == 0) {
                 teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128), 0 0 0 8px rgb(255, 255, 255)");
             }
         }
@@ -2217,7 +2218,7 @@ function updateTeamPickUI() {
                 teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128), 0 0 0 8px rgb(255, 255, 255)");
             }
         }
-        if (i == 11) {
+        if (i == 0) {
             teamButton.style("background-color", "rgb(0,0,0)");
             teamButton.style("background-image", "url('images/ui/none.png')");
             teamButton.style("background-size", "contain");

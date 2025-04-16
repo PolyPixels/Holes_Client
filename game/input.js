@@ -16,7 +16,7 @@ function keyReleased() {
     }
     if(gameState == "playing"){
         if (keyCode === 82){ //r
-            ghostBuild = createObject("Wall", 0, 0, 0, 11, curPlayer.id, curPlayer.name);
+            ghostBuild = createObject("Wall", 0, 0, 0, 0, curPlayer.id, curPlayer.name);
             buildMode = !buildMode;
             renderGhost = buildMode;
 
@@ -65,7 +65,7 @@ function keyReleased() {
 
                 ghostBuild = createObject(
                     option.objName, 0, 0, 0, 
-                    11, curPlayer.id, curPlayer.name
+                    0, curPlayer.id, curPlayer.name
                 );
 
                 renderBuildOptions();
@@ -342,7 +342,7 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                     let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
                     for(let i = 0; i < chunk.objects.length; i++){
                         if(createVector(x,y).dist(chunk.objects[i].pos) < (chunk.objects[i].size.w+chunk.objects[i].size.h)/2){
-                            if((chunk.objects[i].color == 11 && chunk.objects[i].ownerName == curPlayer.name) || (chunk.objects[i].color != 11 && chunk.objects[i].color == curPlayer.color)){ //only team members and you can delete your objects
+                            if((chunk.objects[i].color == 0 && chunk.objects[i].ownerName == curPlayer.name) || (chunk.objects[i].color != 0 && chunk.objects[i].color == curPlayer.color)){ //only team members and you can delete your objects
                                 socket.emit("delete_obj", {
                                     cx: chunkPos.x, cy: chunkPos.y, 
                                     objName: chunk.objects[i].objName, 

@@ -76,14 +76,14 @@ class InvBlock{
     }
 
     dropItem(item,amount){
-        let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 11, "", "");
+        let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 0, "", "");
         itemBag.invBlock.addItem(item, amount);
         this.decreaseAmount(item, amount);
     }
 
     dropAll(){
         //spawn in an item bag
-        let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 11, "", "");
+        let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 0, "", "");
         let keys = Object.keys(this.items);
         for(let i = 0; i < keys.length; i++){
             let item = this.items[keys[i]];

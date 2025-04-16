@@ -124,18 +124,18 @@ function bombUpdate(){
 defineCustomObj("PlacedBomb", ['bomb1','bomb2'], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, true);
 
 var teamColors = [
+    {r: 128, g: 128, b: 128}, //Gray - No Team
     {r: 255, g:   0, b:   0}, //Red
     {r:   0, g:   0, b: 255}, //Blue
     {r:   0, g: 255, b:   0}, //Green
-    {r:   0, g: 255, b: 255}, //Cyan
-    {r: 255, g: 255, b:   0}, //Yellow
-    {r: 255, g:   0, b: 255}, //Magenta
-    {r:   0, g: 128, b:   0}, //Dark-Green
-    {r: 255, g: 128, b:   0}, //Orange
-    {r: 128, g:   0, b: 255}, //Purple
-    {r: 255, g: 128, b: 225}, //Pink
-    {r: 127, g:  63, b:   0}, //Brown
-    {r: 128, g: 128, b: 128}, //Gray - No Team
+    // {r:   0, g: 255, b: 255}, //Cyan
+    // {r: 255, g: 255, b:   0}, //Yellow
+    // {r: 255, g:   0, b: 255}, //Magenta
+    // {r:   0, g: 128, b:   0}, //Dark-Green
+    // {r: 255, g: 128, b:   0}, //Orange
+    // {r: 128, g:   0, b: 255}, //Purple
+    // {r: 255, g: 128, b: 225}, //Pink
+    // {r: 127, g:  63, b:   0}, //Brown
 ]
 
 class Placeable{
@@ -146,7 +146,7 @@ class Placeable{
         this.rot = rot;
         this.z = z;
         this.color = color; //index to team colors
-        if(this.color == undefined) this.color = 11; //no team color
+        if(this.color == undefined) this.color = 0; //no team color
         this.hp = health;
         this.mhp = health;
         this.imgNum = imgNum;
@@ -418,7 +418,7 @@ class Trap extends Placeable{
     update(){
         super.update();
         //!make this handle multiple players
-        if(curPlayer.color != this.color || this.color == 11){ //not on the same team as the trap, or the trap belongs to no team
+        if(curPlayer.color != this.color || this.color == 0){ //not on the same team as the trap, or the trap belongs to no team
             if(this.id != curPlayer.id && this.ownerName != curPlayer.name){ //aka if you didnt make this trap
                 if(this.pos.dist(curPlayer.pos) < this.triggerRadius){
                     let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);

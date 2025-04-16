@@ -102,7 +102,7 @@ class SimpleProjectile{
         }
 
         //check collision with curPlayer
-        if((this.color == 11 && this.ownerName != curPlayer.name) || this.color != curPlayer.color){
+        if((this.color == 0 && this.ownerName != curPlayer.name) || this.color != curPlayer.color){
             if(this.pos.dist(curPlayer.pos) < 29){
                 this.deleteTag = true;
                 //if player collishion tell server to set delete tag to true
@@ -220,7 +220,7 @@ class MeleeProjectile extends SimpleProjectile{
         }
 
         //check collision with curPlayer
-        if((this.color == 11 && this.ownerName != curPlayer.name) || this.color != curPlayer.color){
+        if((this.color == 0 && this.ownerName != curPlayer.name) || this.color != curPlayer.color){
             let d = curPlayer.pos.dist(this.pos);
             if(d-5 < (this.range)+this.safeRange && d+64 > this.safeRange && 
                 curPlayer.pos.copy().sub(this.pos).heading() > this.flightPath.a-(this.angleWidth/2) &&

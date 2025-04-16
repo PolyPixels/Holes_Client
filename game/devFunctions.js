@@ -141,7 +141,7 @@ function giveAllItems(){
     curPlayer.invBlock.hotbarItem("Mushroom Seed", 4);
 }
 
-function spawnObj(name, x, y, rot = 0, color = 11, id = "", ownerName = ""){
+function spawnObj(name, x, y, rot = 0, color = 0, id = "", ownerName = ""){
     let chunkPos = testMap.globalToChunk(x,y);
     let temp = createObject(name, x, y, rot, color, id, ownerName);
     testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(temp);
