@@ -168,43 +168,53 @@ class Player {
         if (this.holding.w) {
             this.vel.y += -BASE_SPEED * this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'up';
-            collisionChecks.push(this.newCollisionPoint(0, 1, this.direction));
-            collisionChecks.push(this.newCollisionPoint(1, 1, this.direction));
         }
         if (this.holding.a) {
             this.vel.x += -BASE_SPEED * this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'left';
-            collisionChecks.push(this.newCollisionPoint(0, 1, this.direction));
-            if (this.holding.w) {
-                collisionChecks.push(this.newCollisionPoint(0, 2, this.direction));
-            }
-            else {
-                collisionChecks.push(this.newCollisionPoint(0, 0, this.direction));
-            }
         }
         if (this.holding.s) {
             this.vel.y += BASE_SPEED * this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'down';
-            collisionChecks.push(this.newCollisionPoint(0, 1, this.direction));
-            collisionChecks.push(this.newCollisionPoint(1, 1, this.direction));
         }
         if (this.holding.d) {
             this.vel.x += BASE_SPEED * this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'right';
+        }
 
-            collisionChecks.push(this.newCollisionPoint(1, 1, this.direction));
+        //console.log(this.vel.heading());
+        if(this.vel.heading() >= -80 && this.vel.heading() < 80){ //right
+            collisionChecks.push(this.newCollisionPoint(1, 1, "right"));
             if (this.holding.w) {
-                collisionChecks.push(this.newCollisionPoint(1, 2, this.direction));
+                collisionChecks.push(this.newCollisionPoint(1, 2, "right"));
             }
             else {
-                collisionChecks.push(this.newCollisionPoint(1, 0, this.direction));
+                collisionChecks.push(this.newCollisionPoint(1, 0, "right"));
             }
         }
+        if(this.vel.heading() >= 10 && this.vel.heading() < 170){ //down
+            collisionChecks.push(this.newCollisionPoint(0, 1, "down"));
+            collisionChecks.push(this.newCollisionPoint(1, 1, "down"));
+        }
+        if((this.vel.heading() >= 100 && this.vel.heading() <= 180) || (this.vel.heading() >= -180 && this.vel.heading() <= -100)){ //left
+            collisionChecks.push(this.newCollisionPoint(0, 1, "left"));
+            if (this.holding.w) {
+                collisionChecks.push(this.newCollisionPoint(0, 2, "left"));
+            }
+            else {
+                collisionChecks.push(this.newCollisionPoint(0, 0, "left"));
+            }
+        }
+        if(this.vel.heading() >= -170 && this.vel.heading() < -10){ //up
+            collisionChecks.push(this.newCollisionPoint(0, 1, "up"));
+            collisionChecks.push(this.newCollisionPoint(1, 1, "up"));
+        }
+
 
 
         let oldPos = this.pos.copy();
 
-        if (this.holding) this.pos.add(this.vel);
+        this.pos.add(this.vel);
 
         // Handle collisions
         let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
