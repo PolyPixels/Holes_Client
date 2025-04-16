@@ -214,7 +214,7 @@ class Player {
 
         let oldPos = this.pos.copy();
 
-        this.pos.add(this.vel);
+        this.pos.add(this.vel.mult(deltaTime/33));
 
         // Handle collisions
         let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
