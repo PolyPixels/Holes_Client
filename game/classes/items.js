@@ -23,6 +23,7 @@ defineMelee("Evil Apple on Stick", ["evil_apple_on_stick"], [["Bad Apple",1],["L
 defineRanged("Basic SlingShot", ["sling"], [["Mushroom", 2]], 1, 100, 5, 5, "Rock", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
 defineRanged("Better SlingShot", ["sling"], [["Mushroom", 2], ["Gem", 1]], 1, 100, 5, 5, "Rock", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);
 defineRanged("Dirt Ball", ["dirtball"], [["Dirt", 5]], 1, 1, 0, 5, "Dirt", "Dirt Ball", 10, 10, 60, false, "A ball of dirt to push people around",true);
+defineRanged("Bomb", ["images/structures/bomb1"], [["Dirt", 5]], 1, 1, 0, 5, "Bomb", "Bomb", 10, 10, 60, false, "A bomb you can throw",false);
 defineSimpleItem("Rock", ["rock"], [], 1, "A rock for your slingshot",false);
 defineSimpleItem("Gem", ["gem"], [], 1, "A pretty gem",false);
 defineSimpleItem("Dark Gem", ["black_gem"], [], 1, "A dull gem",false);
