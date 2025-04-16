@@ -54,7 +54,7 @@ const BASE_STATS = [
 class StatBlock{
     constructor(race, health){
         this.race = race;
-        this.stats = BASE_STATS[this.race];
+        this.stats = JSON.parse(JSON.stringify(BASE_STATS[this.race]));
         if(health != undefined) this.stats.hp = health;
         this.level = 0;
         this.xp = 0;
