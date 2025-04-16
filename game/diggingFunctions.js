@@ -83,10 +83,10 @@ async function dig(x, y, amt, rayStart) {
     if(rayStart != undefined){
         push();
         stroke(255,50);
-        strokeWeight(20);
+        strokeWeight(10);
         line(
-            rayStart.x*TILESIZE -camera.pos.x+(width/2), 
-            rayStart.y*TILESIZE -camera.pos.y+(height/2), 
+            curPlayer.pos.x -camera.pos.x+(width/2), 
+            curPlayer.pos.y -camera.pos.y+(height/2), 
             (chunkPos.x*CHUNKSIZE+floor(x))*TILESIZE -camera.pos.x+(width/2), 
             (chunkPos.y*CHUNKSIZE+floor(y))*TILESIZE -camera.pos.y+(height/2)
         );
