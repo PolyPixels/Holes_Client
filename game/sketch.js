@@ -149,39 +149,20 @@ function draw() {
             if(curPlayer.statBlock.stats.hp <= 0){ //death
                 //console.log("dead",curPlayer.attackingOBJ);
                 let dealthData = {x:curPlayer.pos.x , y : curPlayer.pos.y, name : curPlayer.name, id:curPlayer.id, attacker : curPlayer.attackingOBJ ? curPlayer.attackingOBJ.ownerName : " Some thing Ominous"}
-                socket.emit("player_dies", dealthData   )
+                socket.emit("player_dies", dealthData)
 
                 curPlayer.invBlock.dropAll();
-                curPlayer.pos.x = random(-200*TILESIZE, 200*TILESIZE);
-                curPlayer.pos.y = random(-200*TILESIZE, 200*TILESIZE);
-
-                //load in some chunks for easy start
-                let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
-                for(let yOff = -1; yOff < 2; yOff++){
-                    for(let xOff = -1; xOff < 2; xOff++){
-                        testMap.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
-                    }
-                }
 
                 dirtInv = 0;
-                // Clear a small area around the player
-                for (let y = -5; y < 5; y++) {
-                    for (let x = -5; x < 5; x++) {
-                        dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1);
-                    }
-                }
-                dirtInv = 0;
-                
-                curPlayer.statBlock.stats.hp = 100;
-
-                socket.emit("update_pos", curPlayer);
+                gameState = "dead";
+                deathDiv.show();
             }
         }
 
         renderTimeUI()
         renderDirtBagUI();
     }
-    if (gameState === "inventory" || gameState === "crafting" || gameState === "swap_inv" || gameState === "pause" || gameState =="player_status" || gameState == "team_select") {
+    if (gameState === "chating" || gameState === "inventory" || gameState === "crafting" || gameState === "swap_inv" || gameState === "pause" || gameState =="player_status" || gameState == "team_select" || gameState == "dead") {
         //render the game in the background
 
         renderTimeUI()
@@ -191,6 +172,8 @@ function draw() {
         }
 
         if (curPlayer) {
+            moveCamera();
+
             curPlayer.render();
             curPlayer.update();
             // if(renderGhost){
@@ -213,39 +196,12 @@ function draw() {
             }
         }
 
-        curPlayer.invBlock.renderHotBar();
-        renderPlayerCardUI();
-        renderDirtBagUI();
-
-    }
-    if (gameState === "chating") {
-        //render the game in the background
-        if (Object.keys(testMap.chunks).length > 0) {
-            testMap.render();
-            testMap.update();
-        }
-
-        if (curPlayer) {
-            curPlayer.render();
-            curPlayer.update();
-            if(renderGhost){
-                ghostBuild.pos.x = mouseX + camera.pos.x - width / 2;
-                ghostBuild.pos.y = mouseY + camera.pos.y - height / 2;
-                if(ghostBuild.canRotate & wantRotate){
-                    ghostBuild.rot = ghostBuild.pos.copy().sub(curPlayer.pos).heading();
-                }
-                ghostBuild.ghostRender(createVector(ghostBuild.pos.x,ghostBuild.pos.y).dist(curPlayer.pos) < 200);
-            }
-        }
-
-        let keys = Object.keys(players);
-        for (let i = 0; i < keys.length; i++) {
-            if(curPlayer){
-                if(players[keys[i]].pos.dist(curPlayer.pos) < TILESIZE*CHUNKSIZE*2){
-                    players[keys[i]].render();
-                    players[keys[i]].update();
-                }
-            }
+        if(gameState == "dead"){
+            push();
+            fill(255, 0, 0, 100);
+            rect(0, 0, width, height);
+            image(edgeBloodImg, 0, 0, width, height);
+            pop();
         }
 
         curPlayer.invBlock.renderHotBar();

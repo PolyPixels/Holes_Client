@@ -1,5 +1,6 @@
 //globals for ui.js
 var raceSelected = false;
+var curRace;
 var nameEntered = false;
 var raceButtons = []; // now storing "card" divs instead of p5 buttons
 var goButton;
@@ -12,8 +13,6 @@ function updateResponsiveDesign() {
     const inputWidth = 220; // as defined in style
     const spacing = 20;
 
-    nameInput?.position(width / 2 - inputWidth / 2, height * 0.8);
-    goButton?.position(width / 2 + inputWidth / 2 + spacing, height * 0.8);
 
     // Update race card widths responsively
     let newCardWidth = constrain(width * 0.15, 150, 300);
@@ -25,6 +24,8 @@ function updateResponsiveDesign() {
     raceTitle?.style("font-size", "calc(1.5vw + 24px)");
 
     dirtBagUI.pos = createVector(width - 180 - 10, height - 186 - 10);
+
+    timerDiv.position(width / 2 - 50, 10);
 }
 
 function hideRaceSelect() {
@@ -44,11 +45,11 @@ let serverList = JSON.parse(localStorage.getItem("servers")) || [
 
     { ip: "api.holesgame.com", name: "Holes Offical", status: "Online" },
     { ip: "localhost", name: "Local Server", status: "Online" },
-    { ip: "54.91.39.132", name: "Remote Server", status: "Online" },
+    { ip: "dig.holesgame.com", name: "Remote Server", status: "Online" },
 ];
 
 let selectedServer = null;
-let serverBrowserContainer, inputName, inputIP, inputStatus, addServerButton;
+let serverBrowserContainer, inputName, inputIP, inputStatus, addServerButton, serverListDiv;
 let renderedserverBrowserContainer = false;
 
 function saveServers() {
@@ -281,6 +282,8 @@ function renderServerBrowser() {
         title.style("text-align", "center");
         title.parent(serverBrowserContainer);
 
+        serverListDiv = createDiv();
+        serverListDiv.parent(serverBrowserContainer);
         // Render the server list
         renderServerList();
 
@@ -388,7 +391,7 @@ function renderServerBrowser() {
                 socket = io.connect(getServerUrl(selectedServer));
                 socketSetup();
                 testMap = new Map();
-                ghostBuild = createObject("Wall", 0, 0, 0, 11, " ", " ");
+                ghostBuild = createObject("Wall", 0, 0, 0, 0, " ", " ");
                 //console.log("Connected to " + selectedServer, socket);
                 hideServerBrowser();
                 gameState = "race_selection";
@@ -539,7 +542,7 @@ function renderServerList() {
             serverList.splice(index, 1);
             saveServers();
             renderServerList();
-            renderServerList();
+            //renderServerList();
         });
 
         // Select a server
@@ -553,7 +556,7 @@ function renderServerList() {
             //console.log("Server selected:", selectedServer);
         });
 
-        serverEntry.parent(serverBrowserContainer);
+        serverEntry.parent(serverListDiv);
     });
 }
 
@@ -649,6 +652,7 @@ function setupUI() {
     defineTeamPickUI();
     defineSwapInvUI();
     defineCraftingUI();
+    defineDeathUI();
 
     timerDiv = createDiv("⏳ 15:00");
     timerDiv.position(width / 2 - 50, 10); // adjust as needed
@@ -757,7 +761,7 @@ card.mousePressed(() => {
     card.style("background-color", "#4CAF50");
 
     raceSelected = true;
-    curPlayer.race = selectedItem;
+    curRace = selectedItem;
 
     //console.log("Race selected:", races[selectedItem]);
 });
@@ -778,19 +782,35 @@ card.mousePressed(() => {
     nameInput.hide();
     let inputWidth = constrain(width * 0.5, 100, 200); // Responsive width
     let inputX = (width - inputWidth) / 2;
-    let inputY = height * 0.85;
-    
+    let inputY = height * 0.86;
     nameInput.size(inputWidth, AUTO); // Auto height from padding
-    nameInput.position(inputX, inputY);
-    
-    // Responsive styling
-    nameInput.style("font-size", width < 500 ? "14px" : "18px");
-    nameInput.style("border-radius", "8px");
-    nameInput.style("padding", "10px");
-    nameInput.style("outline", "none");
-    nameInput.style("transition", "border 0.2s");
-    nameInput.style("width", inputWidth + "px");
-    nameInput.attribute("placeholder", "Name :");
+nameInput.position(inputX, inputY);
+
+// Responsive base styling
+nameInput.style("font-size", width < 500 ? "14px" : "18px");
+nameInput.style("border-radius", "8px");
+nameInput.style("padding", "10px");
+nameInput.style("outline", "none");
+nameInput.style("transition", "border 0.2s, box-shadow 0.2s");
+nameInput.style("width", inputWidth + "px");
+nameInput.attribute("placeholder", "Name :");
+nameInput.style("border", "2px solid #ccc"); // base border
+
+// Focus style
+nameInput.elt.addEventListener("focus", () => {
+  nameInput.style("border", "2px solid var(--color-gold)");
+  nameInput.style("box-shadow", "0 0 6px rgba(255, 215, 0, 0.6)");
+
+
+nameInput.attribute("placeholder", "");
+});
+
+// Revert on blur
+nameInput.elt.addEventListener("blur", () => {
+  nameInput.style("border", "2px solid #ccc");
+  nameInput.style("box-shadow", "none");
+});
+
     
     // Optional shadow or backdrop (optional UX polish)
     nameInput.style("background-color", "rgba(255, 255, 255, 0.9)");
@@ -826,7 +846,6 @@ card.mousePressed(() => {
     goButton.style("position", "absolute");
     goButton.style("left", "calc(50% + 130px)");
     goButton.style("top", "85dvh"); // or "80%" if more stable
-    goButton.style("transform", "translateX(-50%)");
 
 
     goButton.style("font-size", "20px");
@@ -884,6 +903,7 @@ function renderChatUI() {
     // ─────────────────────────────────────────────────────────
 
     toggleChatButton = createButton("");
+    toggleChatButton.id("chatToggle")
     toggleChatButton.parent(chatContainer);
     toggleChatButton.style("width", "100%");
     toggleChatButton.style("background", "#555");
@@ -1042,9 +1062,28 @@ function startGame() {
         }
     }
 
-    // If all checks pass, assign the name and proceed
-    if (!curPlayer) return;
-    curPlayer.name = nameVal;
+    // If all checks pass, make their character and send it to the server
+    curPlayer = new Player(
+        200, //random(-200*TILESIZE, 200*TILESIZE)
+        200, //random(-200*TILESIZE, 200*TILESIZE)
+        undefined,
+        curID,
+        0,
+        curRace,
+        nameVal
+    ); // Default race index 0
+
+    camera.pos = createVector(curPlayer.pos.x, curPlayer.pos.y);
+
+    //load in some chunks for easy start
+    let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+    for(let yOff = -2; yOff < 3; yOff++){
+        for(let xOff = -2; xOff < 3; xOff++){
+            testMap.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
+        }
+    }
+
+    giveAllItems(); //TODO: give players starting gear not all items
 
     document.getElementById("canvas-container").style.display = "block";
     socket.emit("new_player", curPlayer);
@@ -1213,10 +1252,18 @@ function defineInvUI() {
     // Inventory Title
     let invTitle = createP("Inventory").parent(topBar);
     invTitle.class("inventory-title");
+    invTitle.style("color", "yellow");
 
     // Crafting Title
     let craftingTitle = createP("Crafting").parent(topBar);
     craftingTitle.class("inventory-title");
+    craftingTitle.mousePressed(() => {
+        gameState = "crafting";
+        craftDiv.show();
+        updateCraftList();
+        invDiv.hide();
+    });
+    craftingTitle.style("cursor", "pointer");
 
     // Tag Bar (Category Buttons)
     let tagBar = createDiv().parent(invDiv);
@@ -1273,6 +1320,25 @@ function defineInvUI() {
     });
 
     spaceBarDiv.hide();
+
+        // Close Button
+    let closeButton = createButton("X").parent(topBar);
+    closeButton.class("close-button"); // Style it in CSS
+    applyStyle(closeButton, {
+        marginLeft: "auto",  // Pushes it to the right
+        position:"absolute",
+        fontSize: "18px",
+        right:"0",
+        color:"white",
+        cursor: "pointer",
+        background: "none",
+        border: "none",
+    });
+
+    closeButton.mousePressed(() => {
+        gameState = "playing"
+        invDiv.hide(); // Hides the inventory when clicked
+    });
 
     // Finally, populate items
     updateItemList();
@@ -1360,7 +1426,16 @@ function updatecurItemDiv() {
     //clear the div
     curItemDiv.html("");
 
-    if(curPlayer.invBlock.curItem == "") return;
+    if(curPlayer.invBlock.curItem == "") {
+        let curItemNone = createP("No Selected Item");
+        curItemNone.parent(curItemDiv);
+        curItemNone.class("inventory-title");
+        applyStyle(curItemNone, {
+            paddingTop: "7%",
+            textDecoration: "none"
+        });
+        return;
+    };
 
     let itemCardDiv = createDiv();
     itemCardDiv.style("width", "100%");
@@ -1532,6 +1607,8 @@ function renderDirtBagUI() {
     //should add an open and closed version
 
     if (dirtBagUI.shake.length > 0) {
+        //dirt bag shake sound
+        if(!dirtBagShakeSound.isLooping()) dirtBagShakeSound.loop();
         if (dirtBagUI.vel.mag() < 1) {
             dirtBagUI.vel.x = dirtBagUI.shake.intensity;
         }
@@ -1543,6 +1620,8 @@ function renderDirtBagUI() {
         dirtBagUI.shake.length -= 1;
     }
     else {
+        //stop dirt bag shake sound
+        dirtBagShakeSound.stop();
         dirtBagUI.shake.intensity = 0;
         dirtBagUI.vel.x = ((width - 180 - 10) - dirtBagUI.pos.x);
         dirtBagUI.vel.y = ((height - 186 - 10) - dirtBagUI.pos.y);
@@ -1821,7 +1900,7 @@ function renderBuildOptions() {
             // If you want to prevent selection when not enough materials, uncomment:
             // if (!canBuild) return;
 
-            ghostBuild = createObject(option.objName, 0, 0, 0, 11, " ", " ");
+            ghostBuild = createObject(option.objName, 0, 0, 0, 0, " ", " ");
 
             // Re-render to highlight the newly selected item
             renderBuildOptions();
@@ -1874,17 +1953,19 @@ function definePauseUI() {
     let sliderContainer = createDiv();
     sliderContainer.parent(settingsContainer);
     sliderContainer.style("margin", "20px 0");
-
+    
     // Label
     let volumeLabel = createElement("label", "Volume:");
     volumeLabel.parent(sliderContainer);
     volumeLabel.style("font-size", "16px");
     volumeLabel.style("margin-right", "10px");
 
+
+
     // p5 slider
-    volumeSlider = createSlider(0, 100, 50);
-    volumeSlider.parent(sliderContainer);
+    volumeSlider = createSlider(0, 100, 50)
     volumeSlider.style("width", "150px");
+    volumeSlider.parent(sliderContainer)
 
     // Retrieve saved volume from localStorage
     const savedVolume = localStorage.getItem("volume");
@@ -1892,9 +1973,27 @@ function definePauseUI() {
         volumeSlider.value(savedVolume);
     }
 
+
+    removeData_button = createButton("Remove Data");
+    removeData_button.parent(sliderContainer);
+    removeData_button.class("button"); // For your reference, you can define .button in CSS if desired
+    removeData_button.style("padding", "10px");
+    removeData_button.style("margin-top", "20px");
+    removeData_button.style("background-color", "#444");
+    removeData_button.style("border", "none");
+    removeData_button.style("color", "white");
+    removeData_button.style("border-radius", "5px");
+    removeData_button.style("cursor", "pointer");
+
+    removeData_button.mousePressed(() => {
+        // Save volume setting to localStorage
+        localStorage.clear()
+    });
+
+    removeData_button.parent(sliderContainer)
+
     // Save button
     saveButton = createButton("Save");
-    saveButton.parent(settingsContainer);
     saveButton.class("button"); // For your reference, you can define .button in CSS if desired
     saveButton.style("padding", "10px");
     saveButton.style("margin-top", "20px");
@@ -1904,6 +2003,7 @@ function definePauseUI() {
     saveButton.style("border-radius", "5px");
     saveButton.style("cursor", "pointer");
 
+    saveButton.parent(settingsContainer);
     // Save button logic
     saveButton.mousePressed(() => {
         // Save volume setting to localStorage
@@ -2073,8 +2173,8 @@ function defineTeamPickUI() {
     teamPickDiv.style("left", "50%");
     teamPickDiv.style("transform", "translate(-50%, -50%)");
     teamPickDiv.style("display", "none");
-    teamPickDiv.style("width", "25%");
-    teamPickDiv.style("height", "20%");
+    // teamPickDiv.style("width", "25%");
+    // teamPickDiv.style("height", "20%");
     teamPickDiv.style("border", "2px solid black");
     teamPickDiv.style("border-radius", "10px");
     teamPickDiv.style("text-align", "center");
@@ -2092,6 +2192,7 @@ function updateTeamPickUI() {
     teamPickTitle.style("color", "white");
     teamPickTitle.style("text-decoration", "underline");
     teamPickTitle.style("margin", "0px");
+    teamPickTitle.style("margin-bottom", "10px");
     teamPickTitle.parent(teamPickDiv);
 
     //turn the team colors into buttons
@@ -2108,7 +2209,7 @@ function updateTeamPickUI() {
         teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128)");
         teamButton.style("cursor", "pointer");
         if (curPlayer == undefined) {
-            if (i == 11) {
+            if (i == 0) {
                 teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128), 0 0 0 8px rgb(255, 255, 255)");
             }
         }
@@ -2117,7 +2218,7 @@ function updateTeamPickUI() {
                 teamButton.style("box-shadow", "0 0 0 4px rgb(128, 128, 128), 0 0 0 8px rgb(255, 255, 255)");
             }
         }
-        if (i == 11) {
+        if (i == 0) {
             teamButton.style("background-color", "rgb(0,0,0)");
             teamButton.style("background-image", "url('images/ui/none.png')");
             teamButton.style("background-size", "contain");
@@ -2127,6 +2228,13 @@ function updateTeamPickUI() {
 
         teamButton.mousePressed(() => {
             curPlayer.color = i;
+            socket.emit("update_player", {
+                id: curPlayer.id,
+                pos: curPlayer.pos,
+                holding: curPlayer.holding,
+                update_names: ["color"],
+                update_values: [curPlayer.color]
+            });
             updateTeamPickUI();
             teamPickDiv.hide();
             gameState = "playing";
@@ -2150,6 +2258,30 @@ function defineSwapInvUI() {
     swapInvDiv.style("left", "50%");
     swapInvDiv.style("transform", "translate(-50%, -50%)");
 
+    let swapInvTitleBar = createDiv();
+    swapInvTitleBar.parent(swapInvDiv);
+    applyStyle(swapInvTitleBar, {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingBottom: "15px",
+        borderBottom: "2px solid black"
+    });
+
+    let swapInvYourInvTittle = createP("Your Inventory");
+    swapInvYourInvTittle.parent(swapInvTitleBar);
+    swapInvYourInvTittle.class("inventory-title");
+    swapInvYourInvTittle.style("margin-left", "25px");
+
+    let swapInvCurItemTittle = createP("Selected Item");
+    swapInvCurItemTittle.parent(swapInvTitleBar);
+    swapInvCurItemTittle.class("inventory-title");
+
+    let swapInvOtherInvTittle = createP("Other Inventory");
+    swapInvOtherInvTittle.parent(swapInvTitleBar);
+    swapInvOtherInvTittle.class("inventory-title");
+    swapInvOtherInvTittle.style("margin-right", "25px");
+
     let swapInvDivInnerds = createDiv();
     swapInvDivInnerds.parent(swapInvDiv);
     swapInvDivInnerds.style("display", "flex");
@@ -2166,9 +2298,37 @@ function defineSwapInvUI() {
     curSwapItemDiv = createDiv().parent(swapInvDivInnerds);
     curSwapItemDiv.class("item-details");
 
+    let curSwapItemNone = createP("No Selected Item");
+    curSwapItemNone.parent(curSwapItemDiv);
+    curSwapItemNone.class("inventory-title");
+    applyStyle(curSwapItemNone, {
+        paddingTop: "7%",
+        textDecoration: "none"
+    });
+
     //Right Item list
     itemListDivRight = createDiv().parent(swapInvDivInnerds);
     itemListDivRight.class("item-list");
+    itemListDivRight.style("border-left", "2px solid black");
+
+    // Close Button
+    let closeButton = createButton("X").parent(swapInvTitleBar);
+    closeButton.class("close-button"); // Style it in CSS
+    applyStyle(closeButton, {
+        marginLeft: "auto",  // Pushes it to the right
+        position:"absolute",
+        fontSize: "18px",
+        right:"0",
+        color:"white",
+        cursor: "pointer",
+        background: "none",
+        border: "none",
+    });
+
+    closeButton.mousePressed(() => {
+        gameState = "playing"
+        swapInvDiv.hide(); // Hides the inventory when clicked
+    });
 
     swapInvDiv.hide();
 }
@@ -2454,7 +2614,12 @@ function renderTimeUI() {
         lastUpdateTime = millis();
     }
     if (timerDiv) {
-        timerDiv.html("⏳ " + timerDisplay);
+        timerDiv.html(" ⏳ " + timerDisplay);
+        applyStyle(timerDiv, {
+            position: "absolute",
+            width:"auto"
+    
+        });
     }
 }
 
@@ -2492,10 +2657,18 @@ function defineCraftingUI(){
     // Inventory Title
     let invTitle = createP("Inventory").parent(topBar);
     invTitle.class("inventory-title");
+    invTitle.mousePressed(() => {
+        gameState = "inventory";
+        invDiv.show();
+        updateItemList();
+        craftDiv.hide();
+    });
+    invTitle.style("cursor", "pointer");
 
     // Crafting Title
     let craftingTitle = createP("Crafting").parent(topBar);
     craftingTitle.class("inventory-title");
+    craftingTitle.style("color", "yellow");
 
     // Tag Bar (Category Buttons)
     let tagBar = createDiv().parent(craftDiv);
@@ -2541,10 +2714,26 @@ function defineCraftingUI(){
     // Current item details
     curCraftItemDiv = createDiv().parent(bottomDiv);
     curCraftItemDiv.class("item-details");
+    let closeButton = createButton("X").parent(topBar);
+    closeButton.class("close-button"); // Style it in CSS
+    applyStyle(closeButton, {
+        marginLeft: "auto",  // Pushes it to the right
+        position:"absolute",
+        right:"0",
+        fontSize: "18px",
+        cursor: "pointer",
+        background: "none",
+        color:"white",
+        border: "none",
+    });
 
+    closeButton.mousePressed(() => {
+        gameState = "playing"
+        craftDiv.hide(); // Hides the inventory when clicked
+    });
     // Finally, populate items
     updateCraftList();
-    updatecurItemDiv();
+    updatecurCraftItemDiv();
 }
 
 function updateCraftList(){
@@ -2553,27 +2742,27 @@ function updateCraftList(){
     craftListDiv.html("");
     //create a div for each item in the inventory
     let arr = JSON.parse(JSON.stringify(craftOptions));
-    arr = arr.filter((itemName) => {
+    arr = arr.filter((item) => {
         if (curPlayer.invBlock.curTag == "All") {
             return true;
         }
         else if (curPlayer.invBlock.curTag == "Tools/Seeds") {
-            if (curPlayer.invBlock.items[itemName].type == "Shovel" || curPlayer.invBlock.items[itemName].type == "Seed") {
+            if (item.type == "Shovel" || item.type == "Seed") {
                 return true;
             }
         }
         else if (curPlayer.invBlock.curTag == "Weapons") {
-            if (curPlayer.invBlock.items[itemName].type == "Melee" || curPlayer.invBlock.items[itemName].type == "Ranged") {
+            if (item.type == "Melee" || item.type == "Ranged") {
                 return true;
             }
         }
         else if (curPlayer.invBlock.curTag == "Equipment") {
-            if (curPlayer.invBlock.items[itemName].type == "Equipment") {
+            if (item.type == "Equipment") {
                 return true;
             }
         }
         else if (curPlayer.invBlock.curTag == "Consumables") {
-            if (curPlayer.invBlock.items[itemName].type == "Food" || curPlayer.invBlock.items[itemName].type == "Potion") {
+            if (item.type == "Food" || item.type == "Potion") {
                 return true;
             }
         }
@@ -2626,7 +2815,16 @@ function updatecurCraftItemDiv(){
     //clear the div
     curCraftItemDiv.html("");
 
-    if(curPlayer.invBlock.curItem == "") return;
+    if(curPlayer.invBlock.curItem == "") {
+        let curCraftItemNone = createP("No Selected Item");
+        curCraftItemNone.parent(curCraftItemDiv);
+        curCraftItemNone.class("inventory-title");
+        applyStyle(curCraftItemNone, {
+            paddingTop: "7%",
+            textDecoration: "none"
+        });
+        return;
+    };
 
     let itemCardDiv = createDiv();
     itemCardDiv.style("width", "100%");
@@ -2764,4 +2962,76 @@ function updatecurCraftItemDiv(){
         itemAmountDiv.style("padding", "5px");
         itemAmountDiv.parent(costDiv);
     }
+}
+
+var deathDiv;
+
+function defineDeathUI(){
+    deathDiv = createDiv();
+    deathDiv.id("deathDiv");
+    deathDiv.class("container");
+    deathDiv.style("position", "absolute");
+    deathDiv.style("top", "50%");
+    deathDiv.style("left", "50%");
+    deathDiv.style("transform", "translate(-50%, -50%)");
+    deathDiv.style("display", "none");
+    deathDiv.style("width", "25%");
+    deathDiv.style("height", "20%");
+    deathDiv.style("border", "2px solid black");
+    deathDiv.style("border-radius", "10px");
+    deathDiv.style("text-align", "center");
+    deathDiv.style("padding", "20px");
+
+    let title = createP("Dead").parent(deathDiv);
+    title.style("font-size", "28px");
+    title.style("font-weight", "bold");
+    title.style("color", "white");
+
+    let respawnButton = createButton("Respawn").parent(deathDiv);
+    styleButton(respawnButton);
+    respawnButton.mousePressed(() => {
+        curPlayer.pos.x = random(-200*TILESIZE, 200*TILESIZE);
+        curPlayer.pos.y = random(-200*TILESIZE, 200*TILESIZE);
+
+        //load in some chunks for easy start
+        let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+        for(let yOff = -1; yOff < 2; yOff++){
+            for(let xOff = -1; xOff < 2; xOff++){
+                testMap.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
+            }
+        }
+        // Clear a small area around the player
+        for (let y = -5; y < 5; y++) {
+            for (let x = -5; x < 5; x++) {
+                dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1);
+            }
+        }
+        dirtInv = 0;
+        
+        curPlayer.statBlock.stats.hp = 100;
+
+        socket.emit("update_pos", {
+            id: curPlayer.id,
+            pos: curPlayer.pos,
+            holding: curPlayer.holding
+        });
+        socket.emit("update_player", {
+            id: curPlayer.id,
+            pos: curPlayer.pos,
+            holding: curPlayer.holding,
+            update_names: ["stats.hp"],
+            update_values: [curPlayer.statBlock.stats.hp]
+        });
+        
+        gameState = "playing";
+        deathDiv.hide();
+    });
+
+    //disconnect button
+    let disconnectButton = createButton("Disconnect").parent(deathDiv);
+    styleButton(disconnectButton);
+    disconnectButton.mousePressed(() => {
+        location.reload();
+        deathDiv.hide();
+    });
 }

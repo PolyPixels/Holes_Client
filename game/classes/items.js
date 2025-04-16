@@ -23,6 +23,7 @@ defineMelee("Evil Apple on Stick", ["evil_apple_on_stick"], [["Bad Apple",1],["L
 defineRanged("Basic SlingShot", ["sling"], [["Mushroom", 2]], 1, 100, 5, 5, "Rock", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
 defineRanged("Better SlingShot", ["sling"], [["Mushroom", 2], ["Gem", 1]], 1, 100, 5, 5, "Rock", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);
 defineRanged("Dirt Ball", ["dirtball"], [["Dirt", 5]], 1, 1, 0, 5, "Dirt", "Dirt Ball", 10, 10, 60, false, "A ball of dirt to push people around",true);
+defineRanged("Bomb", ["images/structures/bomb1"], [["Dirt", 5]], 1, 1, 0, 5, "Bomb", "Bomb", 10, 10, 60, false, "A bomb you can throw",false);
 defineSimpleItem("Rock", ["rock"], [], 1, "A rock for your slingshot",false);
 defineSimpleItem("Gem", ["gem"], [], 1, "A pretty gem",false);
 defineSimpleItem("Dark Gem", ["black_gem"], [], 1, "A dull gem",false);
@@ -261,6 +262,12 @@ class Food extends SimpleItem{
             this.shake = {intensity: 1, length: 5};
             return;
         } else if(curPlayer.invBlock.useTimer <= 0){
+            //play eat sound and send to server
+            let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+            let temp = new SoundObj("eat.ogg", curPlayer.pos.x, curPlayer.pos.y);
+            testMap.chunks[chunkPos.x+','+chunkPos.y].soundObjs.push(temp);
+            socket.emit("new_sound", {sound: "eat.ogg", cPos: chunkPos, pos: {x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
+            
             curPlayer.statBlock.heal(this.heal);
             curPlayer.invBlock.useTimer = this.eatWait;
             curPlayer.invBlock.decreaseAmount(this.itemName, 1);
@@ -353,7 +360,13 @@ class Seed extends SimpleItem{
             });
 
             curPlayer.animationCreate("put");
-            socket.emit("update_pos", curPlayer);
+            socket.emit("update_player", {
+                id: curPlayer.id,
+                pos: curPlayer.pos,
+                holding: curPlayer.holding,
+                update_names: ["animationType", "animationFrame"],
+                update_values: [curPlayer.animationType, curPlayer.animationFrame]
+            });
 
             curPlayer.invBlock.decreaseAmount(this.itemName, 1);
         }

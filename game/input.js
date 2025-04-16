@@ -7,6 +7,8 @@ function keyReleased() {
         pauseDiv.hide();
         invDiv.hide();
         player_status_container.hide();
+        craftDiv.hide();
+        teamPickDiv.hide();
         buildMode = false;
        
         renderGhost = false;
@@ -14,7 +16,7 @@ function keyReleased() {
     }
     if(gameState == "playing"){
         if (keyCode === 82){ //r
-            ghostBuild = createObject("Wall", 0, 0, 0, 11, curPlayer.id, curPlayer.name);
+            ghostBuild = createObject("Wall", 0, 0, 0, 0, curPlayer.id, curPlayer.name);
             buildMode = !buildMode;
             renderGhost = buildMode;
 
@@ -28,6 +30,7 @@ function keyReleased() {
         if(keyCode == 73){ //i
             gameState = "inventory";
             updateItemList();
+            updatecurItemDiv();
             invDiv.show();
             
             curPlayer.holding = { w: false, a: false, s: false, d: false };
@@ -35,6 +38,7 @@ function keyReleased() {
         if(keyCode == 67){ //c
             gameState = "crafting";
             updateCraftList();
+            updatecurCraftItemDiv();
             craftDiv.show();
             
             curPlayer.holding = { w: false, a: false, s: false, d: false };
@@ -61,7 +65,7 @@ function keyReleased() {
 
                 ghostBuild = createObject(
                     option.objName, 0, 0, 0, 
-                    11, curPlayer.id, curPlayer.name
+                    0, curPlayer.id, curPlayer.name
                 );
 
                 renderBuildOptions();
@@ -85,6 +89,8 @@ function keyReleased() {
         if(keyCode == 67){ //c
             gameState = "crafting";
             craftDiv.show();
+            updateCraftList();
+            invDiv.hide();
         }
     }
     else if(gameState == "crafting"){
@@ -101,6 +107,7 @@ function keyReleased() {
         if(keyCode == 73){ //i
             gameState = "inventory";
             invDiv.show();
+            updateItemList();
             craftDiv.hide();
         }
     }
@@ -197,9 +204,8 @@ function keyPressed(){ //prevents normal key related actions
 
 function mouseReleased(){
     if(gameState == "chating"){
-        if(mouseX > 260 || mouseY < height-310){
+        if(mouseX > 260 || mouseY < height-50){
             gameState = "playing";
-            toggleChatDropdown();
         }
     }
     if(gameState != "playing") return;
@@ -301,8 +307,18 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                                 obj: temp
                             });
         
+                            //play placing_structure sound and tell server
+                            let temp2 = new SoundObj("placing_structure.ogg", x, y);
+                            testMap.chunks[chunkPos.x+","+chunkPos.y].soundObjs.push(temp2);
+                            socket.emit("new_sound", {sound: "placing_structure.ogg", cPos: chunkPos, pos:{x: x, y: y}, id: temp.id});
                             curPlayer.animationCreate("put");
-                            socket.emit("update_pos", curPlayer);
+                            socket.emit("update_player", {
+                                id: curPlayer.id,
+                                pos: curPlayer.pos,
+                                holding: curPlayer.holding,
+                                update_names: ["animationType","animationFrame"],
+                                update_values: [curPlayer.animationType,curPlayer.animationFrame]
+                            });
                         }
                     }
                 }
@@ -326,7 +342,7 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                     let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
                     for(let i = 0; i < chunk.objects.length; i++){
                         if(createVector(x,y).dist(chunk.objects[i].pos) < (chunk.objects[i].size.w+chunk.objects[i].size.h)/2){
-                            if((chunk.objects[i].color == 11 && chunk.objects[i].ownerName == curPlayer.name) || (chunk.objects[i].color != 11 && chunk.objects[i].color == curPlayer.color)){ //only team members and you can delete your objects
+                            if((chunk.objects[i].color == 0 && chunk.objects[i].ownerName == curPlayer.name) || (chunk.objects[i].color != 0 && chunk.objects[i].color == curPlayer.color)){ //only team members and you can delete your objects
                                 socket.emit("delete_obj", {
                                     cx: chunkPos.x, cy: chunkPos.y, 
                                     objName: chunk.objects[i].objName, 
@@ -365,7 +381,11 @@ function continousKeyBoardInput(){
             lastHolding.s !== curPlayer.holding.s ||
             lastHolding.d !== curPlayer.holding.d
         ) {
-            socket.emit("update_pos", curPlayer);
+            socket.emit("update_pos", {
+                id: curPlayer.id,
+                pos: curPlayer.pos,
+                holding: curPlayer.holding
+            });
         }
     }
     else if(gameState == "inventory"){

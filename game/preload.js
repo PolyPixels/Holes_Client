@@ -10,6 +10,7 @@ var manaBarImg;
 var edgeBloodImg;
 var objImgs = [];
 var itemImgs = [];
+var dirtBagShakeSound;
 
 function preload() {
     // Load the default image
@@ -69,6 +70,9 @@ function preload() {
             soundDic[keys[i]].sounds[j].setVolume((j/20)*soundDic[keys[i]].volume);
         }
     }
+
+    dirtBagShakeSound = loadSound("audio/dirtbag_shake.ogg");
+    dirtBagShakeSound.setVolume(0.1);
 }
 
 function loadDefaultImage(){

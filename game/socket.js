@@ -1,4 +1,5 @@
 var socket; //Connection to the server
+var curID = null; //The ID of the current player
 
 function socketSetup(){
     //all caps means it came from the server
@@ -19,17 +20,18 @@ function socketSetup(){
             data.race,
             data.name
         );
-        updatePlayerCount()
+        updatePlayerCount();
     });
 
     socket.on('OLD_DATA', (data) => {
         let keys = Object.keys(data.players);
         for (let i = 0; i < keys.length; i++) {
             const playerData = data.players[keys[i]];
+            console.log(playerData);
             players[keys[i]] = new Player(
                 playerData.pos.x,
                 playerData.pos.y,
-                playerData.hp,
+                playerData.statBlock.stats.hp,
                 keys[i],
                 playerData.color,
                 playerData.race,
@@ -39,27 +41,7 @@ function socketSetup(){
     });
 
     socket.on('YOUR_ID', (data) => {
-        curPlayer = new Player(
-            200, //random(-200*TILESIZE, 200*TILESIZE)
-            200, //random(-200*TILESIZE, 200*TILESIZE)
-            undefined,
-            data.id,
-            11,
-            0,
-            ''
-        ); // Default race index 0
-
-        camera.pos = createVector(curPlayer.pos.x, curPlayer.pos.y);
-
-        //load in some chunks for easy start
-        let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
-        for(let yOff = -2; yOff < 3; yOff++){
-            for(let xOff = -2; xOff < 3; xOff++){
-                testMap.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
-            }
-        }
-
-        giveAllItems(); //TODO: give players starting gear not all items
+        curID = data.id;
     });
 
     socket.on('UPDATE_ALL_POS', (data) => {
@@ -71,7 +53,11 @@ function socketSetup(){
             const playerData = data[playerId];
 
             if (playerId === curPlayer.id) {
-                socket.emit('update_pos', curPlayer);
+                socket.emit('update_pos', {
+                    id: curPlayer.id,
+                    pos: curPlayer.pos,
+                    holding: curPlayer.holding
+                });
             } else {
                 if (players[playerId]) {
                     players[playerId].pos.x = playerData.pos.x;
@@ -85,21 +71,46 @@ function socketSetup(){
     });
 
     socket.on('UPDATE_POS', (data) => {
-        if (!data) return;
-        if (!data.pos) return;
-
         if (players[data.id]) {
             players[data.id].pos.x = data.pos.x;
             players[data.id].pos.y = data.pos.y;
-            players[data.id].statBlock.stats.hp = data.hp;
             players[data.id].holding = data.holding;
-            players[data.id].animationType = data.animationType;
-            players[data.id].animationFrame = data.animationFrame;
         }
     });
 
+    socket.on("UPDATE_PLAYER", (data) =>{
+        if(players[data.id]){
+            for(let i=0; i<data.update_names.length; i++){
+                if(data.update_names[i].includes("stats")){
+                    players[data.id].statBlock.stats[data.update_names[i].split("stats.")[1]] = data.update_values[i];
+                }
+                else{
+                    players[data.id][data.update_names[i]] = data.update_values[i];
+                }
+            }
+            players[data.id].pos.x = data.pos.x;
+            players[data.id].pos.y = data.pos.y;
+            players[data.id].holding = data.holding;
+        }
+    })
+
     socket.on("UPDATE_NODE", (data) => {
-        if(testMap.chunks[data.chunkPos] != undefined) testMap.chunks[data.chunkPos].data[data.index] = data.val;
+        if(testMap.chunks[data.chunkPos] != undefined){
+            if(data.amt > 0){
+                if (testMap.chunks[data.chunkPos].data[data.index] > 0) testMap.chunks[data.chunkPos].data[data.index] -= data.amt;
+                if (testMap.chunks[data.chunkPos].data[data.index] < 0.3 && testMap.chunks[data.chunkPos].data[data.index] !== -1){
+                    testMap.chunks[data.chunkPos].data[data.index] = 0;
+                }
+            }
+            else{
+                if (testMap.chunks[data.chunkPos].data[data.index] < 1.3 && testMap.chunks[data.chunkPos].data[data.index] !== -1){
+                    testMap.chunks[data.chunkPos].data[data.index] -= data.amt;
+                }
+                if (testMap.chunks[data.chunkPos].data[data.index] > 1.3){
+                    testMap.chunks[data.chunkPos].data[data.index] = 1.3;
+                }
+            }
+        }
     });
     socket.on("change_name", (data) => {
         curPlayer.name = data
@@ -116,6 +127,7 @@ function socketSetup(){
             let temp = createObject(data.obj.objName, data.obj.pos.x, data.obj.pos.y, data.obj.rot, data.obj.color, data.obj.id, data.obj.ownerName);
 
             if(temp.type == "InvObj"){
+                temp.invBlock.invId = data.obj.invBlock.invId;
                 let keys = Object.keys(data.obj.invBlock.items);
                 for(let i=0; i<keys.length; i++){
                     temp.invBlock.addItem(keys[i], data.obj.invBlock.items[keys[i]].amount);
@@ -154,7 +166,7 @@ function socketSetup(){
             for(let i = chunk.objects.length-1; i >= 0; i--){
                 if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.objName == chunk.objects[i].objName){
                     chunk.objects[i].invBlock.items = data.items;
-                    updateSwapItemLists(chunk.objects[i].invBlock);
+                    if(curPlayer.otherInv.invBlock.invId == chunk.objects[i].invBlock.invId) updateSwapItemLists(chunk.objects[i].invBlock);
                 }
             }
         }
@@ -203,6 +215,7 @@ function socketSetup(){
             //fix some obj properties
             if(temp.type == "InvObj"){
                 if(data.objects[i].invBlock != undefined){
+                    temp.invBlock.invId = data.objects[i].invBlock.invId;
                     if(data.objects[i].invBlock.items != undefined){
                         let keys = Object.keys(data.objects[i].invBlock.items);
                         for(let j=0; j<keys.length; j++){

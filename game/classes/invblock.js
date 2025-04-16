@@ -15,6 +15,7 @@ class InvBlock{
         this.curTag = "All"; //tag for sorting through items
         this.useTimer = 0; //for some items, so you cant spam them
         this.animationTimer = 0; //for hotbar animations
+        this.invId = random(100000);
     }
 
     addItem(item,amount){
@@ -75,14 +76,14 @@ class InvBlock{
     }
 
     dropItem(item,amount){
-        let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 11, "", "");
+        let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 0, "", "");
         itemBag.invBlock.addItem(item, amount);
         this.decreaseAmount(item, amount);
     }
 
     dropAll(){
         //spawn in an item bag
-        let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 11, "", "");
+        let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 0, "", "");
         let keys = Object.keys(this.items);
         for(let i = 0; i < keys.length; i++){
             let item = this.items[keys[i]];
@@ -266,6 +267,33 @@ class InvBlock{
         text("Q", width - (0.866 * 255), height - (0.5 * 255) - 3);
         text("E", width - (0.5 * 255), height - (0.866 * 255) - 1.5);
     
+
+        // === Add item name at bottom center with background ===
+    let selectedItemName = this.hotbar[this.selectedHotBar];
+    if (selectedItemName && selectedItemName !== "") {
+        push();
+        textFont(gameUIFont);
+        textSize(20);
+        textAlign(LEFT, CENTER);
+        let textX = width - 100;
+        let textY = height - 195;
+
+        let textW = textWidth(selectedItemName);
+        let textH = 28;
+
+        // Draw background rectangle
+        fill(0, 150); // semi-transparent black
+        noStroke();
+        rect(textX , textY , textW , textH, 8); // 8 = rounded corners
+
+        // Draw item name
+        fill(255);
+        stroke(0);
+        strokeWeight(2);
+        text(selectedItemName, textX - 50, textY);
+        pop();
+    }
+
         pop();
     }
     

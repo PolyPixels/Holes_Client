@@ -75,7 +75,11 @@ function createTestChunk(cx, cy){ //makes the dirt in a specific way to test the
 function teleportToChunk(cx,cy){ //teleports you to the top left corner of a chunk
     curPlayer.pos.x = cx*CHUNKSIZE*TILESIZE;
     curPlayer.pos.y = cy*CHUNKSIZE*TILESIZE;
-    socket.emit("update_pos", curPlayer);
+    socket.emit("update_pos", {
+        id: curPlayer.id,
+        pos: curPlayer.pos,
+        holding: curPlayer.holding
+    });
     return true;
 }
 
@@ -84,7 +88,11 @@ function teleportToPlayer(name){ //teleports you to another player
     for(let i = 0; i < keys.length; i++){
         if(players[keys[i]].name === name){
             curPlayer.pos = players[keys[i]].pos.copy();
-            socket.emit("update_pos", curPlayer);
+            socket.emit("update_pos", {
+                id: curPlayer.id,
+                pos: curPlayer.pos,
+                holding: curPlayer.holding
+            });
             return true;
         }
     }
@@ -133,7 +141,7 @@ function giveAllItems(){
     curPlayer.invBlock.hotbarItem("Mushroom Seed", 4);
 }
 
-function spawnObj(name, x, y, rot = 0, color = 11, id = "", ownerName = ""){
+function spawnObj(name, x, y, rot = 0, color = 0, id = "", ownerName = ""){
     let chunkPos = testMap.globalToChunk(x,y);
     let temp = createObject(name, x, y, rot, color, id, ownerName);
     testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(temp);

@@ -19,13 +19,13 @@ Obj Dic is a full dictanary of every object that can exist, falling into one of 
 */
 
 var objDic = {};
-definePlaceable("Wall", ['tempwall0','tempwall1','tempwall2','tempwall3','tempwall4','tempwall5','tempwall6','tempwall7','tempwall8','tempwall9','tempwall10','tempwall11'], [["dirt", 20]], 128, 128, 2, 100, true, true);
-definePlaceable("Door", ['tempdoor0','tempdoor1','tempdoor2','tempdoor3','tempdoor4','tempdoor5','tempdoor6','tempdoor7','tempdoor8','tempdoor9','tempdoor10','tempdoor11'], [["dirt", 20]], 64, 128, 2, 100, true, true);
-definePlaceable("Floor", ['tempfloor0','tempfloor1','tempfloor2','tempfloor3','tempfloor4','tempfloor5','tempfloor6','tempfloor7','tempfloor8','tempfloor9','tempfloor10','tempfloor11'], [["dirt", 20]], 128, 128, 0, 100, true, true);
-definePlaceable("Rug", ['temprug0','temprug1','temprug2','temprug3','temprug4','temprug5','temprug6','temprug7','temprug8','temprug9','temprug10','temprug11'], [["dirt", 20]], 128, 128, 1, 100, true, true);
+definePlaceable("Wall", ['tempwall11','tempwall0','tempwall1','tempwall2','tempwall3','tempwall4','tempwall5','tempwall6','tempwall7','tempwall8','tempwall9','tempwall10','tempwall11'], [["dirt", 20]], 128, 128, 2, 100, true, true);
+definePlaceable("Door", ['tempdoor11','tempdoor0','tempdoor1','tempdoor2','tempdoor3','tempdoor4','tempdoor5','tempdoor6','tempdoor7','tempdoor8','tempdoor9','tempdoor10','tempdoor11'], [["dirt", 20]], 64, 128, 2, 100, true, true);
+definePlaceable("Floor", ['tempfloor11','tempfloor0','tempfloor1','tempfloor2','tempfloor3','tempfloor4','tempfloor5','tempfloor6','tempfloor7','tempfloor8','tempfloor9','tempfloor10','tempfloor11'], [["dirt", 20]], 128, 128, 0, 100, true, true);
+definePlaceable("Rug", ['temprug11','temprug0','temprug1','temprug2','temprug3','temprug4','temprug5','temprug6','temprug7','temprug8','temprug9','temprug10','temprug11'], [["dirt", 20]], 128, 128, 1, 100, true, true);
 definePlaceable("Mug", ['tempmug'], [["dirt", 20]], 32, 32, 3, 100, false, true);
 defineTrap("BearTrap", ['beartrap1'], [["dirt", 20]], 68, 48, 100, 50, 50, false, 15, true);
-defineTrap("LandMine", ['bomb1'], [["dirt", 20]], 52, 36, 100, 40, 40, false, 10, false);
+defineTrap("LandMine", ['bomb1'], [["dirt", 20]], 52, 36, 100, 40, 40, false, 10, true);
 
 function turretUpdate(){
     if(this.hp <= 0){
@@ -63,7 +63,7 @@ function turretUpdate(){
         socket.emit("update_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, update_name: "rot", update_value: this.rot});
     }
 }
-defineCustomObj("Turret", ['tempturret0','tempturret1','tempturret2','tempturret3','tempturret4','tempturret5','tempturret6','tempturret7','tempturret8','tempturret9','tempturret10','tempturret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
+defineCustomObj("Turret", ['tempturret11','tempturret0','tempturret1','tempturret2','tempturret3','tempturret4','tempturret5','tempturret6','tempturret7','tempturret8','tempturret9','tempturret10','tempturret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
 definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 100, 60, "edible_mushroom");
 definePlant("AppleTree", ['apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 100, 60, "Apple");
 definePlant("Tree", ['tree'], [["Log", 4]], 120, 120, 100, 60, "Log");
@@ -94,14 +94,34 @@ function bombUpdate(){
         }
     }
 
+    if(this.hp <= 3){
+        for(let i=0; i<100; i++){
+            push();
+            translate(
+                -camera.pos.x + (width / 2) + this.pos.x + random((33+(6*(this.size.w+this.size.h)/4))/-2, (33+(6*(this.size.w+this.size.h)/4))/2), 
+                -camera.pos.y + (height / 2) + this.pos.y + random((33+(6*(this.size.w+this.size.h)/4))/-2, (33+(6*(this.size.w+this.size.h)/4))/2)
+            );
+            rotate(random(0,360));
+            fill(random(150,255),random(0,255),0);
+            noStroke();
+            square(0, 0, random(20,50));
+            pop();
+        }
+    }
     if (this.hp <= 0) {
         
         // Bomb hurts everyone nearby
-        if(this.pos.dist(curPlayer.pos) < -2+(this.size.w+this.size.h)/2){
+        if(this.pos.dist(curPlayer.pos) < 33+(6*(this.size.w+this.size.h)/4)){
             curPlayer.statBlock.stats.hp -= 20;
             camera.shake = {intensity: 20, length: 5};
             camera.edgeBlood = 5;
-            socket.emit("update_pos", curPlayer);
+            socket.emit("update_player", {
+                id: curPlayer.id,
+                pos: curPlayer.pos,
+                holding: curPlayer.holding,
+                update_names: ["stats.hp"],
+                update_values: [curPlayer.statBlock.stats.hp]
+            });
         }
 
         // if you made this bomb, when it eventually blows up, the 'damage' will be sent to server by bomb-placer
@@ -115,21 +135,21 @@ function bombUpdate(){
         socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
     }
 }
-defineCustomObj("PlacedBomb", ['bomb1','bomb2'], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, true);
+defineCustomObj("PlacedBomb", ['bomb1','bomb2'], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, false);
 
 var teamColors = [
+    {r: 128, g: 128, b: 128}, //Gray - No Team
     {r: 255, g:   0, b:   0}, //Red
     {r:   0, g:   0, b: 255}, //Blue
     {r:   0, g: 255, b:   0}, //Green
-    {r:   0, g: 255, b: 255}, //Cyan
-    {r: 255, g: 255, b:   0}, //Yellow
-    {r: 255, g:   0, b: 255}, //Magenta
-    {r:   0, g: 128, b:   0}, //Dark-Green
-    {r: 255, g: 128, b:   0}, //Orange
-    {r: 128, g:   0, b: 255}, //Purple
-    {r: 255, g: 128, b: 225}, //Pink
-    {r: 127, g:  63, b:   0}, //Brown
-    {r: 128, g: 128, b: 128}, //Gray - No Team
+    // {r:   0, g: 255, b: 255}, //Cyan
+    // {r: 255, g: 255, b:   0}, //Yellow
+    // {r: 255, g:   0, b: 255}, //Magenta
+    // {r:   0, g: 128, b:   0}, //Dark-Green
+    // {r: 255, g: 128, b:   0}, //Orange
+    // {r: 128, g:   0, b: 255}, //Purple
+    // {r: 255, g: 128, b: 225}, //Pink
+    // {r: 127, g:  63, b:   0}, //Brown
 ]
 
 class Placeable{
@@ -140,7 +160,7 @@ class Placeable{
         this.rot = rot;
         this.z = z;
         this.color = color; //index to team colors
-        if(this.color == undefined) this.color = 11; //no team color
+        if(this.color == undefined) this.color = 0; //no team color
         this.hp = health;
         this.mhp = health;
         this.imgNum = imgNum;
@@ -152,6 +172,10 @@ class Placeable{
         this.openBool = true; //is object in an open spot?, used for ghost rendering
         this.deleteTag = false;
         this.type = "Placeable";
+
+        this.offset = createVector(0,0);
+        this.offVel = createVector(0,0); //offset velocity
+        this.shake = {intensity: 0, length: 0};
     }
 
     update(){
@@ -188,16 +212,37 @@ class Placeable{
 
     render(t){
         push();
-        if(this.hp < this.mhp){
-            this.renderHealthBar()
+        
+        if(this.shake.length > 0){
+            if(this.offVel.mag() < 1){
+                this.offVel.x = this.shake.intensity;
+            }
+            this.offVel.setMag(this.offVel.mag()+this.shake.intensity);
+            if(this.offVel.mag() > this.shake.intensity*5){
+                this.offVel.setMag(this.shake.intensity*5);
+            }
+            this.offVel.rotate(random(0, 360));
+            this.shake.length -= 1;
         }
-        translate(-camera.pos.x+(width/2)+this.pos.x, -camera.pos.y+(height/2)+this.pos.y);
+        else{
+            this.shake.intensity = 0;
+            this.offVel.x = -1*this.offset.x;
+            this.offVel.y = -1*this.offset.y;
+            this.offVel.setMag(this.offVel.mag()/10);
+        }
+        this.offset.add(this.offVel);
+
+        translate(-camera.pos.x+(width/2)+this.pos.x+this.offset.x, -camera.pos.y+(height/2)+this.pos.y+this.offset.y);
         rotate(this.rot);
         if(t == "green") tint(100, 200, 100, 100);
         if(t == "red") tint(200, 100, 100, 100);
         if(this.alpha < 255) tint(255, this.alpha);
         image(objImgs[this.imgNum][this.color % (objImgs[this.imgNum].length)], -this.size.w/2,-this.size.h/2, this.size.w, this.size.h);
         pop();
+
+        if(this.hp < this.mhp){
+            this.renderHealthBar();
+        }
     }
 
     ghostRender(ob){
@@ -206,15 +251,25 @@ class Placeable{
         rotate(this.rot);
         
         this.openBool = ob;
+        let touchingObjs = [];
 
         let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
         let chunk = testMap.chunks[chunkPos.x+","+chunkPos.y];
         for(let j = 0; j < chunk.objects.length; j++){
             if(this.z == chunk.objects[j].z){
                 let d = chunk.objects[j].pos.dist(this.pos);
-                if(d*2 < (chunk.objects[j].size.w+chunk.objects[j].size.h)/2 + (this.size.w+this.size.h)/2 - 30){
+                if(d < (chunk.objects[j].size.w+chunk.objects[j].size.h)/4 + (this.size.w+this.size.h)/4 - 10){
                     this.openBool = false;
+                    touchingObjs.push({pos: chunk.objects[j].pos, size: chunk.objects[j].size});
                 }
+            }
+        }
+
+        let keys = Object.keys(players);
+        for(let i = 0; i < keys.length; i++){
+            if(players[keys[i]].pos.dist(this.pos) < ((48.4+83.6)/4 + (this.size.w+this.size.h)/4)){
+                this.openBool = false;
+                touchingObjs.push({pos: players[keys[i]].pos, size: {w: 48.4, h: 83.6}});
             }
         }
 
@@ -243,6 +298,19 @@ class Placeable{
                     this.openBool = false;
                 }
             }
+        }
+
+        if(touchingObjs.length > 0){
+            fill(255,100);
+            circle(0,0, (this.size.w+this.size.h)/2);
+        }
+        
+        pop();
+
+        push();
+        fill(255,100);
+        for(let i=0; i<touchingObjs.length; i++){
+            circle(touchingObjs[i].pos.x-camera.pos.x+(width/2), touchingObjs[i].pos.y-camera.pos.y+(height/2), (touchingObjs[i].size.w+touchingObjs[i].size.h)/2);
         }
         pop();
 
@@ -319,15 +387,35 @@ class Plant extends Placeable{
 
     render(t){
         push();
-        if(this.hp < this.mhp){
-            this.renderHealthBar()
+        if(this.shake.length > 0){
+            if(this.offVel.mag() < 1){
+                this.offVel.x = this.shake.intensity;
+            }
+            this.offVel.setMag(this.offVel.mag()+this.shake.intensity);
+            if(this.offVel.mag() > this.shake.intensity*5){
+                this.offVel.setMag(this.shake.intensity*5);
+            }
+            this.offVel.rotate(random(0, 360));
+            this.shake.length -= 1;
         }
-        translate(-camera.pos.x+(width/2)+this.pos.x, -camera.pos.y+(height/2)+this.pos.y);
+        else{
+            this.shake.intensity = 0;
+            this.offVel.x = -1*this.offset.x;
+            this.offVel.y = -1*this.offset.y;
+            this.offVel.setMag(this.offVel.mag()/10);
+        }
+        this.offset.add(this.offVel);
+
+        translate(-camera.pos.x+(width/2)+this.pos.x+this.offset.x, -camera.pos.y+(height/2)+this.pos.y+this.offset.y);
         rotate(this.rot);
         if(t == "green") tint(100, 200, 100);
         if(t == "red") tint(200, 100, 100);
         image(objImgs[this.imgNum][this.stage], -this.size.w/2,-this.size.h/2, this.size.w, this.size.h);
         pop();
+
+        if(this.hp < this.mhp){
+            this.renderHealthBar()
+        }
     }
 }
 
@@ -344,15 +432,26 @@ class Trap extends Placeable{
     update(){
         super.update();
         //!make this handle multiple players
-        if(curPlayer.color != this.color || this.color == 11){ //not on the same team as the trap, or the trap belongs to no team
+        if(curPlayer.color != this.color || this.color == 0){ //not on the same team as the trap, or the trap belongs to no team
             if(this.id != curPlayer.id && this.ownerName != curPlayer.name){ //aka if you didnt make this trap
                 if(this.pos.dist(curPlayer.pos) < this.triggerRadius){
+                    let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+                    //play hit noise and tell server
+                    let temp = new SoundObj("hit.ogg", curPlayer.pos.x, curPlayer.pos.y);
+                    testMap.chunks[chunkPos.x+","+chunkPos.y].soundObjs.push(temp);
+                    socket.emit("new_sound", {sound: "hit.ogg", cPos: chunkPos, pos:{x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
                     this.deleteTag = true;
                     curPlayer.statBlock.stats.hp -= this.damage;
                     camera.shake = {intensity: this.damage, length: 5};
                     camera.edgeBlood = 5;
-                    socket.emit("update_pos", curPlayer);
-                    let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+                    socket.emit("update_player", {
+                        id: curPlayer.id,
+                        pos: curPlayer.pos,
+                        holding: curPlayer.holding,
+                        update_names: ["stats.hp"],
+                        update_values: [curPlayer.statBlock.stats.hp]
+                    });
+                    
                     socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
                 }
             }
@@ -396,7 +495,7 @@ class InvObj extends Placeable{
                     }
                 }
                 else{ //when unlocked all team members can open
-                    if(curPlayer.color == this.color){
+                    if(curPlayer.color == this.color || (this.ownerName == "" && this.id == "")){
                         gameState = "swap_inv";
                         curPlayer.otherInv = this;
                         updateSwapItemLists(this.invBlock);
