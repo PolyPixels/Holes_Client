@@ -52,7 +52,7 @@ function keyReleased() {
 
         if(keyCode == 9){ //TAB
             gameState = "player_status";
-            togglePlayerStatusTable()
+            togglePlayerStatusTable();
         }
 
         if (buildMode) { // Assuming buildMode is a boolean flag, yes it is

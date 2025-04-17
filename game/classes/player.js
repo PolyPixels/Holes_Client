@@ -27,6 +27,7 @@ class Player {
         this.invBlock = new InvBlock();
         this.alignment = 50;
         this.moving = false;
+        this.kills = 0;
 
         // Animation properties
         this.currentFrame = 0; // Current frame for animation

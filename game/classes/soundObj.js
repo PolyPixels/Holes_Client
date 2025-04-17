@@ -1,12 +1,13 @@
 
 var soundDic = {};
 
-defineSound("digging.ogg", 0.5);
+defineSound("digging.wav", 0.7);
 defineSound("swing.wav", 0.5);
 defineSound("eat.ogg", 0.5);
 defineSound("hit.ogg", 0.5);
-defineSound("placing_dirt.ogg", 0.5);
+defineSound("placing_dirt.wav", 0.4);
 defineSound("placing_structure.ogg", 0.5);
+defineSound("snd_bizarreexplode.ogg", 0.5);
 
 class SoundObj{
     constructor(sound, x, y){

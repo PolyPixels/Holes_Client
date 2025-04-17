@@ -94,6 +94,13 @@ function bombUpdate(){
         }
     }
 
+    if(this.hp == 3){
+        let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+        //play hit noise and tell server
+        let temp = new SoundObj("snd_bizarreexplode.ogg", curPlayer.pos.x, curPlayer.pos.y);
+        testMap.chunks[chunkPos.x+","+chunkPos.y].soundObjs.push(temp);
+        socket.emit("new_sound", {sound: "snd_bizarreexplode.ogg", cPos: chunkPos, pos:{x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
+    }
     if(this.hp <= 3){
         for(let i=0; i<100; i++){
             push();
@@ -128,7 +135,7 @@ function bombUpdate(){
         if(this.id == curPlayer.id && this.ownerName == curPlayer.name) { 
 
         }
-
+        
         // Remove bomb after explosion
         this.deleteTag = true;
         let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
@@ -136,6 +143,7 @@ function bombUpdate(){
     }
 }
 defineCustomObj("PlacedBomb", ['bomb1','bomb2'], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, false);
+defineCustomObj("DirtBomb", ['dirtbomb'], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, false);
 
 var teamColors = [
     {r: 128, g: 128, b: 128}, //Gray - No Team

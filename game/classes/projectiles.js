@@ -8,6 +8,7 @@ var projDic = {};
 defineSimpleProjectile("Rock", 0, 20, 5, 20, "Straight", 5, 10);
 defineSimpleProjectile("Dirt", 1, 20, 0, 30, "Straight", 5, 10);
 defineObjProjectile("Bomb", "PlacedBomb", 40, 5, 2);
+defineObjProjectile("Dirt Bomb", "dirt", 40, 5, 2);
 
 class SimpleProjectile{
     constructor(name, damage, knockback, flightPath, speed, lifespan, ownerName, color, imgNum){
@@ -264,10 +265,29 @@ class MeleeProjectile extends SimpleProjectile{
 }
 
 class ObjProj extends SimpleProjectile{
-    constructor(name, x,y,a, speed, lifespan, objName, ownerName, color){
-        super(name, 0, 0, createFlightPath("Straight", x,y,a), speed, lifespan, ownerName, color, objDic[objName].img);
+    constructor(name, x,y,a, speed, lifespan, objName, radius, ownerName, color){
+        if(objName == "dirt"){
+            super(name, 0, 0, createFlightPath("Straight", x,y,a), speed, lifespan, ownerName, color, objDic["DirtBomb"].img);
+        }
+        else{
+            super(name, 0, 0, createFlightPath("Straight", x,y,a), speed, lifespan, ownerName, color, objDic[objName].img);
+        }
+        this.radius = radius;
         this.objName = objName;
         this.type = "ObjProj";
+    }
+
+    spawnObj(){
+        if(this.objName == "dirt"){
+            for(let y=-this.radius; y<this.radius; y++){
+                for(let x=-this.radius; x<this.radius; x++){
+                    if(((x*x)+(y*y)) < (this.radius*this.radius)){
+                        dig(this.pos.x+x, this.pos.y+y, -1, false);
+                    }
+                }
+            }
+        }
+        else testMap.chunks[this.cPos.x+','+this.cPos.y].objects.push(createObject(this.objName, this.pos.x, this.pos.y, 0, this.color, 0, this.ownerName));
     }
 
     render(){
@@ -302,7 +322,7 @@ class ObjProj extends SimpleProjectile{
 
         this.lifespan -= 1/60;
         if(this.lifespan <= 0){
-            testMap.chunks[this.cPos.x+','+this.cPos.y].objects.push(createObject(this.objName, this.pos.x, this.pos.y, 0, this.color, 0, this.ownerName));
+            this.spawnObj();
             this.deleteTag = true;
             socket.emit("delete_proj", this);
         }
@@ -315,10 +335,12 @@ class ObjProj extends SimpleProjectile{
         let x = floor(this.pos.x / TILESIZE) - (this.cPos.x*CHUNKSIZE);
         let y = floor(this.pos.y / TILESIZE) - (this.cPos.y*CHUNKSIZE);
         let chunk = testMap.chunks[this.cPos.x+","+this.cPos.y];
-        if(chunk.data[x + (y / CHUNKSIZE)] > 0){
-            testMap.chunks[this.cPos.x+','+this.cPos.y].objects.push(createObject(this.objName, this.pos.x, this.pos.y, 0, this.color, 0, this.ownerName));
-            this.deleteTag = true;
-            socket.emit("delete_proj", this);
+        if(x > 0 && x < CHUNKSIZE && y > 0 && y < CHUNKSIZE){
+            if(chunk.data[x + (y / CHUNKSIZE)] > 0){
+                this.spawnObj();
+                this.deleteTag = true;
+                socket.emit("delete_proj", this);
+            }
         }
 
         //check collision with objects
@@ -329,7 +351,7 @@ class ObjProj extends SimpleProjectile{
                 if(d < (chunk.objects[j].size.w+chunk.objects[j].size.h)/4){
                     if(chunk.objects[j].objName == "Door"){
                         if(chunk.objects[j].alpha == 255){
-                            testMap.chunks[this.cPos.x+','+this.cPos.y].objects.push(createObject(this.objName, this.pos.x, this.pos.y, 0, this.color, 0, this.ownerName));
+                            this.spawnObj();
                             this.deleteTag = true;
                             socket.emit("delete_proj", this);
 
@@ -341,7 +363,7 @@ class ObjProj extends SimpleProjectile{
                         }
                     }
                     else{
-                        testMap.chunks[this.cPos.x+','+this.cPos.y].objects.push(createObject(this.objName, this.pos.x, this.pos.y, 0, this.color, 0, this.ownerName));
+                        this.spawnObj();
                         this.deleteTag = true;
                         socket.emit("delete_proj", this);
 
@@ -358,7 +380,7 @@ class ObjProj extends SimpleProjectile{
         //check collision with curPlayer
         if((this.color == 0 && this.ownerName != curPlayer.name) || this.color != curPlayer.color){
             if(this.pos.dist(curPlayer.pos) < 29){
-                testMap.chunks[this.cPos.x+','+this.cPos.y].objects.push(createObject(this.objName, this.pos.x, this.pos.y, 0, this.color, 0, this.ownerName));
+                this.spawnObj();
                 this.deleteTag = true;
                 //if player collishion tell server to set delete tag to true
                 socket.emit("delete_proj", this);
@@ -384,7 +406,7 @@ function createProjectile(name,owner,color, x,y,a){
         return new MeleeProjectile(name, projDic[name].damage, projDic[name].knockback, x,y,a, projDic[name].lifespan, projDic[name].r, projDic[name].sr, projDic[name].aw, owner, color, projDic[name].imgNum);
     }
     if(projDic[name].type == "ObjProj"){
-        return new ObjProj(name, x,y,a, projDic[name].speed, projDic[name].lifespan, projDic[name].objName, owner, color);
+        return new ObjProj(name, x,y,a, projDic[name].speed, projDic[name].lifespan, projDic[name].objName, projDic[name].r, owner, color);
     }
 }
 

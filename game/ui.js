@@ -1093,10 +1093,9 @@ function startGame() {
     // Clear a small area around the player (example logic)
     for (let y = -5; y < 5; y++) {
         for (let x = -5; x < 5; x++) {
-            dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1);
+            dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1, false);
         }
     }
-    dirtInv = 0;
 }
 
 // ─────────────────────────────────────────────────────────
@@ -3003,10 +3002,9 @@ function defineDeathUI(){
         // Clear a small area around the player
         for (let y = -5; y < 5; y++) {
             for (let x = -5; x < 5; x++) {
-                dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1);
+                dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1, false);
             }
         }
-        dirtInv = 0;
         
         curPlayer.statBlock.stats.hp = 100;
 

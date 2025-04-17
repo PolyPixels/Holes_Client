@@ -5,7 +5,7 @@ function playerDig(x,y, amount){
 
     let digSpot = cast(curPlayer.pos.x, curPlayer.pos.y, ray.heading(), (amount < 0));
     if(digSpot != undefined){
-        dig(((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE), amount, digSpot.rayStart);
+        dig(((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE), amount, true, digSpot.rayStart);
         
         //2 extra digs to make a better path for walking
         let digSpot2;
@@ -44,19 +44,19 @@ function playerDig(x,y, amount){
             digSpot3 = {cx: digSpot.cx, cy: digSpot.cy, x: digSpot.x, y: digSpot.y+1};
         }
 
-        if(digSpot2 != undefined) dig(((digSpot2.cx*CHUNKSIZE+digSpot2.x)*TILESIZE), ((digSpot2.cy*CHUNKSIZE+digSpot2.y)*TILESIZE), amount, digSpot.rayStart);
-        if(digSpot3 != undefined) dig(((digSpot3.cx*CHUNKSIZE+digSpot3.x)*TILESIZE), ((digSpot3.cy*CHUNKSIZE+digSpot3.y)*TILESIZE), amount, digSpot.rayStart);
+        if(digSpot2 != undefined) dig(((digSpot2.cx*CHUNKSIZE+digSpot2.x)*TILESIZE), ((digSpot2.cy*CHUNKSIZE+digSpot2.y)*TILESIZE), amount, true, digSpot.rayStart);
+        if(digSpot3 != undefined) dig(((digSpot3.cx*CHUNKSIZE+digSpot3.x)*TILESIZE), ((digSpot3.cy*CHUNKSIZE+digSpot3.y)*TILESIZE), amount, true, digSpot.rayStart);
         
         if(digSoundTimer <= 0){
             if(amount > 0){
-                let temp = new SoundObj("digging.ogg", ((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE));
+                let temp = new SoundObj("digging.wav", ((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE));
                 testMap.chunks[digSpot.cx+","+digSpot.cy].soundObjs.push(temp);
-                socket.emit("new_sound", {sound: "digging.ogg", cPos: {x: digSpot.cx, y: digSpot.cy}, pos:{x: ((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), y: ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE)}, id: temp.id});
+                socket.emit("new_sound", {sound: "digging.wav", cPos: {x: digSpot.cx, y: digSpot.cy}, pos:{x: ((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), y: ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE)}, id: temp.id});
             }
             else{
-                let temp = new SoundObj("placing_dirt.ogg", ((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE));
+                let temp = new SoundObj("placing_dirt.wav", ((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE));
                 testMap.chunks[digSpot.cx+","+digSpot.cy].soundObjs.push(temp);
-                socket.emit("new_sound", {sound: "placing_dirt.ogg", cPos: {x: digSpot.cx, y: digSpot.cy}, pos:{x: ((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), y: ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE)}, id: temp.id});
+                socket.emit("new_sound", {sound: "placing_dirt.wav", cPos: {x: digSpot.cx, y: digSpot.cy}, pos:{x: ((digSpot.cx*CHUNKSIZE+digSpot.x)*TILESIZE), y: ((digSpot.cy*CHUNKSIZE+digSpot.y)*TILESIZE)}, id: temp.id});
             }
             digSoundTimer = 1.3;
         }
@@ -70,7 +70,7 @@ function playerDig(x,y, amount){
     }
 }
 
-async function dig(x, y, amt, rayStart) {
+function dig(x, y, amt, playerDiging, rayStart) {
     x = floor(x / TILESIZE);
     y = floor(y / TILESIZE);
     
@@ -103,14 +103,16 @@ async function dig(x, y, amt, rayStart) {
         pop();
     }
 
-    if(testMap.chunks[chunkPos.x+","+chunkPos.y] != undefined){
-        if(amt > 0){
-            dirtInv += amt;
-        }
-        else{
-            dirtInv += amt;
-            if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 1.3){
-                dirtInv -= testMap.chunks[chunkPos.x+","+chunkPos.y].data[index]-1.3;
+    if(playerDiging){
+        if(testMap.chunks[chunkPos.x+","+chunkPos.y] != undefined){
+            if(amt > 0){
+                dirtInv += amt;
+            }
+            else{
+                dirtInv += amt;
+                if (testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] > 1.3){
+                    dirtInv -= testMap.chunks[chunkPos.x+","+chunkPos.y].data[index]-1.3;
+                }
             }
         }
     }
