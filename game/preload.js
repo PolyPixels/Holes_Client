@@ -51,10 +51,14 @@ function preload() {
     //Projectile imgs still using the old method
     rockImg = loadImage("images/items/rock.png");
     dirtBallImg = loadImage("images/items/dirtball.png");
+    fireBallImg = loadImage("images/items/fireball.png");
+    laserImg = loadImage("images/items/laser.png");
 
     projImgs = [
         [rockImg],
-        [dirtBallImg]
+        [dirtBallImg],
+        [fireBallImg],
+        [laserImg]
     ];
 
     playerCardImg = loadImage('images/ui/playercard.png');
