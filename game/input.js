@@ -1,7 +1,9 @@
 var isChatting = false
 
 function getIsChatting() {
+    console.log("get is chatting ", isChatting)
     isChatting = (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA'));
+    console.log("isChatting ", isChatting)
 }
 
 function keyReleased() {
@@ -205,17 +207,26 @@ function keyPressed(){ //prevents normal key related actions
     if(keyCode == 9){ //TAB
         return false;
     }
+    if (keyCode === 13 && isChatting) { // 13 = Enter
+        console.log("dd")
+        blurActiveElement();
+        isChatting = false
+        return false; // prevent default enter behavior (like form submit)
+    }
+}
+function blurActiveElement() {
+    if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+        document.activeElement.blur();
+    }
 }
 
 function mouseReleased(){
-    if (isChatting) {
-        getIsChatting();
+
+    // remove chatting if clicked out side of bounds 
+    if (getIsChatting()) {
+        blurActiveElement();
         
-        if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
-            document.activeElement.blur();
-        }
-        
-        if (mouseX > 260 || mouseY < height - 50) {
+        if (!isChatting && (mouseX > 260 || mouseY < height - 50)) {
             gameState = "playing";
         }
     }
@@ -260,7 +271,8 @@ function mouseReleased(){
 }
 
 function continousMouseInput(){ //ran once every frame, good for anything like digging, or items
-    if(isChatting) return
+
+    if(isChatting || isElementVisible(pauseDiv)) return
     if (mouseIsPressed) {
         //converts screen space to global space
         let x = mouseX + camera.pos.x - width / 2;
@@ -375,9 +387,15 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
         }
     }
 }
+function isElementVisible(el) {
+    return el && el.style("display") !== "none";
+}
+
 
 function continousKeyBoardInput(){
-    if(isChatting) return
+    console.log("VIS",isElementVisible(pauseDiv))
+    console.log("Is Chatting", isChatting)
+    if(isChatting || isElementVisible(pauseDiv)) return
     if(gameState == "playing"){
         // default all keys to false
         curPlayer.holding = { w: false, a: false, s: false, d: false };

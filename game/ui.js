@@ -969,6 +969,7 @@ function renderChatUI() {
 
     chatSendButton.style("min-width", "5dvw");
     chatSendButton.mousePressed(() => {
+        blurActiveElement();
         sendChatMessage();
         gameState = "playing";
     });
