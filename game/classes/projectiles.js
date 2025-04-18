@@ -66,8 +66,9 @@ class SimpleProjectile{
 
     render(){
         push();
-        translate(-camera.pos.x+(width/2), -camera.pos.y+(height/2));
-        image(projImgs[this.imgNum][0], this.pos.x, this.pos.y, 40, 40);
+        translate(this.pos.x-camera.pos.x+(width/2), this.pos.y-camera.pos.y+(height/2));
+        rotate(this.flightPath.a);
+        image(projImgs[this.imgNum][0], 0, 0, 40, 40);
         pop();
     }
 
