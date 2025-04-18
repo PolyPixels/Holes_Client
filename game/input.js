@@ -342,8 +342,7 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                                 update_values: [curPlayer.animationType,curPlayer.animationFrame]
                             });
 
-                            updateCraftList();
-                            updatecurCraftItemDiv();
+                            renderBuildOptions();
                         }
                     }
                 }
