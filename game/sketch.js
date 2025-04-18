@@ -141,6 +141,86 @@ function draw() {
                 ghostBuild.ghostRender(createVector(ghostBuild.pos.x,ghostBuild.pos.y).dist(curPlayer.pos) < 200);
             }
 
+            //little f above the thing you can interact with
+            let mouseVec = createVector(mouseX + camera.pos.x - (width / 2), mouseY + camera.pos.y - (height / 2));
+            let chunkPos = testMap.globalToChunk(mouseVec.x,mouseVec.y);
+            let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
+            if(chunk != undefined){
+                let closest;
+                let closestDist;
+
+                for(let i = 0; i < chunk.objects.length; i++){
+                    if(chunk.objects[i].type == "InvObj" || chunk.objects[i].type == "Plant" || chunk.objects[i].objName == "Door"){
+                        if(closest == undefined){
+                            closest = chunk.objects[i];
+                            closestDist = mouseVec.dist(closest.pos);
+                        }
+                        else if (mouseVec.dist(chunk.objects[i].pos) < closestDist){
+                            closest = chunk.objects[i];
+                            closestDist = mouseVec.dist(closest.pos);
+                        }
+                    }
+                }
+                if(closest != undefined){
+                    if(closestDist < 2*TILESIZE){
+                        push();
+                        fill(120);
+                        stroke(0);
+                        strokeWeight(1);
+                        rectMode(CENTER);
+                        let offY = 0;
+                        if(closest.objName != "Door") offY = (closest.size.h * 0.8);
+                        rect(closest.pos.x - camera.pos.x + (width/2), closest.pos.y - offY - camera.pos.y + (height/2), 20, 20);
+
+                        fill(0);
+                        stroke(0);
+                        textAlign(CENTER, CENTER);
+                        textSize(15);
+                        textFont(gameUIFont);
+                        text("F", closest.pos.x - camera.pos.x + (width/2), closest.pos.y - offY - camera.pos.y + (height/2));
+                        pop();
+                    }
+                    else{
+                        let chunkPos = testMap.globalToChunk(curPlayer.pos.x,curPlayer.pos.y);
+                        let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
+                        closest = undefined;
+                        for(let i = 0; i < chunk.objects.length; i++){
+                            if(chunk.objects[i].type == "InvObj" || chunk.objects[i].type == "Plant" || chunk.objects[i].objName == "Door"){
+                                if(closest == undefined){
+                                    closest = chunk.objects[i];
+                                    closestDist = curPlayer.pos.dist(closest.pos);
+                                }
+                                if (curPlayer.pos.dist(chunk.objects[i].pos) < closestDist){
+                                    closest = chunk.objects[i];
+                                    closestDist = curPlayer.pos.dist(closest.pos);
+                                }
+                            }
+                        }
+
+                        if(closest != undefined){
+                            if(closestDist < 4*TILESIZE){
+                                push();
+                                fill(120);
+                                stroke(0);
+                                strokeWeight(1);
+                                rectMode(CENTER);
+                                let offY = 0;
+                                if(closest.objName != "Door") offY = (closest.size.h * 0.8);
+                                rect(closest.pos.x - camera.pos.x + (width/2), closest.pos.y - offY - camera.pos.y + (height/2), 20, 20);
+    
+                                fill(0);
+                                stroke(0);
+                                textAlign(CENTER, CENTER);
+                                textSize(15);
+                                textFont(gameUIFont);
+                                text("F", closest.pos.x - camera.pos.x + (width/2), closest.pos.y - offY - camera.pos.y + (height/2));
+                                pop();
+                            }
+                        }
+                    }
+                }
+            }
+
             lastHolding = curPlayer.holding;
 
             curPlayer.invBlock.renderHotBar();

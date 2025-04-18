@@ -81,6 +81,69 @@ function keyReleased() {
         } else {
             buildDiv.hide();
         }
+
+        if(keyCode == 70){ //f
+            let mouseVec = createVector(mouseX + camera.pos.x - (width / 2), mouseY + camera.pos.y - (height / 2));
+            let chunkPos = testMap.globalToChunk(mouseVec.x,mouseVec.y);
+            let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
+            let closest;
+            let closestDist;
+
+            for(let i = 0; i < chunk.objects.length; i++){
+                if(chunk.objects[i].type == "InvObj" || chunk.objects[i].type == "Plant" || chunk.objects[i].objName == "Door"){
+                    if(closest == undefined){
+                        closest = chunk.objects[i];
+                        closestDist = mouseVec.dist(closest.pos);
+                    }
+                    else if (mouseVec.dist(chunk.objects[i].pos) < closestDist){
+                        closest = chunk.objects[i];
+                        closestDist = mouseVec.dist(closest.pos);
+                    }
+                }
+            }
+            if(closest != undefined){
+                if(closestDist < 2*TILESIZE){
+                    if(closest.type == "InvObj"){
+                        closest.useInv();
+                    }
+                    else if(closest.type == "Plant"){
+                        closest.usePlant();
+                    }
+                    else if(closest.objName == "Door"){
+                        closest.useDoor();
+                    }
+                }
+                else{
+                    let chunkPos = testMap.globalToChunk(curPlayer.pos.x,curPlayer.pos.y);
+                    let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
+                    closest = undefined;
+                    for(let i = 0; i < chunk.objects.length; i++){
+                        if(chunk.objects[i].type == "InvObj" || chunk.objects[i].type == "Plant" || chunk.objects[i].objName == "Door"){
+                            if(closest == undefined){
+                                closest = chunk.objects[i];
+                                closestDist = curPlayer.pos.dist(closest.pos);
+                            }
+                            if (curPlayer.pos.dist(chunk.objects[i].pos) < closestDist){
+                                closest = chunk.objects[i];
+                                closestDist = curPlayer.pos.dist(closest.pos);
+                            }
+                        }
+                    }
+
+                    if(closestDist < 4*TILESIZE){
+                        if(closest.type == "InvObj"){
+                            closest.useInv();
+                        }
+                        else if(closest.type == "Plant"){
+                            closest.usePlant();
+                        }
+                        else if(closest.objName == "Door"){
+                            closest.useDoor();
+                        }
+                    }
+                }
+            }
+        }
      
     }
     else if(gameState == "inventory"){
@@ -246,35 +309,6 @@ function mouseReleased(){
         if(mouseX > width-530 && mouseX < width && mouseY > 0 && mouseY < 100){
             gameState = "team_select";
             teamPickDiv.show();
-        }
-    }
-
-    let x = mouseX + camera.pos.x - width / 2;
-    let y = mouseY + camera.pos.y - height / 2;
-    let chunkPos = testMap.globalToChunk(x,y);
-    let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
-    if(!chunk?.objects) return
-    for(let i = 0; i < chunk.objects.length; i++){
-        if(chunk.objects[i].objName == "Door"){
-            if(createVector(x,y).dist(chunk.objects[i].pos) < chunk.objects[i].size.h){
-                if(chunk.objects[i].ownerName == curPlayer.name || chunk.objects[i].color == curPlayer.color){ //only team members and you can open your doors
-                    if(chunk.objects[i].alpha == 255){
-                        chunk.objects[i].alpha = 100;
-                    }
-                    else{
-                        chunk.objects[i].alpha = 255;
-                    }
-                    let chunkPos = testMap.globalToChunk(chunk.objects[i].pos.x,chunk.objects[i].pos.y);
-                    socket.emit("update_obj", {
-                        cx: chunkPos.x, cy: chunkPos.y, 
-                        objName: chunk.objects[i].objName, 
-                        pos: {x: chunk.objects[i].pos.x, y: chunk.objects[i].pos.y}, 
-                        z: chunk.objects[i].z, 
-                        update_name: "alpha", 
-                        update_value: chunk.objects[i].alpha
-                    });
-                }
-            }
         }
     }
 }

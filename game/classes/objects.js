@@ -19,7 +19,7 @@ Obj Dic is a full dictanary of every object that can exist, falling into one of 
 */
 
 var objDic = {};
-definePlaceable("Wall", ['tempwall11','tempwall0','tempwall1','tempwall2','tempwall3','tempwall4','tempwall5','tempwall6','tempwall7','tempwall8','tempwall9','tempwall10','tempwall11'], [["dirt", 50]], 128, 128, 2, 100, true, true);
+definePlaceable("Wall", ['wall11','wall0','wall1','wall2','wall3','wall4','wall5','wall6','wall7','wall8','wall9','wall10','wall11'], [["dirt", 50]], 128, 128, 2, 100, true, true);
 definePlaceable("Door", ['tempdoor11','tempdoor0','tempdoor1','tempdoor2','tempdoor3','tempdoor4','tempdoor5','tempdoor6','tempdoor7','tempdoor8','tempdoor9','tempdoor10','tempdoor11'], [["dirt", 40], ["Log", 1]], 64, 128, 2, 100, true, true);
 definePlaceable("Floor", ['tempfloor11','tempfloor0','tempfloor1','tempfloor2','tempfloor3','tempfloor4','tempfloor5','tempfloor6','tempfloor7','tempfloor8','tempfloor9','tempfloor10','tempfloor11'], [["dirt", 30]], 128, 128, 0, 100, true, true);
 definePlaceable("Rug", ['temprug11','temprug0','temprug1','temprug2','temprug3','temprug4','temprug5','temprug6','temprug7','temprug8','temprug9','temprug10','temprug11'], [["dirt", 30]], 128, 128, 1, 100, true, true);
@@ -67,8 +67,10 @@ function turretUpdate(){
 }
 defineCustomObj("Turret", ['tempturret11','tempturret0','tempturret1','tempturret2','tempturret3','tempturret4','tempturret5','tempturret6','tempturret7','tempturret8','tempturret9','tempturret10','tempturret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
 definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 100, 60, "edible_mushroom");
-definePlant("AppleTree", ['apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 100, 60, "Apple");
-definePlant("Tree", ['tree'], [["Log", 4]], 120, 120, 100, 60, "Log");
+
+definePlaceable("AppleTree", ['apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 0, 100, false, false);
+definePlaceable("Tree", ['tree'], [["Log", 4]], 120, 120, 0, 100, false, false);
+
 defineInvObj("Chest", ['chest'], [['Log', 5]], 14*4, 15*4, 100, 100, false, true);
 defineInvObj("ItemBag", ['item_bag1'], [], 12*3, 13*3, 100, 100, false, false);
 
@@ -351,6 +353,28 @@ class Placeable{
         };
         
     }
+
+    useDoor(){
+        if(this.objName == "Door"){
+            if(this.ownerName == curPlayer.name || this.color == curPlayer.color){ //only team members and you can open your doors
+                if(this.alpha == 255){
+                    this.alpha = 100;
+                }
+                else{
+                    this.alpha = 255;
+                }
+                let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+                socket.emit("update_obj", {
+                    cx: chunkPos.x, cy: chunkPos.y, 
+                    objName: this.objName, 
+                    pos: {x: this.pos.x, y: this.pos.y}, 
+                    z: this.z, 
+                    update_name: "alpha", 
+                    update_value: this.alpha
+                });
+            }
+        }
+    }
 }
 
 class Plant extends Placeable{
@@ -427,6 +451,12 @@ class Plant extends Placeable{
             this.renderHealthBar()
         }
     }
+
+    usePlant(){
+        if(this.stage == (objImgs[this.imgNum].length-1)){
+            this.hp = 0;
+        }
+    }
 }
 
 class Trap extends Placeable{
@@ -492,33 +522,25 @@ class InvObj extends Placeable{
                 }
             }
         }
-        if(gameState != "playing") return;
-        if(!mouseIsPressed) return;
-        if(createVector(mouseX + camera.pos.x - width / 2, mouseY + camera.pos.y - height / 2).dist(this.pos) < (this.size.w+this.size.h)/2){ //if mouse is over the obj
-            if(mouseButton == LEFT){ //open inv
-                if(this.locked){ //when locked only owner can open
-                    if(curPlayer.name == this.ownerName && curPlayer.id == this.id){
-                        gameState = "swap_inv";
-                        curPlayer.otherInv = this;
-                        updateSwapItemLists(this.invBlock);
-                        swapInvDiv.show();
-                        //console.log("open Inv");
-                    }
-                }
-                else{ //when unlocked all team members can open
-                    if(curPlayer.color == this.color || (this.ownerName == "" && this.id == "")){
-                        gameState = "swap_inv";
-                        curPlayer.otherInv = this;
-                        updateSwapItemLists(this.invBlock);
-                        swapInvDiv.show();
-                        //console.log("open Inv");
-                    }
-                }
+    }
+
+    useInv(){
+        if(this.locked){ //when locked only owner can open
+            if(curPlayer.name == this.ownerName && curPlayer.id == this.id){
+                gameState = "swap_inv";
+                curPlayer.otherInv = this;
+                updateSwapItemLists(this.invBlock);
+                swapInvDiv.show();
+                //console.log("open Inv");
             }
-            else if(mouseButton == RIGHT){ //right click to lock or unlock this chest
-                if(curPlayer.name == this.ownerName && curPlayer.id == this.id){
-                    this.locked = !this.locked;
-                }
+        }
+        else{ //when unlocked all team members can open
+            if(curPlayer.color == this.color || (this.ownerName == "" && this.id == "")){
+                gameState = "swap_inv";
+                curPlayer.otherInv = this;
+                updateSwapItemLists(this.invBlock);
+                swapInvDiv.show();
+                //console.log("open Inv");
             }
         }
     }

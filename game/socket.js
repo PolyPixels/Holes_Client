@@ -231,6 +231,9 @@ function socketSetup(){
                 if(data.objects[i].stage == undefined) data.objects[i].stage = 0;
                 else temp.stage = data.objects[i].stage;
             }
+            if(temp.objName == "Door"){
+                temp.alpha = data.objects[i].alpha;
+            }
             temp.hp = data.objects[i].hp;
 
             testMap.chunks[data.x+","+data.y].objects.push(temp);
