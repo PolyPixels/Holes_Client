@@ -585,14 +585,14 @@ function drawSelection() {
     raceTitle.style("left", "50%");
     raceTitle.style("transform", "translateX(-50%)");
     raceTitle.style("max-width", "90vw");
-raceTitle.style("white-space", "normal");
+    raceTitle.style("white-space", "normal");
 
     // Responsive font size (combining viewport and fixed pixels)
     raceTitle.style("font-size", "calc(1.5vw + 12px)");
     if (window.innerWidth < 480) {
         raceTitle.style("font-size", "calc(1vw + 10px)");
-      }
-      
+    }
+
     raceTitle.style("font-weight", "bold");
     raceTitle.style("color", "#fff");
     raceTitle.style("text-shadow", "1px 1px 2px #000");
@@ -738,33 +738,33 @@ function setupUI() {
         raceStatsLbl.style("text-align", "right");
         raceStatsLbl.parent(card);
 
-// Hover out styling
-card.mouseOut(() => {
-    card.style("transform", "scale(1)");
-    card.style("box-shadow", "none");
+        // Hover out styling
+        card.mouseOut(() => {
+            card.style("transform", "scale(1)");
+            card.style("box-shadow", "none");
 
-    card.style("background-color", card.selected ? "#4CAF50" : "#222");
-});
+            card.style("background-color", card.selected ? "#4CAF50" : "#222");
+        });
 
-// On click: deselect all cards, select only this one
-card.mousePressed(() => {
-    //console.log(selectedItem, i, raceName);
+        // On click: deselect all cards, select only this one
+        card.mousePressed(() => {
+            //console.log(selectedItem, i, raceName);
 
-    // Deselect all cards
-    raceButtons.forEach((c) => {
-        c.selected = false;
-        c.style("background-color", "#222"); // reset background for all
-    });
+            // Deselect all cards
+            raceButtons.forEach((c) => {
+                c.selected = false;
+                c.style("background-color", "#222"); // reset background for all
+            });
 
-    // Select this card
-    card.selected = true;
-    card.style("background-color", "#4CAF50");
+            // Select this card
+            card.selected = true;
+            card.style("background-color", "#4CAF50");
 
-    raceSelected = true;
-    curRace = selectedItem;
+            raceSelected = true;
+            curRace = selectedItem;
 
-    //console.log("Race selected:", races[selectedItem]);
-});
+            //console.log("Race selected:", races[selectedItem]);
+        });
 
 
         // Hide the card initially (only shown in the race selection state)
@@ -784,38 +784,38 @@ card.mousePressed(() => {
     let inputX = (width - inputWidth) / 2;
     let inputY = height * 0.86;
     nameInput.size(inputWidth, AUTO); // Auto height from padding
-nameInput.position(inputX, inputY);
+    nameInput.position(inputX, inputY);
 
-// Responsive base styling
-nameInput.style("font-size", width < 500 ? "14px" : "18px");
-nameInput.style("border-radius", "8px");
-nameInput.style("padding", "10px");
-nameInput.style("outline", "none");
-nameInput.style("transition", "border 0.2s, box-shadow 0.2s");
-nameInput.style("width", inputWidth + "px");
-nameInput.attribute("placeholder", "Name :");
-nameInput.style("border", "2px solid #ccc"); // base border
+    // Responsive base styling
+    nameInput.style("font-size", width < 500 ? "14px" : "18px");
+    nameInput.style("border-radius", "8px");
+    nameInput.style("padding", "10px");
+    nameInput.style("outline", "none");
+    nameInput.style("transition", "border 0.2s, box-shadow 0.2s");
+    nameInput.style("width", inputWidth + "px");
+    nameInput.attribute("placeholder", "Name :");
+    nameInput.style("border", "2px solid #ccc"); // base border
 
-// Focus style
-nameInput.elt.addEventListener("focus", () => {
-  nameInput.style("border", "2px solid var(--color-gold)");
-  nameInput.style("box-shadow", "0 0 6px rgba(255, 215, 0, 0.6)");
+    // Focus style
+    nameInput.elt.addEventListener("focus", () => {
+        nameInput.style("border", "2px solid var(--color-gold)");
+        nameInput.style("box-shadow", "0 0 6px rgba(255, 215, 0, 0.6)");
 
 
-nameInput.attribute("placeholder", "");
-});
+        nameInput.attribute("placeholder", "");
+    });
 
-// Revert on blur
-nameInput.elt.addEventListener("blur", () => {
-  nameInput.style("border", "2px solid #ccc");
-  nameInput.style("box-shadow", "none");
-});
+    // Revert on blur
+    nameInput.elt.addEventListener("blur", () => {
+        nameInput.style("border", "2px solid #ccc");
+        nameInput.style("box-shadow", "none");
+    });
 
-    
+
     // Optional shadow or backdrop (optional UX polish)
     nameInput.style("background-color", "rgba(255, 255, 255, 0.9)");
     nameInput.style("box-shadow", "2px 2px 4px rgba(0, 0, 0, 0.3)");
-    
+
 
     nameInput.style("padding", "10px");
     nameInput.style("outline", "none");
@@ -842,7 +842,7 @@ nameInput.elt.addEventListener("blur", () => {
     // ---------------------------------------------------
     goButton = createButton("Go");
     goButton.hide();
-        // Position near the name input with a fixed offset
+    // Position near the name input with a fixed offset
     goButton.style("position", "absolute");
     goButton.style("left", "calc(50% + 130px)");
     goButton.style("top", "85dvh"); // or "80%" if more stable
@@ -889,7 +889,7 @@ function renderChatUI() {
     chatContainer.style("position", "fixed");
     chatContainer.style("bottom", "0dvh");
     chatContainer.style("left", "0dvw");
-    chatContainer.style("z-index", "1000");
+    chatContainer.style("z-index", "10");
     chatContainer.style("min-width", "10dvw");
     chatContainer.style("background", "rgba(34, 34, 34, 0.8)"); // Semi-transparent dark background
     chatContainer.style("padding", "10px");
@@ -1077,9 +1077,9 @@ function startGame() {
 
     //load in some chunks for easy start
     let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
-    for(let yOff = -2; yOff < 3; yOff++){
-        for(let xOff = -2; xOff < 3; xOff++){
-            testMap.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
+    for (let yOff = -2; yOff < 3; yOff++) {
+        for (let xOff = -2; xOff < 3; xOff++) {
+            testMap.getChunk(chunkPos.x + xOff, chunkPos.y + yOff);
         }
     }
 
@@ -1226,34 +1226,30 @@ function defineInvUI() {
     invDiv = createDiv();
     invDiv.id("inventory");
     invDiv.class("container");
-
+    // Bring swapInvDiv above other elements
+    invDiv.style("z-index", "50");
     // Minimal inline styles – rely on CSS for the main visuals
     applyStyle(invDiv, {
         position: "absolute",
         top: "45%",
-        left: "50%",
+        left: "55%",
         transform: "translate(-50%, -50%)",
         display: "none",
 
     });
 
-    // Top bar (title area)
     let topBar = createDiv().parent(invDiv);
-    // Let CSS handle sizing and layout. 
-    // We'll just give it an appropriate class if we want.
-    // e.g., topBar.class("top-bar");
+
     applyStyle(topBar, {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
     });
 
-    // Inventory Title
     let invTitle = createP("Inventory").parent(topBar);
     invTitle.class("inventory-title");
     invTitle.style("color", "yellow");
 
-    // Crafting Title
     let craftingTitle = createP("Crafting").parent(topBar);
     craftingTitle.class("inventory-title");
     craftingTitle.mousePressed(() => {
@@ -1264,13 +1260,9 @@ function defineInvUI() {
     });
     craftingTitle.style("cursor", "pointer");
 
-    // Tag Bar (Category Buttons)
     let tagBar = createDiv().parent(invDiv);
     tagBar.class("tag-bar");
-    // If you want minimal inline style:
-    // applyStyle(tagBar, { gap: "5px", borderBottom: "2px solid black" });
 
-    // Define categories
     const categories = ["All", "Tools/Seeds", "Weapons", "Equipment", "Consumables"];
     let categoryButtons = {};
 
@@ -1320,15 +1312,15 @@ function defineInvUI() {
 
     spaceBarDiv.hide();
 
-        // Close Button
+    // Close Button
     let closeButton = createButton("X").parent(topBar);
     closeButton.class("close-button"); // Style it in CSS
     applyStyle(closeButton, {
         marginLeft: "auto",  // Pushes it to the right
-        position:"absolute",
+        position: "absolute",
         fontSize: "18px",
-        right:"0",
-        color:"white",
+        right: "0",
+        color: "white",
         cursor: "pointer",
         background: "none",
         border: "none",
@@ -1425,7 +1417,7 @@ function updatecurItemDiv() {
     //clear the div
     curItemDiv.html("");
 
-    if(curPlayer.invBlock.curItem == "") {
+    if (curPlayer.invBlock.curItem == "") {
         let curItemNone = createP("No Selected Item");
         curItemNone.parent(curItemDiv);
         curItemNone.class("inventory-title");
@@ -1607,7 +1599,7 @@ function renderDirtBagUI() {
 
     if (dirtBagUI.shake.length > 0) {
         //dirt bag shake sound
-        if(!dirtBagShakeSound.isLooping()) dirtBagShakeSound.loop();
+        if (!dirtBagShakeSound.isLooping()) dirtBagShakeSound.loop();
         if (dirtBagUI.vel.mag() < 1) {
             dirtBagUI.vel.x = dirtBagUI.shake.intensity;
         }
@@ -1952,7 +1944,7 @@ function definePauseUI() {
     let sliderContainer = createDiv();
     sliderContainer.parent(settingsContainer);
     sliderContainer.style("margin", "20px 0");
-    
+
     // Label
     let volumeLabel = createElement("label", "Volume:");
     volumeLabel.parent(sliderContainer);
@@ -2010,9 +2002,9 @@ function definePauseUI() {
 
         // Update the volume of all sounds
         let keys = Object.keys(soundDic);
-        for(let i = 0; i < keys.length; i++){
-            for(let j = 1; j < soundDic[keys[i]].sounds.length; j++){
-                soundDic[keys[i]].sounds[j].setVolume((j/20)*soundDic[keys[i]].volume * (volumeSlider.value()/100));
+        for (let i = 0; i < keys.length; i++) {
+            for (let j = 1; j < soundDic[keys[i]].sounds.length; j++) {
+                soundDic[keys[i]].sounds[j].setVolume((j / 20) * soundDic[keys[i]].volume * (volumeSlider.value() / 100));
             }
         }
         toggleSettings()
@@ -2257,6 +2249,8 @@ function defineSwapInvUI() {
     swapInvDiv.style("left", "50%");
     swapInvDiv.style("transform", "translate(-50%, -50%)");
 
+    swapInvDiv.style("z-index", "50");
+
     let swapInvTitleBar = createDiv();
     swapInvTitleBar.parent(swapInvDiv);
     applyStyle(swapInvTitleBar, {
@@ -2315,10 +2309,10 @@ function defineSwapInvUI() {
     closeButton.class("close-button"); // Style it in CSS
     applyStyle(closeButton, {
         marginLeft: "auto",  // Pushes it to the right
-        position:"absolute",
+        position: "absolute",
         fontSize: "18px",
-        right:"0",
-        color:"white",
+        right: "0",
+        color: "white",
         cursor: "pointer",
         background: "none",
         border: "none",
@@ -2616,8 +2610,8 @@ function renderTimeUI() {
         timerDiv.html(" ⏳ " + timerDisplay);
         applyStyle(timerDiv, {
             position: "absolute",
-            width:"auto"
-    
+            width: "auto"
+
         });
     }
 }
@@ -2626,11 +2620,13 @@ var craftDiv;
 var craftListDiv;
 var curCraftItemDiv;
 
-function defineCraftingUI(){
+function defineCraftingUI() {
     // Main inventory container
     craftDiv = createDiv();
     craftDiv.id("inventory");
     craftDiv.class("container");
+
+    swapInvDiv.style("z-index", "50");
 
     // Minimal inline styles – rely on CSS for the main visuals
     applyStyle(craftDiv, {
@@ -2717,12 +2713,12 @@ function defineCraftingUI(){
     closeButton.class("close-button"); // Style it in CSS
     applyStyle(closeButton, {
         marginLeft: "auto",  // Pushes it to the right
-        position:"absolute",
-        right:"0",
+        position: "absolute",
+        right: "0",
         fontSize: "18px",
         cursor: "pointer",
         background: "none",
-        color:"white",
+        color: "white",
         border: "none",
     });
 
@@ -2735,7 +2731,7 @@ function defineCraftingUI(){
     updatecurCraftItemDiv();
 }
 
-function updateCraftList(){
+function updateCraftList() {
     if (curPlayer == undefined) return;
 
     craftListDiv.html("");
@@ -2808,13 +2804,13 @@ function updateCraftList(){
     }
 }
 
-function updatecurCraftItemDiv(){
+function updatecurCraftItemDiv() {
     if (curPlayer == undefined) return;
 
     //clear the div
     curCraftItemDiv.html("");
 
-    if(curPlayer.invBlock.curItem == "") {
+    if (curPlayer.invBlock.curItem == "") {
         let curCraftItemNone = createP("No Selected Item");
         curCraftItemNone.parent(curCraftItemDiv);
         curCraftItemNone.class("inventory-title");
@@ -2891,7 +2887,7 @@ function updatecurCraftItemDiv(){
     craftButton.style("align-items", "center");
     craftButton.style("justify-content", "center");
     craftButton.style("margin-bottom", "5px");
-    if(!curPlayer.invBlock.craftCheck(curPlayer.invBlock.curItem)){
+    if (!curPlayer.invBlock.craftCheck(curPlayer.invBlock.curItem)) {
         craftButton.style("opacity", "0.5");
         craftButton.style("background-color", "red");
         craftButton.style("pointer-events", "none");
@@ -2900,16 +2896,16 @@ function updatecurCraftItemDiv(){
     craftButton.mousePressed(() => {
         if (curPlayer.invBlock.craftCheck(curPlayer.invBlock.curItem)) {
             curPlayer.invBlock.addItem(curPlayer.invBlock.curItem, 1);
-            for(let i=0; i<itemDic[curPlayer.invBlock.curItem].cost.length; i++){
+            for (let i = 0; i < itemDic[curPlayer.invBlock.curItem].cost.length; i++) {
                 //console.log(itemDic[curPlayer.invBlock.curItem].cost[i]);
-                if(itemDic[curPlayer.invBlock.curItem].cost[i][0] == "Dirt"){
+                if (itemDic[curPlayer.invBlock.curItem].cost[i][0] == "Dirt") {
                     dirtInv -= itemDic[curPlayer.invBlock.curItem].cost[i][1];
                 }
-                else{
+                else {
                     curPlayer.invBlock.decreaseAmount(itemDic[curPlayer.invBlock.curItem].cost[i][0], itemDic[curPlayer.invBlock.curItem].cost[i][1]);
                 }
             }
-            
+
             updateCraftList();
             updatecurCraftItemDiv();
         }
@@ -2931,7 +2927,7 @@ function updatecurCraftItemDiv(){
     costList.style("overflow-y", "auto");
     costList.parent(itemCostDiv);
 
-    for(let i=0; i<itemDic[curPlayer.invBlock.curItem].cost.length; i++){
+    for (let i = 0; i < itemDic[curPlayer.invBlock.curItem].cost.length; i++) {
         let costDiv = createDiv();
         costDiv.style("width", "100%");
         costDiv.style("height", "20px");
@@ -2965,7 +2961,7 @@ function updatecurCraftItemDiv(){
 
 var deathDiv;
 
-function defineDeathUI(){
+function defineDeathUI() {
     deathDiv = createDiv();
     deathDiv.id("deathDiv");
     deathDiv.class("container");
@@ -2989,14 +2985,14 @@ function defineDeathUI(){
     let respawnButton = createButton("Respawn").parent(deathDiv);
     styleButton(respawnButton);
     respawnButton.mousePressed(() => {
-        curPlayer.pos.x = random(-200*TILESIZE, 200*TILESIZE);
-        curPlayer.pos.y = random(-200*TILESIZE, 200*TILESIZE);
+        curPlayer.pos.x = random(-200 * TILESIZE, 200 * TILESIZE);
+        curPlayer.pos.y = random(-200 * TILESIZE, 200 * TILESIZE);
 
         //load in some chunks for easy start
         let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
-        for(let yOff = -1; yOff < 2; yOff++){
-            for(let xOff = -1; xOff < 2; xOff++){
-                testMap.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
+        for (let yOff = -1; yOff < 2; yOff++) {
+            for (let xOff = -1; xOff < 2; xOff++) {
+                testMap.getChunk(chunkPos.x + xOff, chunkPos.y + yOff);
             }
         }
         // Clear a small area around the player
@@ -3005,7 +3001,7 @@ function defineDeathUI(){
                 dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1, false);
             }
         }
-        
+
         curPlayer.statBlock.stats.hp = 100;
 
         socket.emit("update_pos", {
@@ -3022,7 +3018,7 @@ function defineDeathUI(){
         });
 
         giveDefaultItems();
-        
+
         gameState = "playing";
         deathDiv.hide();
     });

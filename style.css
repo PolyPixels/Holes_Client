@@ -300,8 +300,7 @@ input:focus {
   border-radius: 10px;
   text-align: center;
   transition: 0.3s ease-in-out;
-
-
+  flex-grow: calc(10);
 }
 
 input:focus {
@@ -452,6 +451,10 @@ tag-bar:hover {
     font-size: 1rem;
   }
 
+  .serverEntry {
+    min-width: 40px;
+    flex-direction: column;
+  }
   input,
   textarea,
   select {
