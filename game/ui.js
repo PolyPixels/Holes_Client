@@ -2119,7 +2119,7 @@ function renderPlayerCardUI() {
     rect(width - 530 + 340, 83, 36, 19);
 
     image(hpBarImg, width - 530 + 93, 52, 281 * (curPlayer.statBlock.stats.hp / curPlayer.statBlock.stats.mhp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.hp / curPlayer.statBlock.stats.mhp), 14);
-    image(manaBarImg, width - 530 + 93, 83, 281 * (1), 14);
+    image(manaBarImg, width - 530 + 93, 83, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14);
 
     let raceName = races[curPlayer.race];
     image(raceImages[raceName].portrait, width - 30 - 115 + 6 + 7, 7, 98, 98);

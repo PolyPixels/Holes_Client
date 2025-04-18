@@ -28,8 +28,8 @@ defineRanged("Better SlingShot", ["sling"], [["Mushroom", 2], ["Gem", 1]], 1, 10
 defineRanged("Dirt Ball", ["dirtball"], [["Dirt", 5]], 1, 1, 0, 5, "Dirt", "Dirt Ball", 10, 10, 60, false, "A ball of dirt to push people around",true);
 defineRanged("Bomb", ["images/structures/bomb1"], [["Dirt", 5]], 1, 1, 0, 5, "Bomb", "Bomb", 10, 10, 60, false, "A bomb you can throw",false);
 defineRanged("DirtBomb", ["images/structures/dirtbomb"], [["Dirt", 5]], 1, 1, 0, 5, "Dirt Bomb", "DirtBomb", 10, 10, 60, false, "A bomb that just makes dirt",false);
-defineRanged("Fire Staff", ["fire_staff"], [["Dirt", 5]], 1, 100, 0, 5, "Fire Ball", "Mana", 10, 10, 60, false, "A staff that shoots fire",false);
-defineRanged("Laser Gun", ["laser_gun"], [["Dirt", 5]], 1, 100, 0, 5, "Laser", "Mana", 10, 10, 60, false, "A gun that shoots lasers",false);
+defineRanged("Fire Staff", ["fire_staff"], [["Dirt", 5]], 1, 100, 0, 5, "Fire Ball", "mana25", 10, 10, 60, true, "A staff that shoots fire",false);
+defineRanged("Laser Gun", ["laser_gun"], [["Dirt", 5]], 1, 100, 0, 5, "Laser", "mana15", 10, 10, 60, false, "A gun that shoots lasers",false);
 
 defineSimpleItem("Rock", ["rock"], [], 1, "A rock for your slingshot",false);
 defineSimpleItem("Gem", ["gem"], [], 1, "A pretty gem",false);
@@ -185,7 +185,7 @@ class Melee extends SimpleItem{
 }
 
 class Ranged extends SimpleItem{
-    constructor(itemName, weight, durability, imgNum, desc, damage, spread, projName, ammoName, fireRate, roundSize, reloadSpeed, magicBool){
+    constructor(itemName, weight, durability, imgNum, desc, damage, spread, projName, ammoName, fireRate, roundSize, reloadSpeed, manaCost, magicBool){
         super(itemName, weight, durability, imgNum, desc);
         this.damage = damage;
         this.spread = spread;
@@ -195,6 +195,7 @@ class Ranged extends SimpleItem{
         this.roundSize = roundSize; //how many bullets can be shot before reload
         this.reloadSpeed = reloadSpeed; //how many frames it takes to reload
         this.magicBool = magicBool; //magic damage or nah
+        this.manaCost = manaCost;
 
         this.bulletsLeft = roundSize; //how many bullets left in a round
         this.type = "Ranged";
@@ -204,7 +205,7 @@ class Ranged extends SimpleItem{
         if(mouseButton == LEFT){
             if(curPlayer.invBlock.useTimer <= 0){
                 if(this.bulletsLeft > 0){
-                    if(curPlayer.invBlock.items[this.ammoName] != undefined || this.ammoName == "Mana"){ //if you have item used for ammo
+                    if(curPlayer.invBlock.items[this.ammoName] != undefined || (this.ammoName == "mana" && curPlayer.statBlock.stats.mp >= this.manaCost)){ //if you have item used for ammo
                         //console.log("Shoot");
                         let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
                         let toMouse = createVector(x,y).sub(curPlayer.pos).setMag(50);
@@ -220,7 +221,8 @@ class Ranged extends SimpleItem{
                         //tell the server you made a projectile
                         socket.emit("new_proj", proj);
                         this.bulletsLeft --;
-                        if(this.ammoName != "Mana") curPlayer.invBlock.decreaseAmount(this.ammoName, 1);
+                        if(this.ammoName != "mana") curPlayer.invBlock.decreaseAmount(this.ammoName, 1);
+                        else curPlayer.statBlock.stats.mp -= this.manaCost;
                         curPlayer.invBlock.useTimer = this.fireRate;
                     }
                 }
@@ -410,7 +412,7 @@ function createItem(name){
             return new Melee(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].damage, itemDic[name].range, itemDic[name].safeRange, itemDic[name].angle, itemDic[name].swingSpeed, itemDic[name].magicBool);
         }
         else if(itemDic[name].type == "Ranged"){
-            return new Ranged(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].damage, itemDic[name].spread, itemDic[name].projName, itemDic[name].ammoName, itemDic[name].fireRate, itemDic[name].roundSize, itemDic[name].reloadSpeed, itemDic[name].magicBool);
+            return new Ranged(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].damage, itemDic[name].spread, itemDic[name].projName, itemDic[name].ammoName, itemDic[name].fireRate, itemDic[name].roundSize, itemDic[name].reloadSpeed, itemDic[name].manaCost, itemDic[name].magicBool);
         }
         else if(itemDic[name].type == "Food"){
             return new Food(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].heal);
@@ -569,11 +571,19 @@ function defineRanged(name, imgPaths, cost, weight, durability, damage, spread, 
         [paramNames[5], paramNames[6], paramNames[7], paramNames[8], paramNames[9], paramNames[10], paramNames[11], paramNames[12]],
         ["int","int","string","string","int","int","number","boolean"]
     );
+
+    if(ammoName.includes("mana")){
+        itemDic[name].ammoName = "mana";
+        itemDic[name].manaCost = parseInt(ammoName.substring(4));
+    }
+    else{
+        itemDic[name].ammoName = ammoName;
+        itemDic[name].manaCost = 0;
+    }
     
     itemDic[name].damage = damage;
     itemDic[name].spread = spread;
     itemDic[name].projName = projName;
-    itemDic[name].ammoName = ammoName;
     itemDic[name].fireRate = fireRate;
     itemDic[name].roundSize = roundSize;
     itemDic[name].reloadSpeed = reloadSpeed;
