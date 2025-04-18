@@ -1,14 +1,13 @@
 var isChatting = false
 
 function getIsChatting() {
-    console.log("get is chatting ", isChatting)
+    //console.log("get is chatting ", isChatting)
     isChatting = (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA'));
-    console.log("isChatting ", isChatting)
+    //console.log("isChatting ", isChatting)
+    return isChatting;
 }
 
 function keyReleased() {
-
-    
     if(keyCode == 27 && gameState != "pause" && gameState != "initial" && gameState != "race_selection"){ //ESC
         gameState = "playing";
         pauseDiv.hide();
@@ -208,7 +207,7 @@ function keyPressed(){ //prevents normal key related actions
         return false;
     }
     if (keyCode === 13 && isChatting) { // 13 = Enter
-        console.log("dd")
+        //console.log("dd");
         blurActiveElement();
         isChatting = false
         return false; // prevent default enter behavior (like form submit)
@@ -222,11 +221,10 @@ function blurActiveElement() {
 
 function mouseReleased(){
 
-    // remove chatting if clicked out side of bounds 
-    if (getIsChatting()) {
-        blurActiveElement();
-        
-        if (!isChatting && (mouseX > 260 || mouseY < height - 50)) {
+    if(gameState != "initial" && gameState != "settings" && gameState != "race_selection"){
+        // remove chatting if clicked out side of bounds 
+        if(!getIsChatting()){
+            blurActiveElement();
             gameState = "playing";
         }
     }
@@ -393,9 +391,7 @@ function isElementVisible(el) {
 
 
 function continousKeyBoardInput(){
-    console.log("VIS",isElementVisible(pauseDiv))
-    console.log("Is Chatting", isChatting)
-    if(isChatting || isElementVisible(pauseDiv)) return
+    if(getIsChatting() || isElementVisible(pauseDiv)) return
     if(gameState == "playing"){
         // default all keys to false
         curPlayer.holding = { w: false, a: false, s: false, d: false };
