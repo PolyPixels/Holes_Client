@@ -119,8 +119,8 @@ function bombUpdate(){
         
         // Bomb hurts everyone nearby
         if(this.pos.dist(curPlayer.pos) < 33+(6*(this.size.w+this.size.h)/4)){
-            curPlayer.statBlock.stats.hp -= 20;
-            camera.shake = {intensity: 20, length: 5};
+            curPlayer.statBlock.stats.hp -= ((33+(6*(this.size.w+this.size.h)/4))-this.pos.dist(curPlayer.pos))/2;
+            camera.shake = {intensity: ((33+(6*(this.size.w+this.size.h)/4))-this.pos.dist(curPlayer.pos))/2, length: 5};
             camera.edgeBlood = 5;
             socket.emit("update_player", {
                 id: curPlayer.id,

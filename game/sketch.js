@@ -9,7 +9,7 @@ var collisionChecks = [];
 const races = BASE_STATS.map(item => item.name);
 var camera = {};
 var dirtBagUI = {};
-var Debuging = true;
+var Debuging = false;
 //console.log("Race names:", races);
 
 function setup() {
