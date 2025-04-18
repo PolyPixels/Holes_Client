@@ -1083,7 +1083,7 @@ function startGame() {
         }
     }
 
-    giveAllItems(); //TODO: give players starting gear not all items
+    giveDefaultItems();
 
     document.getElementById("canvas-container").style.display = "block";
     socket.emit("new_player", curPlayer);
@@ -3020,6 +3020,8 @@ function defineDeathUI(){
             update_names: ["stats.hp"],
             update_values: [curPlayer.statBlock.stats.hp]
         });
+
+        giveDefaultItems();
         
         gameState = "playing";
         deathDiv.hide();

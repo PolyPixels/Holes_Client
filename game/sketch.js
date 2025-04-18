@@ -149,7 +149,7 @@ function draw() {
             if(curPlayer.statBlock.stats.hp <= 0){ //death
                 //console.log("dead",curPlayer.attackingOBJ);
                 let dealthData = {x:curPlayer.pos.x , y : curPlayer.pos.y, name : curPlayer.name, id:curPlayer.id, attacker : curPlayer.attackingOBJ ? curPlayer.attackingOBJ.ownerName : " Some thing Ominous"}
-                socket.emit("player_dies", dealthData)
+                socket.emit("player_dies", dealthData);
 
                 curPlayer.invBlock.dropAll();
 

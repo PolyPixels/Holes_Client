@@ -141,6 +141,22 @@ function giveAllItems(){
     curPlayer.invBlock.hotbarItem("Mushroom Seed", 4);
 }
 
+function giveDefaultItems(){
+    curPlayer.invBlock.addItem("Basic Shovel", 1);
+    curPlayer.invBlock.addItem("Basic Sword", 1);
+    curPlayer.invBlock.addItem("Basic SlingShot", 1);
+    curPlayer.invBlock.addItem("Mushroom Seed", 5);
+    curPlayer.invBlock.addItem("Rock", 20);
+    curPlayer.invBlock.addItem("Log", 5);
+    curPlayer.invBlock.addItem("Apple", 5);
+
+    curPlayer.invBlock.hotbarItem("Basic Shovel", 0);
+    curPlayer.invBlock.hotbarItem("Basic Sword", 1);
+    curPlayer.invBlock.hotbarItem("Basic SlingShot", 2);
+    curPlayer.invBlock.hotbarItem("Apple", 3);
+    curPlayer.invBlock.hotbarItem("Mushroom Seed", 4);
+}
+
 function spawnObj(name, x, y, rot = 0, color = 0, id = "", ownerName = ""){
     let chunkPos = testMap.globalToChunk(x,y);
     let temp = createObject(name, x, y, rot, color, id, ownerName);
