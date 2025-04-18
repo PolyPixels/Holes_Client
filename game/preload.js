@@ -55,12 +55,14 @@ function preload() {
     dirtBallImg = loadImage("images/items/dirtball.png");
     fireBallImg = loadImage("images/items/fireball.png");
     laserImg = loadImage("images/items/laser.png");
+    arrowImage = loadImage("images/items/arrow.png");
 
     projImgs = [
         [rockImg],
         [dirtBallImg],
         [fireBallImg],
-        [laserImg]
+        [laserImg],
+        [arrowImage]
     ];
 
     playerCardImg = loadImage('images/ui/playercard.png');

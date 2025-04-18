@@ -20,6 +20,7 @@ defineShovel("God Shovel", ["shovel3"], [["Rock",2],["Philosopher's Stone",1]], 
 
 defineMelee("Basic Sword", ["sword1"], [["Log",1],["Rock",2]], 1, 100, 25, 5, 50, 60, 90, 30, false, "A basic sword for slashing",true);
 defineMelee("Better Sword", ["sword2"], [["Rock",1],["Gem",2]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A better sword for slashing",true);
+defineMelee("Gem Sword", ["gem_sword"], [["Gem",5]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A godly sword for slashing",true);
 defineMelee("Evil Apple on Stick", ["evil_apple_on_stick"], [["Bad Apple",1],["Log",1]], 1, 100, 10, 5, 100, 60, 20, 10, false, "Now it'll bite your opponets",true);
 defineMelee("Scythe", ["scythe"], [["Log",2],["Rock",3]], 1, 100, 25, 5, 50, 150, 150, 120, false, "Just gotta make sure they are on the blade",true);
 
@@ -30,6 +31,9 @@ defineRanged("Bomb", ["images/structures/bomb1"], [["Dirt", 5]], 1, 1, 0, 5, "Bo
 defineRanged("DirtBomb", ["images/structures/dirtbomb"], [["Dirt", 5], ["Bomb", 1]], 1, 1, 0, 5, "Dirt Bomb", "DirtBomb", 10, 10, 60, false, "A bomb that just makes dirt",false);
 defineRanged("Fire Staff", ["fire_staff"], [["Dirt", 5]], 1, 100, 0, 5, "Fire Ball", "mana25", 10, 10, 60, true, "A staff that shoots fire",false);
 defineRanged("Laser Gun", ["laser_gun"], [["Rock", 5], ["Tech", 2]], 1, 100, 0, 5, "Laser", "mana15", 10, 10, 60, false, "A gun that shoots lasers",true);
+defineRanged("Bow", ["bow"], [["Log", 5]], 1, 100, 0, 5, "Arrow", "Arrow", 10, 10, 60, false, "A bow",true);
+defineRanged("CrossBow", ["crossbow"], [["Log", 5], ["Rock", 1]], 1, 100, 0, 5, "Arrow", "Arrow", 10, 10, 60, false, "A Cross bow",true);
+defineRanged("TriSling", ["trisling"], [["Better SlingShot", 3]], 1, 100, 0, 5, "Rock", "Rock", 10, 10, 60, false, "A handful of slingshots",true);
 
 defineSimpleItem("Rock", ["rock"], [], 1, "A rock for your slingshot",false);
 defineSimpleItem("Gem", ["gem"], [], 1, "A pretty gem",false);
@@ -37,6 +41,7 @@ defineSimpleItem("Black Gem", ["black_gem"], [], 1, "An explosive gem",false);
 defineSimpleItem("Philosopher's Stone", ["philosopher_stone"], [], 1, "A gem with immense power flowing out of it",false);
 defineSimpleItem("Log", ["log"], [], 1, "A wooden log",false);
 defineSimpleItem("Tech", ["circuit"], [], 1, "Some piece of technology",false);
+defineSimpleItem("Arrow", ["arrow"], [["Log", 1], ["Rock", 1]], 1, "An arrow",true);
 
 defineFood("Apple", ["apple"], [], 1, 100, 10, "A juicy apple",false);
 defineFood("Bad Apple", ["bad_apple"], [], 1, 100, 5, "Looks like this apple would bite back",false);
