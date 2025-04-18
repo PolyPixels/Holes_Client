@@ -20,7 +20,7 @@ Obj Dic is a full dictanary of every object that can exist, falling into one of 
 
 var objDic = {};
 definePlaceable("Wall", ['wall11','wall0','wall1','wall2','wall3','wall4','wall5','wall6','wall7','wall8','wall9','wall10','wall11'], [["dirt", 50]], 128, 128, 2, 100, true, true);
-definePlaceable("Door", ['tempdoor11','tempdoor0','tempdoor1','tempdoor2','tempdoor3','tempdoor4','tempdoor5','tempdoor6','tempdoor7','tempdoor8','tempdoor9','tempdoor10','tempdoor11'], [["dirt", 40], ["Log", 1]], 64, 128, 2, 100, true, true);
+definePlaceable("Door", ['tempdoor11','door0','door1','door2','tempdoor3','tempdoor4','tempdoor5','tempdoor6','tempdoor7','tempdoor8','tempdoor9','tempdoor10','tempdoor11'], [["dirt", 40], ["Log", 1]], 64, 128, 2, 100, true, true);
 definePlaceable("Floor", ['tempfloor11','tempfloor0','tempfloor1','tempfloor2','tempfloor3','tempfloor4','tempfloor5','tempfloor6','tempfloor7','tempfloor8','tempfloor9','tempfloor10','tempfloor11'], [["dirt", 30]], 128, 128, 0, 100, true, true);
 definePlaceable("Rug", ['temprug11','temprug0','temprug1','temprug2','temprug3','temprug4','temprug5','temprug6','temprug7','temprug8','temprug9','temprug10','temprug11'], [["dirt", 30]], 128, 128, 1, 100, true, true);
 definePlaceable("Mug", ['tempmug'], [["dirt", 10]], 32, 32, 3, 100, false, true);
