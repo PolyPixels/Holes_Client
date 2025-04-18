@@ -249,6 +249,7 @@ class InvBlock{
         rectMode(CENTER);
         rect(width - (0.866 * 255), height - (0.5 * 255), 20, 20);  // Q
         rect(width - (0.5 * 255), height - (0.866 * 255), 20, 20);  // E
+        rect(width - 350, height - 30, 20, 20);  // R
     
         // That triangular shape
         fill(255, 0, 0);
@@ -266,7 +267,10 @@ class InvBlock{
         textFont(gameUIFont);
         text("Q", width - (0.866 * 255), height - (0.5 * 255) - 3);
         text("E", width - (0.5 * 255), height - (0.866 * 255) - 1.5);
+        text("R", width - 350, height - 30);
     
+        if(!buildMode) image(hammerImg, width - 385, height - 30, 40, 40);
+        else image(Ximage, width - 385, height - 30, 40, 40);
 
         // === Add item name at bottom center with background ===
     let selectedItemName = this.hotbar[this.selectedHotBar];

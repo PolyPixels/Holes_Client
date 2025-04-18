@@ -29,6 +29,8 @@ function preload() {
     hpBarImg = loadImage('images/ui/healthbar.png');
     manaBarImg = loadImage('images/ui/manabar.png');
     edgeBloodImg = loadImage('images/ui/edgeblood.png');
+    hammerImg = loadImage("images/ui/hammer.png");
+    Ximage = loadImage("images/ui/x.png");
 
     //load obj imgs
     for(let i = 0; i < objImgPaths.length; i++){
