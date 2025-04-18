@@ -150,7 +150,7 @@ class SimpleProjectile{
 
 class MeleeProjectile extends SimpleProjectile{
     constructor(name, damage, knockback, x,y,a, lifespan, range, safeRange, angleWidth, ownerName, color, imgNum){
-        super(name, damage/(lifespan*60), knockback, createFlightPath("Stay", x,y,a), 0, lifespan, ownerName, color, imgNum);
+        super(name, damage, knockback, createFlightPath("Stay", x,y,a), 0, lifespan, ownerName, color, imgNum);
         
         this.range = range;
         this.safeRange = safeRange;
@@ -224,13 +224,14 @@ class MeleeProjectile extends SimpleProjectile{
                     chunk.objects[j].pos.copy().sub(this.pos).heading() > this.flightPath.a-(this.angleWidth/2) &&
                     chunk.objects[j].pos.copy().sub(this.pos).heading() < this.flightPath.a+(this.angleWidth/2)
                 ){
-                    if(this.lifespan >= projDic[this.name].lifespan - (1/60)){
-                        //play hit noise and tell server
-                        let temp = new SoundObj("hit.ogg", chunk.objects[j].pos.x, chunk.objects[j].pos.y);
-                        testMap.chunks[chunk.cx+","+chunk.cy].soundObjs.push(temp);
-                        socket.emit("new_sound", {sound: "hit.ogg", cPos: {x: chunk.cx, y: chunk.cy}, pos:{x: chunk.objects[j].pos.x, y: chunk.objects[j].pos.y}, id: temp.id});
-                    }
+                    //play hit noise and tell server
+                    let temp = new SoundObj("hit.ogg", chunk.objects[j].pos.x, chunk.objects[j].pos.y);
+                    testMap.chunks[chunk.cx+","+chunk.cy].soundObjs.push(temp);
+                    socket.emit("new_sound", {sound: "hit.ogg", cPos: {x: chunk.cx, y: chunk.cy}, pos:{x: chunk.objects[j].pos.x, y: chunk.objects[j].pos.y}, id: temp.id});
                     damageObj(chunk, chunk.objects[j], this.damage);
+                    
+                    this.deleteTag = true;
+                    socket.emit("delete_proj", this);
                 }
             }
         }
@@ -261,6 +262,9 @@ class MeleeProjectile extends SimpleProjectile{
                     update_names: ["stats.hp"],
                     update_values: [curPlayer.statBlock.stats.hp]
                 });
+                
+                this.deleteTag = true;
+                socket.emit("delete_proj", this);
             }
         }
     }
