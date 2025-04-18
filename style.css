@@ -156,13 +156,15 @@ select:focus {
 /* Misc elements */
 .spacebar-hotkey {
   position: absolute;
-  top: 105%;
+  bottom: 14%;
   left: 50%;
   transform: translateX(-50%);
   background-color: var(--color-ui-dark);
   border: 2px solid var(--color-black);
   padding: 6px;
   font-size: 1rem;
+  color: white;
+  cursor: pointer;
 }
 
 .tag-bar {

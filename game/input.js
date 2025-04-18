@@ -13,6 +13,7 @@ function keyReleased() {
         gameState = "playing";
         pauseDiv.hide();
         invDiv.hide();
+        spaceBarDiv.hide();
         player_status_container.hide();
         craftDiv.hide();
         teamPickDiv.hide();
@@ -92,12 +93,14 @@ function keyReleased() {
         if(keyCode == 73){ //i
             gameState = "playing";
             invDiv.hide();
+            spaceBarDiv.hide();
         }
         if(keyCode == 67){ //c
             gameState = "crafting";
             craftDiv.show();
             updateCraftList();
             invDiv.hide();
+            spaceBarDiv.hide();
         }
     }
     else if(gameState == "crafting"){
@@ -172,6 +175,10 @@ function keyReleased() {
         if(keyCode == 73){ //i
             gameState = "playing";
             swapInvDiv.hide();
+            spaceBarDiv.hide();
+        }
+        if(keyCode == 16){ //Shift
+            updateSpaceBarDiv();
         }
     }
 
@@ -212,6 +219,9 @@ function keyPressed(){ //prevents normal key related actions
         blurActiveElement();
         isChatting = false
         return false; // prevent default enter behavior (like form submit)
+    }
+    if(keyCode == 16){ //Shift
+        updateSpaceBarDiv();
     }
 }
 function blurActiveElement() {

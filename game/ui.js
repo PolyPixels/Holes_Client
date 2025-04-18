@@ -645,6 +645,7 @@ function setupUI() {
         }
     }
 
+    defineSpaceBarUI();
     defineInvUI();
     definePauseUI();
     defineBuildUI();
@@ -1214,6 +1215,108 @@ function addChatMessage(chatMsg) {
     chatMessagesBox.elt.scrollTop = chatMessagesBox.elt.scrollHeight;
 }
 
+var spaceBarDiv;
+function defineSpaceBarUI(){
+    // Spacebar Hotkey Div
+    spaceBarDiv = createDiv("");
+    spaceBarDiv.class("spacebar-hotkey");
+    spaceBarDiv.html("Hotkey: Space");
+
+    spaceBarDiv.mousePressed(() => {
+        if(gameState == "inventory"){
+            curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem, curPlayer.invBlock.selectedHotBar);
+        }
+        else if (gameState == "swap_inv"){
+            if(keyIsDown(16)){
+                if(curPlayer.invBlock.curItem != ""){
+                    curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount);
+                    curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount);
+    
+                    curPlayer.otherInv.invBlock.curItem = curPlayer.invBlock.curItem;
+                    curPlayer.invBlock.curItem = "";
+                }
+                else if(curPlayer.otherInv.invBlock.curItem != ""){
+                    curPlayer.invBlock.addItem(curPlayer.otherInv.invBlock.curItem, curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem].amount);
+                    curPlayer.otherInv.invBlock.decreaseAmount(curPlayer.otherInv.invBlock.curItem, curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem].amount);
+    
+                    curPlayer.invBlock.curItem = curPlayer.otherInv.invBlock.curItem;
+                    curPlayer.otherInv.invBlock.curItem = "";
+                }
+            }
+            else{
+                if(curPlayer.invBlock.curItem != ""){
+                    //console.log(curPlayer.otherInv);
+                    curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, 1);
+                    curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem,1);
+    
+                    if(curPlayer.invBlock.items[curPlayer.invBlock.curItem] == undefined){
+                        curPlayer.otherInv.invBlock.curItem = curPlayer.invBlock.curItem;
+                        curPlayer.invBlock.curItem = "";
+                    }
+                }
+                else if(curPlayer.otherInv.invBlock.curItem != ""){
+                    curPlayer.invBlock.addItem(curPlayer.otherInv.invBlock.curItem, 1);
+                    curPlayer.otherInv.invBlock.decreaseAmount(curPlayer.otherInv.invBlock.curItem, 1);
+    
+                    if(curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem] == undefined){
+                        curPlayer.invBlock.curItem = curPlayer.otherInv.invBlock.curItem;
+                        curPlayer.otherInv.invBlock.curItem = "";
+                    }
+                }
+            }
+            updateSwapItemLists(curPlayer.otherInv.invBlock);
+            updatecurSwapItemDiv(curPlayer.otherInv.invBlock);
+        }
+    });
+
+    spaceBarDiv.hide();
+}
+
+function updateSpaceBarDiv() {
+    if(curPlayer == undefined) return;
+    
+    if(gameState == "inventory"){
+        if (curPlayer.invBlock.curItem == "") return;
+        if (itemDic[curPlayer.invBlock.curItem].type == "Simple") {
+            spaceBarDiv.hide();
+        }
+        else {
+            spaceBarDiv.show();
+            spaceBarDiv.style("bottom", "14%");
+            let msg = "";
+            if (curPlayer.invBlock.curItem == curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]) {
+                msg = "(SpaceBar) - remove from hotbar";
+            }
+            else {
+                msg = "(SpaceBar) - put in hotbar";
+            }
+            spaceBarDiv.html(msg);
+        }
+    }
+    else if (gameState == "swap_inv"){
+        spaceBarDiv.show();
+        spaceBarDiv.style("bottom", "9%");
+        let msg = "";
+        if(keyIsDown(16)){
+            if(curPlayer.invBlock.curItem != ""){
+                msg = "(SpaceBar) - move all to other inv";
+            }
+            else if(curPlayer.otherInv.invBlock.curItem != ""){
+                msg = "(SpaceBar) - move all to your inv";
+            }
+        }
+        else{
+            if(curPlayer.invBlock.curItem != ""){
+                msg = "(SpaceBar) - move to other inv";
+            }
+            else if(curPlayer.otherInv.invBlock.curItem != ""){
+                msg = "(SpaceBar) - move to your inv";
+            }
+        }
+        spaceBarDiv.html(msg);
+    }
+}
+
 var invDiv;
 var itemListDiv;
 var curItemDiv;
@@ -1222,7 +1325,6 @@ var toolsTag;
 var weaponsTag;
 var equipmentTag;
 var consumablesTag;
-var spaceBarDiv;
 function defineInvUI() {
     // Main inventory container
     invDiv = createDiv();
@@ -1259,6 +1361,7 @@ function defineInvUI() {
         craftDiv.show();
         updateCraftList();
         invDiv.hide();
+        spaceBarDiv.hide();
     });
     craftingTitle.style("cursor", "pointer");
 
@@ -1303,17 +1406,6 @@ function defineInvUI() {
     curItemDiv = createDiv().parent(bottomDiv);
     curItemDiv.class("item-details");
 
-    // Spacebar Hotkey Div
-    spaceBarDiv = createDiv("").parent(invDiv);
-    spaceBarDiv.class("spacebar-hotkey");
-    spaceBarDiv.html("Hotkey: Space");
-
-    spaceBarDiv.mousePressed(() => {
-        curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem, curPlayer.invBlock.selectedHotBar);
-    });
-
-    spaceBarDiv.hide();
-
     // Close Button
     let closeButton = createButton("X").parent(topBar);
     closeButton.class("close-button"); // Style it in CSS
@@ -1331,6 +1423,7 @@ function defineInvUI() {
     closeButton.mousePressed(() => {
         gameState = "playing"
         invDiv.hide(); // Hides the inventory when clicked
+        spaceBarDiv.hide();
     });
 
     // Finally, populate items
@@ -1573,25 +1666,6 @@ function updatecurItemDiv() {
     });
 
     updateSpaceBarDiv();
-}
-
-function updateSpaceBarDiv() {
-    if (curPlayer.invBlock.curItem == "") return;
-
-    if (itemDic[curPlayer.invBlock.curItem].type == "Simple") {
-        spaceBarDiv.hide();
-    }
-    else {
-        spaceBarDiv.show();
-        let msg = "";
-        if (curPlayer.invBlock.curItem == curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]) {
-            msg = "(SpaceBar) - remove from hotbar";
-        }
-        else {
-            msg = "(SpaceBar) - put in hotbar";
-        }
-        spaceBarDiv.html(msg);
-    }
 }
 
 function renderDirtBagUI() {
@@ -2323,6 +2397,7 @@ function defineSwapInvUI() {
     closeButton.mousePressed(() => {
         gameState = "playing"
         swapInvDiv.hide(); // Hides the inventory when clicked
+        spaceBarDiv.hide();
     });
 
     swapInvDiv.hide();

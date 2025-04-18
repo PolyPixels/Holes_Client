@@ -488,6 +488,7 @@ class InvObj extends Placeable{
                 if(gameState == "swap_inv"){
                     gameState = "playing";
                     swapInvDiv.hide();
+                    spaceBarDiv.hide();
                 }
             }
         }
