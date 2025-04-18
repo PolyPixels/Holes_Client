@@ -946,12 +946,13 @@ function renderChatUI() {
     chatInput.style("background-color", "#222");
     chatInput.style("margin-right", "5px");
     chatInput.mousePressed(() => {
+        lastGameState = gameState+"";
         gameState = "chating";
     });
     chatInput.elt.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
             sendChatMessage();
-            gameState = "playing";
+            gameState = lastGameState;
         }
     });
 
@@ -971,7 +972,7 @@ function renderChatUI() {
     chatSendButton.mousePressed(() => {
         blurActiveElement();
         sendChatMessage();
-        gameState = "playing";
+        gameState = lastGameState;
     });
 
     // ─────────────────────────────────────────────────────────

@@ -1,4 +1,5 @@
 var isChatting = false
+var lastGameState = "initial";
 
 function getIsChatting() {
     //console.log("get is chatting ", isChatting)
@@ -221,11 +222,11 @@ function blurActiveElement() {
 
 function mouseReleased(){
 
-    if(gameState != "initial" && gameState != "settings" && gameState != "race_selection"){
+    if(gameState == "chating"){
         // remove chatting if clicked out side of bounds 
         if(!getIsChatting()){
             blurActiveElement();
-            gameState = "playing";
+            gameState = lastGameState;
         }
     }
     if(gameState != "playing") return;
