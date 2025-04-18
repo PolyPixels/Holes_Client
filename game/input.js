@@ -1,9 +1,9 @@
 var isChatting = false
 
 function getIsChatting() {
-
-    isChatting = document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA' || mouseX > 260 || mouseY < height-50
+    isChatting = (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA'));
 }
+
 function keyReleased() {
 
     
@@ -208,10 +208,14 @@ function keyPressed(){ //prevents normal key related actions
 }
 
 function mouseReleased(){
-    if(isChatting){
-        getIsChatting()
-        document.activeElement = undefined
-        if(mouseX > 260 || mouseY < height-50){
+    if (isChatting) {
+        getIsChatting();
+        
+        if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+            document.activeElement.blur();
+        }
+        
+        if (mouseX > 260 || mouseY < height - 50) {
             gameState = "playing";
         }
     }
