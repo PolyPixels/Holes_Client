@@ -19,13 +19,13 @@ Obj Dic is a full dictanary of every object that can exist, falling into one of 
 */
 
 var objDic = {};
-definePlaceable("Wall", ['tempwall11','tempwall0','tempwall1','tempwall2','tempwall3','tempwall4','tempwall5','tempwall6','tempwall7','tempwall8','tempwall9','tempwall10','tempwall11'], [["dirt", 20]], 128, 128, 2, 100, true, true);
-definePlaceable("Door", ['tempdoor11','tempdoor0','tempdoor1','tempdoor2','tempdoor3','tempdoor4','tempdoor5','tempdoor6','tempdoor7','tempdoor8','tempdoor9','tempdoor10','tempdoor11'], [["dirt", 20]], 64, 128, 2, 100, true, true);
-definePlaceable("Floor", ['tempfloor11','tempfloor0','tempfloor1','tempfloor2','tempfloor3','tempfloor4','tempfloor5','tempfloor6','tempfloor7','tempfloor8','tempfloor9','tempfloor10','tempfloor11'], [["dirt", 20]], 128, 128, 0, 100, true, true);
-definePlaceable("Rug", ['temprug11','temprug0','temprug1','temprug2','temprug3','temprug4','temprug5','temprug6','temprug7','temprug8','temprug9','temprug10','temprug11'], [["dirt", 20]], 128, 128, 1, 100, true, true);
-definePlaceable("Mug", ['tempmug'], [["dirt", 20]], 32, 32, 3, 100, false, true);
-defineTrap("BearTrap", ['beartrap1'], [["dirt", 20]], 68, 48, 100, 50, 50, false, 15, true);
-defineTrap("LandMine", ['mine1'], [["dirt", 20]], 52, 36, 100, 40, 40, false, 10, true);
+definePlaceable("Wall", ['tempwall11','tempwall0','tempwall1','tempwall2','tempwall3','tempwall4','tempwall5','tempwall6','tempwall7','tempwall8','tempwall9','tempwall10','tempwall11'], [["dirt", 50]], 128, 128, 2, 100, true, true);
+definePlaceable("Door", ['tempdoor11','tempdoor0','tempdoor1','tempdoor2','tempdoor3','tempdoor4','tempdoor5','tempdoor6','tempdoor7','tempdoor8','tempdoor9','tempdoor10','tempdoor11'], [["dirt", 40], ["Log", 1]], 64, 128, 2, 100, true, true);
+definePlaceable("Floor", ['tempfloor11','tempfloor0','tempfloor1','tempfloor2','tempfloor3','tempfloor4','tempfloor5','tempfloor6','tempfloor7','tempfloor8','tempfloor9','tempfloor10','tempfloor11'], [["dirt", 30]], 128, 128, 0, 100, true, true);
+definePlaceable("Rug", ['temprug11','temprug0','temprug1','temprug2','temprug3','temprug4','temprug5','temprug6','temprug7','temprug8','temprug9','temprug10','temprug11'], [["dirt", 30]], 128, 128, 1, 100, true, true);
+definePlaceable("Mug", ['tempmug'], [["dirt", 10]], 32, 32, 3, 100, false, true);
+defineTrap("BearTrap", ['beartrap1'], [["Rock", 5]], 68, 48, 100, 50, 50, false, 15, true);
+defineTrap("LandMine", ['mine1'], [["Rock", 2], ["Bomb", 1]], 52, 36, 100, 40, 40, false, 10, true);
 
 function turretUpdate(){
     if(this.hp <= 0){
@@ -69,7 +69,7 @@ defineCustomObj("Turret", ['tempturret11','tempturret0','tempturret1','tempturre
 definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 100, 60, "edible_mushroom");
 definePlant("AppleTree", ['apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 100, 60, "Apple");
 definePlant("Tree", ['tree'], [["Log", 4]], 120, 120, 100, 60, "Log");
-defineInvObj("Chest", ['chest'], [['dirt', 20]], 14*4, 15*4, 100, 100, false, true);
+defineInvObj("Chest", ['chest'], [['Log', 5]], 14*4, 15*4, 100, 100, false, true);
 defineInvObj("ItemBag", ['item_bag1'], [], 12*3, 13*3, 100, 100, false, false);
 
 function bombUpdate(){
