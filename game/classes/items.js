@@ -16,7 +16,7 @@ var craftOptions = [];
 
 defineShovel("Basic Shovel", ["shovel1"], [["Log",1],["Rock",1]], 1, 100, 0.12, 3, 1, "A basic shovel for digging dirt",true);
 defineShovel("Better Shovel", ["shovel2"], [["Log",1],["Gem",1]], 1, 100, 0.18, 3, 1, "A better shovel for digging dirt",true);
-defineShovel("God Shovel", ["shovel3"], [["Rock",2],["Philosopher Stone",1]], 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt",true);
+defineShovel("God Shovel", ["shovel3"], [["Rock",2],["Philosopher's Stone",1]], 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt",true);
 
 defineMelee("Basic Sword", ["sword1"], [["Log",1],["Rock",2]], 1, 100, 25, 5, 50, 60, 90, 30, false, "A basic sword for slashing",true);
 defineMelee("Better Sword", ["sword2"], [["Rock",1],["Gem",2]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A better sword for slashing",true);
@@ -33,8 +33,8 @@ defineRanged("Laser Gun", ["laser_gun"], [["Rock", 5], ["Tech", 2]], 1, 100, 0, 
 
 defineSimpleItem("Rock", ["rock"], [], 1, "A rock for your slingshot",false);
 defineSimpleItem("Gem", ["gem"], [], 1, "A pretty gem",false);
-defineSimpleItem("Dark Gem", ["black_gem"], [], 1, "A dull gem",false);
-defineSimpleItem("Philosopher Stone", ["philosopher_stone"], [], 1, "A gem with emence power flowing out of it",false);
+defineSimpleItem("Black Gem", ["black_gem"], [], 1, "An explosive gem",false);
+defineSimpleItem("Philosopher's Stone", ["philosopher_stone"], [], 1, "A gem with immense power flowing out of it",false);
 defineSimpleItem("Log", ["log"], [], 1, "A wooden log",false);
 defineSimpleItem("Tech", ["circuit"], [], 1, "Some piece of technology",false);
 
@@ -43,6 +43,8 @@ defineFood("Bad Apple", ["bad_apple"], [], 1, 100, 5, "Looks like this apple wou
 defineFood("Mushroom", ["images/structures/mushroom1"], [], 1, 100, 10, "A tasty mushroom",false);
 
 defineSeed("Mushroom Seed", ["mushroom_spores"], [["Mushroom", 1]], 1, "Mushroom", 0.5, "Some mushroom spores",true);
+
+
 
 class SimpleItem{
     constructor(itemName, weight, durability, imgNum, desc){

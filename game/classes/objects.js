@@ -65,7 +65,7 @@ function turretUpdate(){
         socket.emit("update_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, update_name: "rot", update_value: this.rot});
     }
 }
-defineCustomObj("Turret", ['tempturret11','tempturret0','tempturret1','tempturret2','tempturret3','tempturret4','tempturret5','tempturret6','tempturret7','tempturret8','tempturret9','tempturret10','tempturret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
+defineCustomObj("Turret", ['tempturret11','turret0','turret1','turret2','tempturret3','tempturret4','tempturret5','tempturret6','tempturret7','tempturret8','tempturret9','tempturret10','tempturret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
 definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 100, 60, "edible_mushroom");
 
 definePlaceable("AppleTree", ['apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 0, 100, false, false);
