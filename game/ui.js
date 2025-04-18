@@ -1577,7 +1577,7 @@ function updatecurItemDiv() {
 function updateSpaceBarDiv() {
     if (curPlayer.invBlock.curItem == "") return;
 
-    if (curPlayer.invBlock.items[curPlayer.invBlock.curItem].type == "Simple") {
+    if (itemDic[curPlayer.invBlock.curItem].type == "Simple") {
         spaceBarDiv.hide();
     }
     else {
@@ -2834,8 +2834,8 @@ function updatecurCraftItemDiv() {
     itemImgDiv.style("height", "100%");
     itemImgDiv.style("border", "2px solid black");
     itemImgDiv.style("border-radius", "10px");
-    //console.log(itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]);
-    itemImgDiv.style("background-image", "url(" + itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0] + ")");
+    //console.log(itemImgPaths[itemDic[curPlayer.invBlock.curItem].img][0]);
+    itemImgDiv.style("background-image", "url(" + itemImgPaths[itemDic[curPlayer.invBlock.curItem].img][0] + ")");
     itemImgDiv.style("background-size", "contain");
     itemImgDiv.style("background-repeat", "no-repeat");
     itemImgDiv.style("background-position", "center");
@@ -2868,7 +2868,7 @@ function updatecurCraftItemDiv() {
     itemDescDiv.style("border-radius", "10px");
     itemDescDiv.parent(itemNameDescDiv);
 
-    let itemDescP = createP(curPlayer.invBlock.items[curPlayer.invBlock.curItem].desc);
+    let itemDescP = createP(itemDic[curPlayer.invBlock.curItem].desc);
     itemDescP.style("font-size", "20px");
     itemDescP.style("color", "white");
     itemDescP.style("margin", "5px");
