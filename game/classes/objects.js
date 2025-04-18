@@ -25,7 +25,7 @@ definePlaceable("Floor", ['tempfloor11','tempfloor0','tempfloor1','tempfloor2','
 definePlaceable("Rug", ['temprug11','temprug0','temprug1','temprug2','temprug3','temprug4','temprug5','temprug6','temprug7','temprug8','temprug9','temprug10','temprug11'], [["dirt", 20]], 128, 128, 1, 100, true, true);
 definePlaceable("Mug", ['tempmug'], [["dirt", 20]], 32, 32, 3, 100, false, true);
 defineTrap("BearTrap", ['beartrap1'], [["dirt", 20]], 68, 48, 100, 50, 50, false, 15, true);
-defineTrap("LandMine", ['bomb1'], [["dirt", 20]], 52, 36, 100, 40, 40, false, 10, true);
+defineTrap("LandMine", ['mine1'], [["dirt", 20]], 52, 36, 100, 40, 40, false, 10, true);
 
 function turretUpdate(){
     if(this.hp <= 0){

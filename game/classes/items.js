@@ -21,7 +21,7 @@ defineShovel("God Shovel", ["shovel3"], [["Log",1],["Philosopher Stone",1]], 1, 
 defineMelee("Basic Sword", ["sword1"], [["Log",1],["Rock",2]], 1, 100, 25, 5, 50, 60, 90, 30, false, "A basic sword for slashing",true);
 defineMelee("Better Sword", ["sword2"], [["Rock",1],["Gem",2]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A better sword for slashing",true);
 defineMelee("Evil Apple on Stick", ["evil_apple_on_stick"], [["Bad Apple",1],["Log",1]], 1, 100, 10, 5, 100, 60, 20, 10, false, "Now it'll bite your opponets",true);
-defineMelee("Scythe", ["scythe"], [["Log",1],["Rock",2]], 1, 100, 25, 5, 50, 150, 150, 10, false, "Just gotta make sure they are on the blade",true);
+defineMelee("Scythe", ["scythe"], [["Log",1],["Rock",2]], 1, 100, 25, 5, 50, 150, 150, 60, false, "Just gotta make sure they are on the blade",true);
 
 defineRanged("Basic SlingShot", ["sling"], [["Mushroom", 2]], 1, 100, 5, 5, "Rock", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
 defineRanged("Better SlingShot", ["sling"], [["Mushroom", 2], ["Gem", 1]], 1, 100, 5, 5, "Rock", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);
