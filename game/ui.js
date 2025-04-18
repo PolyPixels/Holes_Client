@@ -1238,23 +1238,18 @@ function defineInvUI() {
 
     });
 
-    // Top bar (title area)
     let topBar = createDiv().parent(invDiv);
-    // Let CSS handle sizing and layout. 
-    // We'll just give it an appropriate class if we want.
-    // e.g., topBar.class("top-bar");
+
     applyStyle(topBar, {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
     });
 
-    // Inventory Title
     let invTitle = createP("Inventory").parent(topBar);
     invTitle.class("inventory-title");
     invTitle.style("color", "yellow");
 
-    // Crafting Title
     let craftingTitle = createP("Crafting").parent(topBar);
     craftingTitle.class("inventory-title");
     craftingTitle.mousePressed(() => {
@@ -1265,13 +1260,9 @@ function defineInvUI() {
     });
     craftingTitle.style("cursor", "pointer");
 
-    // Tag Bar (Category Buttons)
     let tagBar = createDiv().parent(invDiv);
     tagBar.class("tag-bar");
-    // If you want minimal inline style:
-    // applyStyle(tagBar, { gap: "5px", borderBottom: "2px solid black" });
 
-    // Define categories
     const categories = ["All", "Tools/Seeds", "Weapons", "Equipment", "Consumables"];
     let categoryButtons = {};
 
