@@ -29,12 +29,14 @@ class SoundObj{
     }
 
     play(){
-        let localVolume = 1 - (curPlayer.pos.dist(this.pos)/(2*CHUNKSIZE*TILESIZE));
-        localVolume = constrain(localVolume, 0, 1);
-        localVolume = round(localVolume * 20) / 20; // Round to nearest 10%
-        if(localVolume <= 0) return;
-        soundDic[this.sound].sounds[localVolume*20].rate(random(0.8, 1.2));
-        soundDic[this.sound].sounds[localVolume*20].play();
+        if(curPlayer != undefined){
+            let localVolume = 1 - (curPlayer.pos.dist(this.pos)/(2*CHUNKSIZE*TILESIZE));
+            localVolume = constrain(localVolume, 0, 1);
+            localVolume = round(localVolume * 20) / 20; // Round to nearest 10%
+            if(localVolume <= 0) return;
+            soundDic[this.sound].sounds[localVolume*20].rate(random(0.8, 1.2));
+            soundDic[this.sound].sounds[localVolume*20].play();
+        }
     }
 
     stop(){

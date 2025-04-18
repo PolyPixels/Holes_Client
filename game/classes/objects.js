@@ -53,11 +53,13 @@ function turretUpdate(){
                     this.pos.y + toPlayer.y,
                     toPlayer.heading()
                 )
-                testMap.chunks[chunkPos.x+','+chunkPos.y].projectiles.push(
-                    proj
-                );
-                //tell the server you made a projectile
-                socket.emit("new_proj", proj);
+                if(testMap.chunks[chunkPos.x+','+chunkPos.y] != undefined){
+                    testMap.chunks[chunkPos.x+','+chunkPos.y].projectiles.push(
+                        proj
+                    );
+                    //tell the server you made a projectile
+                    socket.emit("new_proj", proj);
+                }
             }
         }
         socket.emit("update_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, update_name: "rot", update_value: this.rot});
