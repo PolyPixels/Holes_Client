@@ -1,7 +1,12 @@
+var isChatting = false
 
+function getIsChatting() {
+
+    isChatting = document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA' || mouseX > 260 || mouseY < height-50
+}
 function keyReleased() {
 
-
+    
     if(keyCode == 27 && gameState != "pause" && gameState != "initial" && gameState != "race_selection"){ //ESC
         gameState = "playing";
         pauseDiv.hide();
@@ -203,7 +208,9 @@ function keyPressed(){ //prevents normal key related actions
 }
 
 function mouseReleased(){
-    if(gameState == "chating"){
+    if(isChatting){
+        getIsChatting()
+        document.activeElement = undefined
         if(mouseX > 260 || mouseY < height-50){
             gameState = "playing";
         }
@@ -249,6 +256,7 @@ function mouseReleased(){
 }
 
 function continousMouseInput(){ //ran once every frame, good for anything like digging, or items
+    if(isChatting) return
     if (mouseIsPressed) {
         //converts screen space to global space
         let x = mouseX + camera.pos.x - width / 2;
@@ -365,6 +373,7 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
 }
 
 function continousKeyBoardInput(){
+    if(isChatting) return
     if(gameState == "playing"){
         // default all keys to false
         curPlayer.holding = { w: false, a: false, s: false, d: false };
@@ -401,6 +410,7 @@ function continousKeyBoardInput(){
 }
 
 function mouseWheel(event) {
+    
     if(gameState != "playing") return
     if (event.delta > 0) {
       // Scrolled down
