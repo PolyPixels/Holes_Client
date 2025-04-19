@@ -19,8 +19,8 @@ Obj Dic is a full dictanary of every object that can exist, falling into one of 
 */
 
 var objDic = {};
-definePlaceable("Wall", ['wall11','wall0','wall1','wall2','wall3','wall4','wall5','wall6','wall7','wall8','wall9','wall10','wall11'], [["dirt", 50]], 128, 128, 2, 100, true, true);
-definePlaceable("Door", ['tempdoor11','door0','door1','door2','tempdoor3','tempdoor4','tempdoor5','tempdoor6','tempdoor7','tempdoor8','tempdoor9','tempdoor10','tempdoor11'], [["dirt", 40], ["Log", 1]], 64, 128, 2, 100, true, true);
+definePlaceable("Wall", ['wall11','wall0','wall1','wall2','wall3','wall4','wall5','wall6','wall7','wall8','wall9','wall10','wall11'], [["dirt", 50]], 128, 128, 2, 200, true, true);
+definePlaceable("Door", ['tempdoor11','door0','door1','door2','tempdoor3','tempdoor4','tempdoor5','tempdoor6','tempdoor7','tempdoor8','tempdoor9','tempdoor10','tempdoor11'], [["dirt", 40], ["Log", 1]], 64, 128, 2, 150, true, true);
 definePlaceable("Floor", ['tempfloor11','tempfloor0','tempfloor1','tempfloor2','tempfloor3','tempfloor4','tempfloor5','tempfloor6','tempfloor7','tempfloor8','tempfloor9','tempfloor10','tempfloor11'], [["dirt", 30]], 128, 128, 0, 100, true, true);
 definePlaceable("Rug", ['temprug11','temprug0','temprug1','temprug2','temprug3','temprug4','temprug5','temprug6','temprug7','temprug8','temprug9','temprug10','temprug11'], [["dirt", 30]], 128, 128, 1, 100, true, true);
 definePlaceable("Mug", ['tempmug'], [["dirt", 10]], 32, 32, 3, 100, false, true);
@@ -66,10 +66,10 @@ function turretUpdate(){
     }
 }
 defineCustomObj("Turret", ['tempturret11','turret0','turret1','turret2','tempturret3','tempturret4','tempturret5','tempturret6','tempturret7','tempturret8','tempturret9','tempturret10','tempturret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
-definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 100, 60, "edible_mushroom");
+definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 50, 60, "edible_mushroom");
 
-definePlaceable("AppleTree", ['apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 0, 100, false, false);
-definePlaceable("Tree", ['tree'], [["Log", 4]], 120, 120, 0, 100, false, false);
+definePlaceable("AppleTree", ['apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 0, 80, false, false);
+definePlaceable("Tree", ['tree'], [["Log", 4]], 120, 120, 0, 80, false, false);
 
 defineInvObj("Chest", ['chest'], [['Log', 5]], 14*4, 15*4, 100, 100, false, true);
 defineInvObj("ItemBag", ['item_bag1'], [], 12*3, 13*3, 100, 100, false, false);
