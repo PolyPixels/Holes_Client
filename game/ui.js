@@ -3121,8 +3121,11 @@ function defineTutorialUI(){
         backgroundColor: "#1a1a1a",
         width: "50%",
         height: "50%",
+        position: "absolute",
+        margin: "auto",
         color: "white"
     });
+    tutorialDiv.hide();
 
     let topBar = createDiv().parent(tutorialDiv);
     applyStyle(topBar, {
