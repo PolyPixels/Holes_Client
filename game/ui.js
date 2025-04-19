@@ -654,6 +654,7 @@ function setupUI() {
     defineSwapInvUI();
     defineCraftingUI();
     defineDeathUI();
+    defineTutorialUI();
 
     timerDiv = createDiv("⏳ 15:00");
     timerDiv.position(width / 2 - 50, 10); // adjust as needed
@@ -3107,4 +3108,125 @@ function defineDeathUI() {
         location.reload();
         deathDiv.hide();
     });
+}
+
+var tutorialDiv;
+var pages;
+var currentTutorialPage = 0;
+
+function defineTutorialUI(){
+    tutorialDiv = createDiv();
+    applyStyle(tutorialDiv, {
+        backgroundColor: "#1a1a1a",
+        width: "50%",
+        height: "50%",
+        color: "white"
+    });
+
+    let topBar = createDiv().parent(tutorialDiv);
+    applyStyle(topBar, {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    });
+
+    let closeButton = createButton("X").parent(topBar);
+    closeButton.class("close-button"); // Style it in CSS
+    applyStyle(closeButton, {
+        marginLeft: "auto",  // Pushes it to the right
+        position: "relative",
+        right: "0",
+        fontSize: "18px",
+        cursor: "pointer",
+        background: "none",
+        color: "white",
+        border: "none",
+    });
+    closeButton.mousePressed(() => {
+        gameState = "playing"
+        tutorialDiv.hide(); // Hides the tutorial when clicked
+    });
+
+    let pageHolder = createDiv().parent(tutorialDiv);
+    applyStyle(pageHolder, {
+        height: "78%",
+        padding: "10px"
+    });
+
+    let bottomBar = createDiv().parent(tutorialDiv);
+    applyStyle(bottomBar, {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    });
+
+    let leftButton = createButton("<").parent(bottomBar);
+    leftButton.class("close-button"); // Style it in CSS
+    applyStyle(leftButton, {
+        marginRight: "auto",  // Pushes it to the left
+        position: "relative",
+        left: "0",
+        fontSize: "18px",
+        cursor: "pointer",
+        background: "none",
+        color: "white",
+        border: "none",
+    });
+    leftButton.mousePressed(() => {
+        pages[currentTutorialPage].hide();
+        currentTutorialPage = (currentTutorialPage-1);
+        if(currentTutorialPage < 0) currentTutorialPage = pages.length-1;
+        pages[currentTutorialPage].show();
+    });
+
+    let rightButton = createButton(">").parent(bottomBar);
+    rightButton.class("close-button"); // Style it in CSS
+    applyStyle(rightButton, {
+        marginLeft: "auto",  // Pushes it to the right
+        position: "relative",
+        right: "0",
+        fontSize: "18px",
+        cursor: "pointer",
+        background: "none",
+        color: "white",
+        border: "none",
+    });
+    rightButton.mousePressed(() => {
+        pages[currentTutorialPage].hide();
+        currentTutorialPage = (currentTutorialPage+1)%pages.length;
+        pages[currentTutorialPage].show();
+    });
+
+    pages = [];
+    page1 = createDiv().parent(pageHolder);
+    let skipText = createP("Press that x to skip all this. ^ ").parent(page1);
+    applyStyle(skipText, {
+        textAlign: "end",
+        paddingRight: "5px"
+    });
+
+    createP("First thing you should know is, you can dig with and empty hand.").parent(page1).style("margin-bottom", "5px");
+    createP("Next any type of food will heal you.").parent(page1).style("margin-bottom", "5px");
+    createP("Try not to fill up your dirt bag without knowing where you are gonna empty it.").parent(page1).style("margin-bottom", "5px");
+    createP("Use your sword to break stuff.").parent(page1).style("margin-bottom", "5px");
+    createP("You will always interact with the thing that has an 'F' over it, try moving your mouse close to something to move the 'F'.").parent(page1).style("margin-bottom", "5px");
+    
+    pages.push(page1);
+
+    page2 = createDiv().parent(pageHolder);
+
+    createP("Controls").parent(page2).style("margin-bottom", "5px");
+    createP("WASD - to move").parent(page2).style("margin-bottom", "5px");
+    createP("Left & Right Click - use item").parent(page2).style("margin-bottom", "5px");
+    createP("F - interact with objects").parent(page2).style("margin-bottom", "5px");
+    createP("Q&E / Mouse Wheel - move hotbar").parent(page2).style("margin-bottom", "5px");
+    createP("R - bring up build menu").parent(page2).style("margin-bottom", "5px");
+    createP("ESC - pause (only pauses you)").parent(page2).style("margin-bottom", "5px");
+    createP("TAB - bring up leaderboard").parent(page2).style("margin-bottom", "5px");
+    createP("I - bring up inventory").parent(page2).style("margin-bottom", "5px");
+    createP("C - bring up crafting").parent(page2).style("margin-bottom", "5px");
+    createP("Space - do stuff in inventory (should be a tooltip to tell when to hit space)").parent(page2).style("margin-bottom", "5px");
+    page2.hide();
+
+    pages.push(page2);
 }
