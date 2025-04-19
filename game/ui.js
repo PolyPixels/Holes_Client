@@ -1093,6 +1093,7 @@ function startGame() {
     socket.emit("new_player", curPlayer);
     gameState = "playing";
     hideRaceSelect();
+    tutorialDiv.show();
 
     // Clear a small area around the player (example logic)
     for (let y = -5; y < 5; y++) {
