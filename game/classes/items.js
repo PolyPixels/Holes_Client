@@ -48,6 +48,7 @@ defineFood("Bad Apple", ["bad_apple"], [], 1, 100, 5, "Looks like this apple wou
 defineFood("Mushroom", ["images/structures/mushroom1"], [], 1, 100, 10, "A tasty mushroom",false);
 
 defineSeed("Mushroom Seed", ["mushroom_spores"], [["Mushroom", 1]], 1, "Mushroom", 0.5, "Some mushroom spores",true);
+defineSimpleItem("Mushroom Fiber", ["mushroom_fiber"], [], 1, "A stringy component of many tools",false);
 
 
 
