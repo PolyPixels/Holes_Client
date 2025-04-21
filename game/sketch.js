@@ -183,38 +183,40 @@ function draw() {
                     else{
                         let chunkPos = testMap.globalToChunk(curPlayer.pos.x,curPlayer.pos.y);
                         let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
-                        closest = undefined;
-                        for(let i = 0; i < chunk.objects.length; i++){
-                            if(chunk.objects[i].type == "InvObj" || chunk.objects[i].type == "Plant" || chunk.objects[i].objName == "Door"){
-                                if(closest == undefined){
-                                    closest = chunk.objects[i];
-                                    closestDist = curPlayer.pos.dist(closest.pos);
-                                }
-                                if (curPlayer.pos.dist(chunk.objects[i].pos) < closestDist){
-                                    closest = chunk.objects[i];
-                                    closestDist = curPlayer.pos.dist(closest.pos);
+                        if(chunk != undefined){
+                            closest = undefined;
+                            for(let i = 0; i < chunk.objects.length; i++){
+                                if(chunk.objects[i].type == "InvObj" || chunk.objects[i].type == "Plant" || chunk.objects[i].objName == "Door"){
+                                    if(closest == undefined){
+                                        closest = chunk.objects[i];
+                                        closestDist = curPlayer.pos.dist(closest.pos);
+                                    }
+                                    if (curPlayer.pos.dist(chunk.objects[i].pos) < closestDist){
+                                        closest = chunk.objects[i];
+                                        closestDist = curPlayer.pos.dist(closest.pos);
+                                    }
                                 }
                             }
-                        }
 
-                        if(closest != undefined){
-                            if(closestDist < 4*TILESIZE){
-                                push();
-                                fill(120);
-                                stroke(0);
-                                strokeWeight(1);
-                                rectMode(CENTER);
-                                let offY = 0;
-                                if(closest.objName != "Door") offY = (closest.size.h * 0.8);
-                                rect(closest.pos.x - camera.pos.x + (width/2), closest.pos.y - offY - camera.pos.y + (height/2), 20, 20);
-    
-                                fill(0);
-                                stroke(0);
-                                textAlign(CENTER, CENTER);
-                                textSize(15);
-                                textFont(gameUIFont);
-                                text("F", closest.pos.x - camera.pos.x + (width/2), closest.pos.y - offY - camera.pos.y + (height/2));
-                                pop();
+                            if(closest != undefined){
+                                if(closestDist < 4*TILESIZE){
+                                    push();
+                                    fill(120);
+                                    stroke(0);
+                                    strokeWeight(1);
+                                    rectMode(CENTER);
+                                    let offY = 0;
+                                    if(closest.objName != "Door") offY = (closest.size.h * 0.8);
+                                    rect(closest.pos.x - camera.pos.x + (width/2), closest.pos.y - offY - camera.pos.y + (height/2), 20, 20);
+        
+                                    fill(0);
+                                    stroke(0);
+                                    textAlign(CENTER, CENTER);
+                                    textSize(15);
+                                    textFont(gameUIFont);
+                                    text("F", closest.pos.x - camera.pos.x + (width/2), closest.pos.y - offY - camera.pos.y + (height/2));
+                                    pop();
+                                }
                             }
                         }
                     }

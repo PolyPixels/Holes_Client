@@ -29,6 +29,7 @@ class InvBlock{
     }
 
     decreaseAmount(item, amount){
+        if(this.items[item] == undefined) return;
         this.items[item].amount -= amount;
         if(this.items[item].amount <= 0){
             for(let i=0; i<this.hotbar.length; i++){ //remove item from hotbar
