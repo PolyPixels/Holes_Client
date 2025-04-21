@@ -1424,6 +1424,7 @@ function defineInvUI() {
 
     closeButton.mousePressed(() => {
         gameState = "playing"
+        curPlayer.invBlock.useTimer = 10;
         invDiv.hide(); // Hides the inventory when clicked
         spaceBarDiv.hide();
     });
@@ -2398,6 +2399,7 @@ function defineSwapInvUI() {
 
     closeButton.mousePressed(() => {
         gameState = "playing"
+        curPlayer.invBlock.useTimer = 10;
         swapInvDiv.hide(); // Hides the inventory when clicked
         spaceBarDiv.hide();
     });
@@ -2803,6 +2805,7 @@ function defineCraftingUI() {
 
     closeButton.mousePressed(() => {
         gameState = "playing"
+        curPlayer.invBlock.useTimer = 10;
         craftDiv.hide(); // Hides the inventory when clicked
     });
     // Finally, populate items
@@ -3148,6 +3151,7 @@ function defineTutorialUI(){
     });
     closeButton.mousePressed(() => {
         gameState = "playing"
+        curPlayer.invBlock.useTimer = 10;
         tutorialDiv.hide(); // Hides the tutorial when clicked
     });
 
