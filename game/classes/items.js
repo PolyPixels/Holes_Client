@@ -257,7 +257,7 @@ class Ranged extends SimpleItem{
         return [
             ["Durability", this.durability], 
             ["Weight", this.weight], 
-            ["Damage", projectileDic[this.projName].damage], 
+            ["Damage", projDic[this.projName].damage], 
             ["Spread", this.spread],
             ["Ammo Name", this.ammoName],
             ["Firerate", (1/this.fireRate).toFixed(3)],
@@ -282,8 +282,10 @@ class Food extends SimpleItem{
 
         if(this.heal > 0){
             if(curPlayer.statBlock.stats.hp >=  curPlayer.statBlock.stats.mhp) {
-                this.shake = {intensity: 1, length: 5};
-                return;
+                if(this.manaRegen == 0){
+                    this.shake = {intensity: 1, length: 5};
+                    return;
+                }
             } else if(curPlayer.invBlock.useTimer <= 0){
                 //play eat sound and send to server
                 let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
