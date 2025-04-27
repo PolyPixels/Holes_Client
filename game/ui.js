@@ -2881,7 +2881,7 @@ function updateCraftList() {
 
         let craftCheckText = createP(curPlayer.invBlock.craftCheck(itemName) ? "✔" : "✘");
         craftCheckText.style("font-size", "20px");
-        craftCheckText.style("color", "white");
+        craftCheckText.style("color", curPlayer.invBlock.craftCheck(itemName) ? "green" : "red");
         craftCheckText.parent(itemInfoDiv);
     }
 }
@@ -2969,6 +2969,7 @@ function updatecurCraftItemDiv() {
     craftButton.style("align-items", "center");
     craftButton.style("justify-content", "center");
     craftButton.style("margin-bottom", "5px");
+    craftButton.style("background-color", "green");
     if (!curPlayer.invBlock.craftCheck(curPlayer.invBlock.curItem)) {
         craftButton.style("opacity", "0.5");
         craftButton.style("background-color", "red");
