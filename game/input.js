@@ -90,7 +90,7 @@ function keyReleased() {
             let closestDist;
 
             for(let i = 0; i < chunk.objects.length; i++){
-                if(chunk.objects[i].type == "InvObj" || chunk.objects[i].type == "Plant" || chunk.objects[i].objName == "Door"){
+                if(chunk.objects[i].type == "InvObj" || (chunk.objects[i].type == "Plant" && chunk.objects[i].stage == (objImgs[chunk.objects[i].imgNum].length-1)) || chunk.objects[i].objName == "Door"){
                     if(closest == undefined){
                         closest = chunk.objects[i];
                         closestDist = mouseVec.dist(closest.pos);
@@ -118,7 +118,7 @@ function keyReleased() {
                     let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
                     closest = undefined;
                     for(let i = 0; i < chunk.objects.length; i++){
-                        if(chunk.objects[i].type == "InvObj" || chunk.objects[i].type == "Plant" || chunk.objects[i].objName == "Door"){
+                        if(chunk.objects[i].type == "InvObj" || (chunk.objects[i].type == "Plant" && chunk.objects[i].stage == (objImgs[chunk.objects[i].imgNum].length-1)) || chunk.objects[i].objName == "Door"){
                             if(closest == undefined){
                                 closest = chunk.objects[i];
                                 closestDist = curPlayer.pos.dist(closest.pos);
