@@ -43,9 +43,9 @@ defineSimpleItem("Log", ["log"], [], 1, "A wooden log",false);
 defineSimpleItem("Tech", ["circuit"], [], 1, "Some piece of technology",false);
 defineSimpleItem("Arrow", ["arrow"], [["Log", 1], ["Rock", 1]], 1, "An arrow",true);
 
-defineFood("Apple", ["apple"], [], 1, 100, 10, "A juicy apple",false);
-defineFood("Bad Apple", ["bad_apple"], [], 1, 100, 5, "Looks like this apple would bite back",false);
-defineFood("Mushroom", ["images/structures/mushroom1"], [], 1, 100, 10, "A tasty mushroom",false);
+defineFood("Apple", ["apple"], [], 1, 100, 10, 0, "A juicy apple",false);
+defineFood("Bad Apple", ["bad_apple"], [], 1, 100, 5, 5, "Looks like this apple would bite back",false);
+defineFood("Mushroom", ["images/structures/mushroom1"], [], 1, 100, 5, 10, "A tasty mushroom",false);
 
 defineSeed("Mushroom Seed", ["mushroom_spores"], [["Mushroom", 1]], 1, "Mushroom", 0.5, "Some mushroom spores",true);
 defineSimpleItem("Mushroom Fiber", ["mushroom_fiber"], [["Mushroom",1]], 1, "A stringy component of many tools",true);
@@ -268,9 +268,10 @@ class Ranged extends SimpleItem{
 }
 
 class Food extends SimpleItem{
-    constructor(itemName, weight, durability, imgNum, desc, heal){
+    constructor(itemName, weight, durability, imgNum, desc, heal, manaRegen){
         super(itemName, weight, durability, imgNum, desc);
         this.heal = heal; //how much the food heals you
+        this.manaRegen = manaRegen;
         this.eatWait = 60; //maybe make this variable? so BIGGER food items make you wait longer imbetween bites
 
         this.type = "Food";
@@ -279,19 +280,37 @@ class Food extends SimpleItem{
     use(x,y,mouseButton){
         //console.log("!!!!!!!",curPlayer.statBlock.stats.hp ,curPlayer.statBlock.stats.mhp )
 
-        if(curPlayer.statBlock.stats.hp >=  curPlayer.statBlock.stats.mhp) {
-            this.shake = {intensity: 1, length: 5};
-            return;
-        } else if(curPlayer.invBlock.useTimer <= 0){
-            //play eat sound and send to server
-            let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
-            let temp = new SoundObj("eat.ogg", curPlayer.pos.x, curPlayer.pos.y);
-            testMap.chunks[chunkPos.x+','+chunkPos.y].soundObjs.push(temp);
-            socket.emit("new_sound", {sound: "eat.ogg", cPos: chunkPos, pos: {x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
-            
-            curPlayer.statBlock.heal(this.heal);
-            curPlayer.invBlock.useTimer = this.eatWait;
-            curPlayer.invBlock.decreaseAmount(this.itemName, 1);
+        if(this.heal > 0){
+            if(curPlayer.statBlock.stats.hp >=  curPlayer.statBlock.stats.mhp) {
+                this.shake = {intensity: 1, length: 5};
+                return;
+            } else if(curPlayer.invBlock.useTimer <= 0){
+                //play eat sound and send to server
+                let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+                let temp = new SoundObj("eat.ogg", curPlayer.pos.x, curPlayer.pos.y);
+                testMap.chunks[chunkPos.x+','+chunkPos.y].soundObjs.push(temp);
+                socket.emit("new_sound", {sound: "eat.ogg", cPos: chunkPos, pos: {x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
+                
+                curPlayer.statBlock.heal(this.heal);
+                curPlayer.invBlock.useTimer = this.eatWait;
+                curPlayer.invBlock.decreaseAmount(this.itemName, 1);
+            }
+        }
+        if(this.manaRegen > 0){
+            if(curPlayer.statBlock.stats.mp >= curPlayer.statBlock.stats.mmp) {
+                this.shake = {intensity: 1, length: 5};
+                return;
+            } else if(curPlayer.invBlock.useTimer <= 0){
+                //play eat sound and send to server
+                let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+                let temp = new SoundObj("eat.ogg", curPlayer.pos.x, curPlayer.pos.y);
+                testMap.chunks[chunkPos.x+','+chunkPos.y].soundObjs.push(temp);
+                socket.emit("new_sound", {sound: "eat.ogg", cPos: chunkPos, pos: {x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
+                
+                curPlayer.statBlock.stats.mp += this.manaRegen;
+                curPlayer.invBlock.useTimer = this.eatWait;
+                curPlayer.invBlock.decreaseAmount(this.itemName, 1);
+            }
         }
     }
 
@@ -424,7 +443,7 @@ function createItem(name){
             return new Ranged(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].spread, itemDic[name].projName, itemDic[name].ammoName, itemDic[name].fireRate, itemDic[name].roundSize, itemDic[name].reloadSpeed, itemDic[name].manaCost, itemDic[name].magicBool);
         }
         else if(itemDic[name].type == "Food"){
-            return new Food(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].heal);
+            return new Food(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].heal, itemDic[name].manaRegen);
         }
         else if(itemDic[name].type == "Potion"){
             return new Potion(name, itemDic[name].weight, itemDic[name].img, itemDic[name].desc, itemDic[name].statName, itemDic[name].statBoost, itemDic[name].time);
@@ -606,14 +625,16 @@ function defineRanged(name, imgPaths, cost, weight, durability, spread, projName
  * @param {number} weight how much the item weighs
  * @param {int} durability how many inv updates before this food spoils
  * @param {int} heal how much the food heals
+ * @param {int} manaRegen how much the food regenerates mana
  * @param {string} desc the description of the item
 */
-function defineFood(name, imgPaths, cost, weight, durability, heal, desc, inCraftList){
+function defineFood(name, imgPaths, cost, weight, durability, heal, manaRegen, desc, inCraftList){
     defineItemSuper("Food", name, imgPaths, cost, weight, durability, desc, inCraftList);
 
-    checkParams([arguments[5]],[getParamNames(defineFood)[5]],["int"]);
+    checkParams([arguments[5],arguments[6]],[getParamNames(defineFood)[5],getParamNames(defineFood)[6]],["int", "int"]);
     
     itemDic[name].heal = heal;
+    itemDic[name].manaRegen = manaRegen;
 }
 
 /**
