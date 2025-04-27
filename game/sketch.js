@@ -141,6 +141,10 @@ function draw() {
                 ghostBuild.ghostRender(createVector(ghostBuild.pos.x,ghostBuild.pos.y).dist(curPlayer.pos) < 200);
             }
 
+            //regen mana and health over time
+            if(curPlayer.statBlock.stats.mp < curPlayer.statBlock.stats.mmp) curPlayer.statBlock.stats.mp += 0.01;
+            if(curPlayer.statBlock.stats.hp < curPlayer.statBlock.stats.mhp) curPlayer.statBlock.heal(0.01);
+
             //little f above the thing you can interact with
             let mouseVec = createVector(mouseX + camera.pos.x - (width / 2), mouseY + camera.pos.y - (height / 2));
             let chunkPos = testMap.globalToChunk(mouseVec.x,mouseVec.y);
