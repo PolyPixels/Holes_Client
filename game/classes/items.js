@@ -18,17 +18,17 @@ defineShovel("Basic Shovel", ["shovel1"], [["Log",1],["Rock",1]], 1, 100, 0.12, 
 defineShovel("Better Shovel", ["shovel2"], [["Log",1],["Gem",1]], 1, 100, 0.18, 3, 1, "A better shovel for digging dirt",true);
 defineShovel("God Shovel", ["shovel3"], [["Rock",2],["Philosopher's Stone",1]], 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt",true);
 
-defineMelee("Basic Sword", ["sword1"], [["Log",1],["Rock",2]], 1, 100, 25, 5, 50, 60, 90, 30, false, "A basic sword for slashing",true);
-defineMelee("Better Sword", ["sword2"], [["Rock",1],["Gem",2]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A better sword for slashing",true);
-defineMelee("Gem Sword", ["gem_sword"], [["Gem",5]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A godly sword for slashing",true);
+defineMelee("Basic Sword", ["sword1"], [["Log",1],["Rock",3],["Mushroom Fiber",2]], 1, 100, 25, 5, 50, 60, 90, 30, false, "A basic sword for slashing",true);
+defineMelee("Better Sword", ["sword2"], [["Log",2],["Rock",2],["Gem",5],["Mushroom Fiber", 3]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A better sword for slashing",true);
+defineMelee("Gem Sword", ["gem_sword"], [["Gem",3],["Philosopher's Stone",1],["Black Gem",2],["Tech",4]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A godly sword for slashing",true);
 defineMelee("Evil Apple on Stick", ["evil_apple_on_stick"], [["Bad Apple",1],["Log",1]], 1, 100, 10, 5, 100, 60, 20, 10, false, "Now it'll bite your opponets",true);
-defineMelee("Scythe", ["scythe"], [["Log",2],["Rock",3]], 1, 100, 25, 5, 50, 150, 150, 120, false, "Just gotta make sure they are on the blade",true);
+defineMelee("Scythe", ["scythe"], [["Log",2],["Rock",4],["Mushroom Fiber",1]], 1, 100, 25, 5, 50, 150, 150, 120, false, "Just gotta make sure they are on the blade",true);
 
 defineRanged("Basic SlingShot", ["sling"], [["Mushroom", 2]], 1, 100, 5, 5, "Rock", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
 defineRanged("Better SlingShot", ["sling"], [["Mushroom", 2], ["Gem", 1]], 1, 100, 5, 5, "Rock", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);
 defineRanged("Dirt Ball", ["dirtball"], [["Dirt", 5]], 1, 1, 0, 5, "Dirt", "Dirt Ball", 10, 10, 60, false, "A ball of dirt to push people around",true);
-defineRanged("Bomb", ["images/structures/bomb1"], [["Dirt", 5]], 1, 1, 0, 5, "Bomb", "Bomb", 10, 10, 60, false, "A bomb you can throw",false);
-defineRanged("DirtBomb", ["images/structures/dirtbomb"], [["Dirt", 5], ["Bomb", 1]], 1, 1, 0, 5, "Dirt Bomb", "DirtBomb", 10, 10, 60, false, "A bomb that just makes dirt",false);
+defineRanged("Bomb", ["images/structures/bomb1"], [["Rock", 2], ["Black Gem", 2]], 1, 1, 0, 5, "Bomb", "Bomb", 10, 10, 60, false, "A bomb you can throw",true);
+defineRanged("DirtBomb", ["images/structures/dirtbomb"], [["Dirt", 5], ["Bomb", 1]], 1, 1, 0, 5, "Dirt Bomb", "DirtBomb", 10, 10, 60, false, "A bomb that just makes dirt",true);
 defineRanged("Fire Staff", ["fire_staff"], [["Dirt", 5]], 1, 100, 0, 5, "Fire Ball", "mana25", 10, 10, 60, true, "A staff that shoots fire",false);
 defineRanged("Laser Gun", ["laser_gun"], [["Rock", 5], ["Tech", 2]], 1, 100, 0, 5, "Laser", "mana15", 10, 10, 60, false, "A gun that shoots lasers",true);
 defineRanged("Bow", ["bow"], [["Log", 5]], 1, 100, 0, 5, "Arrow", "Arrow", 10, 10, 60, false, "A bow",true);
@@ -48,7 +48,7 @@ defineFood("Bad Apple", ["bad_apple"], [], 1, 100, 5, "Looks like this apple wou
 defineFood("Mushroom", ["images/structures/mushroom1"], [], 1, 100, 10, "A tasty mushroom",false);
 
 defineSeed("Mushroom Seed", ["mushroom_spores"], [["Mushroom", 1]], 1, "Mushroom", 0.5, "Some mushroom spores",true);
-defineSimpleItem("Mushroom Fiber", ["mushroom_fiber"], [], 1, "A stringy component of many tools",false);
+defineSimpleItem("Mushroom Fiber", ["mushroom_fiber"], [["Mushroom",1]], 1, "A stringy component of many tools",true);
 
 
 
