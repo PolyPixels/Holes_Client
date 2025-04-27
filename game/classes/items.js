@@ -318,7 +318,8 @@ class Food extends SimpleItem{
         return [
             ["Durability", this.durability], 
             ["Weight", this.weight], 
-            ["Heal", this.heal]
+            ["Heal", this.heal],
+            ["Mana Regen", this.manaRegen]
         ];
     }
 }
