@@ -167,16 +167,18 @@ class Melee extends SimpleItem{
             let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
             let toMouse = createVector(x,y).sub(curPlayer.pos).setMag(50);
             let proj = createProjectile(this.itemName+" Slash", curPlayer.name, curPlayer.color, curPlayer.pos.x, curPlayer.pos.y, toMouse.heading());
-            testMap.chunks[chunkPos.x+','+chunkPos.y].projectiles.push(
-                proj
-            );
-            //tell the server you made a projectile
-            socket.emit("new_proj", proj);
-
-            let temp = new SoundObj("swing.wav", curPlayer.pos.x, curPlayer.pos.y);
-            testMap.chunks[chunkPos.x+','+chunkPos.y].soundObjs.push(temp);
-            socket.emit("new_sound", {sound: "swing.wav", cPos: chunkPos, pos: {x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
-            curPlayer.invBlock.useTimer = this.swingSpeed;
+            if(testMap.chunks[chunkPos.x+','+chunkPos.y] != undefined){
+                testMap.chunks[chunkPos.x+','+chunkPos.y].projectiles.push(
+                    proj
+                );
+                //tell the server you made a projectile
+                socket.emit("new_proj", proj);
+    
+                let temp = new SoundObj("swing.wav", curPlayer.pos.x, curPlayer.pos.y);
+                testMap.chunks[chunkPos.x+','+chunkPos.y].soundObjs.push(temp);
+                socket.emit("new_sound", {sound: "swing.wav", cPos: chunkPos, pos: {x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
+                curPlayer.invBlock.useTimer = this.swingSpeed;
+            }
         }
     }
 
