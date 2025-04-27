@@ -18,3 +18,6 @@ https://github.com/PolyPixels/Holes_server
 If you encounter **CORS errors**, ensure that the frontend and backend are configured properly. The server has been configured to allow requests from [`http://127.0.0.1:5500`](http://127.0.0.1:5500/game/index.html).
 ---
 
+To play
+
+https://api.holesgame.com/game/
