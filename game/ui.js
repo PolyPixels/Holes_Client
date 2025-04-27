@@ -1093,7 +1093,15 @@ function startGame() {
     socket.emit("new_player", curPlayer);
     gameState = "playing";
     hideRaceSelect();
-    tutorialDiv.show();
+
+    if(localStorage.getItem("tut_seen") == "true") {
+
+        tutorialDiv.hide();
+    }else {
+
+        tutorialDiv.show();
+        localStorage.setItem("tut_seen","true")
+    }
 
     // Clear a small area around the player (example logic)
     for (let y = -5; y < 5; y++) {
@@ -3118,7 +3126,7 @@ function defineDeathUI() {
 var tutorialDiv;
 var pages;
 var currentTutorialPage = 0;
-
+var seen = localStorage.getItem("tut_seen")
 function defineTutorialUI(){
     tutorialDiv = createDiv();
     applyStyle(tutorialDiv, {
