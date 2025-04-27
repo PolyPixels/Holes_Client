@@ -135,14 +135,46 @@ function bombUpdate(){
             });
         }
 
-        // if you made this bomb, when it eventually blows up, the 'damage' will be sent to server by bomb-placer
-        if(this.id == curPlayer.id && this.ownerName == curPlayer.name) { 
-
+        //dig dirt in a radius around the bomb
+        for(let y=-100; y<100; y++){
+            for(let x=-100; x<100; x++){
+                dig(this.pos.x+x, this.pos.y+y, 1, false);
+            }
         }
+
+        // Bomb hurts all objects nearby
+        let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+        let chunk = testMap.chunks[chunkPos.x+","+chunkPos.y];
+        if(chunk != undefined){
+            for(let i=0; i<chunk.objects.length; i++){
+                if(chunk.objects[i].pos.dist(this.pos) < 33+(6*(this.size.w+this.size.h)/4)){
+                    if(chunk.objects[i].type == "Placeable" || chunk.objects[i].type == "Trap" || chunk.objects[i].objName == "Turret"){
+                        chunk.objects[i].hp -= ((33+(6*(this.size.w+this.size.h)/4))-chunk.objects[i].pos.dist(this.pos))/2;
+                        chunk.objects[i].shake = {intensity: 10, length: 5};
+                        
+                        //tell the server to update the object
+                        socket.emit("update_obj", {
+                            cx: chunkPos.x, cy: chunkPos.y,
+                            objName: chunk.objects[i].objName,
+                            pos: {x: chunk.objects[i].pos.x, y: chunk.objects[i].pos.y},
+                            z: chunk.objects[i].z,
+                            update_name: "hp",
+                            update_value: chunk.objects[i].hp
+                        });
+                    }
+                }
+            }
+        }
+
+
+
+        // if you made this bomb, when it eventually blows up, the 'damage' will be sent to server by bomb-placer
+        // if(this.id == curPlayer.id && this.ownerName == curPlayer.name) { 
+
+        // }
         
         // Remove bomb after explosion
         this.deleteTag = true;
-        let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
         socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
     }
 }
