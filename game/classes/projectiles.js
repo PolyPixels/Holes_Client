@@ -7,9 +7,9 @@ var projDic = {};
 
 defineSimpleProjectile("Rock", 0, 20, 18, 20, "Straight", 5, 10);
 defineSimpleProjectile("Dirt", 1, 20, 0, 30, "Straight", 5, 10);
-defineSimpleProjectile("Fire Ball", 2, 20, 25, 30, "Screw", 5, 10);
-defineSimpleProjectile("Laser", 3, 20, 0, 30, "Straight", 10, 10);
-defineSimpleProjectile("Arrow", 4, 20, 0, 30, "Straight", 10, 10);
+defineSimpleProjectile("Fire Ball", 2, 20, 30, 30, "Screw", 5, 10);
+defineSimpleProjectile("Laser", 3, 20, 25, 10, "Straight", 10, 10);
+defineSimpleProjectile("Arrow", 4, 20, 20, 20, "Straight", 7, 10);
 defineObjProjectile("Bomb", "PlacedBomb", 40, 5, 2);
 defineObjProjectile("Dirt Bomb", "dirt", 40, 5, 2);
 

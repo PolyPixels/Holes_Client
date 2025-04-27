@@ -24,16 +24,16 @@ defineMelee("Gem Sword", ["gem_sword"], [["Gem",3],["Philosopher's Stone",1],["B
 defineMelee("Evil Apple on Stick", ["evil_apple_on_stick"], [["Bad Apple",1],["Log",1]], 1, 100, 10, 5, 100, 60, 20, 10, false, "Now it'll bite your opponets",true);
 defineMelee("Scythe", ["scythe"], [["Log",2],["Rock",4],["Mushroom Fiber",1]], 1, 100, 25, 5, 50, 150, 150, 120, false, "Just gotta make sure they are on the blade",true);
 
-defineRanged("Basic SlingShot", ["sling"], [["Mushroom", 2]], 1, 100, 5, 5, "Rock", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
-defineRanged("Better SlingShot", ["sling"], [["Mushroom", 2], ["Gem", 1]], 1, 100, 5, 5, "Rock", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);
-defineRanged("Dirt Ball", ["dirtball"], [["Dirt", 5]], 1, 1, 0, 5, "Dirt", "Dirt Ball", 10, 10, 60, false, "A ball of dirt to push people around",true);
-defineRanged("Bomb", ["images/structures/bomb1"], [["Rock", 2], ["Black Gem", 2]], 1, 1, 0, 5, "Bomb", "Bomb", 10, 10, 60, false, "A bomb you can throw",true);
-defineRanged("DirtBomb", ["images/structures/dirtbomb"], [["Dirt", 5], ["Bomb", 1]], 1, 1, 0, 5, "Dirt Bomb", "DirtBomb", 10, 10, 60, false, "A bomb that just makes dirt",true);
-defineRanged("Fire Staff", ["fire_staff"], [["Dirt", 5]], 1, 100, 0, 5, "Fire Ball", "mana25", 10, 10, 60, true, "A staff that shoots fire",false);
-defineRanged("Laser Gun", ["laser_gun"], [["Rock", 5], ["Tech", 2]], 1, 100, 0, 5, "Laser", "mana15", 10, 10, 60, false, "A gun that shoots lasers",true);
-defineRanged("Bow", ["bow"], [["Log", 5]], 1, 100, 0, 5, "Arrow", "Arrow", 10, 10, 60, false, "A bow",true);
-defineRanged("CrossBow", ["crossbow"], [["Log", 5], ["Rock", 1]], 1, 100, 0, 5, "Arrow", "Arrow", 10, 10, 60, false, "A Cross bow",true);
-defineRanged("TriSling", ["trisling"], [["Better SlingShot", 3]], 1, 100, 0, 5, "Rock", "Rock", 10, 10, 60, false, "A handful of slingshots",true);
+defineRanged("Basic SlingShot", ["sling"], [["Mushroom", 2]], 1, 100, 5, "Rock", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
+defineRanged("Better SlingShot", ["sling"], [["Mushroom", 2], ["Gem", 1]], 1, 100, 5, "Rock", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);
+defineRanged("Dirt Ball", ["dirtball"], [["Dirt", 5]], 1, 1, 5, "Dirt", "Dirt Ball", 10, 10, 60, false, "A ball of dirt to push people around",true);
+defineRanged("Bomb", ["images/structures/bomb1"], [["Rock", 2], ["Black Gem", 2]], 1, 1, 5, "Bomb", "Bomb", 10, 10, 60, false, "A bomb you can throw",true);
+defineRanged("DirtBomb", ["images/structures/dirtbomb"], [["Dirt", 5], ["Bomb", 1]], 1, 1, 5, "Dirt Bomb", "DirtBomb", 10, 10, 60, false, "A bomb that just makes dirt",true);
+defineRanged("Fire Staff", ["fire_staff"], [["Dirt", 5]], 1, 100, 5, "Fire Ball", "mana25", 20, 10, 60, true, "A staff that shoots fire",false);
+defineRanged("Laser Gun", ["laser_gun"], [["Rock", 5], ["Tech", 2]], 1, 100, 5, "Laser", "mana15", 10, 10, 60, false, "A gun that shoots lasers",true);
+defineRanged("Bow", ["bow"], [["Log", 5]], 1, 100, 5, "Arrow", "Arrow", 3, 3, 30, false, "A bow",true);
+defineRanged("CrossBow", ["crossbow"], [["Log", 5], ["Rock", 1]], 1, 100, 5, "Arrow", "Arrow", 15, 10, 60, false, "A Cross bow",true);
+defineRanged("TriSling", ["trisling"], [["Better SlingShot", 3]], 1, 100, 5, "Rock", "Rock", 3, 30, 60, false, "A handful of slingshots",true);
 
 defineSimpleItem("Rock", ["rock"], [], 1, "A rock for your slingshot",false);
 defineSimpleItem("Gem", ["gem"], [], 1, "A pretty gem",false);
@@ -195,9 +195,8 @@ class Melee extends SimpleItem{
 }
 
 class Ranged extends SimpleItem{
-    constructor(itemName, weight, durability, imgNum, desc, damage, spread, projName, ammoName, fireRate, roundSize, reloadSpeed, manaCost, magicBool){
+    constructor(itemName, weight, durability, imgNum, desc, spread, projName, ammoName, fireRate, roundSize, reloadSpeed, manaCost, magicBool){
         super(itemName, weight, durability, imgNum, desc);
-        this.damage = damage;
         this.spread = spread;
         this.projName = projName; //projectile name
         this.ammoName = ammoName; //item used for ammo
@@ -258,7 +257,7 @@ class Ranged extends SimpleItem{
         return [
             ["Durability", this.durability], 
             ["Weight", this.weight], 
-            ["Damage", this.damage], 
+            ["Damage", projectileDic[this.projName].damage], 
             ["Spread", this.spread],
             ["Ammo Name", this.ammoName],
             ["Firerate", (1/this.fireRate).toFixed(3)],
@@ -422,7 +421,7 @@ function createItem(name){
             return new Melee(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].damage, itemDic[name].range, itemDic[name].safeRange, itemDic[name].angle, itemDic[name].swingSpeed, itemDic[name].magicBool);
         }
         else if(itemDic[name].type == "Ranged"){
-            return new Ranged(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].damage, itemDic[name].spread, itemDic[name].projName, itemDic[name].ammoName, itemDic[name].fireRate, itemDic[name].roundSize, itemDic[name].reloadSpeed, itemDic[name].manaCost, itemDic[name].magicBool);
+            return new Ranged(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].spread, itemDic[name].projName, itemDic[name].ammoName, itemDic[name].fireRate, itemDic[name].roundSize, itemDic[name].reloadSpeed, itemDic[name].manaCost, itemDic[name].magicBool);
         }
         else if(itemDic[name].type == "Food"){
             return new Food(name, itemDic[name].weight, itemDic[name].durability, itemDic[name].img, itemDic[name].desc, itemDic[name].heal);
@@ -562,7 +561,6 @@ function defineMelee(name,imgPaths, cost, weight, durability, damage, knockback,
  * @param {Array} cost an array of things this item needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
  * @param {number} weight how much the item weighs
  * @param {int} durability how many uses the item has left
- * @param {int} damage how much damage the weapon does
  * @param {int} spread how much the bullets spread
  * @param {string} projName the name of the projectile this will spawn
  * @param {string} ammoName the name of the item used for ammo
@@ -572,14 +570,14 @@ function defineMelee(name,imgPaths, cost, weight, durability, damage, knockback,
  * @param {boolean} magicBool if the weapon does magic damage
  * @param {string} desc the description of the item
 */
-function defineRanged(name, imgPaths, cost, weight, durability, damage, spread, projName, ammoName, fireRate, roundSize, reloadSpeed, magicBool, desc, inCraftList){
+function defineRanged(name, imgPaths, cost, weight, durability, spread, projName, ammoName, fireRate, roundSize, reloadSpeed, magicBool, desc, inCraftList){
     defineItemSuper("Ranged", name, imgPaths, cost, weight, durability, desc, inCraftList);
     
     let paramNames = getParamNames(defineRanged);
     checkParams(
-        [arguments[5], arguments[6], arguments[7], arguments[8], arguments[9], arguments[10], arguments[11], arguments[12]],
-        [paramNames[5], paramNames[6], paramNames[7], paramNames[8], paramNames[9], paramNames[10], paramNames[11], paramNames[12]],
-        ["int","int","string","string","int","int","number","boolean"]
+        [arguments[5], arguments[6], arguments[7], arguments[8], arguments[9], arguments[10], arguments[11]],
+        [paramNames[5], paramNames[6], paramNames[7], paramNames[8], paramNames[9], paramNames[10], paramNames[11]],
+        ["int","string","string","int","int","number","boolean"]
     );
 
     if(ammoName.includes("mana")){
@@ -591,7 +589,6 @@ function defineRanged(name, imgPaths, cost, weight, durability, damage, spread, 
         itemDic[name].manaCost = 0;
     }
     
-    itemDic[name].damage = damage;
     itemDic[name].spread = spread;
     itemDic[name].projName = projName;
     itemDic[name].fireRate = fireRate;
