@@ -2317,6 +2317,7 @@ function updateTeamPickUI() {
             updateTeamPickUI();
             teamPickDiv.hide();
             gameState = "playing";
+            curPlayer.invBlock.useTimer = 10;
         });
         teamButton.parent(teamPickDiv);
     }
