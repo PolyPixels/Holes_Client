@@ -1369,6 +1369,7 @@ function defineInvUI() {
     craftingTitle.mousePressed(() => {
         gameState = "crafting";
         craftDiv.show();
+        curPlayer.invBlock.curItem = "";
         updateCraftList();
         invDiv.hide();
         spaceBarDiv.hide();
@@ -2743,6 +2744,7 @@ function defineCraftingUI() {
     invTitle.class("inventory-title");
     invTitle.mousePressed(() => {
         gameState = "inventory";
+        curPlayer.invBlock.curItem = "";
         invDiv.show();
         updateItemList();
         craftDiv.hide();

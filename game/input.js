@@ -37,6 +37,7 @@ function keyReleased() {
         }
         if(keyCode == 73){ //i
             gameState = "inventory";
+            curPlayer.invBlock.curItem = "";
             updateItemList();
             updatecurItemDiv();
             invDiv.show();
@@ -45,6 +46,7 @@ function keyReleased() {
         }
         if(keyCode == 67){ //c
             gameState = "crafting";
+            curPlayer.invBlock.curItem = "";
             updateCraftList();
             updatecurCraftItemDiv();
             craftDiv.show();
@@ -161,6 +163,7 @@ function keyReleased() {
         if(keyCode == 67){ //c
             gameState = "crafting";
             craftDiv.show();
+            curPlayer.invBlock.curItem = "";
             updateCraftList();
             invDiv.hide();
             spaceBarDiv.hide();
@@ -180,6 +183,7 @@ function keyReleased() {
         if(keyCode == 73){ //i
             gameState = "inventory";
             invDiv.show();
+            curPlayer.invBlock.curItem = "";
             updateItemList();
             craftDiv.hide();
         }
@@ -306,7 +310,7 @@ function mouseReleased(){
 
     if(mouseButton === LEFT){
         //if you click on the player card, open the team select ui
-        if(mouseX > width-530 && mouseX < width && mouseY > 0 && mouseY < 100){
+        if(mouseX > width-530 && mouseX < width && mouseY > 0 && mouseY < 50){
             gameState = "team_select";
             teamPickDiv.show();
         }
