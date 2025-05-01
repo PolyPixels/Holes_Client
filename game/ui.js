@@ -258,12 +258,12 @@ function renderServerBrowser() {
         serverBrowserContainer.class("container");
         serverBrowserContainer.style("overflow-y", "scroll")
         // Main container styling
-        serverBrowserContainer.style("width", "50dvw");
-        serverBrowserContainer.style("max-height", "60dvh");
+        serverBrowserContainer.style("width", "45dvw");
+        serverBrowserContainer.style("max-height", "50dvh");
         serverBrowserContainer.style("overflow-y", "hide");
         serverBrowserContainer.style("padding", "25px");
-        serverBrowserContainer.style("margin-top", "25px");
-        serverBrowserContainer.style("border-radius", "15px");
+        serverBrowserContainer.style("margin-top", "10dvh");//maintain distance with upper image
+        serverBrowserContainer.style("border-radius", "25px");
         serverBrowserContainer.style("color", "#fff");
         serverBrowserContainer.style("font-family", "Arial, sans-serif");
         serverBrowserContainer.style("box-shadow", "0px 8px 16px rgba(0, 0, 0, 0.4)");
@@ -276,9 +276,10 @@ function renderServerBrowser() {
 
         // Title
         let title = createDiv("Select A Server");
-        title.style("font-size", "2.5em");
+        title.style("font-size", "2em");
         title.style("font-weight", "bold");
-        title.style("margin-bottom", "15px");
+        title.style("margin-bottom", "25px");
+        title.style("margin-top", "25px");
         title.style("text-align", "center");
         title.parent(serverBrowserContainer);
 
@@ -293,7 +294,7 @@ function renderServerBrowser() {
 
         // Parent section that holds the "Add New Server" header and collapsible content
         let addServerSection = createDiv();
-        addServerSection.style("margin-top", "100px");
+        addServerSection.style("margin-top", "10px");
         addServerSection.style("padding", "15px");
         addServerSection.style("background", "#2a2a2a");
         addServerSection.style("border-radius", "10px");
@@ -307,6 +308,7 @@ function renderServerBrowser() {
         addServerTitle.style("margin-bottom", "10px");
         addServerTitle.style("text-align", "center");
         addServerTitle.style("cursor", "pointer"); // Indicate it can be clicked
+        // addServerTitle.style("border-radius", "50px"); // Indicate it can be clicked
         addServerTitle.parent(addServerSection);
 
         // Collapsible content container (initially hidden)
@@ -317,28 +319,30 @@ function renderServerBrowser() {
         // Server Name Input
         inputName = createInput("").attribute("placeholder", " Server Name");
         inputName.parent(addServerContent);
-        inputName.style("width", "90%");
-        inputName.style("margin-bottom", "8px");
-        inputName.style("padding", "10px");
-        inputName.style("border-radius", "5px");
+        inputName.style("width", "70%");
+        inputName.style("margin-bottom", "12px");
+        inputName.style("margin-top", "12px");
+        inputName.style("padding", "12px");
+        inputName.style("border-radius", "12px");
 
         // Server IP Input
         inputIP = createInput("").attribute("placeholder", " Server IP");
         inputIP.parent(addServerContent);
-        inputIP.style("width", "90%");
+        inputIP.style("width", "70%");
         inputIP.style("margin-bottom", "8px");
         inputIP.style("padding", "10px");
-        inputIP.style("border-radius", "5px");
+        inputIP.style("border-radius", "12px");
 
         // Add Server Button
         addServerButton = createButton("ADD");
         addServerButton.parent(addServerContent);
-        addServerButton.style("width", "80%");
-        addServerButton.style("padding", "10px");
+        addServerButton.style("margin-top","20px")
+        addServerButton.style("width", "50%");
+        addServerButton.style("padding", "16px");
         addServerButton.style("cursor", "pointer");
         addServerButton.style("color", "#fff");
         addServerButton.style("border", "none");
-        addServerButton.style("border-radius", "5px");
+        addServerButton.style("border-radius", "12px");
 
         // Functionality for the Add button
         addServerButton.mousePressed(() => {
@@ -377,12 +381,12 @@ function renderServerBrowser() {
         connectButton.style("height", "5dvw");
 
         connectButton.style("font-size", "2rem");
-        connectButton.style("margin-top", "20px");
-        connectButton.style("padding", "12px");
+        connectButton.style("margin-top", "40px");
+        connectButton.style("padding", "6px");
         connectButton.style("background", "#4CAF50");
         connectButton.style("color", "#fff");
         connectButton.style("border", "none");
-        connectButton.style("border-radius", "5px");
+        connectButton.style("border-radius", "12px");
 
         addServerSection.parent(serverBrowserContainer);
         connectButton.mousePressed(() => {
