@@ -561,6 +561,8 @@ class InvObj extends Placeable{
             if(curPlayer.name == this.ownerName && curPlayer.id == this.id){
                 gameState = "swap_inv";
                 curPlayer.otherInv = this;
+                curPlayer.invBlock.curItem = "";
+                curPlayer.otherInv.invBlock.curItem = "";
                 updateSwapItemLists(this.invBlock);
                 swapInvDiv.show();
                 //console.log("open Inv");
@@ -570,6 +572,8 @@ class InvObj extends Placeable{
             if(curPlayer.color == this.color || (this.ownerName == "" && this.id == "")){
                 gameState = "swap_inv";
                 curPlayer.otherInv = this;
+                curPlayer.invBlock.curItem = "";
+                curPlayer.otherInv.invBlock.curItem = "";
                 updateSwapItemLists(this.invBlock);
                 swapInvDiv.show();
                 //console.log("open Inv");
