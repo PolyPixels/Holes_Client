@@ -1185,8 +1185,6 @@ function addChatMessage(chatMsg) {
         chatMsg.user = "SERVER"
     }
     // If your 'chatMsg' object doesn't have a time property, you can generate one:
-    // let timeString = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    // Otherwise, if 'chatMsg.time' is already set, you can do:
     const timeString = chatMsg.time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     // Create a container for the entire message (text + time)
@@ -2677,15 +2675,50 @@ let lastUpdateTime = 0;
 
 let timerDisplay = "15:00";
 function setTimeUI(data) {
-    timerRemaining = data.minutes * 60 + data.seconds;
+    console.log(data)
+    timerRemaining = data.totalSeconds ?? (data.minutes * 60 + data.seconds);
     updateTimerDisplay();
 }
 
+
 function updateTimerDisplay() {
-    const m = Math.floor(timerRemaining / 60).toString().padStart(2, '0');
-    const s = (timerRemaining % 60).toString().padStart(2, '0');
-    timerDisplay = `${m}:${s}`;
+    const years = Math.floor(timerRemaining / (365 * 24 * 3600));
+    const days = Math.floor((timerRemaining % (365 * 24 * 3600)) / (24 * 3600));
+    const hours = Math.floor((timerRemaining % (24 * 3600)) / 3600);
+    const minutes = Math.floor((timerRemaining % 3600) / 60);
+    const seconds = timerRemaining % 60;
+
+    // Optional: pad values
+    const pad = (v) => v.toString().padStart(2, '0');
+
+    let parts = [];
+    if (years > 0) parts.push(`${years}y`);
+    if (days > 0 || years > 0) parts.push(`${days}d`);
+    if (hours > 0 || days > 0 || years > 0) parts.push(`${pad(hours)}h`);
+    parts.push(`${pad(minutes)}m`, `${pad(seconds)}s`);
+
+    timerDisplay = parts.join(' ');
+    console.log("Timer:", timerDisplay);
+
+    // Optional: call resize function here
+    adjustFontSize(timerRemaining);
 }
+function adjustFontSize(timerRemaining) {
+    const el = document.getElementById("timer");
+
+    if (!el) return;
+
+    if (timerRemaining >= 365 * 24 * 3600) {
+        el.style.fontSize = "1.2rem"; // Years
+    } else if (timerRemaining >= 24 * 3600) {
+        el.style.fontSize = "1.5rem"; // Days
+    } else if (timerRemaining >= 3600) {
+        el.style.fontSize = "2rem"; // Hours
+    } else {
+        el.style.fontSize = "2.5rem"; // MM:SS
+    }
+}
+
 
 function renderTimeUI() {
     if (millis() - lastUpdateTime >= 1000) {
@@ -3126,32 +3159,39 @@ function defineDeathUI() {
 var tutorialDiv;
 var pages;
 var currentTutorialPage = 0;
-var seen = localStorage.getItem("tut_seen")
-function defineTutorialUI(){
+var seen = localStorage.getItem("tut_seen");
+var pages = [];
+var currentTutorialPage = 0;
+var tutorialDiv;
+var pageNumberText;
+
+function defineTutorialUI() {
     tutorialDiv = createDiv();
     applyStyle(tutorialDiv, {
         backgroundColor: "#1a1a1a",
         width: "50%",
         height: "50%",
         position: "absolute",
+        top: "0", left: "0", bottom: "0", right: "0",
         margin: "auto",
-        color: "white"
+        color: "white",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "10px",
     });
     tutorialDiv.hide();
 
     let topBar = createDiv().parent(tutorialDiv);
     applyStyle(topBar, {
         display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        width: "100%",
+        justifyContent: "flex-end",
     });
 
     let closeButton = createButton("X").parent(topBar);
-    closeButton.class("close-button"); // Style it in CSS
     applyStyle(closeButton, {
-        marginLeft: "auto",  // Pushes it to the right
-        position: "relative",
-        right: "0",
         fontSize: "18px",
         cursor: "pointer",
         background: "none",
@@ -3159,91 +3199,140 @@ function defineTutorialUI(){
         border: "none",
     });
     closeButton.mousePressed(() => {
-        gameState = "playing"
+        gameState = "playing";
         curPlayer.invBlock.useTimer = 10;
-        tutorialDiv.hide(); // Hides the tutorial when clicked
+        tutorialDiv.hide();
     });
 
     let pageHolder = createDiv().parent(tutorialDiv);
     applyStyle(pageHolder, {
-        height: "78%",
-        padding: "10px"
+        flexGrow: "1",
+        width: "100%",
+        overflow: "auto",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
     });
 
     let bottomBar = createDiv().parent(tutorialDiv);
     applyStyle(bottomBar, {
         display: "flex",
-        justifyContent: "center",
+        width: "100%",
+        justifyContent: "space-between",
         alignItems: "center",
     });
 
     let leftButton = createButton("<").parent(bottomBar);
-    leftButton.class("close-button"); // Style it in CSS
     applyStyle(leftButton, {
-        marginRight: "auto",  // Pushes it to the left
-        position: "relative",
-        left: "0",
         fontSize: "18px",
         cursor: "pointer",
         background: "none",
         color: "white",
         border: "none",
-    });
-    leftButton.mousePressed(() => {
-        pages[currentTutorialPage].hide();
-        currentTutorialPage = (currentTutorialPage-1);
-        if(currentTutorialPage < 0) currentTutorialPage = pages.length-1;
-        pages[currentTutorialPage].show();
     });
 
     let rightButton = createButton(">").parent(bottomBar);
-    rightButton.class("close-button"); // Style it in CSS
     applyStyle(rightButton, {
-        marginLeft: "auto",  // Pushes it to the right
-        position: "relative",
-        right: "0",
         fontSize: "18px",
         cursor: "pointer",
         background: "none",
         color: "white",
         border: "none",
     });
+
+    pageNumberText = createP("").parent(bottomBar);
+    applyStyle(pageNumberText, {
+        fontSize: "12px",
+        color: "white",
+        margin: "0 auto",
+    });
+
+    leftButton.mousePressed(() => {
+        pages[currentTutorialPage].hide();
+        currentTutorialPage = (currentTutorialPage - 1 + pages.length) % pages.length;
+        pages[currentTutorialPage].show();
+        updatePageNumber();
+    });
+
     rightButton.mousePressed(() => {
         pages[currentTutorialPage].hide();
-        currentTutorialPage = (currentTutorialPage+1)%pages.length;
+        currentTutorialPage = (currentTutorialPage + 1) % pages.length;
         pages[currentTutorialPage].show();
+        updatePageNumber();
     });
 
-    pages = [];
-    page1 = createDiv().parent(pageHolder);
-    let skipText = createP("Press that x to skip all this. ^ ").parent(page1);
+    // Setup tutorial pages
+    setupTutorialPages(pageHolder);
+    updatePageNumber();
+}
+
+function setupTutorialPages(pageHolder) {
+    // --- Page 1 ---
+    let page1 = createDiv().parent(pageHolder);
+
+    let skipText = createP("Press X above to skip").parent(page1);
     applyStyle(skipText, {
-        textAlign: "end",
-        paddingRight: "5px"
+        textAlign: "right",
+        fontSize: "12px",
+        width: "100%",
+        marginBottom: "10px"
     });
 
-    createP("First thing you should know is, you can dig with and empty hand.").parent(page1).style("margin-bottom", "5px");
-    createP("Next any type of food will heal you.").parent(page1).style("margin-bottom", "5px");
-    createP("Try not to fill up your dirt bag without knowing where you are gonna empty it.").parent(page1).style("margin-bottom", "5px");
-    createP("Use your sword to break stuff.").parent(page1).style("margin-bottom", "5px");
-    createP("You will always interact with the thing that has an 'F' over it, try moving your mouse close to something to move the 'F'.").parent(page1).style("margin-bottom", "5px");
-    
+    addTutorialStep(page1, "images/items/shovel1.png", "You can dig with an empty hand or shovel.");
+    addTutorialStep(page1, "images/items/apple.png", "Any type of food will heal you.");
+    addTutorialStep(page1, "images/ui/dirtbag.png", "Don't fill your dirt bag unless you know where to empty it.");
+    addTutorialStep(page1, "images/items/sword1.png", "Use your sword to break things.");
+    addTutorialStep(page1, "", "Move your mouse close to objects to interact with them (F key).");
+
     pages.push(page1);
 
-    page2 = createDiv().parent(pageHolder);
+    // --- Page 2 ---
+    let page2 = createDiv().parent(pageHolder);
+    createP("Controls:").parent(page2).style("margin-bottom", "10px");
 
-    createP("Controls").parent(page2).style("margin-bottom", "5px");
-    createP("WASD - to move").parent(page2).style("margin-bottom", "5px");
-    createP("Left & Right Click - use item").parent(page2).style("margin-bottom", "5px");
-    createP("F - interact with objects").parent(page2).style("margin-bottom", "5px");
-    createP("Q&E / Mouse Wheel - move hotbar").parent(page2).style("margin-bottom", "5px");
-    createP("R - bring up build menu").parent(page2).style("margin-bottom", "5px");
-    createP("ESC - pause (only pauses you)").parent(page2).style("margin-bottom", "5px");
-    createP("TAB - bring up leaderboard").parent(page2).style("margin-bottom", "5px");
-    createP("I - bring up inventory").parent(page2).style("margin-bottom", "5px");
-    createP("C - bring up crafting").parent(page2).style("margin-bottom", "5px");
-    createP("Space - do stuff in inventory (should be a tooltip to tell when to hit space)").parent(page2).style("margin-bottom", "5px");
+    addControlStep(page2, "WASD", "Move around");
+    addControlStep(page2, "Left/Right Click", "Use item");
+    addControlStep(page2, "F", "Interact");
+    addControlStep(page2, "Q & E / Mouse Wheel", "Switch Hotbar slot");
+    addControlStep(page2, "R", "Build menu");
+    addControlStep(page2, "ESC", "Pause");
+    addControlStep(page2, "TAB", "Leaderboard");
+    addControlStep(page2, "I", "Inventory");
+    addControlStep(page2, "C", "Crafting");
+    addControlStep(page2, "Space", "Do stuff in Inventory");
+
     page2.hide();
-
     pages.push(page2);
 }
+
+function addTutorialStep(parent, imgPath, text) {
+    let step = createDiv().parent(parent);
+    applyStyle(step, {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        marginBottom: "15px",
+    });
+    let img = createImg(imgPath).parent(step);
+    img.style("width", "50px");
+    img.style("height", "50px");
+    let label = createP(text).parent(step);
+    applyStyle(label, {
+        marginTop: "5px",
+        fontSize: "14px",
+    });
+}
+
+function addControlStep(parent, control, description) {
+    let line = createP(control + " - " + description).parent(parent);
+    applyStyle(line, {
+        marginBottom: "5px",
+        fontSize: "14px",
+    });
+}
+
+function updatePageNumber() {
+    pageNumberText.html(`Page ${currentTutorialPage + 1} of ${pages.length}`);
+}
+
