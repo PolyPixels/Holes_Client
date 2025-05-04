@@ -3169,6 +3169,7 @@ var tutorialDiv;
 var pageNumberText;
 
 function defineTutorialUI() {
+    // MAIN CONTAINER
     tutorialDiv = createDiv();
     applyStyle(tutorialDiv, {
         backgroundColor: "#1a1a1a",
@@ -3186,13 +3187,13 @@ function defineTutorialUI() {
     });
     tutorialDiv.hide();
 
+    // TOP BAR (close button)
     let topBar = createDiv().parent(tutorialDiv);
     applyStyle(topBar, {
         display: "flex",
         width: "100%",
         justifyContent: "flex-end",
     });
-
     let closeButton = createButton("X").parent(topBar);
     applyStyle(closeButton, {
         fontSize: "18px",
@@ -3207,6 +3208,7 @@ function defineTutorialUI() {
         tutorialDiv.hide();
     });
 
+    // PAGE HOLDER
     let pageHolder = createDiv().parent(tutorialDiv);
     applyStyle(pageHolder, {
         flexGrow: "1",
@@ -3218,17 +3220,23 @@ function defineTutorialUI() {
         textAlign: "center",
     });
 
+    // BOTTOM BAR
     let bottomBar = createDiv().parent(tutorialDiv);
     applyStyle(bottomBar, {
         display: "flex",
         width: "100%",
-        justifyContent: "space-between",
+        flexDirection: "row",
         alignItems: "center",
-        margin:"auto",
-        flexDirection:"column"
     });
 
-    let leftButton = createButton("<").parent(bottomBar);
+    // ← BUTTON WRAPPER
+    let leftDiv = createDiv().parent(bottomBar);
+    applyStyle(leftDiv, {
+        flex: "1",
+        display: "flex",
+        justifyContent: "flex-start",
+    });
+    let leftButton = createButton("<").parent(leftDiv);
     applyStyle(leftButton, {
         fontSize: "18px",
         cursor: "pointer",
@@ -3237,7 +3245,28 @@ function defineTutorialUI() {
         border: "none",
     });
 
-    let rightButton = createButton(">").parent(bottomBar);
+    // PAGE NUMBER WRAPPER
+    let centerDiv = createDiv().parent(bottomBar);
+    applyStyle(centerDiv, {
+        flex: "1",
+        display: "flex",
+        justifyContent: "center",
+    });
+    pageNumberText = createP("").parent(centerDiv);
+    applyStyle(pageNumberText, {
+        fontSize: "12px",
+        color: "white",
+        margin: "0",
+    });
+
+    // → BUTTON WRAPPER
+    let rightDiv = createDiv().parent(bottomBar);
+    applyStyle(rightDiv, {
+        flex: "1",
+        display: "flex",
+        justifyContent: "flex-end",
+    });
+    let rightButton = createButton(">").parent(rightDiv);
     applyStyle(rightButton, {
         fontSize: "18px",
         cursor: "pointer",
@@ -3246,20 +3275,13 @@ function defineTutorialUI() {
         border: "none",
     });
 
-    pageNumberText = createP("").parent(bottomBar);
-    applyStyle(pageNumberText, {
-        fontSize: "12px",
-        color: "white",
-        margin: "0 auto",
-    });
-
+    // NAVIGATION LOGIC
     leftButton.mousePressed(() => {
         pages[currentTutorialPage].hide();
         currentTutorialPage = (currentTutorialPage - 1 + pages.length) % pages.length;
         pages[currentTutorialPage].show();
         updatePageNumber();
     });
-
     rightButton.mousePressed(() => {
         pages[currentTutorialPage].hide();
         currentTutorialPage = (currentTutorialPage + 1) % pages.length;
@@ -3267,10 +3289,11 @@ function defineTutorialUI() {
         updatePageNumber();
     });
 
-    // Setup tutorial pages
+    // SETUP PAGES
     setupTutorialPages(pageHolder);
     updatePageNumber();
 }
+
 
 function setupTutorialPages(pageHolder) {
     // --- Page 1 ---
