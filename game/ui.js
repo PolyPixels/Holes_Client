@@ -1805,7 +1805,7 @@ function togglePlayerStatusTable() {
                 tableWrapper.style("overflow-y", "auto");
                 tableWrapper.style("max-height", "70%");
                 tableWrapper.style("margin-top", "10px");
-
+                console.log(players)
                 let table = createElement("table").parent(tableWrapper);
                 table.style("width", "100%");
                 table.style("color", "white");
@@ -1813,13 +1813,13 @@ function togglePlayerStatusTable() {
                 table.style("font-size", "1rem");
 
                 let thead = createElement("thead").parent(table);
-                thead.html("<tr><th>Name</th><th>Kills</th><th>Ping</th></tr>");
+                thead.html("<tr><th>Name</th><th>Kills</th><th>Deaths</th></tr>");
                 thead.elt.style.backgroundColor = "#333";
 
                 let tbody = createElement("tbody").parent(table);
                 players.forEach(p => {
                     const row = createElement("tr").parent(tbody);
-                    row.html(`<td>${p.name}</td><td>${p.kills}</td><td>${p.ping}</td>`);
+                    row.html(`<td>${p.name}</td><td>${p.kills}</td><td>${p.deaths}</td>`);
                     row.elt.style.borderBottom = "1px solid #444";
                 });
 
