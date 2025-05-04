@@ -83,10 +83,10 @@ function renderLinks() {
     titleImage = createImg("./images/ui/title.png");
 
     titleImage.style("width", "25dvw"); // Set the width of the image
-    titleImage.style("height", "10dvh"); 
+    titleImage.style("height", "15dvh"); 
     titleImage.style("border", "5px solid #000"); // Add a border
     titleImage.style("display", "block"); // Make it a block element (to prevent inline styling)
-    titleImage.style("margin", "5% auto");
+    titleImage.style("margin-top","1%")
     titleImage.style("padding-bottom", "40px auto");
     titleImage.style("top", "0")
     titleImage.style("position", "absolute"); let randItem1 = Math.floor(Math.random() * markeeText.length);
@@ -222,7 +222,6 @@ function hideLinks() {
         } else {
             linkContainer.style("display", "none");
             markee.style("display", "none")
-            titleImage.style("display", "none");
             settingsToggle.style("display", "none")
             renderLinks = false
         }
@@ -393,6 +392,7 @@ function renderServerBrowser() {
                 //console.log("Connected to " + selectedServer, socket);
                 hideServerBrowser();
                 gameState = "race_selection";
+                hideLinks()
                 renderedserverBrowserContainer = false;
             } else {
                 alert("⚠️ Please select a server first.");
@@ -702,6 +702,7 @@ function setupUI() {
         card.style("width", cardWidth + "px");
         card.style("border-radius", "10px");
         card.style("padding", "25px");
+        card.style("padding-top", "5px");
         card.style("cursor", "pointer");
         card.selected = false; // custom property for selection
 
@@ -1014,6 +1015,8 @@ function toggleChatDropdown() {
 
 
 function startGame() {
+    
+    titleImage.style("display", "none");
     //console.log(raceSelected, "sasd")
     if (!selectedServer) {
         alert("Issue with server retry.");
