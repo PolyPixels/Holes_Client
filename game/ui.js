@@ -82,12 +82,11 @@ function renderLinks() {
 
     titleImage = createImg("./images/ui/title.png");
 
-    // Apply styles to the image using .style()
-    titleImage.style("width", "28dvw"); // Set the width of the image
-    titleImage.style("height", "13dvw"); // Automatically adjust the height
+    titleImage.style("width", "25dvw"); // Set the width of the image
+    titleImage.style("height", "10dvh"); 
     titleImage.style("border", "5px solid #000"); // Add a border
     titleImage.style("display", "block"); // Make it a block element (to prevent inline styling)
-    titleImage.style("margin", "20px auto");
+    titleImage.style("margin", "5% auto");
     titleImage.style("padding-bottom", "40px auto");
     titleImage.style("top", "0")
     titleImage.style("position", "absolute"); let randItem1 = Math.floor(Math.random() * markeeText.length);
@@ -261,8 +260,7 @@ function renderServerBrowser() {
         serverBrowserContainer.style("width", "50dvw");
         serverBrowserContainer.style("max-height", "60dvh");
         serverBrowserContainer.style("overflow-y", "hide");
-        serverBrowserContainer.style("padding", "25px");
-        serverBrowserContainer.style("margin-top", "25px");
+        serverBrowserContainer.style("margin-bottom", "10dvh");
         serverBrowserContainer.style("border-radius", "15px");
         serverBrowserContainer.style("color", "#fff");
         serverBrowserContainer.style("font-family", "Arial, sans-serif");
@@ -276,7 +274,7 @@ function renderServerBrowser() {
 
         // Title
         let title = createDiv("Select A Server");
-        title.style("font-size", "2.5em");
+        title.style("font-size", "2em");
         title.style("font-weight", "bold");
         title.style("margin-bottom", "15px");
         title.style("text-align", "center");
