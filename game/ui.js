@@ -3224,6 +3224,8 @@ function defineTutorialUI() {
         width: "100%",
         justifyContent: "space-between",
         alignItems: "center",
+        margin:"auto",
+        flexDirection:"column"
     });
 
     let leftButton = createButton("<").parent(bottomBar);
@@ -3286,8 +3288,7 @@ function setupTutorialPages(pageHolder) {
     addTutorialStep(page1, "images/items/apple.png", "Any type of food will heal you.");
     addTutorialStep(page1, "images/ui/dirtbag.png", "Don't fill your dirt bag unless you know where to empty it.");
     addTutorialStep(page1, "images/items/sword1.png", "Use your sword to break things.");
-    addTutorialStep(page1, "", "Move your mouse close to objects to interact with them (F key).");
-
+    addTutorialStep(page1, "images/ui/f_tutorial_icon.png", "Move your mouse close to objects to interact with them (F key).");
     pages.push(page1);
 
     // --- Page 2 ---
