@@ -392,7 +392,6 @@ function renderServerBrowser() {
                 //console.log("Connected to " + selectedServer, socket);
                 hideServerBrowser();
                 gameState = "race_selection";
-                hideLinks()
                 renderedserverBrowserContainer = false;
             } else {
                 alert("⚠️ Please select a server first.");
