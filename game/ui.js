@@ -3022,8 +3022,8 @@ function updatecurCraftItemDiv() {
     craftButton.parent(itemCostDiv);
     craftButton.mousePressed(() => {
         if (curPlayer.invBlock.craftCheck(curPlayer.invBlock.curItem)) {
-            curPlayer.invBlock.addItem(curPlayer.invBlock.curItem, 1);
-            for (let i = 0; i < itemDic[curPlayer.invBlock.curItem].cost.length; i++) {
+            curPlayer.invBlock.addItem(curPlayer.invBlock.curItem, itemDic[curPlayer.invBlock.curItem].cost[0]);
+            for (let i = 1; i < itemDic[curPlayer.invBlock.curItem].cost.length; i++) {
                 //console.log(itemDic[curPlayer.invBlock.curItem].cost[i]);
                 if (itemDic[curPlayer.invBlock.curItem].cost[i][0] == "Dirt") {
                     dirtInv -= itemDic[curPlayer.invBlock.curItem].cost[i][1];
@@ -3062,7 +3062,16 @@ function updatecurCraftItemDiv() {
         costDiv.style("margin-bottom", "12px");
         costDiv.parent(costList);
 
-        let itemNameDiv = createDiv(itemDic[curPlayer.invBlock.curItem].cost[i][0] + ":");
+        let itemNameDiv;
+        let itemAmountDiv;
+        if(i == 0){
+            itemNameDiv = createDiv("Output:");
+            itemAmountDiv = createDiv(itemDic[curPlayer.invBlock.curItem].cost[0]);
+        }
+        else{
+            itemNameDiv = createDiv(itemDic[curPlayer.invBlock.curItem].cost[i][0] + ":");
+            itemAmountDiv = createDiv(itemDic[curPlayer.invBlock.curItem].cost[i][1]);
+        }
         itemNameDiv.style("width", "50%");
         itemNameDiv.style("height", "100%");
         itemNameDiv.style("color", "white");
@@ -3073,7 +3082,6 @@ function updatecurCraftItemDiv() {
         itemNameDiv.style("padding", "5px");
         itemNameDiv.parent(costDiv);
 
-        let itemAmountDiv = createDiv(itemDic[curPlayer.invBlock.curItem].cost[i][1]);
         itemAmountDiv.style("width", "50%");
         itemAmountDiv.style("height", "100%");
         itemAmountDiv.style("color", "white");

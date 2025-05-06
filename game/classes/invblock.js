@@ -166,7 +166,7 @@ class InvBlock{
     }
 
     craftCheck(itemName){
-        for(let i=0; i<itemDic[itemName].cost.length; i++){
+        for(let i=1; i<itemDic[itemName].cost.length; i++){
             let item = itemDic[itemName].cost[i][0];
             let amount = itemDic[itemName].cost[i][1];
             if(item == "Dirt"){
