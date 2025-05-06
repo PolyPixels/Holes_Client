@@ -82,12 +82,11 @@ function renderLinks() {
 
     titleImage = createImg("./images/ui/title.png");
 
-    // Apply styles to the image using .style()
-    titleImage.style("width", "28dvw"); // Set the width of the image
-    titleImage.style("height", "13dvw"); // Automatically adjust the height
+    titleImage.style("width", "25dvw"); // Set the width of the image
+    titleImage.style("height", "15dvh"); 
     titleImage.style("border", "5px solid #000"); // Add a border
     titleImage.style("display", "block"); // Make it a block element (to prevent inline styling)
-    titleImage.style("margin", "20px auto");
+    titleImage.style("margin-top","1%")
     titleImage.style("padding-bottom", "40px auto");
     titleImage.style("top", "0")
     titleImage.style("position", "absolute"); let randItem1 = Math.floor(Math.random() * markeeText.length);
@@ -223,7 +222,6 @@ function hideLinks() {
         } else {
             linkContainer.style("display", "none");
             markee.style("display", "none")
-            titleImage.style("display", "none");
             settingsToggle.style("display", "none")
             renderLinks = false
         }
@@ -261,8 +259,7 @@ function renderServerBrowser() {
         serverBrowserContainer.style("width", "50dvw");
         serverBrowserContainer.style("max-height", "60dvh");
         serverBrowserContainer.style("overflow-y", "hide");
-        serverBrowserContainer.style("padding", "25px");
-        serverBrowserContainer.style("margin-top", "25px");
+        serverBrowserContainer.style("margin-bottom", "10dvh");
         serverBrowserContainer.style("border-radius", "15px");
         serverBrowserContainer.style("color", "#fff");
         serverBrowserContainer.style("font-family", "Arial, sans-serif");
@@ -276,7 +273,7 @@ function renderServerBrowser() {
 
         // Title
         let title = createDiv("Select A Server");
-        title.style("font-size", "2.5em");
+        title.style("font-size", "2em");
         title.style("font-weight", "bold");
         title.style("margin-bottom", "15px");
         title.style("text-align", "center");
@@ -704,6 +701,7 @@ function setupUI() {
         card.style("width", cardWidth + "px");
         card.style("border-radius", "10px");
         card.style("padding", "25px");
+        card.style("padding-top", "5px");
         card.style("cursor", "pointer");
         card.selected = false; // custom property for selection
 
@@ -1016,6 +1014,8 @@ function toggleChatDropdown() {
 
 
 function startGame() {
+    
+    titleImage.style("display", "none");
     //console.log(raceSelected, "sasd")
     if (!selectedServer) {
         alert("Issue with server retry.");
