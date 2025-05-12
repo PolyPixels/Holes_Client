@@ -3371,3 +3371,64 @@ function updatePageNumber() {
     pageNumberText.html(`Page ${currentTutorialPage + 1} of ${pages.length}`);
 }
 
+var popups = [];
+
+class Popup {
+    constructor(img, text, lifespan, x, y){
+        this.img = img;
+        this.txt = text;
+        this.lifespan = lifespan;
+        this.pos = createVector(x, y);
+        this.deleteTag = false;
+        this.yOffset = 0;
+        this.h = 50;
+    }
+
+    render(i){
+        if(this.lifespan <= 0){
+            this.h -= 5;
+            if(this.h <= 0){
+                this.deleteTag = true;
+                return;
+            }
+        }
+
+        this.lifespan -= 1;
+
+        this.yOffset = 0;
+        for(let j = 0; j < i; j++){
+            if(this.pos.x == popups[j].pos.x && (this.pos.y + this.yOffset) == (popups[j].pos.y + popups[j].yOffset)){
+                this.yOffset = popups[j].yOffset + popups[j].h;
+            }
+        }
+        push();
+        textSize(20);
+        beginClip();
+        rect(this.pos.x, this.pos.y + this.yOffset, 50 + 5 + textWidth(this.txt), this.h);
+        endClip();
+        fill(0);
+        stroke(255);
+        strokeWeight(2);
+        rect(this.pos.x, this.pos.y + this.yOffset - (50 - this.h), 50 + 5 + textWidth(this.txt), 50, 10);
+        
+        fill(255);
+        noStroke();
+        textAlign(CENTER, CENTER);
+        text(this.txt, this.pos.x + 50 - 5 + textWidth(this.txt)/2, this.pos.y + 25 + this.yOffset - (50 - this.h));
+
+        image(this.img, this.pos.x, this.pos.y + this.yOffset - (50 - this.h), 50, 50);
+        pop();
+    }
+}
+
+function renderPopups(){
+    for(let i = 0; i < popups.length; i++){
+        popups[i].render(i);
+    }
+    //loop through popups backwards so we can remove them
+    for(let i = popups.length-1; i >= 0; i--){
+        if(popups[i].deleteTag){
+            popups.splice(i, 1);
+        }
+    }
+}

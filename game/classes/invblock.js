@@ -25,7 +25,7 @@ class InvBlock{
         }else{
             this.items[item].amount += amount;
         }
-        //added item popup?
+        popups.push(new Popup(itemImgs[itemDic[item].img][0], amount + " " + item + " added to inv", 50, 0, 0));
     }
 
     decreaseAmount(item, amount){
