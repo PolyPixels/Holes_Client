@@ -23,7 +23,7 @@ function keyReleased() {
         
     }
     if(gameState == "playing"){
-        if (keyCode === 82){ //r
+        if (keyCode === Controls_Build_code){ //r
             ghostBuild = createObject("Wall", 0, 0, 0, 0, curPlayer.id, curPlayer.name);
             buildMode = !buildMode;
             renderGhost = buildMode;
@@ -35,7 +35,7 @@ function keyReleased() {
                 }
             }
         }
-        if(keyCode == 73){ //i
+        if(keyCode == Controls_Inventory_code){ //i
             gameState = "inventory";
             curPlayer.invBlock.curItem = "";
             updateItemList();
@@ -44,7 +44,7 @@ function keyReleased() {
             
             curPlayer.holding = { w: false, a: false, s: false, d: false };
         }
-        if(keyCode == 67){ //c
+        if(keyCode == Controls_Crafting_code){ //c
             gameState = "crafting";
             curPlayer.invBlock.curItem = "";
             updateCraftList();
@@ -53,7 +53,7 @@ function keyReleased() {
             
             curPlayer.holding = { w: false, a: false, s: false, d: false };
         }
-        if( (keyCode == 80 ||  keyCode ==27) && gameState != "initial"){ //p
+        if( (keyCode == Controls_Pause_code ||  keyCode ==27) && gameState != "initial"){ //p
             gameState = "pause";
             pauseDiv.show();
 
@@ -84,7 +84,7 @@ function keyReleased() {
             buildDiv.hide();
         }
 
-        if(keyCode == 70){ //f
+        if(keyCode == Controls_Interact_code){ //f
             let mouseVec = createVector(mouseX + camera.pos.x - (width / 2), mouseY + camera.pos.y - (height / 2));
             let chunkPos = testMap.globalToChunk(mouseVec.x,mouseVec.y);
             let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
@@ -151,16 +151,16 @@ function keyReleased() {
     else if(gameState == "inventory"){
 
         curPlayer.holding = { w: false, a: false, s: false, d: false };
-        if (keyCode === 32) { //space
+        if (keyCode === Controls_Space_code) { //space
             curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem, curPlayer.invBlock.selectedHotBar);
             updateSpaceBarDiv();
         }
-        if(keyCode == 73){ //i
+        if(keyCode == Controls_Inventory_code){ //i
             gameState = "playing";
             invDiv.hide();
             spaceBarDiv.hide();
         }
-        if(keyCode == 67){ //c
+        if(keyCode == Controls_Crafting_code){ //c
             gameState = "crafting";
             craftDiv.show();
             curPlayer.invBlock.curItem = "";
@@ -172,15 +172,15 @@ function keyReleased() {
     else if(gameState == "crafting"){
 
         curPlayer.holding = { w: false, a: false, s: false, d: false };
-        if (keyCode === 32) { //space
+        if (keyCode === Controls_Space_code) { //space
             //check cost
             //add item to inv
         }
-        if(keyCode == 67){ //c
+        if(keyCode == Controls_Crafting_code){ //c
             gameState = "playing";
             craftDiv.hide();
         }
-        if(keyCode == 73){ //i
+        if(keyCode == Controls_Inventory_code){ //i
             gameState = "inventory";
             invDiv.show();
             curPlayer.invBlock.curItem = "";
@@ -189,7 +189,7 @@ function keyReleased() {
         }
     }
     else if(gameState == "swap_inv"){
-        if (keyCode === 32) { //space
+        if (keyCode === Controls_Space_code) { //space
             if(keyIsDown(16)){
                 if(curPlayer.invBlock.curItem != ""){
                     curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount);
@@ -239,7 +239,7 @@ function keyReleased() {
             updateSwapItemLists(curPlayer.otherInv.invBlock);
             updatecurSwapItemDiv(curPlayer.otherInv.invBlock);
         }
-        if(keyCode == 73){ //i
+        if(keyCode == Controls_Inventory_code){ //i
             gameState = "playing";
             swapInvDiv.hide();
             spaceBarDiv.hide();
@@ -250,7 +250,7 @@ function keyReleased() {
     }
 
     else if (gameState =="pause") {
-        if(keyCode == 80 || keyCode ==27){ //p or ESC
+        if(keyCode == Controls_Pause_code || keyCode ==27){ //p or ESC
             gameState = "playing";
             pauseDiv.hide();
         }
@@ -269,7 +269,123 @@ function keyReleased() {
         }
     }
 
-    if(keyCode == 81 || keyCode == 69 ){  //e or q -should work in inventory and playing, so players can look at their wheel
+    else if (gameState == "controls") {
+        if (keyCode == 27) { // ESC
+            control_set = 0;
+            Controls_Up_button.style("background-color", "var(--color-dirt-dark)");
+            Controls_Left_button.style("background-color", "var(--color-dirt-dark)");
+            Controls_Down_button.style("background-color", "var(--color-dirt-dark)");
+            Controls_Right_button.style("background-color", "var(--color-dirt-dark)");
+            Controls_Interact_button.style("background-color", "var(--color-dirt-dark)");
+            Controls_Inventory_button.style("background-color", "var(--color-dirt-dark)");
+            Controls_Crafting_button.style("background-color", "var(--color-dirt-dark)");
+            Controls_Pause_button.style("background-color", "var(--color-dirt-dark)");
+            Controls_MoveHotBarRight_button.style("background-color", "var(--color-dirt-dark)");
+            Controls_MoveHotBarLeft_button.style("background-color", "var(--color-dirt-dark)");
+            Controls_Build_button.style("background-color", "var(--color-dirt-dark)");
+            return;
+        }
+
+        key = keyToVisualKey(key);
+        if (control_set == 1 && key != lastKey){
+            Controls_move_Up_code = keyCode;
+            Controls_Up_key = key;
+            control_set = 0;
+            Controls_Up_button.html(Controls_Up_key);
+            Controls_Up_button.style("background-color", "var(--color-dirt-dark)");
+            //saveOptions();
+        }
+        else if (control_set == 2 && key != lastKey){
+            Controls_move_Left_code = keyCode;
+            Controls_Left_key = key;
+            control_set = 0;
+            Controls_Left_button.html(Controls_Left_key);
+            Controls_Left_button.style("background-color", "var(--color-dirt-dark)");
+            //saveOptions();
+        }
+        else if (control_set == 3 && key != lastKey){
+            Controls_move_Down_code = keyCode;
+            Controls_Down_key = key;
+            control_set = 0;
+            Controls_Down_button.html(Controls_Down_key);
+            Controls_Down_button.style("background-color", "var(--color-dirt-dark)");
+            //saveOptions();
+        }
+        else if (control_set == 4 && key != lastKey){
+            Controls_move_Right_code = keyCode;
+            Controls_Right_key = key;
+            control_set = 0;
+            Controls_Right_button.html(Controls_Right_key);
+            Controls_Right_button.style("background-color", "var(--color-dirt-dark)");
+            //saveOptions();
+        }
+        else if(control_set == 5 && key != lastKey){
+            Controls_Interact_code = keyCode;
+            Controls_Interact_key = key;
+            control_set = 0;
+            Controls_Interact_button.html(Controls_Interact_key);
+            Controls_Interact_button.style("background-color", "var(--color-dirt-dark)");
+            //saveOptions();
+        }
+        else if (control_set == 6 && key != lastKey){
+            Controls_Inventory_code = keyCode;
+            Controls_Inventory_key = key;
+            control_set = 0;
+            Controls_Inventory_button.html(Controls_Inventory_key);
+            Controls_Inventory_button.style("background-color", "var(--color-dirt-dark)");
+            //saveOptions();
+        }
+        else if (control_set == 7 && key != lastKey){
+            Controls_Crafting_code = keyCode;
+            Controls_Crafting_key = key;
+            control_set = 0;
+            Controls_Crafting_button.html(Controls_Crafting_key);
+            Controls_Crafting_button.style("background-color", "var(--color-dirt-dark)");
+            //saveOptions();
+        }
+        else if (control_set == 8 && key != lastKey){
+            Controls_Pause_code = keyCode;
+            Controls_Pause_key = key;
+            control_set = 0;
+            Controls_Pause_button.html(Controls_Pause_key);
+            Controls_Pause_button.style("background-color", "var(--color-dirt-dark)");
+            //saveOptions();
+        }
+        else if (control_set == 9 && key != lastKey){
+            Controls_MoveHotBarRight_code = keyCode;
+            Controls_MoveHotBarRight_key = key;
+            control_set = 0;
+            Controls_MoveHotBarRight_button.html(Controls_MoveHotBarRight_key);
+            Controls_MoveHotBarRight_button.style("background-color", "var(--color-dirt-dark)");
+            //saveOptions();
+        }
+        else if (control_set == 10 && key != lastKey){
+            Controls_MoveHotBarLeft_code = keyCode;
+            Controls_MoveHotBarLeft_key = key;
+            control_set = 0;
+            Controls_MoveHotBarLeft_button.html(Controls_MoveHotBarLeft_key);
+            Controls_MoveHotBarLeft_button.style("background-color", "var(--color-dirt-dark)");
+            //saveOptions();
+        }
+        else if (control_set == 11 && key != lastKey){
+            Controls_Build_code = keyCode;
+            Controls_Build_key = key;
+            control_set = 0;
+            Controls_Build_button.html(Controls_Build_key);
+            Controls_Build_button.style("background-color", "var(--color-dirt-dark)");
+            //saveOptions();
+        }
+        else if (control_set == 12 && key != lastKey){
+            Controls_Space_code = keyCode;
+            Controls_Space_key = key;
+            control_set = 0;
+            Controls_Space_button.html(Controls_Space_key);
+            Controls_Space_button.style("background-color", "var(--color-dirt-dark)");
+            //saveOptions();
+        }
+    }
+
+    if(keyCode == Controls_MoveHotBarLeft_code || keyCode == Controls_MoveHotBarRight_code ){  //e or q -should work in inventory and playing, so players can look at their wheel
         updatePlayerHotBarOffset()
     }
 }
@@ -448,10 +564,10 @@ function continousKeyBoardInput(){
         curPlayer.holding = { w: false, a: false, s: false, d: false };
 
         // Player controls
-        if (keyIsDown(87)) curPlayer.holding.w = true; // W
-        if (keyIsDown(65)) curPlayer.holding.a = true; // A
-        if (keyIsDown(83)) curPlayer.holding.s = true; // S
-        if (keyIsDown(68)) curPlayer.holding.d = true; // D
+        if (keyIsDown(Controls_move_Up_code)) curPlayer.holding.w = true; // W
+        if (keyIsDown(Controls_move_Left_code)) curPlayer.holding.a = true; // A
+        if (keyIsDown(Controls_move_Down_code)) curPlayer.holding.s = true; // S
+        if (keyIsDown(Controls_move_Right_code)) curPlayer.holding.d = true; // D
 
         if (
             lastHolding.w !== curPlayer.holding.w ||
@@ -467,10 +583,10 @@ function continousKeyBoardInput(){
         }
     }
     else if(gameState == "inventory"){
-        if (keyIsDown(87)){} //W
-        if (keyIsDown(65)){} //A
-        if (keyIsDown(83)){} //S
-        if (keyIsDown(68)){} //D
+        if (keyIsDown(Controls_move_Up_code)){} //W
+        if (keyIsDown(Controls_move_Left_code)){} //A
+        if (keyIsDown(Controls_move_Down_code)){} //S
+        if (keyIsDown(Controls_move_Right_code)){} //D
     }else {
         if(curPlayer ) {
             curPlayer.holding = { w: false, a: false, s: false, d: false };
@@ -506,8 +622,8 @@ function mouseWheel(event) {
 
     if(abs(curPlayer.invBlock.animationTimer) <= 0.1){
    
-        if(keyCode == 81) hotBarOffset = -1;
-        if(keyCode == 69) hotBarOffset = 1;
+        if(keyCode == Controls_MoveHotBarLeft_code) hotBarOffset = -1;
+        if(keyCode == Controls_MoveHotBarRight_code) hotBarOffset = 1;
         let slot = curPlayer.invBlock.selectedHotBar + hotBarOffset;
         if(slot < 0) slot = 4;
         if(slot > 4) slot = 0;
@@ -532,3 +648,34 @@ function mouseWheel(event) {
         updateSpaceBarDiv();
     }
   }
+
+
+
+var Controls_Up_key = 'w';
+var Controls_Left_key = 'a';
+var Controls_Down_key = 's';
+var Controls_Right_key = 'd';
+var Controls_Interact_key = 'f';
+var Controls_Inventory_key = 'i';
+var Controls_Crafting_key = 'c';
+var Controls_Pause_key = 'p';
+var Controls_MoveHotBarRight_key = 'e';
+var Controls_MoveHotBarLeft_key = 'q';
+var Controls_Build_key = 'r';
+var Controls_Space_key = ' ';
+
+var Controls_move_Up_code = 87;       //w
+var Controls_move_Left_code = 65;     //a
+var Controls_move_Down_code = 83;     //s
+var Controls_move_Right_code = 68;    //d
+var Controls_Interact_code = 70;   //f
+var Controls_Inventory_code = 73;  //i
+var Controls_Crafting_code = 67;   //c
+var Controls_Pause_code = 80;           //p
+var Controls_MoveHotBarRight_code = 69;  //e
+var Controls_MoveHotBarLeft_code = 81;   //q
+var Controls_Build_code = 82;           //r
+var Controls_Space_code = 32;           //space
+
+var control_set = 0;
+var lastKey = '!';

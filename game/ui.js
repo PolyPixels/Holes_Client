@@ -655,6 +655,7 @@ function setupUI() {
     defineCraftingUI();
     defineDeathUI();
     defineTutorialUI();
+    defineKeyBindingUI();
 
     timerDiv = createDiv("⏳ 15:00");
     timerDiv.position(width / 2 - 50, 10); // adjust as needed
@@ -2008,7 +2009,7 @@ function definePauseUI() {
     // Create a container div for the settings
     settingsContainer = createDiv();
     settingsContainer.class("container");
-    settingsContainer.style("position", "absolute")
+    settingsContainer.style("position", "absolute");
     // Style the container (similar to your CSS)
     settingsContainer.style("font-family", "Arial, sans-serif");
     settingsContainer.style("margin", "0 auto");
@@ -2020,7 +2021,7 @@ function definePauseUI() {
     settingsContainer.style("display", "none");
     settingsContainer.style("flex-direction", "column");
     settingsContainer.style("align-items", "center");
-    settingsContainer.style("z-index", "999")
+    settingsContainer.style("z-index", "998")
 
     // Title
     let title = createElement("h2", "Settings");
@@ -2050,6 +2051,21 @@ function definePauseUI() {
         volumeSlider.value(savedVolume);
     }
 
+    keyBind_Button = createButton("Key Bindings");
+    keyBind_Button.parent(sliderContainer);
+    keyBind_Button.class("button"); // For your reference, you can define .button in CSS if desired
+    keyBind_Button.style("padding", "10px");
+    keyBind_Button.style("margin-top", "20px");
+    keyBind_Button.style("background-color", "#444");
+    keyBind_Button.style("border", "none");
+    keyBind_Button.style("color", "white");
+    keyBind_Button.style("border-radius", "5px");
+    keyBind_Button.style("cursor", "pointer");
+    keyBind_Button.mousePressed(() => {
+        gameState = "controls";
+        settingsContainer.hide();
+        bindingDiv.show();
+    });
 
     removeData_button = createButton("Remove Data");
     removeData_button.parent(sliderContainer);
@@ -2093,6 +2109,35 @@ function definePauseUI() {
                 soundDic[keys[i]].sounds[j].setVolume((j / 20) * soundDic[keys[i]].volume * (volumeSlider.value() / 100));
             }
         }
+
+        // Save the key bindings to localStorage
+        let keyBindings = {};
+        keyBindings.upCode = Controls_move_Up_code;
+        keyBindings.upKey = Controls_Up_key;
+        keyBindings.leftCode = Controls_move_Left_code;
+        keyBindings.leftKey = Controls_Left_key;
+        keyBindings.downCode = Controls_move_Down_code;
+        keyBindings.downKey = Controls_Down_key;
+        keyBindings.rightCode = Controls_move_Right_code;
+        keyBindings.rightKey = Controls_Right_key;
+        keyBindings.interactCode = Controls_Interact_code;
+        keyBindings.interactKey = Controls_Interact_key;
+        keyBindings.invCode = Controls_Inventory_code;
+        keyBindings.invKey = Controls_Inventory_key;
+        keyBindings.craftCode = Controls_Crafting_code;
+        keyBindings.craftKey = Controls_Crafting_key;
+        keyBindings.pauseCode = Controls_Pause_code;
+        keyBindings.pauseKey = Controls_Pause_key;
+        keyBindings.moveHotBarRightCode = Controls_MoveHotBarRight_code;
+        keyBindings.moveHotBarRightKey = Controls_MoveHotBarRight_key;
+        keyBindings.moveHotBarLeftCode = Controls_MoveHotBarLeft_code;
+        keyBindings.moveHotBarLeftKey = Controls_MoveHotBarLeft_key;
+        keyBindings.buildCode = Controls_Build_code;
+        keyBindings.buildKey = Controls_Build_key;
+        keyBindings.spaceCode = Controls_Space_code;
+        keyBindings.spaceKey = Controls_Space_key;
+        localStorage.setItem("keyBindings", JSON.stringify(keyBindings));
+
         toggleSettings()
     });
 
@@ -3325,17 +3370,22 @@ function setupTutorialPages(pageHolder) {
     // --- Page 2 ---
     let page2 = createDiv().parent(pageHolder);
     createP("Controls:").parent(page2).style("margin-bottom", "10px");
+    
+    keyToVisualKey(Controls_Up_key);
+    keyToVisualKey(Controls_Left_key);
+    keyToVisualKey(Controls_Down_key);
+    keyToVisualKey(Controls_Right_key);
 
-    addControlStep(page2, "WASD", "Move around");
+    addControlStep(page2, ""+Controls_Up_key+Controls_Left_key+Controls_Down_key+Controls_Right_key, "Move around");
     addControlStep(page2, "Left/Right Click", "Use item");
-    addControlStep(page2, "F", "Interact");
-    addControlStep(page2, "Q & E / Mouse Wheel", "Switch Hotbar slot");
-    addControlStep(page2, "R", "Build menu");
+    addControlStep(page2, Controls_Interact_key, "Interact");
+    addControlStep(page2, Controls_MoveHotBarLeft_key + "&" + Controls_MoveHotBarRight_key +" / Mouse Wheel", "Switch Hotbar slot");
+    addControlStep(page2, Controls_Build_key, "Build menu");
     addControlStep(page2, "ESC", "Pause");
     addControlStep(page2, "TAB", "Leaderboard");
-    addControlStep(page2, "I", "Inventory");
-    addControlStep(page2, "C", "Crafting");
-    addControlStep(page2, "Space", "Do stuff in Inventory");
+    addControlStep(page2, Controls_Inventory_key, "Inventory");
+    addControlStep(page2, Controls_Crafting_key, "Crafting");
+    addControlStep(page2, Controls_Space_key, "Do stuff in Inventory");
 
     page2.hide();
     pages.push(page2);
@@ -3360,7 +3410,8 @@ function addTutorialStep(parent, imgPath, text) {
 }
 
 function addControlStep(parent, control, description) {
-    let line = createP(control + " - " + description).parent(parent);
+    keyToVisualKey(control);
+    let line = createP(key + " - " + description).parent(parent);
     applyStyle(line, {
         marginBottom: "5px",
         fontSize: "14px",
@@ -3431,4 +3482,334 @@ function renderPopups(){
             popups.splice(i, 1);
         }
     }
+}
+
+var bindingDiv;
+
+function defineKeyBindingUI(){
+    //make div to hold the key binding UI
+    bindingDiv = createDiv();
+    bindingDiv.style("background-color", "var(--color-ui-dark)");
+    bindingDiv.style("border", "2px solid var(--color-dirt-dark)");
+    bindingDiv.style("border-radius", "10px");
+    bindingDiv.style("padding", "10px");
+    bindingDiv.style("z-index", "999");
+    bindingDiv.style("position", "absolute");
+    bindingDiv.style("top", "50%");
+    bindingDiv.style("left", "50%");
+    bindingDiv.style("transform", "translate(-50%, -50%)");
+    bindingDiv.id("bindingDiv");
+    bindingDiv.hide();
+
+    bindingTitle = createP("Key Bindings");
+    bindingTitle.style("padding", "10px 5px");
+    bindingTitle.style("margin", "0px");
+    bindingTitle.style("text-align", "center");
+    bindingTitle.style("font-size", "30px");
+    bindingTitle.style("color", "white");
+    bindingTitle.parent(bindingDiv);
+
+    contentDiv = createDiv();
+    contentDiv.style("display", "flex");
+    contentDiv.parent(bindingDiv);
+
+    doneButtonDiv = createDiv();
+    doneButtonDiv.style("width", "100%");
+    doneButtonDiv.style("display", "flex");
+    doneButtonDiv.style("align-items", "center");
+    doneButtonDiv.style("justify-content", "center");
+    doneButtonDiv.parent(bindingDiv);
+
+    doneButton = createButton("Done");
+    doneButton.class("button");
+    doneButton.style("font-size", "25px");
+    doneButton.style("background-color", "rgb(76, 175, 80)");
+    doneButton.style("border-radius", "10px");
+    doneButton.style("color", "white");
+    doneButton.parent(doneButtonDiv);
+    doneButton.mousePressed(() => {
+        bindingDiv.hide();
+        gameState = "settings";
+        settingsContainer.show();
+    });
+
+
+
+    namesDiv = createDiv();
+    namesDiv.id("namesDiv");
+    namesDiv.parent(contentDiv);
+    namesDiv.style("height", "auto");
+
+    //create the labels for each key
+    Controls_Up = createP("Move Up:");
+    Controls_Up.style("padding", "10px 5px");
+    Controls_Up.style("margin", "0px");
+    Controls_Up.style("text-align", "end");
+    Controls_Up.style("font-size", "20px");
+    Controls_Up.style("color", "white");
+    Controls_Up.parent(namesDiv);
+    
+    Controls_Left = createP("Move Left:");
+    Controls_Left.style("padding", "10px 5px");
+    Controls_Left.style("margin", "0px")
+    Controls_Left.style("text-align", "end");
+    Controls_Left.style("font-size", "20px");
+    Controls_Left.style("color", "white");
+    Controls_Left.parent(namesDiv);
+    
+    Controls_Down = createP("Move Down:");
+    Controls_Down.style("padding", "10px 5px");
+    Controls_Down.style("margin", "0px");
+    Controls_Down.style("text-align", "end");
+    Controls_Down.style("font-size", "20px");
+    Controls_Down.style("color", "white");
+    Controls_Down.parent(namesDiv);
+
+    Controls_Right = createP("Move Right:");
+    Controls_Right.style("padding", "10px 5px");
+    Controls_Right.style("margin", "0px");
+    Controls_Right.style("text-align", "end");
+    Controls_Right.style("font-size", "20px");
+    Controls_Right.style("color", "white");
+    Controls_Right.parent(namesDiv);
+
+    Controls_Interact = createP("Interact:");
+    Controls_Interact.style("padding", "10px 5px");
+    Controls_Interact.style("margin", "0px");
+    Controls_Interact.style("text-align", "end");
+    Controls_Interact.style("font-size", "20px");
+    Controls_Interact.style("color", "white");
+    Controls_Interact.parent(namesDiv);
+
+    Controls_Inventory = createP("Inventory:");
+    Controls_Inventory.style("padding", "10px 5px");
+    Controls_Inventory.style("margin", "0px");
+    Controls_Inventory.style("text-align", "end");
+    Controls_Inventory.style("font-size", "20px");
+    Controls_Inventory.style("color", "white");
+    Controls_Inventory.parent(namesDiv);
+
+    Controls_Crafting = createP("Crafting:");
+    Controls_Crafting.style("padding", "10px 5px");
+    Controls_Crafting.style("margin", "0px");
+    Controls_Crafting.style("text-align", "end");
+    Controls_Crafting.style("font-size", "20px");
+    Controls_Crafting.style("color", "white");
+    Controls_Crafting.parent(namesDiv);
+
+    Controls_Pause = createP("Pause:");
+    Controls_Pause.style("padding", "10px 5px");
+    Controls_Pause.style("margin", "0px");
+    Controls_Pause.style("text-align", "end");
+    Controls_Pause.style("font-size", "20px");
+    Controls_Pause.style("color", "white");
+    Controls_Pause.parent(namesDiv);
+
+    Controls_MoveHotBarRight = createP("Move HotBar Right:");
+    Controls_MoveHotBarRight.style("padding", "10px 5px");
+    Controls_MoveHotBarRight.style("margin", "0px");
+    Controls_MoveHotBarRight.style("text-align", "end");
+    Controls_MoveHotBarRight.style("font-size", "20px");
+    Controls_MoveHotBarRight.style("color", "white");
+    Controls_MoveHotBarRight.parent(namesDiv);
+
+    Controls_MoveHotBarLeft = createP("Move HotBar Left:");
+    Controls_MoveHotBarLeft.style("padding", "10px 5px");
+    Controls_MoveHotBarLeft.style("margin", "0px");
+    Controls_MoveHotBarLeft.style("text-align", "end");
+    Controls_MoveHotBarLeft.style("font-size", "20px");
+    Controls_MoveHotBarLeft.style("color", "white");
+    Controls_MoveHotBarLeft.parent(namesDiv);
+
+    Controls_Build = createP("Build:");
+    Controls_Build.style("padding", "10px 5px");
+    Controls_Build.style("margin", "0px");
+    Controls_Build.style("text-align", "end");
+    Controls_Build.style("font-size", "20px");
+    Controls_Build.style("color", "white");
+    Controls_Build.parent(namesDiv);
+
+    Controls_Space = createP("Space:");
+    Controls_Space.style("padding", "10px 5px");
+    Controls_Space.style("margin", "0px");
+    Controls_Space.style("text-align", "end");
+    Controls_Space.style("font-size", "20px");
+    Controls_Space.style("color", "white");
+    Controls_Space.parent(namesDiv);
+
+    keysDiv = createDiv();
+    keysDiv.id("keysDiv");
+    keysDiv.style("display", "flex");
+    keysDiv.style("flex-direction", "column");
+    keysDiv.parent(contentDiv);
+    //create the buttons for each key
+
+    //if we want transparent buttons, we can use this
+    //Controls_Up_button.style('background','url()');
+    //Controls_Up.style("border","none");
+    Controls_Up_button = createButton(keyToVisualKey(Controls_Up_key));
+    Controls_Up_button.mousePressed(() => {
+        if(control_set == 0){
+            control_set = 1;
+            key = Controls_Up_key;
+            lastKey = key;
+            Controls_Up_button.style("background-color", "var(--color-gold)");
+        }
+    });
+    Controls_Up_button.style('min-width', '90px');
+    Controls_Up_button.style("cursor", "pointer");
+    Controls_Up_button.parent(keysDiv);
+
+    Controls_Left_button = createButton(keyToVisualKey(Controls_Left_key));
+    Controls_Left_button.mousePressed(() => {
+        if(control_set == 0){
+            control_set = 2;
+            key = Controls_Left_key;
+            lastKey = key;
+            Controls_Left_button.style("background-color", "var(--color-gold)");
+        }
+    });
+    Controls_Left_button.style('min-width', '90px');
+    Controls_Left_button.style("cursor", "pointer");
+    Controls_Left_button.parent(keysDiv);
+
+    Controls_Down_button = createButton(keyToVisualKey(Controls_Down_key));
+    Controls_Down_button.mousePressed(() => {
+        if(control_set == 0){
+            control_set = 3;
+            key = Controls_Down_key;
+            lastKey = key;
+            Controls_Down_button.style("background-color", "var(--color-gold)");
+        }
+    });
+    Controls_Down_button.style('min-width', '90px');
+    Controls_Down_button.style("cursor", "pointer");
+    Controls_Down_button.parent(keysDiv);
+
+    Controls_Right_button = createButton(keyToVisualKey(Controls_Right_key));
+    Controls_Right_button.mousePressed(() => {
+        if(control_set == 0){
+            control_set = 4;
+            key = Controls_Right_key;
+            lastKey = key;
+            Controls_Right_button.style("background-color", "var(--color-gold)");
+        }
+    });
+    Controls_Right_button.style('min-width', '90px');
+    Controls_Right_button.style("cursor", "pointer");
+    Controls_Right_button.parent(keysDiv);
+
+    Controls_Interact_button = createButton(keyToVisualKey(Controls_Interact_key));
+    Controls_Interact_button.mousePressed(() => {
+        if(control_set == 0){
+            control_set = 5;
+            key = Controls_Interact_key;
+            lastKey = key;
+            Controls_Interact_button.style("background-color", "var(--color-gold)");
+        }
+    });
+    Controls_Interact_button.style('min-width', '90px');
+    Controls_Interact_button.style("cursor", "pointer");
+    Controls_Interact_button.parent(keysDiv);
+    
+    Controls_Inventory_button = createButton(keyToVisualKey(Controls_Inventory_key));
+    Controls_Inventory_button.mousePressed(() => {
+        if(control_set == 0){
+            control_set = 6;
+            key = Controls_Inventory_key;
+            lastKey = key;
+            Controls_Inventory_button.style("background-color", "var(--color-gold)");
+        }
+    });
+    Controls_Inventory_button.style('min-width', '90px');
+    Controls_Inventory_button.style("cursor", "pointer");
+    Controls_Inventory_button.parent(keysDiv);
+
+    Controls_Crafting_button = createButton(keyToVisualKey(Controls_Crafting_key));
+    Controls_Crafting_button.mousePressed(() => {
+        if(control_set == 0){
+            control_set = 7;
+            key = Controls_Crafting_key;
+            lastKey = key;
+            Controls_Crafting_button.style("background-color", "var(--color-gold)");
+        }
+    });
+    Controls_Crafting_button.style('min-width', '90px');
+    Controls_Crafting_button.style("cursor", "pointer");
+    Controls_Crafting_button.parent(keysDiv);
+
+    Controls_Pause_button = createButton(keyToVisualKey(Controls_Pause_key));
+    Controls_Pause_button.mousePressed(() => {
+        if(control_set == 0){
+            control_set = 8;
+            key = Controls_Pause_key;
+            lastKey = key;
+            Controls_Pause_button.style("background-color", "var(--color-gold)");
+        }
+    });
+    Controls_Pause_button.style('min-width', '90px');
+    Controls_Pause_button.style("cursor", "pointer");
+    Controls_Pause_button.parent(keysDiv);
+
+    Controls_MoveHotBarRight_button = createButton(keyToVisualKey(Controls_MoveHotBarRight_key));
+    Controls_MoveHotBarRight_button.mousePressed(() => {
+        if(control_set == 0){
+            control_set = 9;
+            key = Controls_MoveHotBarRight_key;
+            lastKey = key;
+            Controls_MoveHotBarRight_button.style("background-color", "var(--color-gold)");
+        }
+    });
+    Controls_MoveHotBarRight_button.style('min-width', '90px');
+    Controls_MoveHotBarRight_button.style("cursor", "pointer");
+    Controls_MoveHotBarRight_button.parent(keysDiv);
+
+    Controls_MoveHotBarLeft_button = createButton(keyToVisualKey(Controls_MoveHotBarLeft_key));
+    Controls_MoveHotBarLeft_button.mousePressed(() => {
+        if(control_set == 0){
+            control_set = 10;
+            key = Controls_MoveHotBarLeft_key;
+            lastKey = key;
+            Controls_MoveHotBarLeft_button.style("background-color", "var(--color-gold)");
+        }
+    });
+    Controls_MoveHotBarLeft_button.style('min-width', '90px');
+    Controls_MoveHotBarLeft_button.style("cursor", "pointer");
+    Controls_MoveHotBarLeft_button.parent(keysDiv);
+
+    Controls_Build_button = createButton(keyToVisualKey(Controls_Build_key));
+    Controls_Build_button.mousePressed(() => {
+        if(control_set == 0){
+            control_set = 11;
+            key = Controls_Build_key;
+            lastKey = key;
+            Controls_Build_button.style("background-color", "var(--color-gold)");
+        }
+    });
+    Controls_Build_button.style('min-width', '90px');
+    Controls_Build_button.style("cursor", "pointer");
+    Controls_Build_button.parent(keysDiv);
+
+    Controls_Space_button = createButton(keyToVisualKey(Controls_Space_key));
+    Controls_Space_button.mousePressed(() => {
+        if(control_set == 0){
+            control_set = 12;
+            key = Controls_Space_key;
+            lastKey = key;
+            Controls_Space_button.style("background-color", "var(--color-gold)");
+        }
+    });
+    Controls_Space_button.style('min-width', '90px');
+    Controls_Space_button.style("cursor", "pointer");
+    Controls_Space_button.parent(keysDiv);
+}
+
+function keyToVisualKey(key){
+    if(key == " "){key = "Space";}
+    if(key == "ArrowUp"){key = "↑";}
+    if(key == "ArrowLeft"){key = "←";}
+    if(key == "ArrowDown"){key = "↓";}
+    if(key == "ArrowRight"){key = "→";}
+
+    return key;
 }

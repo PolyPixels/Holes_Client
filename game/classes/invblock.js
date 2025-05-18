@@ -266,9 +266,9 @@ class InvBlock{
         textAlign(CENTER, CENTER);
         textSize(15);
         textFont(gameUIFont);
-        text("Q", width - (0.866 * 255), height - (0.5 * 255) - 3);
-        text("E", width - (0.5 * 255), height - (0.866 * 255) - 1.5);
-        text("R", width - 350, height - 30);
+        text(Controls_MoveHotBarLeft_key.toUpperCase(), width - (0.866 * 255), height - (0.5 * 255) - 3);
+        text(Controls_MoveHotBarRight_key.toUpperCase(), width - (0.5 * 255), height - (0.866 * 255) - 1.5);
+        text(Controls_Build_key.toUpperCase(), width - 350, height - 30);
     
         if(!buildMode) image(hammerImg, width - 385, height - 30, 40, 40);
         else image(Ximage, width - 385, height - 30, 40, 40);

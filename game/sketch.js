@@ -27,6 +27,35 @@ function setup() {
         element.addEventListener("contextmenu", (e) => e.preventDefault());
     }
 
+    //read keybinds from local storage
+    if(localStorage.getItem("keyBindings") != null){
+        let keyBindings = JSON.parse(localStorage.getItem("keyBindings"));
+        Controls_move_Up_code = keyBindings.upCode;
+        Controls_Up_key = keyBindings.upKey;
+        Controls_move_Left_code = keyBindings.leftCode;
+        Controls_Left_key = keyBindings.leftKey;
+        Controls_move_Down_code = keyBindings.downCode;
+        Controls_Down_key = keyBindings.downKey;
+        Controls_move_Right_code = keyBindings.rightCode;
+        Controls_Right_key = keyBindings.rightKey;
+        Controls_Interact_code = keyBindings.interactCode;
+        Controls_Interact_key = keyBindings.interactKey;
+        Controls_Inventory_code = keyBindings.invCode;
+        Controls_Inventory_key = keyBindings.invKey;
+        Controls_Crafting_code = keyBindings.craftCode;
+        Controls_Crafting_key = keyBindings.craftKey;
+        Controls_Pause_code = keyBindings.pauseCode;
+        Controls_Pause_key = keyBindings.pauseKey;
+        Controls_MoveHotBarRight_code = keyBindings.moveHotBarRightCode;
+        Controls_MoveHotBarRight_key = keyBindings.moveHotBarRightKey;
+        Controls_MoveHotBarLeft_code = keyBindings.moveHotBarLeftCode;
+        Controls_MoveHotBarLeft_key = keyBindings.moveHotBarLeftKey;
+        Controls_Build_code = keyBindings.buildCode;
+        Controls_Build_key = keyBindings.buildKey;
+        Controls_Space_code = keyBindings.spaceCode;
+        Controls_Space_key = keyBindings.spaceKey;
+    }
+
     setupUI();
 
     camera.pos = createVector(0, 0);
@@ -145,7 +174,7 @@ function draw() {
             if(curPlayer.statBlock.stats.mp < curPlayer.statBlock.stats.mmp) curPlayer.statBlock.stats.mp += 0.01;
             if(curPlayer.statBlock.stats.hp < curPlayer.statBlock.stats.mhp) curPlayer.statBlock.heal(0.01);
 
-            //little f above the thing you can interact with
+            //little interact key above the thing you can interact with
             let mouseVec = createVector(mouseX + camera.pos.x - (width / 2), mouseY + camera.pos.y - (height / 2));
             let chunkPos = testMap.globalToChunk(mouseVec.x,mouseVec.y);
             let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
@@ -181,7 +210,7 @@ function draw() {
                         textAlign(CENTER, CENTER);
                         textSize(15);
                         textFont(gameUIFont);
-                        text("F", closest.pos.x - camera.pos.x + (width/2), closest.pos.y - offY - camera.pos.y + (height/2));
+                        text(Controls_Interact_key.toUpperCase(), closest.pos.x - camera.pos.x + (width/2), closest.pos.y - offY - camera.pos.y + (height/2));
                         pop();
                     }
                     else{
@@ -218,7 +247,7 @@ function draw() {
                                     textAlign(CENTER, CENTER);
                                     textSize(15);
                                     textFont(gameUIFont);
-                                    text("F", closest.pos.x - camera.pos.x + (width/2), closest.pos.y - offY - camera.pos.y + (height/2));
+                                    text(Controls_Interact_key.toUpperCase(), closest.pos.x - camera.pos.x + (width/2), closest.pos.y - offY - camera.pos.y + (height/2));
                                     pop();
                                 }
                             }
