@@ -85,7 +85,7 @@ function renderLinks() {
 
     // Apply styles to the image using .style()
     titleImage.style("width", "28dvw"); // Set the width of the image
-    titleImage.style("height", "5dvw"); // Automatically adjust the height
+    titleImage.style("height", "9dvw"); // Automatically adjust the height
     titleImage.style("border", "5px solid #000"); // Add a border
     titleImage.style("display", "block"); // Make it a block element (to prevent inline styling)
     titleImage.style("margin", "20px auto");
