@@ -259,11 +259,9 @@ function renderServerBrowser() {
         serverBrowserContainer.class("container");
         serverBrowserContainer.style("overflow-y", "scroll")
         // Main container styling
-        serverBrowserContainer.style("width", "50dvw");
+        serverBrowserContainer.style("max-width", "50dvw");
         serverBrowserContainer.style("max-height", "75%");
         serverBrowserContainer.style("overflow-y", "hide");
-        serverBrowserContainer.style("padding", "25px");
-        serverBrowserContainer.style("margin-top", "25px");
         serverBrowserContainer.style("border-radius", "15px");
         serverBrowserContainer.style("color", "#fff");
         serverBrowserContainer.style("font-family", "Arial, sans-serif");
