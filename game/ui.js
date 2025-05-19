@@ -496,6 +496,8 @@ function renderServerList() {
         serverStatus.style("margin-bottom", "15px");
 
         serverEntry.style("pointer-events", "none");
+
+        serverEntry.style("opacity", "0.5");
         serverStatus.parent(textContainer);
 
         // Player Count
