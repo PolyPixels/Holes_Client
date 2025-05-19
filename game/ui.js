@@ -260,7 +260,7 @@ function renderServerBrowser() {
         serverBrowserContainer.style("overflow-y", "scroll")
         // Main container styling
         serverBrowserContainer.style("width", "50dvw");
-        serverBrowserContainer.style("max-height", "100%");
+        serverBrowserContainer.style("max-height", "80%");
         serverBrowserContainer.style("overflow-y", "hide");
         serverBrowserContainer.style("padding", "25px");
         serverBrowserContainer.style("margin-top", "25px");
