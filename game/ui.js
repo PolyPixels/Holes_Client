@@ -494,6 +494,8 @@ function renderServerList() {
         let serverStatus = createDiv("Status: Loading...");
         serverStatus.style("color", "var(--color-gold)");
         serverStatus.style("margin-bottom", "15px");
+
+        serverEntry.style("pointer-events", "none");
         serverStatus.parent(textContainer);
 
         // Player Count
