@@ -26,6 +26,7 @@ function updateResponsiveDesign() {
     dirtBagUI.pos = createVector(width - 180 - 10, height - 186 - 10);
 
     timerDiv.position(width / 2 - 50, 10);
+    
 }
 
 function hideRaceSelect() {
@@ -84,7 +85,7 @@ function renderLinks() {
 
     // Apply styles to the image using .style()
     titleImage.style("width", "28dvw"); // Set the width of the image
-    titleImage.style("height", "13dvw"); // Automatically adjust the height
+    titleImage.style("height", "10dvw"); // Automatically adjust the height
     titleImage.style("border", "5px solid #000"); // Add a border
     titleImage.style("display", "block"); // Make it a block element (to prevent inline styling)
     titleImage.style("margin", "20px auto");
@@ -259,7 +260,7 @@ function renderServerBrowser() {
         serverBrowserContainer.style("overflow-y", "scroll")
         // Main container styling
         serverBrowserContainer.style("width", "50dvw");
-        serverBrowserContainer.style("max-height", "60dvh");
+        serverBrowserContainer.style("max-height", "100%");
         serverBrowserContainer.style("overflow-y", "hide");
         serverBrowserContainer.style("padding", "25px");
         serverBrowserContainer.style("margin-top", "25px");
@@ -276,7 +277,7 @@ function renderServerBrowser() {
 
         // Title
         let title = createDiv("Select A Server");
-        title.style("font-size", "2.5em");
+        title.style("font-size", "2.5rem");
         title.style("font-weight", "bold");
         title.style("margin-bottom", "15px");
         title.style("text-align", "center");
