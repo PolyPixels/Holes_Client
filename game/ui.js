@@ -88,8 +88,8 @@ function renderLinks() {
     titleImage.style("height", "9dvw"); // Automatically adjust the height
     titleImage.style("border", "5px solid #000"); // Add a border
     titleImage.style("display", "block"); // Make it a block element (to prevent inline styling)
-    titleImage.style("margin", "20px auto");
-    titleImage.style("padding-bottom", "40px auto");
+    titleImage.style("margin", "10px auto");
+    titleImage.style("padding-bottom", "20px auto");
     titleImage.style("top", "0")
     titleImage.style("position", "absolute"); let randItem1 = Math.floor(Math.random() * markeeText.length);
     // Suppose we want 5 distinct random items
