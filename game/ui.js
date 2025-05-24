@@ -661,7 +661,7 @@ function setupUI() {
     defineKeyBindingUI();
 
     timerDiv = createDiv("⏳ 15:00");
-    timerDiv.position(width / 2 - 50, 10); // adjust as needed
+    timerDiv.position(width/2 - 250, 10); // adjust as needed
     timerDiv.style("font-size", "32px");
     timerDiv.style("color", "white");
     timerDiv.style("text-align", "center");
