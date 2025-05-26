@@ -1241,14 +1241,14 @@ function defineSpaceBarUI(){
         else if (gameState == "swap_inv"){
             if(keyIsDown(16)){
                 if(curPlayer.invBlock.curItem != ""){
-                    curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount);
+                    curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount, false);
                     curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount);
     
                     curPlayer.otherInv.invBlock.curItem = curPlayer.invBlock.curItem;
                     curPlayer.invBlock.curItem = "";
                 }
                 else if(curPlayer.otherInv.invBlock.curItem != ""){
-                    curPlayer.invBlock.addItem(curPlayer.otherInv.invBlock.curItem, curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem].amount);
+                    curPlayer.invBlock.addItem(curPlayer.otherInv.invBlock.curItem, curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem].amount, true);
                     curPlayer.otherInv.invBlock.decreaseAmount(curPlayer.otherInv.invBlock.curItem, curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem].amount);
     
                     curPlayer.invBlock.curItem = curPlayer.otherInv.invBlock.curItem;
@@ -1258,7 +1258,7 @@ function defineSpaceBarUI(){
             else{
                 if(curPlayer.invBlock.curItem != ""){
                     //console.log(curPlayer.otherInv);
-                    curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, 1);
+                    curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, 1, false);
                     curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem,1);
     
                     if(curPlayer.invBlock.items[curPlayer.invBlock.curItem] == undefined){
@@ -1267,7 +1267,7 @@ function defineSpaceBarUI(){
                     }
                 }
                 else if(curPlayer.otherInv.invBlock.curItem != ""){
-                    curPlayer.invBlock.addItem(curPlayer.otherInv.invBlock.curItem, 1);
+                    curPlayer.invBlock.addItem(curPlayer.otherInv.invBlock.curItem, 1, true);
                     curPlayer.otherInv.invBlock.decreaseAmount(curPlayer.otherInv.invBlock.curItem, 1);
     
                     if(curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem] == undefined){
@@ -3070,7 +3070,7 @@ function updatecurCraftItemDiv() {
     craftButton.parent(itemCostDiv);
     craftButton.mousePressed(() => {
         if (curPlayer.invBlock.craftCheck(curPlayer.invBlock.curItem)) {
-            curPlayer.invBlock.addItem(curPlayer.invBlock.curItem, itemDic[curPlayer.invBlock.curItem].cost[0]);
+            curPlayer.invBlock.addItem(curPlayer.invBlock.curItem, itemDic[curPlayer.invBlock.curItem].cost[0], true);
             for (let i = 1; i < itemDic[curPlayer.invBlock.curItem].cost.length; i++) {
                 //console.log(itemDic[curPlayer.invBlock.curItem].cost[i]);
                 if (itemDic[curPlayer.invBlock.curItem].cost[i][0] == "Dirt") {

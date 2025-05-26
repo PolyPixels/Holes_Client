@@ -130,7 +130,7 @@ function socketSetup(){
                 temp.invBlock.invId = data.obj.invBlock.invId;
                 let keys = Object.keys(data.obj.invBlock.items);
                 for(let i=0; i<keys.length; i++){
-                    temp.invBlock.addItem(keys[i], data.obj.invBlock.items[keys[i]].amount);
+                    temp.invBlock.addItem(keys[i], data.obj.invBlock.items[keys[i]].amount, false);
                 }
             }
             chunk.objects.push(temp);
@@ -221,7 +221,7 @@ function socketSetup(){
                     if(data.objects[i].invBlock.items != undefined){
                         let keys = Object.keys(data.objects[i].invBlock.items);
                         for(let j=0; j<keys.length; j++){
-                            temp.invBlock.addItem(keys[j], data.objects[i].invBlock.items[keys[j]].amount);
+                            temp.invBlock.addItem(keys[j], data.objects[i].invBlock.items[keys[j]].amount, false);
                             //TODO: fix durability
                         }
                     }

@@ -18,14 +18,16 @@ class InvBlock{
         this.invId = random(100000);
     }
 
-    addItem(item,amount){
+    addItem(item,amount,toPlayer){
         if(this.items[item] == undefined){
             this.items[item] = createItem(item);
             this.items[item].amount = amount;
         }else{
             this.items[item].amount += amount;
         }
-        popups.push(new Popup(itemImgs[itemDic[item].img][0], amount + " " + item + " added to inv", 50, 0, 0));
+        if(toPlayer){
+            popups.push(new Popup(itemImgs[itemDic[item].img][0], amount + " " + item + " added to inv", 50, 0, 0));
+        }
     }
 
     decreaseAmount(item, amount){
@@ -78,7 +80,7 @@ class InvBlock{
 
     dropItem(item,amount){
         let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 0, "", "");
-        itemBag.invBlock.addItem(item, amount);
+        itemBag.invBlock.addItem(item, amount, false);
         this.decreaseAmount(item, amount);
     }
 
@@ -89,7 +91,7 @@ class InvBlock{
         for(let i = 0; i < keys.length; i++){
             let item = this.items[keys[i]];
             if(item.amount > 0){
-                itemBag.invBlock.addItem(keys[i], item.amount);
+                itemBag.invBlock.addItem(keys[i], item.amount, false);
                 this.decreaseAmount(keys[i], item.amount);
             }
         }

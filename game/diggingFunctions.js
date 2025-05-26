@@ -67,16 +67,16 @@ function playerDig(x,y, amount){
             if(random() < 0.05){
                 let rand = random([1,2,3]);
                 if(rand == 1){
-                    curPlayer.invBlock.addItem("Gem", 1);
+                    curPlayer.invBlock.addItem("Gem", 1, true);
                 }
                 else if(rand == 2){
-                    curPlayer.invBlock.addItem("Black Gem", 1);
+                    curPlayer.invBlock.addItem("Black Gem", 1, true);
                 }
                 else if(rand == 3){
-                    curPlayer.invBlock.addItem("Philosopher's Stone", 1);
+                    curPlayer.invBlock.addItem("Philosopher's Stone", 1, true);
                 }
             } 
-            else curPlayer.invBlock.addItem("Rock", 1);
+            else curPlayer.invBlock.addItem("Rock", 1, true);
         }
     }
 }

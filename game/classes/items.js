@@ -18,7 +18,7 @@ defineShovel("Basic Shovel", ["shovel1"], [1,["Log",1],["Rock",1]], 1, 100, 0.12
 defineShovel("Better Shovel", ["shovel2"], [1,["Log",1],["Gem",1]], 1, 100, 0.18, 3, 1, "A better shovel for digging dirt",true);
 defineShovel("God Shovel", ["shovel3"], [1,["Rock",2],["Philosopher's Stone",1]], 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt",true);
 
-defineMelee("Mush Knife", ["images/structures/mushroom2"], [1,["Mushroom",1],["Rock",1],["Mushroom Fiber",1]], 1, 100, 25, 5, 50, 60, 90, 30, false, "A basic knife",true);
+defineMelee("Mush Knife", ["mushroom_knife"], [1,["Mushroom",1],["Rock",1],["Mushroom Fiber",1]], 1, 100, 25, 5, 50, 60, 90, 30, false, "A basic knife",true);
 defineMelee("Basic Sword", ["sword1"], [1,["Log",1],["Rock",3],["Mushroom Fiber",2]], 1, 100, 25, 5, 50, 60, 90, 30, false, "A basic sword for slashing",true);
 defineMelee("Better Sword", ["sword2"], [1,["Log",2],["Rock",2],["Gem",5],["Mushroom Fiber", 3]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A better sword for slashing",true);
 defineMelee("Gem Sword", ["gem_sword"], [1,["Gem",3],["Philosopher's Stone",1],["Black Gem",2],["Tech",4]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A godly sword for slashing",true);
