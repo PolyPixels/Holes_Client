@@ -192,14 +192,14 @@ function keyReleased() {
         if (keyCode === Controls_Space_code) { //space
             if(keyIsDown(16)){
                 if(curPlayer.invBlock.curItem != ""){
-                    curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount);
+                    curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount, false);
                     curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount);
     
                     curPlayer.otherInv.invBlock.curItem = curPlayer.invBlock.curItem;
                     curPlayer.invBlock.curItem = "";
                 }
                 else if(curPlayer.otherInv.invBlock.curItem != ""){
-                    curPlayer.invBlock.addItem(curPlayer.otherInv.invBlock.curItem, curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem].amount);
+                    curPlayer.invBlock.addItem(curPlayer.otherInv.invBlock.curItem, curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem].amount, true);
                     curPlayer.otherInv.invBlock.decreaseAmount(curPlayer.otherInv.invBlock.curItem, curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem].amount);
     
                     curPlayer.invBlock.curItem = curPlayer.otherInv.invBlock.curItem;
@@ -209,7 +209,7 @@ function keyReleased() {
             else{
                 if(curPlayer.invBlock.curItem != ""){
                     //console.log(curPlayer.otherInv);
-                    curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, 1);
+                    curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, 1, false);
                     curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem,1);
     
                     if(curPlayer.invBlock.items[curPlayer.invBlock.curItem] == undefined){
@@ -218,7 +218,7 @@ function keyReleased() {
                     }
                 }
                 else if(curPlayer.otherInv.invBlock.curItem != ""){
-                    curPlayer.invBlock.addItem(curPlayer.otherInv.invBlock.curItem, 1);
+                    curPlayer.invBlock.addItem(curPlayer.otherInv.invBlock.curItem, 1, true);
                     curPlayer.otherInv.invBlock.decreaseAmount(curPlayer.otherInv.invBlock.curItem, 1);
     
                     if(curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem] == undefined){
