@@ -137,11 +137,18 @@ function bombUpdate(){
         }
 
         //dig dirt in a radius around the bomb
-        for(let y=-100; y<100; y++){
-            for(let x=-100; x<100; x++){
-                dig(this.pos.x+x, this.pos.y+y, 1, false);
-            }
-        }
+        // for(let y=-100; y<100; y++){
+        //     for(let x=-100; x<100; x++){
+        //         dig(this.pos.x+x, this.pos.y+y, 1, false);
+        //     }
+        // }
+        socket.emit("update_nodes", {
+            cx: testMap.globalToChunk(this.pos.x,this.pos.y).x,
+            cy: testMap.globalToChunk(this.pos.x,this.pos.y).y,
+            pos: {x: this.pos.x, y: this.pos.y},
+            radius: 5,
+            amt: 1
+        })
 
         // Bomb hurts all objects nearby
         let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
@@ -434,19 +441,21 @@ class Plant extends Placeable{
             socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, cost: bagInv});
         }
         if(this.growthTimer > this.growthRate){
-            if(this.stage < (objImgs[this.imgNum].length-1)){
-                this.stage ++;
-                this.growthTimer = 0;
+            if(this.hp >= this.mhp){
+                if(this.stage < (objImgs[this.imgNum].length-1)){
+                    this.stage ++;
+                    this.growthTimer = 0;
 
-                let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
-                socket.emit("update_obj", {
-                    cx: chunkPos.x, cy: chunkPos.y, 
-                    objName: this.objName, 
-                    pos: {x: this.pos.x, y: this.pos.y}, 
-                    z: this.z,
-                    update_name: "stage", 
-                    update_value: this.stage
-                });
+                    let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+                    socket.emit("update_obj", {
+                        cx: chunkPos.x, cy: chunkPos.y, 
+                        objName: this.objName, 
+                        pos: {x: this.pos.x, y: this.pos.y}, 
+                        z: this.z,
+                        update_name: "stage", 
+                        update_value: this.stage
+                    });
+                }
             }
         }
         this.growthTimer += 1/frameRate(); //growth timer goes up by 1 every second

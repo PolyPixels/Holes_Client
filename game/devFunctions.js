@@ -1,3 +1,8 @@
+function getPlayerChunk(){
+    let temp = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+    return temp.x + "," + temp.y;
+}
+
 function cleanChunk(cx,cy){  //removes all dirt in a chunk
     let chunk = testMap.chunks[cx+","+cy];
     for (let x = 0; x < CHUNKSIZE; x++){
@@ -149,12 +154,13 @@ function giveDefaultItems(){
     curPlayer.invBlock.addItem("Rock", 20, false);
     curPlayer.invBlock.addItem("Log", 5, false);
     curPlayer.invBlock.addItem("Apple", 5, false);
+    curPlayer.invBlock.addItem("Bomb", 5, false);
 
     curPlayer.invBlock.hotbarItem("Basic Shovel", 0);
     curPlayer.invBlock.hotbarItem("Basic Sword", 1);
     curPlayer.invBlock.hotbarItem("Basic SlingShot", 2);
     curPlayer.invBlock.hotbarItem("Apple", 3);
-    curPlayer.invBlock.hotbarItem("Mushroom Seed", 4);
+    curPlayer.invBlock.hotbarItem("Bomb", 4);
 }
 
 function spawnObj(name, x, y, rot = 0, color = 0, id = "", ownerName = ""){

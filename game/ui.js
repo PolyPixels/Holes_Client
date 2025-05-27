@@ -2725,7 +2725,7 @@ let lastUpdateTime = 0;
 
 let timerDisplay = "15:00";
 function setTimeUI(data) {
-    console.log(data)
+    //console.log(data)
     timerRemaining = data.totalSeconds ?? (data.minutes * 60 + data.seconds);
     updateTimerDisplay();
 }
@@ -2748,7 +2748,7 @@ function updateTimerDisplay() {
     parts.push(`${pad(minutes)}m`, `${pad(seconds)}s`);
 
     timerDisplay = parts.join(' ');
-    console.log("Timer:", timerDisplay);
+    //console.log("Timer:", timerDisplay);
 
     // Optional: call resize function here
     adjustFontSize(timerRemaining);

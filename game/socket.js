@@ -112,6 +112,91 @@ function socketSetup(){
             }
         }
     });
+    socket.on("UPDATE_NODES", (data) => {
+        console.log("update nodes", data);
+        let chunk = testMap.getChunk(data.cx, data.cy);
+        let posX = Math.round(data.pos.x / TILESIZE);
+        let posY = Math.round(data.pos.y / TILESIZE);
+        posX = posX - (data.cx * CHUNKSIZE);
+        posY = posY - (data.cy * CHUNKSIZE);
+        for(let x = posX-data.radius; x <= posX+data.radius; x++){
+            for(let y = posY-data.radius; y <= posY+data.radius; y++){
+                if(x >= 0 && x < CHUNKSIZE && y >= 0 && y < CHUNKSIZE){
+                    let index = (x + (y / CHUNKSIZE));
+                    if(data.amt > 0){
+                        if (chunk.data[index] > 0) chunk.data[index] -= data.amt;
+                        if (chunk.data[index] < 0.3 && chunk.data[index] !== -1){
+                            chunk.data[index] = 0;
+                        }
+                    }
+                    else{
+                        if (chunk.data[index] < 1.3 && chunk.data[index] !== -1){
+                            chunk.data[index] -= data.amt;
+                        }
+                        if (chunk.data[index] > 1.3){
+                            chunk.data[index] = 1.3;
+                        }
+                    }
+                }
+                else{
+                    //deal with the edge cases where the node is outside the chunk
+                    let tempChunk;
+                    let index;
+                    if(y < 0 && x >= 0 && x < CHUNKSIZE){ // top edge
+                        tempChunk = testMap.getChunk(data.cx, data.cy-1);
+                        index = (x + 1 + (y / CHUNKSIZE));
+                    }
+                    else if(y >= CHUNKSIZE && x >= 0 && x < CHUNKSIZE){ // bottom edge
+                        tempChunk = testMap.getChunk(data.cx, data.cy+1);
+                        index = x + -1 + (y / CHUNKSIZE);
+                    }
+                    else if(x < 0 && y >= 0 && y < CHUNKSIZE){ // left edge
+                        tempChunk = testMap.getChunk(data.cx-1, data.cy);
+                        index = (x + CHUNKSIZE) + (y / CHUNKSIZE);
+                    }
+                    else if(x >= CHUNKSIZE && y >= 0 && y < CHUNKSIZE){ // right edge
+                        tempChunk = testMap.getChunk(data.cx+1, data.cy);
+                        index = (x - CHUNKSIZE) + (y / CHUNKSIZE);
+                    }
+                    else if(x < 0 && y < 0){ // top left corner
+                        tempChunk = testMap.getChunk(data.cx-1, data.cy-1);
+                        index = (x + CHUNKSIZE) + 1 + (y / CHUNKSIZE);
+                    }
+                    else if(x >= CHUNKSIZE && y < 0){ // top right corner
+                        tempChunk = testMap.getChunk(data.cx+1, data.cy-1);
+                        index = (x - CHUNKSIZE) + 1 + (y / CHUNKSIZE);
+                    }
+                    else if(x < 0 && y >= CHUNKSIZE){ // bottom left corner
+                        tempChunk = testMap.getChunk(data.cx-1, data.cy+1);
+                        index = (x + CHUNKSIZE) + -1 + (y / CHUNKSIZE);
+                    }
+                    else if(x >= CHUNKSIZE && y >= CHUNKSIZE){ // bottom right corner
+                        tempChunk = testMap.getChunk(data.cx+1, data.cy+1);
+                        index = (x - CHUNKSIZE) + -1 + (y / CHUNKSIZE);
+                    }
+                    if(tempChunk != undefined){
+                        if(index != undefined){
+                            if(data.amt > 0){
+                                if (tempChunk.data[index] > 0) tempChunk.data[index] -= data.amt;
+                                if (tempChunk.data[index] < 0.3 && tempChunk.data[index] !== -1){
+                                    tempChunk.data[index] = 0;
+                                }
+                            }
+                            else{
+                                if (tempChunk.data[index] < 1.3 && tempChunk.data[index] !== -1){
+                                    tempChunk.data[index] -= data.amt;
+                                }
+                                if (tempChunk.data[index] > 1.3){
+                                    tempChunk.data[index] = 1.3;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    });
     socket.on("change_name", (data) => {
         curPlayer.name = data
     });
@@ -258,6 +343,26 @@ function socketSetup(){
     socket.on("sync_time", (data) => {
         setTimeUI(data)
     });
+
+    socket.on("HEAL_PLANTS", (data) => {
+        //console.log("Healing plants");
+        let keys = Object.keys(testMap.chunks);
+        // Loop through each chunk
+        for(let i=0; i<keys.length;i++){
+            let chunk = testMap.chunks[keys[i]];
+            // Loop through each tile in the chunk
+            for(let j=0; j<chunk.objects.length;j++){
+                if(chunk.objects[j].type=="Plant" || chunk.objects[j].objName=="Tree" || chunk.objects[j].objName=="AppleTree"){
+                    if(chunk.objects[j].hp < chunk.objects[j].mhp){
+                        chunk.objects[j].hp += 5; // Heal the plant by 0.1 HP
+                        if(chunk.objects[j].hp > chunk.objects[j].mhp){
+                            chunk.objects[j].hp = chunk.objects[j].mhp; // Cap the HP at max HP
+                        }
+                    }
+                }
+            }
+        }
+    })
 
     socket.on("server_ended", () => {
 
