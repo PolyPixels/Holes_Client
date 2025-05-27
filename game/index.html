@@ -1,51 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Holes</title>
-    <meta name="description" content='Holes: "Martyr of Dirt" – a free 2D survival sandbox. Build, mine, explore an infinite world. Gather resources and survive with friends.'>
-    <meta name="keywords" content="Holes game, Martyr of Dirt, 2D survival, free sandbox game, infinite world, multiplayer, mining, building">
-    <meta name="author" content="PolyPixels">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="icon" href="./images/ui/title.png" type="image/x-icon">
-    <!-- Open Graph -->
-    <meta property="og:title" content='Holes: "Martyr of Dirt"'>
-    <meta property="og:description" content='A free 2D survival sandbox. Build, mine, and fight to survive. Be the Martyr of Dirt.'>
-    <meta property="og:type" content="website">
+  <title>Holes: Martyr of Dirt</title>
+  <meta name="description"
+        content='Holes: "Martyr of Dirt" – a free 2D survival sandbox. Build, mine, explore an infinite world.'>
+  <meta name="author" content="PolyPixels">
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content='Holes: "Martyr of Dirt"'>
-    <meta name="twitter:description" content='Build. Dig. Survive. Become the Martyr of Dirt in this 2D sandbox survival game.'>
-    <meta name="twitter:image" content="https://yourdomain.com/game/images/title.png">
+  <!-- Preconnect & Google Fonts -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.socket.io" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    
-    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.11.1/lib/p5.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/addons/p5.sound.min.js"></script>
-    <script src="coreFunctions.js"></script>
-    <script src="diggingFunctions.js"></script>
-    <script src="devFunctions.js"></script>
-    <script src="classes/soundObj.js"></script>
-    <script src="classes/map.js"></script>
-    <script src="classes/flightPath.js"></script>
-    <script src="classes/projectiles.js"></script>
-    <script src="classes/objects.js"></script>
-    <script src="classes/items.js"></script>
-    <script src="classes/statblock.js"></script>
-    <script src="classes/invblock.js"></script>
-    <script src="classes/player.js"></script>
-    <script src="preload.js"></script>
-    <script src="socket.js"></script>
-    <script src="input.js"></script>
-    <script src="sketch.js"></script>
-    <script src="ui.js"></script>
+  <link
+    rel="preload"
+    as="font"
+    href="https://fonts.gstatic.com/s/pressstart2p/v11/8QINdiTajsj_87l9YJH6ujD_X0L6.woff2"
+    type="font/woff2"
+    crossorigin
+  >
+  <!-- Preload & favicon -->
+  <link rel="preload" as="image" href="./images/ui/title.png">
+  <link rel="icon" href="./images/ui/title.png" type="image/png">
 
-    <!-- Link to External Styles -->
-    <link rel="stylesheet" href="./../style.css">
+  <!-- Your main CSS -->
+  <link rel="stylesheet" href="../style.css">
+
+  <!-- Content Security Policy -->
+  <meta http-equiv="Content-Security-Policy"
+        content="
+          default-src      'self'
+                           https://cdn.jsdelivr.net
+                           https://cdnjs.cloudflare.com
+                           https://cdn.socket.io;
+          script-src       'self'
+                           https://cdn.jsdelivr.net
+                           https://cdnjs.cloudflare.com
+                           https://cdn.socket.io
+                           blob:
+                           'unsafe-eval';
+          worker-src       'self' blob:;
+          connect-src      'self'
+                           ws://localhost:3000
+                           wss://localhost:3000
+                           http://localhost:3000
+                           https://api.holesgame.com
+                           wss://api.holesgame.com
+                           https://dig.holesgame.com
+                           wss://dig.holesgame.com;
+          img-src          'self'
+                           data:
+                           https://publicholesinfo.s3.us-east-1.amazonaws.com;
+          style-src        'self'
+                           'unsafe-inline'
+                           https://fonts.googleapis.com;
+          style-src-elem   'self'
+                           'unsafe-inline'
+                           https://fonts.googleapis.com;
+          font-src         'self'
+                           https://fonts.gstatic.com
+                           data:;
+        "
+  >
+
+  <!-- Open Graph & Twitter -->
+  <meta property="og:title"       content='Holes: "Martyr of Dirt"'>
+  <meta property="og:description" content='A free 2D survival sandbox. Build, mine, and fight to survive.'>
+  <meta property="og:type"        content="website">
+  <meta name="twitter:card"       content="summary_large_image">
+  <meta name="twitter:title"      content='Holes: "Martyr of Dirt"'>
+  <meta name="twitter:description"
+        content='Build. Dig. Survive. Become the Martyr of Dirt in this 2D sandbox survival game.'>
+  <meta name="twitter:image"
+        content="https://yourdomain.com/game/images/title.png">
+
+  <!-- Defer all JS -->
+  <script defer src="https://cdn.socket.io/4.4.1/socket.io.min.js"
+          integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
+          crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/p5@1.11.1/lib/p5.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/addons/p5.sound.min.js"></script>
+
+  <!-- App code -->
+  <script defer src="coreFunctions.js"></script>
+  <script defer src="diggingFunctions.js"></script>
+  <script defer src="devFunctions.js"></script>
+  <script defer src="classes/soundObj.js"></script>
+  <script defer src="classes/map.js"></script>
+  <script defer src="classes/flightPath.js"></script>
+  <script defer src="classes/projectiles.js"></script>
+  <script defer src="classes/objects.js"></script>
+  <script defer src="classes/items.js"></script>
+  <script defer src="classes/statblock.js"></script>
+  <script defer src="classes/invblock.js"></script>
+  <script defer src="classes/player.js"></script>
+  <script defer src="preload.js"></script>
+  <script defer src="socket.js"></script>
+  <script defer src="input.js"></script>
+  <script defer src="sketch.js"></script>
+  <script defer src="ui.js"></script>
+
+  <!-- External SW registration -->
+  <script defer src="sw-register.js"></script>
 </head>
+
 <body>
-    <div id="canvas-container"></div> <!-- This is the parent element -->
+  <div id="canvas-container"></div>
 </body>
 </html>
