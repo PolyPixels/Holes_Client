@@ -27,7 +27,7 @@ function socketSetup(){
         let keys = Object.keys(data.players);
         for (let i = 0; i < keys.length; i++) {
             const playerData = data.players[keys[i]];
-            console.log(playerData);
+            //console.log(playerData);
             players[keys[i]] = new Player(
                 playerData.pos.x,
                 playerData.pos.y,
@@ -113,7 +113,7 @@ function socketSetup(){
         }
     });
     socket.on("UPDATE_NODES", (data) => {
-        console.log("update nodes", data);
+        //console.log("update nodes", data);
         let chunk = testMap.getChunk(data.cx, data.cy);
         let posX = Math.round(data.pos.x / TILESIZE);
         let posY = Math.round(data.pos.y / TILESIZE);
