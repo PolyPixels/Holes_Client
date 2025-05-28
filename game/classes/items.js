@@ -137,6 +137,11 @@ class Shovel extends SimpleItem{
         else if(mouseButton == RIGHT){ //place dirt
             if (dirtInv > this.digSpeed) playerDig(x, y, -this.digSpeed);
         }
+        this.durability -= 0.01;
+        if(this.durability <= 0){
+            this.durability = this.maxDurability;
+            curPlayer.invBlock.decreaseAmount(this.itemName, 1);
+        }
     }
 
     getStats(){
@@ -179,6 +184,11 @@ class Melee extends SimpleItem{
                 testMap.chunks[chunkPos.x+','+chunkPos.y].soundObjs.push(temp);
                 socket.emit("new_sound", {sound: "swing.wav", cPos: chunkPos, pos: {x: curPlayer.pos.x, y: curPlayer.pos.y}, id: temp.id});
                 curPlayer.invBlock.useTimer = this.swingSpeed;
+                this.durability -= 1;
+                if(this.durability <= 0){
+                    this.durability = this.maxDurability;
+                    curPlayer.invBlock.decreaseAmount(this.itemName, 1);
+                }
             }
         }
     }
@@ -234,6 +244,11 @@ class Ranged extends SimpleItem{
                         if(this.ammoName != "mana") curPlayer.invBlock.decreaseAmount(this.ammoName, 1);
                         else curPlayer.statBlock.stats.mp -= this.manaCost;
                         curPlayer.invBlock.useTimer = this.fireRate;
+                        this.durability -= 1;
+                        if(this.durability <= 0){
+                            this.durability = this.maxDurability;
+                            curPlayer.invBlock.decreaseAmount(this.itemName, 1);
+                        }
                     }
                 }
                 else{
