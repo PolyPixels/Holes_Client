@@ -442,9 +442,9 @@ class Plant extends Placeable{
         }
         if(this.growthTimer > this.growthRate){
             if(this.hp >= this.mhp){
+                this.growthTimer = 0;
                 if(this.stage < (objImgs[this.imgNum].length-1)){
                     this.stage ++;
-                    this.growthTimer = 0;
 
                     let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
                     socket.emit("update_obj", {
@@ -455,6 +455,24 @@ class Plant extends Placeable{
                         update_name: "stage", 
                         update_value: this.stage
                     });
+                }
+                else{
+                    //try to spread
+                    if(random() > 0.5){
+                        let spreadPos = createVector(this.pos.x + random(-100, 100), this.pos.y + random(-100, 100));
+                        let chunkPos = testMap.globalToChunk(spreadPos.x,spreadPos.y);
+                        if(testMap.chunks[chunkPos.x+","+chunkPos.y] != undefined){
+                            if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[testMap.globalToChunk(spreadPos.x,spreadPos.y).x + (testMap.globalToChunk(spreadPos.x,spreadPos.y).y / CHUNKSIZE)] == 0){
+                                let newPlant = createObject(this.objName, spreadPos.x, spreadPos.y, 0, this.color, this.id, this.ownerName);
+                                testMap.chunks[chunkPos.x+","+chunkPos.y].objects.push(newPlant);
+                                socket.emit("new_object", {
+                                    cx: chunkPos.x,
+                                    cy: chunkPos.y,
+                                    obj: newPlant
+                                });
+                            }
+                        }
+                    }
                 }
             }
         }
