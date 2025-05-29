@@ -1685,7 +1685,6 @@ function updatecurItemDiv() {
 function renderDirtBagUI() {
     // Dirt Inventory
     push();
-    //should add an open and closed version
 
     if (dirtBagUI.shake.length > 0) {
         //dirt bag shake sound
@@ -1711,7 +1710,10 @@ function renderDirtBagUI() {
     dirtBagUI.pos.add(dirtBagUI.vel);
 
     let dirtBagOpen = true;
-    if (curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] == "") {
+    if(buildMode){
+        dirtBagOpen = true;
+    }
+    else if (curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] == "") {
         if (dirtInv >= maxDirtInv - curPlayer.statBlock.stats.handDigSpeed) {
             dirtBagOpen = false;
         }

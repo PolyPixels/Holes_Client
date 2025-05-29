@@ -29,6 +29,9 @@ function keyReleased() {
             renderGhost = buildMode;
 
             if(!buildMode){
+                if(curPlayer.invBlock.selectedHotBar > 4){
+                    curPlayer.invBlock.selectedHotBar = 4;
+                }
                 if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Seed"){
                     ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
                     renderGhost = true;
@@ -625,8 +628,14 @@ function mouseWheel(event) {
         if(keyCode == Controls_MoveHotBarLeft_code) hotBarOffset = -1;
         if(keyCode == Controls_MoveHotBarRight_code) hotBarOffset = 1;
         let slot = curPlayer.invBlock.selectedHotBar + hotBarOffset;
-        if(slot < 0) slot = 4;
-        if(slot > 4) slot = 0;
+        if(!buildMode){
+            if(slot < 0) slot = 4;
+            if(slot > 4) slot = 0;
+        }
+        else{
+            if(slot < 0) slot = 8;
+            if(slot > 8) slot = 0;
+        }
         curPlayer.invBlock.selectedHotBar = slot;
         curPlayer.invBlock.animationTimer = hotBarOffset;
 
@@ -643,6 +652,9 @@ function mouseWheel(event) {
             else{
                 renderGhost = false;
             }
+        }
+        else{
+            ghostBuild = createObject(buildOptions[curPlayer.invBlock.selectedHotBar].objName, 0, 0, 0, curPlayer.color, curPlayer.id, curPlayer.name);
         }
         mouseWheelMoved = false
         updateSpaceBarDiv();

@@ -198,6 +198,7 @@ class InvBlock{
         arc(width, height, 595, 595, 180, 270);
     
         stroke("#604030");
+        if (buildMode) stroke("#1F5489");
         strokeWeight(45);
         arc(width, height, 595, 595, 180, 270);
     
@@ -211,38 +212,53 @@ class InvBlock{
           this.selectedHotBar + 1,
           this.selectedHotBar + 2
         ];
-        for (let i = 0; i < slots.length; i++) {
-          if (slots[i] < 0) slots[i] = 5 + slots[i];
-          if (slots[i] > 4) slots[i] = slots[i] - 5;
-        }
-    
-        // Render the items in each slot
-        for (let i = 0; i < slots.length; i++) {
-          let slotIndex = slots[i];
-          let hotBarKey = this.hotbar[slotIndex];
-          if (hotBarKey !== "") {
-            // Compute position based on your original logic
-            let x = width  - (cos(15 + 15*i + 15*this.animationTimer) * 300);
-            let y = height - (sin(15 + 15*i + 15*this.animationTimer) * 300);
-    
-            // Draw the item image
-            let item = this.items[hotBarKey];
-            item.renderImage(x, y);
-    
-            // If there's more than one of this item, render the amount
-            if (item.amount > 1) {
-              push();
-              fill(255);
-              stroke(0);
-              strokeWeight(4);
-              textAlign(RIGHT, BOTTOM);
-              textSize(18);
-              textFont(gameUIFont);
-              // Adjust the offsets as needed to place the text nicely
-              text(item.amount, x + 35, y +15);
-              pop();
+        
+        if(!buildMode){
+            for (let i = 0; i < slots.length; i++) {
+              if (slots[i] < 0) slots[i] = 5 + slots[i];
+              if (slots[i] > 4) slots[i] = slots[i] - 5;
             }
-          }
+            // Render the items in each slot
+            for (let i = 0; i < slots.length; i++) {
+                let slotIndex = slots[i];
+                let hotBarKey = this.hotbar[slotIndex];
+                if (hotBarKey !== "") {
+                    // Compute position based on your original logic
+                    let x = width  - (cos(15 + 15*i + 15*this.animationTimer) * 300);
+                    let y = height - (sin(15 + 15*i + 15*this.animationTimer) * 300);
+            
+                    // Draw the item image
+                    let item = this.items[hotBarKey];
+                    item.renderImage(x, y);
+            
+                    // If there's more than one of this item, render the amount
+                    if (item.amount > 1) {
+                    push();
+                    fill(255);
+                    stroke(0);
+                    strokeWeight(4);
+                    textAlign(RIGHT, BOTTOM);
+                    textSize(18);
+                    textFont(gameUIFont);
+                    // Adjust the offsets as needed to place the text nicely
+                    text(item.amount, x + 35, y +15);
+                    pop();
+                    }
+                }
+            }
+        }
+        else{
+            for (let i = 0; i < slots.length; i++) {
+              if (slots[i] < 0) slots[i] = 9 + slots[i];
+              if (slots[i] > 8) slots[i] = slots[i] - 9;
+            }
+            for (let i = 0; i < slots.length; i++) {
+                let slotIndex = slots[i];
+                //render the buildOption[slotIndex]
+                let x = width  - (cos(15 + 15*i + 15*this.animationTimer) * 300);
+                let y = height - (sin(15 + 15*i + 15*this.animationTimer) * 300);
+                image(objImgs[buildOptions[slotIndex].images2][curPlayer.color % objImgs[buildOptions[slotIndex].images2].length], x, y, 60, 60);
+            }
         }
     
         // Q & E key rectangles
@@ -276,30 +292,36 @@ class InvBlock{
         else image(Ximage, width - 385, height - 30, 40, 40);
 
         // === Add item name at bottom center with background ===
-    let selectedItemName = this.hotbar[this.selectedHotBar];
-    if (selectedItemName && selectedItemName !== "") {
-        push();
-        textFont(gameUIFont);
-        textSize(20);
-        textAlign(LEFT, CENTER);
-        let textX = width - 100;
-        let textY = height - 195;
+        let selectedItemName = "";
+        if(!buildMode){
+            selectedItemName = this.hotbar[this.selectedHotBar];
+        }
+        else{
+            selectedItemName = buildOptions[this.selectedHotBar].objName;
+        }
+        if (selectedItemName && selectedItemName !== "") {
+            push();
+            textFont(gameUIFont);
+            textSize(20);
+            textAlign(LEFT, CENTER);
+            let textX = width - 100;
+            let textY = height - 195;
 
-        let textW = textWidth(selectedItemName);
-        let textH = 28;
+            let textW = textWidth(selectedItemName);
+            let textH = 28;
 
-        // Draw background rectangle
-        fill(0, 150); // semi-transparent black
-        noStroke();
-        rect(textX , textY , textW , textH, 8); // 8 = rounded corners
+            // Draw background rectangle
+            fill(0, 150); // semi-transparent black
+            noStroke();
+            rect(textX , textY , textW , textH, 8); // 8 = rounded corners
 
-        // Draw item name
-        fill(255);
-        stroke(0);
-        strokeWeight(2);
-        text(selectedItemName, textX - 50, textY);
-        pop();
-    }
+            // Draw item name
+            fill(255);
+            stroke(0);
+            strokeWeight(2);
+            text(selectedItemName, textX - 50, textY);
+            pop();
+        }
 
         pop();
     }

@@ -458,7 +458,7 @@ class Plant extends Placeable{
                 }
                 else{
                     //try to spread
-                    if(random() > 0.5){
+                    if(random() < 0.1){
                         let spreadPos = createVector(this.pos.x + random(-100, 100), this.pos.y + random(-100, 100));
                         let chunkPos = testMap.globalToChunk(spreadPos.x,spreadPos.y);
                         if(testMap.chunks[chunkPos.x+","+chunkPos.y] != undefined){
@@ -677,7 +677,7 @@ function defineObjSuper(type,name,imgPaths,cost,width,height,zLevel,health,canRo
     };
 
     if(inBuildList){
-        buildOptions.push({ objName: name, key: 49+(buildOptions.length), images: imgPaths, cost: cost});
+        buildOptions.push({ objName: name, key: 49+(buildOptions.length), images: imgPaths, images2: imgNum, cost: cost});
     }
 }
 
