@@ -1494,10 +1494,10 @@ function updateItemList() {
         itemDiv.parent(itemListDiv);
         itemDiv.mousePressed(() => {
             curPlayer.invBlock.curItem = itemName;
+            //click to select item 
             updateItemList();
             updatecurItemDiv();
         });
-
         let itemInfoDiv = createDiv();
         itemInfoDiv.style("width", "80%");
         itemInfoDiv.style("height", "50px");
@@ -1549,12 +1549,14 @@ function updatecurItemDiv() {
         let curItemNone = createP("No Selected Item");
         curItemNone.parent(curItemDiv);
         curItemNone.class("inventory-title");
+        
         applyStyle(curItemNone, {
             paddingTop: "7%",
             textDecoration: "none"
         });
         return;
     };
+
 
     let itemCardDiv = createDiv();
     itemCardDiv.style("width", "100%");
@@ -1568,6 +1570,8 @@ function updatecurItemDiv() {
     itemImgDiv.style("height", "100%");
     itemImgDiv.style("border", "2px solid black");
     itemImgDiv.style("border-radius", "10px");
+
+    itemImgDiv.src = ""
     //console.log(itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]);
     itemImgDiv.style("background-image", "url(" + itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0] + ")");
     itemImgDiv.style("background-size", "contain");
@@ -2342,7 +2346,6 @@ function defineSwapInvUI() {
     swapInvDiv.style("transform", "translate(-50%, -50%)");
 
     swapInvDiv.style("z-index", "50");
-
     let swapInvTitleBar = createDiv();
     swapInvTitleBar.parent(swapInvDiv);
     applyStyle(swapInvTitleBar, {
@@ -2423,6 +2426,7 @@ function defineSwapInvUI() {
 function updateSwapItemLists(otherInv) {
     if (curPlayer == undefined) return;
 
+    updatecurSwapItemDiv(otherInv);
     itemListDivLeft.html("");
     //create a div for each item in the inventory
     let arr = Object.keys(curPlayer.invBlock.items);
@@ -2441,8 +2445,11 @@ function updateSwapItemLists(otherInv) {
         itemDiv.style("cursor", "pointer");
         itemDiv.parent(itemListDivLeft);
         itemDiv.mousePressed(() => {
+            console.log( curPlayer.invBlock.curItem)
             curPlayer.invBlock.curItem = itemName;
             otherInv.curItem = "";
+            
+            console.log( curPlayer.invBlock.curItem)
             updateSwapItemLists(otherInv);
             updatecurSwapItemDiv(otherInv);
         });
@@ -2500,11 +2507,14 @@ function updateSwapItemLists(otherInv) {
         if (otherInv.curItem == itemName) itemDiv.style("font-style", "italic");
         itemDiv.style("cursor", "pointer");
         itemDiv.parent(itemListDivRight);
+        
         itemDiv.mousePressed(() => {
+            console.log("before",  otherInv.curItem)
             curPlayer.invBlock.curItem = "";
             otherInv.curItem = itemName;
             updateSwapItemLists(otherInv);
             updatecurSwapItemDiv(otherInv);
+            console.log("after ",otherInv.curItem)
         });
 
         let itemInfoDiv = createDiv();
@@ -2515,7 +2525,7 @@ function updateSwapItemLists(otherInv) {
         itemInfoDiv.style("justify-content", "space-between");
         itemInfoDiv.parent(itemDiv);
 
-           let imgNum = otherInv.items[itemName].imgNum;
+        let imgNum = otherInv.items[itemName].imgNum;
         let itemImg =itemImgPaths[imgNum][0];
         let imgDiv = createDiv();
         imgDiv.style('width', '32px');
@@ -2543,22 +2553,31 @@ function updateSwapItemLists(otherInv) {
     }
 }
 
-
 function updatecurSwapItemDiv(otherInv) {
     if (curPlayer == undefined) return;
     let curSwapItem;
     if (curPlayer.invBlock.curItem != "") {
         curSwapItem = curPlayer.invBlock.items[curPlayer.invBlock.curItem];
-    }
-    else if (otherInv.curItem != "") {
+    } else if (otherInv.curItem != "") {
         curSwapItem = otherInv.items[otherInv.curItem];
     }
 
-    if (curSwapItem == undefined) return;
-
-    //clear the div
+    // Clear the div every time
     curSwapItemDiv.html("");
 
+    if (curSwapItem == undefined) {
+        // Show a clean "None Selected" state
+        let noneDiv = createDiv("No item selected");
+        noneDiv.style("width", "100%");
+        noneDiv.style("padding", "24px");
+        noneDiv.style("color", "#aaa");
+        noneDiv.style("text-align", "center");
+        noneDiv.style("font-size", "22px");
+        noneDiv.parent(curSwapItemDiv);
+        return; // Stop here so no image/details are rendered
+    }
+
+    // --- Everything below is unchanged (your item info UI) ---
     let itemCardDiv = createDiv();
     itemCardDiv.style("width", "100%");
     itemCardDiv.style("height", "30%");
@@ -2570,7 +2589,6 @@ function updatecurSwapItemDiv(otherInv) {
     itemImgDiv.style("width", "50%");
     itemImgDiv.style("border", "2px solid black");
     itemImgDiv.style("border-radius", "10px");
-    //console.log(itemImgPaths[curSwapItem.imgNum][0]);
     itemImgDiv.style("background-image", "url(" + itemImgPaths[curSwapItem.imgNum][0] + ")");
     itemImgDiv.style("background-size", "contain");
     itemImgDiv.style("background-repeat", "no-repeat");
@@ -2596,7 +2614,7 @@ function updatecurSwapItemDiv(otherInv) {
     itemNameP.style("margin", "5px");
     itemNameP.parent(itemNameDiv);
 
-    //create a div for the description
+    // Description
     let itemDescDiv = createDiv();
     itemDescDiv.style("width", "100%");
     itemDescDiv.style("height", "calc(80% - 5px)");
@@ -2616,7 +2634,6 @@ function updatecurSwapItemDiv(otherInv) {
     itemStatsDiv.parent(curSwapItemDiv);
 
     if (curSwapItem.type != "Simple") {
-
         let durabilityDiv = createDiv();
         durabilityDiv.style("width", "calc(100% - 14px)");
         durabilityDiv.style("height", "10%");
@@ -2669,11 +2686,10 @@ function updatecurSwapItemDiv(otherInv) {
     let stats;
     if (curPlayer.invBlock.curItem != "") {
         stats = curPlayer.invBlock.getItemStats(curSwapItem.itemName);
-    }
-    else if (otherInv.curItem != "") {
+    } else if (otherInv.curItem != "") {
         stats = otherInv.getItemStats(curSwapItem.itemName);
     }
-    //console.log(curSwapItem.itemName);
+
     stats.forEach(stat => {
         if (stat[0] == "Durability") { }
         else {
