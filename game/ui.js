@@ -1880,7 +1880,7 @@ function defineBuildUI() {
 
 function renderBuildOptions() {
     buildDiv.html('');
-    
+
     console.log(buildOptions[curPlayer.invBlock.selectedHotBar],curPlayer.invBlock.selectedHotBar)
     let option = buildOptions[curPlayer.invBlock.selectedHotBar];
     if (!option) return;
@@ -1919,7 +1919,7 @@ function renderBuildOptions() {
 
     // Result message
     const affordMsg = createDiv(
-        canAfford ? 'You can afford this!' : 'Not enough resources!'
+        canAfford ? '' : 'Not enough resources!'
     );
     affordMsg.style('font-size', '0.9rem');
     affordMsg.style('font-weight', 'bold');
