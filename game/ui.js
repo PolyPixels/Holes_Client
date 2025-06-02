@@ -2517,7 +2517,7 @@ function updateSwapItemLists(otherInv) {
         itemInfoDiv.style("justify-content", "space-between");
         itemInfoDiv.parent(itemDiv);
 
-           let imgNum = curPlayer.invBlock.items[itemName].imgNum;
+           let imgNum = otherInv.items[itemName].imgNum;
         let itemImg =itemImgPaths[imgNum][0];
         let imgDiv = createDiv();
         imgDiv.style('width', '32px');
