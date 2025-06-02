@@ -1508,6 +1508,27 @@ function updateItemList() {
         itemInfoDiv.style("justify-content", "space-between");
         itemInfoDiv.parent(itemDiv);
 
+                // Add item icon (responsive, pixelated)
+        let imgNum = curPlayer.invBlock.items[itemName].imgNum;
+        let itemImg = itemImgPaths[imgNum][0];
+        let imgDiv = createDiv();
+        imgDiv.style('width', '2.2em');  // Responsive size
+        imgDiv.style('height', '2.2em');
+        imgDiv.style('min-width', '28px');
+        imgDiv.style('min-height', '28px');
+        imgDiv.style('margin-right', '0.5em');
+        imgDiv.style('display', 'flex');
+        imgDiv.style('align-items', 'center');
+        imgDiv.parent(itemInfoDiv);
+
+        let imgEl = createImg(itemImg, '');
+        imgEl.style('width', '100%');
+        imgEl.style('height', '100%');
+        imgEl.style('image-rendering', 'pixelated');
+        imgEl.style('pointer-events', 'none'); // Avoid accidental drag
+        imgEl.parent(imgDiv);
+
+
         let itemNameP = createP((itemName == curPlayer.invBlock.curItem ? "* " : "") + itemName);
         itemNameP.style("font-size", "20px");
         itemNameP.style("color", "white");
@@ -2436,6 +2457,22 @@ function updateSwapItemLists(otherInv) {
         itemInfoDiv.style("justify-content", "space-between");
         itemInfoDiv.parent(itemDiv);
 
+        let imgNum = curPlayer.invBlock.items[itemName].imgNum;
+        let itemImg =itemImgPaths[imgNum][0];
+        let imgDiv = createDiv();
+        imgDiv.style('width', '32px');
+        imgDiv.style('height', '32px');
+        imgDiv.style('margin-right', '8px');
+        imgDiv.style('display', 'flex');
+        imgDiv.style('align-items', 'center');
+        imgDiv.parent(itemInfoDiv);
+
+        let imgEl = createImg(itemImg, '');
+        imgEl.style('width', '32px');
+        imgEl.style('height', '32px');
+        imgEl.style('image-rendering', 'pixelated'); // For that crispy pixel look
+        imgEl.parent(imgDiv);
+
         let itemNameP = createP((itemName == curPlayer.invBlock.curItem ? "* " : "") + itemName);
         itemNameP.style("font-size", "20px");
         itemNameP.style("color", "white");
@@ -2444,7 +2481,10 @@ function updateSwapItemLists(otherInv) {
         let itemAmount = createP(curPlayer.invBlock.items[itemName].amount);
         itemAmount.style("font-size", "20px");
         itemAmount.style("color", "white");
+        
         itemAmount.parent(itemInfoDiv);
+
+        
     }
 
     itemListDivRight.html("");
@@ -2476,6 +2516,22 @@ function updateSwapItemLists(otherInv) {
         itemInfoDiv.style("align-items", "center");
         itemInfoDiv.style("justify-content", "space-between");
         itemInfoDiv.parent(itemDiv);
+
+           let imgNum = curPlayer.invBlock.items[itemName].imgNum;
+        let itemImg =itemImgPaths[imgNum][0];
+        let imgDiv = createDiv();
+        imgDiv.style('width', '32px');
+        imgDiv.style('height', '32px');
+        imgDiv.style('margin-right', '8px');
+        imgDiv.style('display', 'flex');
+        imgDiv.style('align-items', 'center');
+        imgDiv.parent(itemInfoDiv);
+
+        let imgEl = createImg(itemImg, '');
+        imgEl.style('width', '32px');
+        imgEl.style('height', '32px');
+        imgEl.style('image-rendering', 'pixelated'); // For that crispy pixel look
+        imgEl.parent(imgDiv);
 
         let itemNameP = createP((itemName == otherInv.curItem ? "* " : "") + itemName);
         itemNameP.style("font-size", "20px");
@@ -2896,6 +2952,7 @@ function updateCraftList() {
             updatecurCraftItemDiv();
         });
 
+
         let itemInfoDiv = createDiv();
         itemInfoDiv.style("width", "80%");
         itemInfoDiv.style("height", "50px");
@@ -2903,6 +2960,25 @@ function updateCraftList() {
         itemInfoDiv.style("align-items", "center");
         itemInfoDiv.style("justify-content", "space-between");
         itemInfoDiv.parent(itemDiv);
+        console.log(craftOptions)
+                // Add item icon (responsive, pixelated)
+        let itemImg = arr[i].image;
+        let imgDiv = createDiv();
+        imgDiv.style('width', '2.2em');  // Responsive size
+        imgDiv.style('height', '2.2em');
+        imgDiv.style('min-width', '28px');
+        imgDiv.style('min-height', '28px');
+        imgDiv.style('margin-right', '0.5em');
+        imgDiv.style('display', 'flex');
+        imgDiv.style('align-items', 'center');
+        imgDiv.parent(itemInfoDiv);
+
+        let imgEl = createImg(itemImg, '');
+        imgEl.style('width', '100%');
+        imgEl.style('height', '100%');
+        imgEl.style('image-rendering', 'pixelated');
+        imgEl.style('pointer-events', 'none'); // Avoid accidental drag
+        imgEl.parent(imgDiv);
 
         let itemNameP = createP((itemName == curPlayer.invBlock.curItem ? "* " : "") + itemName);
         itemNameP.style("font-size", "20px");
