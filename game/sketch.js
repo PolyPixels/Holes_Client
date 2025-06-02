@@ -127,7 +127,7 @@ function updatePlayerRegen(player) {
         // --- MP Regen ---
         let mmp = player.statBlock.stats.mmp || 100;
         if (player.statBlock.stats.mp < mmp) {
-            let mpRegen = (player.statBlock.stats.magic || 0) / 5;
+            let mpRegen = (player.statBlock.stats.magic || 0) ;
             player.statBlock.stats.mp = Math.min(player.statBlock.stats.mp + mpRegen, mmp);
         }
 
@@ -202,7 +202,7 @@ function draw() {
             updatePlayerRegen(curPlayer,1)
 
             //little interact key above the thing you can interact with f rendered 
-            let mouseVec = createVector(mouseX + camera.pos.x - (width / 2), mouseY + camera.pos.y - (height / 2));
+            let mouseVec = createVector(mouseX + camera.pos.x - (width / 4), mouseY + camera.pos.y - (height / 4));
             let chunkPos = testMap.globalToChunk(mouseVec.x,mouseVec.y);
             let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
             if(chunk != undefined){
