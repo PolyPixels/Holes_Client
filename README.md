@@ -104,7 +104,7 @@ Ready to dig into the code and contribute? Awesome! To make the pull request (PR
 
 ### 4. Join the Community (Discord)
 
-&#x20;*Discord logo icon.* We have an official **Discord server** for *Holes: Martyrs of Dirt* where you can chat with the developers and other players. Join us to discuss ideas, ask questions, report issues in real-time, or just share your epic base builds. It’s a great place to get quick support and stay up-to-date on development progress. **[Click here to join the Holes Discord community](https://discord.gg/4SQGTGhV)**.
+We have an official **Discord server** for *Holes: Martyrs of Dirt* where you can chat with the developers and other players. Join us to discuss ideas, ask questions, report issues in real-time, or just share your epic base builds. It’s a great place to get quick support and stay up-to-date on development progress. **[Click here to join the Holes Discord community](https://discord.gg/4SQGTGhV)**.
 
 *(If the link above doesn’t work, you can find the invite on our website or reach out to us for an updated link.)*
 
