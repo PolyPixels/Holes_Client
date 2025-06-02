@@ -72,8 +72,6 @@ let markeeText = [
     "Remember V the Media Lies",
     "If the government could be trusted Jesus would have died of natural causes",
     "The Simpson's did it !",
-
-
 ]
 // Function to render buttons instead of links
 function renderLinks() {

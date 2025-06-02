@@ -10,7 +10,7 @@ const races = BASE_STATS.map(item => item.name);
 var camera = {};
 var dirtBagUI = {};
 var Debuging = false;
-//console.log("Race names:", races);
+
 
 function setup() {
     // Create a responsive canvas
@@ -111,6 +111,34 @@ function windowResized() {
     updateResponsiveDesign();
 }
 
+function updatePlayerRegen(player) {
+    // Increase timer
+    player.regenTimer += 0.05;
+
+    // Only tick on interval
+    if (player.regenTimer >= player.regenInterval) {
+        // --- HP Regen ---
+        let mhp = player.statBlock.stats.mhp || 100;
+        if (player.statBlock.stats.hp < mhp) {
+            let regenAmount = (player.statBlock.stats.regen || 0) ;
+            player.statBlock.stats.hp = Math.min(player.statBlock.stats.hp + regenAmount, mhp);
+        }
+
+        // --- MP Regen ---
+        let mmp = player.statBlock.stats.mmp || 100;
+        if (player.statBlock.stats.mp < mmp) {
+            let mpRegen = (player.statBlock.stats.magic || 0) / 5;
+            player.statBlock.stats.mp = Math.min(player.statBlock.stats.mp + mpRegen, mmp);
+        }
+
+        // Reset timer and interval (randomize 4-5s)
+        player.regenTimer = 0;
+        player.regenInterval = random(4, 5);
+    }
+}
+
+
+
 function draw() {
     // image as background
 
@@ -171,10 +199,9 @@ function draw() {
             }
 
             //regen mana and health over time
-            if(curPlayer.statBlock.stats.mp < curPlayer.statBlock.stats.mmp) curPlayer.statBlock.stats.mp += 0.01;
-            if(curPlayer.statBlock.stats.hp < curPlayer.statBlock.stats.mhp) curPlayer.statBlock.heal(0.01);
+            updatePlayerRegen(curPlayer,1)
 
-            //little interact key above the thing you can interact with
+            //little interact key above the thing you can interact with f rendered 
             let mouseVec = createVector(mouseX + camera.pos.x - (width / 2), mouseY + camera.pos.y - (height / 2));
             let chunkPos = testMap.globalToChunk(mouseVec.x,mouseVec.y);
             let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];

@@ -35,6 +35,10 @@ class Player {
         this.animationFrame = 0;
         this.animationType = ""; // Name of current animation
 
+
+        this.regenTimer = 0;         
+        this.regenInterval = 3 
+
         this.attackingOBJ = {}
     }
 
