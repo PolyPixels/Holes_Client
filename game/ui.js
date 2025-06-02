@@ -1861,12 +1861,12 @@ function defineBuildUI() {
     buildDiv = createDiv();
     buildDiv.class("container");
     buildDiv.style("position", "absolute");
-    buildDiv.style("top", "40%");
+    buildDiv.style("top", "70%");
     buildDiv.style("left", "90%");
     buildDiv.style("transform", "translate(-50%, -50%)");
     buildDiv.style("display", "none");
     buildDiv.style("width", "10%");
-    buildDiv.style("height", "60%");
+    buildDiv.style("height", "10%");
     buildDiv.style("border", "2px solid black");
     buildDiv.style("border-radius", "10px");
     buildDiv.style("padding", "20px");
@@ -1878,119 +1878,55 @@ function defineBuildUI() {
     buildDiv.style("overflow-y", "scroll");
 }
 
-// 2) Render your build options
 function renderBuildOptions() {
-    // Clear any previous content
     buildDiv.html('');
+    
+    console.log(buildOptions[curPlayer.invBlock.selectedHotBar],curPlayer.invBlock.selectedHotBar)
+    let option = buildOptions[curPlayer.invBlock.selectedHotBar];
+    if (!option) return;
 
-    // Create an unordered list to hold build options
-    const ul = createElement('ul');
-    ul.style('list-style', 'none');
-    ul.style('padding', '0');
-    ul.style('margin', '0 auto');
-    ul.parent(buildDiv);
+    // Option name
+    const nameDiv = createDiv(`Build: ${option.objName}`);
+    nameDiv.style('font-size', '1rem');
+    nameDiv.style('font-weight', 'bold');
+    nameDiv.style('color', '#ccc');
+    nameDiv.style('margin-bottom', '0.3rem');
+    nameDiv.parent(buildDiv);
 
-    buildOptions.forEach(option => {
-        const humanKey = keyCodeToHuman(option.key);
+    // Cost details
+    const costsDetailsDiv = createDiv();
+    costsDetailsDiv.style('font-size', '0.85rem');
+    costsDetailsDiv.style('margin-bottom', '0.25rem');
+    costsDetailsDiv.parent(buildDiv);
 
-        // Main list item
-        const li = createElement('li');
-        li.class("buildOption");
-        li.parent(ul);
+    let canAfford = true;
 
-        // This card wraps each build option
-        const buildCard = createDiv();
-        buildCard.style('display', 'flex');
-        buildCard.style('align-items', 'flex-start');
-        buildCard.style('background', 'rgba(0, 0, 0, 0.25)');
-        buildCard.style('cursor', 'pointer'); // visually indicates it's clickable
-        buildCard.parent(li);
-
-        // If this item is currently selected, highlight the card
-        if (ghostBuild.objName === option.objName) {
-            buildCard.style('background-color', 'rgba(255, 255, 255, 0.2)');
-            buildCard.style('box-shadow', '0 4px 10px rgba(0, 0, 0, 0.5)');
-            buildCard.style('border', '3px solid #ffcc00');
+    option.cost.forEach(([material, requiredAmount]) => {
+        let playerHas = 0;
+        if (material === "dirt") {
+            playerHas = dirtInv;
+        } else if (curPlayer.invBlock.items[material]) {
+            playerHas = curPlayer.invBlock.items[material].amount;
         }
-
-        // You can also adjust text size if you want
-        buildCard.style('font-size', '0.9rem');
-
-        // Left side: the image
-        const imgDiv = createDiv();
-        imgDiv.style('margin-right', '15px');
-        imgDiv.parent(buildCard);
-
-        const img = createImg(option.images[curPlayer.color % option.images.length], option.objName);
-        img.style('width', '64px');
-        img.style('height', '64px');
-        img.style('image-rendering', 'pixelated');
-        img.parent(imgDiv);
-
-        // Right side: text info
-        const infoDiv = createDiv();
-        infoDiv.style('display', 'flex');
-        infoDiv.style('flex-direction', 'column');
-        infoDiv.style('flex-grow', '1');
-        infoDiv.parent(buildCard);
-
-        // Title row (key + object objName)
-        const titleDiv = createDiv(`${humanKey}: ${option.objName}`);
-        titleDiv.style('font-size', '1.1rem');
-        titleDiv.style('font-weight', 'bold');
-        titleDiv.style('margin-bottom', '8px');
-        titleDiv.parent(infoDiv);
-
-        // Check if player can build (enough materials)
-        let canBuild = true;
-        const costArray = objDic[option.objName].cost;
-        // costArray example: [ ["dirt", 20], ["Rock", 5] ]
-
-        // This div will list each required material
-        const costsDetailsDiv = createDiv();
-        costsDetailsDiv.style('font-size', '0.9rem');
-        costsDetailsDiv.parent(infoDiv);
-
-        costArray.forEach(([material, requiredAmount]) => {
-            let playerHas = 0;
-            if (material == "dirt") {
-                playerHas = dirtInv.toFixed(1);
-                //console.log(playerHas, material);
-            }
-            else if (curPlayer.invBlock.items[material] != undefined) {
-                playerHas = curPlayer.invBlock.items[material].amount;
-                //console.log(playerHas, curPlayer.invBlock.items[material], material);
-            }
-            // Create a line: "Material: X / Y"
-            const line = createDiv(`${material}:  ${playerHas} / ${requiredAmount}`);
-
-            // If not enough, color this line red, and set canBuild to false
-            if (playerHas < requiredAmount) {
-                line.style('color', 'red');
-                canBuild = false;
-            } else {
-                line.style('color', 'white');
-            }
-
-            line.parent(costsDetailsDiv);
-        });
-
-        // If the player can’t afford ANY material, color the entire text red
-        infoDiv.style('color', canBuild ? 'white' : 'red');
-
-        // Click the card -> set ghostBuild to this object
-        buildCard.mouseClicked(() => {
-            // If you want to prevent selection when not enough materials, uncomment:
-            // if (!canBuild) return;
-
-            ghostBuild = createObject(option.objName, 0, 0, 0, 0, " ", " ");
-
-            // Re-render to highlight the newly selected item
-            renderBuildOptions();
-        });
+        // Make only the number colored
+        const enough = playerHas >= requiredAmount;
+        const line = createDiv(`${material}: <span style="color:${enough ? '#27f50e' : '#ff4444'};font-weight:bold">${playerHas}</span> / ${requiredAmount}`);
+        line.style('color', '#ddd');
+        line.style('margin-bottom', '0.1rem');
+        if (!enough) canAfford = false;
+        line.parent(costsDetailsDiv);
     });
-}
 
+    // Result message
+    const affordMsg = createDiv(
+        canAfford ? 'You can afford this!' : 'Not enough resources!'
+    );
+    affordMsg.style('font-size', '0.9rem');
+    affordMsg.style('font-weight', 'bold');
+    affordMsg.style('margin-top', '0.2rem');
+    affordMsg.style('color', canAfford ? '#27f50e' : '#ff4444');
+    affordMsg.parent(buildDiv);
+}
 
 
 // Helper function to translate key codes to human-friendly strings
