@@ -202,7 +202,7 @@ function draw() {
             updatePlayerRegen(curPlayer,1)
 
             //little interact key above the thing you can interact with f rendered 
-            let mouseVec = createVector(mouseX + camera.pos.x - (width / 4), mouseY + camera.pos.y - (height / 4));
+            let mouseVec = createVector(mouseX + camera.pos.x - (width / 2), mouseY + camera.pos.y - (height / 2));
             let chunkPos = testMap.globalToChunk(mouseVec.x,mouseVec.y);
             let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
             if(chunk != undefined){
@@ -211,13 +211,15 @@ function draw() {
 
                 for(let i = 0; i < chunk.objects.length; i++){
                     if(chunk.objects[i].type == "InvObj" || (chunk.objects[i].type == "Plant" && chunk.objects[i].stage == (objImgs[chunk.objects[i].imgNum].length-1)) || chunk.objects[i].objName == "Door"){
-                        if(closest == undefined){
-                            closest = chunk.objects[i];
-                            closestDist = mouseVec.dist(closest.pos);
-                        }
-                        else if (mouseVec.dist(chunk.objects[i].pos) < closestDist){
-                            closest = chunk.objects[i];
-                            closestDist = mouseVec.dist(closest.pos);
+                        if(chunk.objects[i].pos.dist(curPlayer.pos) < 4*TILESIZE){
+                            if(closest == undefined){
+                                closest = chunk.objects[i];
+                                closestDist = mouseVec.dist(closest.pos);
+                            }
+                            else if (mouseVec.dist(chunk.objects[i].pos) < closestDist){
+                                closest = chunk.objects[i];
+                                closestDist = mouseVec.dist(closest.pos);
+                            }
                         }
                     }
                 }
