@@ -2215,25 +2215,41 @@ function renderPlayerCardUI() {
     rect(width - 530 + 340, 83, 36, 19);
 
     image(hpBarImg, width - 530 + 93, 52, 281 * (curPlayer.statBlock.stats.hp / curPlayer.statBlock.stats.mhp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.hp / curPlayer.statBlock.stats.mhp), 14);
+    let heldItem = curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]];
     if(buildMode){
         image(manaBarImg, width - 530 + 93, 83, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14);
     }
-    else if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].manaCost == 0 && curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Ranged"){
+    else if(heldItem.manaCost == 0 && heldItem.type == "Ranged"){
         //render ammo bar
-        let ammoBarLength = (curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].bulletsLeft / curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].roundSize);
+        let ammoBarLength;
+        if(heldItem.reloadBool){
+            ammoBarLength = (heldItem.reloadSpeed-curPlayer.invBlock.useTimer) / heldItem.reloadSpeed;
+            if(curPlayer.invBlock.useTimer <= 0){
+                heldItem.reloadBool = false;
+            }
+        }
+        else if(curPlayer.invBlock.items[heldItem.ammoName] == undefined){
+            ammoBarLength = 0.000000000001;
+        }
+        else if(curPlayer.invBlock.items[heldItem.ammoName].amount < heldItem.bulletsLeft){
+            ammoBarLength = curPlayer.invBlock.items[heldItem.ammoName].amount / heldItem.roundSize;
+        }
+        else{
+            ammoBarLength = (heldItem.bulletsLeft / heldItem.roundSize);
+        }
         image(ammoBarImg, width - 530 + 93, 83, 281 * ammoBarLength, 14, 0, 0, 281 * ammoBarLength, 14);
         stroke(0);
         strokeWeight(1);
-        for(let i = 1; i < curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].roundSize; i++){
-            line(width - 530 + 93 + (281 * (i / curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].roundSize)), 83, width - 530 + 93 + (281 * (i / curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].roundSize)), 97);
+        for(let i = 1; i < heldItem.roundSize; i++){
+            line(width - 530 + 93 + (281 * (i / heldItem.roundSize)), 83, width - 530 + 93 + (281 * (i / heldItem.roundSize)), 97);
         }
     }
     else{
         image(manaBarImg, width - 530 + 93, 83, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14);
         stroke(0);
         strokeWeight(1);
-        for(let i = 1; i < curPlayer.statBlock.stats.mmp/curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].manaCost; i++){
-            line(width - 530 + 93 + (281 * (i / (curPlayer.statBlock.stats.mmp/curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].manaCost))), 83, width - 530 + 93 + (281 * (i / (curPlayer.statBlock.stats.mmp/curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].manaCost))), 97);
+        for(let i = 1; i < curPlayer.statBlock.stats.mmp/heldItem.manaCost; i++){
+            line(width - 530 + 93 + (281 * (i / (curPlayer.statBlock.stats.mmp/heldItem.manaCost))), 83, width - 530 + 93 + (281 * (i / (curPlayer.statBlock.stats.mmp/heldItem.manaCost))), 97);
         }
     }
 

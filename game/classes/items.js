@@ -217,6 +217,7 @@ class Ranged extends SimpleItem{
         this.magicBool = magicBool; //magic damage or nah
         this.manaCost = manaCost;
 
+        this.reloadBool = false;
         this.bulletsLeft = roundSize; //how many bullets left in a round
         this.type = "Ranged";
     }
@@ -249,23 +250,16 @@ class Ranged extends SimpleItem{
                             this.durability = this.maxDurability;
                             curPlayer.invBlock.decreaseAmount(this.itemName, 1);
                         }
+                        if(this.bulletsLeft <= 0){
+                            if(curPlayer.invBlock.items[this.ammoName] != undefined){
+                                curPlayer.invBlock.useTimer = this.reloadSpeed;
+                                this.reloadBool = true;
+                                this.bulletsLeft = this.roundSize;
+                            }
+                        }
                     }
                 }
-                else{
-                    //console.log("Reload");
-                    
-                    //TODO: check for the ammo item first and reduce amount of it in inv
-                    curPlayer.invBlock.useTimer = this.reloadSpeed;
-                    this.bulletsLeft = this.roundSize;
-                }
             }
-        }
-        else if(mouseButton == RIGHT){
-            //console.log("Force Reload");
-
-            //TODO: check for the ammo item first and reduce amount of it in inv
-            curPlayer.invBlock.useTimer = this.reloadSpeed;
-            this.bulletsLeft = this.roundSize;
         }
     }
 
