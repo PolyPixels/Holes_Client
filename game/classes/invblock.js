@@ -249,8 +249,8 @@ class InvBlock{
         }
         else{
             for (let i = 0; i < slots.length; i++) {
-              if (slots[i] < 0) slots[i] = 9 + slots[i];
-              if (slots[i] > 8) slots[i] = slots[i] - 9;
+              if (slots[i] < 0) slots[i] = 11 + slots[i];
+              if (slots[i] > 10) slots[i] = slots[i] - 11;
             }
             for (let i = 0; i < slots.length; i++) {
                 let slotIndex = slots[i];

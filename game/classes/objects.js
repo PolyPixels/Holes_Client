@@ -19,11 +19,12 @@ Obj Dic is a full dictanary of every object that can exist, falling into one of 
 */
 
 var objDic = {};
-definePlaceable("Wall", ['wall11','wall0','wall1','wall2','wall3','wall4','wall5','wall6','wall7','wall8','wall9','wall10','wall11'], [["dirt", 50]], 128, 128, 2, 200, true, true);
-definePlaceable("Door", ['tempdoor11','door0','door1','door2','tempdoor3','tempdoor4','tempdoor5','tempdoor6','tempdoor7','tempdoor8','tempdoor9','tempdoor10','tempdoor11'], [["dirt", 40], ["Log", 1]], 64, 128, 2, 150, true, true);
-definePlaceable("Floor", ['tempfloor11','tempfloor0','tempfloor1','tempfloor2','tempfloor3','tempfloor4','tempfloor5','tempfloor6','tempfloor7','tempfloor8','tempfloor9','tempfloor10','tempfloor11'], [["dirt", 30]], 128, 128, 0, 100, true, true);
-definePlaceable("Rug", ['temprug11','temprug0','temprug1','temprug2','temprug3','temprug4','temprug5','temprug6','temprug7','temprug8','temprug9','temprug10','temprug11'], [["dirt", 30]], 128, 128, 1, 100, true, true);
-definePlaceable("Mug", ['tempmug'], [["dirt", 10]], 32, 32, 3, 100, false, true);
+definePlaceable("Wall", ['wall11','wall0','wall1','wall2','wall3','wall4','wall5','wall6','wall7','wall8','wall9','wall10'], [["dirt", 50]], 128, 128, 2, 200, true, true);
+definePlaceable("Thin Wall", ['thin_wall11','thin_wall0','thin_wall1','thin_wall2','thin_wall3','thin_wall4','thin_wall5','thin_wall6','thin_wall7','thin_wall8','thin_wall9','thin_wall10'], [["dirt", 40]], 64, 128, 2, 150, true, true);
+definePlaceable("Door", ['door11','door0','door1','door2','door3','door4','door5','door6','door7','door8','door9','door10'], [["dirt", 40], ["Log", 1]], 64, 128, 2, 150, true, true);
+definePlaceable("Floor", ['floor11','floor0','floor1','floor2','floor3','floor4','floor5','floor6','floor7','floor8','floor9','floor10'], [["dirt", 30]], 128, 128, 0, 100, true, true);
+definePlaceable("Rug", ['rug11','rug0','rug1','rug2','rug3','rug4','rug5','rug6','rug7','rug8','rug9','rug10'], [["dirt", 30]], 128, 128, 1, 100, true, true);
+definePlaceable("Mug", ['mug'], [["dirt", 10]], 32, 32, 3, 100, false, true);
 defineTrap("BearTrap", ['beartrap1'], [["Rock", 5]], 68, 48, 100, 50, 50, false, 15, true);
 defineTrap("LandMine", ['mine1'], [["Rock", 2], ["Bomb", 1]], 52, 36, 100, 40, 40, false, 10, true);
 
@@ -65,7 +66,7 @@ function turretUpdate(){
         socket.emit("update_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, update_name: "rot", update_value: this.rot});
     }
 }
-defineCustomObj("Turret", ['turret11','turret0','turret1','turret2','tempturret3','tempturret4','tempturret5','turret6','tempturret7','tempturret8','tempturret9','tempturret10','turret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
+defineCustomObj("Turret", ['turret11','turret0','turret1','turret2','turret3','turret4','turret5','turret6','turret7','turret8','turret9','turret10','turret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
 definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 50, 60, "edible_mushroom");
 
 definePlaceable("AppleTree", ['apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 0, 80, false, false);
@@ -189,19 +190,22 @@ function bombUpdate(){
 defineCustomObj("PlacedBomb", ['bomb1','bomb2'], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, false);
 defineCustomObj("DirtBomb", ['dirtbomb'], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, false);
 
+function dirtBinUpdate(){}
+defineCustomObj("Dirt Bin", ['dirt_bin'], [["Log", 3]], 16*4, 16*4, 2, 200, dirtBinUpdate, false, true);
+
 var teamColors = [
     {r: 128, g: 128, b: 128}, //Gray - No Team
     {r: 255, g:   0, b:   0}, //Red
     {r:   0, g:   0, b: 255}, //Blue
     {r:   0, g: 255, b:   0}, //Green
-    // {r:   0, g: 255, b: 255}, //Cyan
-    // {r: 255, g: 255, b:   0}, //Yellow
-    // {r: 255, g:   0, b: 255}, //Magenta
-    // {r:   0, g: 128, b:   0}, //Dark-Green
-    // {r: 255, g: 128, b:   0}, //Orange
-    // {r: 128, g:   0, b: 255}, //Purple
-    // {r: 255, g: 128, b: 225}, //Pink
-    // {r: 127, g:  63, b:   0}, //Brown
+    {r:   0, g: 255, b: 255}, //Cyan
+    {r: 255, g: 255, b:   0}, //Yellow
+    {r: 255, g:   0, b: 255}, //Magenta
+    {r:   0, g: 128, b:   0}, //Dark-Green
+    {r: 255, g: 128, b:   0}, //Orange
+    {r: 128, g:   0, b: 255}, //Purple
+    {r: 255, g: 128, b: 225}, //Pink
+    {r: 127, g:  63, b:   0}, //Brown
 ]
 
 class Placeable{

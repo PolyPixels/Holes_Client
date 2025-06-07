@@ -645,8 +645,8 @@ function mouseWheel(event) {
             if(slot > 4) slot = 0;
         }
         else{
-            if(slot < 0) slot = 8;
-            if(slot > 8) slot = 0;
+            if(slot < 0) slot = 10;
+            if(slot > 10) slot = 0;
         }
         curPlayer.invBlock.selectedHotBar = slot;
         curPlayer.invBlock.animationTimer = hotBarOffset;

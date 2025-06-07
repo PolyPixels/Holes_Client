@@ -2215,7 +2215,10 @@ function renderPlayerCardUI() {
     rect(width - 530 + 340, 83, 36, 19);
 
     image(hpBarImg, width - 530 + 93, 52, 281 * (curPlayer.statBlock.stats.hp / curPlayer.statBlock.stats.mhp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.hp / curPlayer.statBlock.stats.mhp), 14);
-    if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].manaCost == 0 && curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Ranged"){
+    if(buildMode){
+        image(manaBarImg, width - 530 + 93, 83, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14);
+    }
+    else if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].manaCost == 0 && curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Ranged"){
         //render ammo bar
         let ammoBarLength = (curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].bulletsLeft / curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].roundSize);
         image(ammoBarImg, width - 530 + 93, 83, 281 * ammoBarLength, 14, 0, 0, 281 * ammoBarLength, 14);
@@ -2249,7 +2252,12 @@ function renderPlayerCardUI() {
     fill(255, 0, 0);
     stroke(255, 0, 0);
     text("HP:", width - 530 + 6 + 30, 70);
-    if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].manaCost == 0 && curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Ranged"){
+    if(buildMode){
+        fill(0,255,255);
+        stroke(0,255,255);
+        text("Mana:", width-530+6+30, 100);
+    }
+    else if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].manaCost == 0 && curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Ranged"){
         fill(255, 255, 0);
         stroke(255, 255, 0);
         text("AMMO:", width - 530 + 6 + 15, 100);
@@ -2281,7 +2289,7 @@ function defineTeamPickUI() {
     teamPickDiv.style("left", "50%");
     teamPickDiv.style("transform", "translate(-50%, -50%)");
     teamPickDiv.style("display", "none");
-    // teamPickDiv.style("width", "25%");
+    teamPickDiv.style("width", "25%");
     // teamPickDiv.style("height", "20%");
     teamPickDiv.style("border", "2px solid black");
     teamPickDiv.style("border-radius", "10px");
