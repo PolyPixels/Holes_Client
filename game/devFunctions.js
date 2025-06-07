@@ -9,7 +9,7 @@ function cleanChunk(cx,cy){  //removes all dirt in a chunk
         for (let y = 0; y < CHUNKSIZE; y++){
             let index = x + (y / CHUNKSIZE);
             chunk.data[index] = 0; 
-            socket.emit("update_node", {chunkPos: (cx+","+cy), index: index, val: 0});
+            //socket.emit("update_node", {chunkPos: (cx+","+cy), index: index, val: 0});
         }
     }
 }

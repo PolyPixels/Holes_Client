@@ -2996,7 +2996,7 @@ function updateCraftList() {
         itemInfoDiv.style("align-items", "center");
         itemInfoDiv.style("justify-content", "space-between");
         itemInfoDiv.parent(itemDiv);
-        console.log(craftOptions)
+        //console.log(craftOptions)
                 // Add item icon (responsive, pixelated)
         let itemImg = arr[i].image;
         let imgDiv = createDiv();

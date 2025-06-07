@@ -297,6 +297,8 @@ function socketSetup(){
         testMap.chunks[data.x+","+data.y] = new Chunk(data.x, data.y);
         let keys = Object.keys(data.data);
         for(let i=0; i<keys.length; i++) testMap.chunks[data.x+","+data.y].data[keys[i]] = data.data[keys[i]];
+        keys = Object.keys(data.iron_data);
+        for(let i=0; i<keys.length; i++) testMap.chunks[data.x+","+data.y].iron_data[keys[i]] = data.iron_data[keys[i]];
         testMap.chunkBools[data.x+","+data.y] = true;
         for(let i=0; i<data.objects.length; i++){
             let temp = createObject(data.objects[i].objName, data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color, data.objects[i].id, data.objects[i].ownerName);

@@ -71,6 +71,7 @@ class Map{
 class Chunk{
     constructor(x,y){
         this.data = []; // Data is very obvious, -1 is unbreakable, 0 is nothing, >0 is block
+        this.iron_data = [];
         this.cx = x; //chunk pos x
         this.cy = y; //chunk pos y
         this.objects = []; // list of objects (might need sorting if we make chunks bigger or have tons of objects in a chunk)
@@ -130,6 +131,226 @@ class Chunk{
         for(let i = 0; i < this.projectiles.length; i++){
             this.projectiles[i].render();
         }
+        
+        push();
+        beginClip();
+        for (let x = 0; x < CHUNKSIZE; x++){
+            for (let y = 0; y < CHUNKSIZE; y++){
+                //holds the values at each corner
+                let corners = [this.iron_data[x+(y/CHUNKSIZE)],this.iron_data[x+1+(y/CHUNKSIZE)],
+                               this.iron_data[x+1+((y+1)/CHUNKSIZE)],this.iron_data[x+((y+1)/CHUNKSIZE)]];
+                if(x == CHUNKSIZE-1){
+                    if(testMap.chunks[(this.cx+1)+","+this.cy] != undefined){
+                        corners[1] = testMap.chunks[(this.cx+1)+","+this.cy].iron_data[(y/CHUNKSIZE)];
+                        corners[2] = testMap.chunks[(this.cx+1)+","+this.cy].iron_data[((y+1)/CHUNKSIZE)];
+                    }
+                }
+                if(y == CHUNKSIZE-1){
+                    if(testMap.chunks[this.cx+","+(this.cy+1)] != undefined){
+                        corners[2] = testMap.chunks[this.cx+","+(this.cy+1)].iron_data[x+1];
+                        corners[3] = testMap.chunks[this.cx+","+(this.cy+1)].iron_data[x];
+                    }
+                }
+                if(x == CHUNKSIZE-1 && y == CHUNKSIZE-1){
+                    if(testMap.chunks[(this.cx+1)+","+(this.cy+1)] != undefined){
+                        corners[2] = testMap.chunks[(this.cx+1)+","+(this.cy+1)].iron_data[((y+1)/CHUNKSIZE)];
+                    }
+                }
+                for(let i=0; i < 4; i++){
+                    if(corners[i] == -1) corners[i] = 1;
+                    corners[i] += 0.7;
+                }
+                //holds the screen cordinates of each corner
+                let scCorners = [this.cordToScreen(x,y),this.cordToScreen(x+1,y),
+                                 this.cordToScreen(x+1,y+1),this.cordToScreen(x,y+1)];
+
+                //scCorners = [{x: x*TILESIZE/4, y: y*TILESIZE/4},{x: (x+1)*TILESIZE/4, y: y*TILESIZE/4},
+                //             {x: (x+1)*TILESIZE/4, y: (y+1)*TILESIZE/4},{x: x*TILESIZE/4, y: (y+1)*TILESIZE/4}];
+                
+                //an attempt to reduce banding effects
+                // scCorners[0].x -= 1.5; scCorners[0].y -= 1.5;
+                // scCorners[1].x += 1.5; scCorners[1].y -= 1.5;
+                // scCorners[2].x += 1.5; scCorners[2].y += 1.5;
+                // scCorners[3].x -= 1.5; scCorners[3].y += 1.5;
+
+                let state = getState(corners[0],corners[1],corners[2],corners[3]);
+                let amt = 0;
+
+                //Visual Representation of positions:
+                //                   
+                //  sc[0]--a--sc[1]  
+                //    |         |    
+                //    d         b    
+                //    |         |    
+                //  sc[3]--c--sc[2]  
+                //                   
+
+                //the side positions, adjsted based on the values at each corner
+                let a = {x: 0, y: scCorners[0].y};
+                amt = (1-corners[0])/(corners[1]-corners[0]);
+                a.x = lerp(scCorners[0].x,scCorners[1].x,amt);
+
+                let b = {x: scCorners[1].x, y: 0};
+                amt = (1-corners[1])/(corners[2]-corners[1]);
+                b.y = lerp(scCorners[1].y,scCorners[2].y,amt);
+
+                let c = {x: 0, y: scCorners[2].y};
+                amt = (1-corners[2])/(corners[3]-corners[2]);
+                c.x = lerp(scCorners[2].x,scCorners[3].x,amt);
+
+                let d = {x: scCorners[0].x, y: 0};
+                amt = (1-corners[0])/(corners[3]-corners[0]);
+                d.y = lerp(scCorners[0].y,scCorners[3].y,amt);
+
+                
+                
+                //draw the specific shape based on which corner values > 0
+                switch(state){
+                    case 1:
+                        //line(c.x,c.y,d.x,d.y);
+                        beginShape();
+                        vertex(d.x,d.y);
+                        vertex(scCorners[3].x, scCorners[3].y);
+                        vertex(c.x,c.y);
+                        endShape();
+                        //circle(scCorners[3].x, scCorners[3].y, (corners[3]-0.6)*TILESIZE);  //TODO: revisit small nodes rendering werid
+                        break;
+                    case 2:
+                        //line(b.x,b.y,c.x,c.y);
+                        beginShape();
+                        vertex(c.x,c.y);
+                        vertex(scCorners[2].x, scCorners[2].y);
+                        vertex(b.x,b.y);
+                        endShape();
+                        //circle(scCorners[2].x, scCorners[2].y, (corners[2]-0.6)*TILESIZE);  //TODO: revisit small nodes rendering werid
+                        break;
+                    case 3:
+                        //line(b.x,b.y,d.x,d.y);
+                        beginShape();
+                        vertex(d.x,d.y);
+                        vertex(scCorners[3].x, scCorners[3].y);
+                        vertex(scCorners[2].x, scCorners[2].y);
+                        vertex(b.x,b.y);
+                        endShape();
+                        break;
+                    case 4:
+                        //line(b.x,b.y,a.x,a.y);
+                        beginShape();
+                        vertex(b.x,b.y);
+                        vertex(scCorners[1].x, scCorners[1].y);
+                        vertex(a.x,a.y);
+                        endShape();
+                        //circle(scCorners[1].x, scCorners[1].y, (corners[1]-0.6)*TILESIZE);  //TODO: revisit small nodes rendering werid
+                        break;
+                    case 5:
+                        //line(a.x,a.y,d.x,d.y);
+                        //line(b.x,b.y,c.x,c.y);
+                        beginShape();
+                        vertex(d.x,d.y);
+                        vertex(scCorners[3].x, scCorners[3].y);
+                        vertex(c.x,c.y);
+                        vertex(b.x,b.y);
+                        vertex(scCorners[1].x, scCorners[1].y);
+                        vertex(a.x,a.y);
+                        endShape();
+                        break;
+                    case 6:
+                        //line(a.x,a.y,c.x,c.y);
+                        beginShape();
+                        vertex(a.x,a.y);
+                        vertex(c.x,c.y);
+                        vertex(scCorners[2].x, scCorners[2].y);
+                        vertex(scCorners[1].x, scCorners[1].y);
+                        endShape();
+                        break;
+                    case 7:
+                        //line(a.x,a.y,d.x,d.y);
+                        beginShape();
+                        vertex(d.x,d.y);
+                        vertex(scCorners[3].x, scCorners[3].y);
+                        vertex(scCorners[2].x, scCorners[2].y);
+                        vertex(scCorners[1].x, scCorners[1].y);
+                        vertex(a.x,a.y);
+                        endShape();
+                        break;
+                    case 8:
+                        //line(a.x,a.y,d.x,d.y);
+                        beginShape();
+                        vertex(scCorners[0].x, scCorners[0].y);
+                        vertex(d.x,d.y);
+                        vertex(a.x,a.y);
+                        endShape();
+                        //circle(scCorners[0].x, scCorners[0].y, (corners[0]-0.6)*TILESIZE);  //TODO: revisit small nodes rendering werid
+                        break;
+                    case 9:
+                        //line(a.x,a.y,c.x,c.y);
+                        beginShape();
+                        vertex(scCorners[0].x, scCorners[0].y);
+                        vertex(scCorners[3].x, scCorners[3].y);
+                        vertex(c.x,c.y);
+                        vertex(a.x,a.y);
+                        endShape();
+                        break;
+                    case 10:
+                        //line(a.x,a.y,b.x,b.y);
+                        //line(d.x,d.y,c.x,c.y);
+                        beginShape();
+                        vertex(scCorners[0].x, scCorners[0].y);
+                        vertex(d.x,d.y);
+                        vertex(c.x,c.y);
+                        vertex(scCorners[2].x, scCorners[2].y);
+                        vertex(b.x,b.y);
+                        vertex(a.x,a.y);
+                        endShape();
+                        break;
+                    case 11:
+                        //line(a.x,a.y,b.x,b.y);
+                        beginShape();
+                        vertex(scCorners[0].x, scCorners[0].y);
+                        vertex(scCorners[3].x, scCorners[3].y);
+                        vertex(scCorners[2].x, scCorners[2].y);
+                        vertex(b.x,b.y);
+                        vertex(a.x,a.y);
+                        endShape();
+                        break;
+                    case 12:
+                        //line(b.x,b.y,d.x,d.y);
+                        beginShape();
+                        vertex(scCorners[0].x, scCorners[0].y);
+                        vertex(d.x,d.y);
+                        vertex(b.x,b.y);
+                        vertex(scCorners[1].x, scCorners[1].y);
+                        endShape();
+                        break;
+                    case 13:
+                        //line(b.x,b.y,c.x,c.y);
+                        beginShape();
+                        vertex(scCorners[0].x, scCorners[0].y);
+                        vertex(scCorners[3].x, scCorners[3].y);
+                        vertex(c.x,c.y);
+                        vertex(b.x,b.y);
+                        vertex(scCorners[1].x, scCorners[1].y);
+                        endShape();
+                        break;
+                    case 14:
+                        //line(c.x,c.y,d.x,d.y);
+                        beginShape();
+                        vertex(scCorners[0].x, scCorners[0].y);
+                        vertex(d.x,d.y);
+                        vertex(c.x,c.y);
+                        vertex(scCorners[2].x, scCorners[2].y);
+                        vertex(scCorners[1].x, scCorners[1].y);
+                        endShape();
+                        break;
+                    case 15:
+                        rect(scCorners[0].x, scCorners[0].y, TILESIZE, TILESIZE);
+                }
+            }
+        }
+
+        endClip();
+        image(chunkIronImg, this.cx*CHUNKSIZE*TILESIZE - camera.pos.x + width/2, this.cy*CHUNKSIZE*TILESIZE - camera.pos.y + height/2, 1600, 1600);
+        pop();
         
         push();
         beginClip();
@@ -352,6 +573,7 @@ class Chunk{
         endClip();
         image(chunkDirtImg, this.cx*CHUNKSIZE*TILESIZE - camera.pos.x + width/2, this.cy*CHUNKSIZE*TILESIZE - camera.pos.y + height/2, 1600, 1600);
         pop();
+
         for(let i = 0; i < this.objects.length; i++){
             if(this.objects[i].z >= 2){
                 this.objects[i].render("none");

@@ -21,6 +21,7 @@ function preload() {
 
     //Dirt floor and wall images
     chunkDirtImg = loadImage('images/dirt_walls.png');
+    chunkIronImg = loadImage('images/iron_walls.png');
     dirtFloorImg = loadImage('images/floor.png');
 
     //Ui Images
