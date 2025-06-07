@@ -2215,7 +2215,24 @@ function renderPlayerCardUI() {
     rect(width - 530 + 340, 83, 36, 19);
 
     image(hpBarImg, width - 530 + 93, 52, 281 * (curPlayer.statBlock.stats.hp / curPlayer.statBlock.stats.mhp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.hp / curPlayer.statBlock.stats.mhp), 14);
-    image(manaBarImg, width - 530 + 93, 83, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14);
+    if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].manaCost == 0 && curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Ranged"){
+        //render ammo bar
+        let ammoBarLength = (curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].bulletsLeft / curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].roundSize);
+        image(ammoBarImg, width - 530 + 93, 83, 281 * ammoBarLength, 14, 0, 0, 281 * ammoBarLength, 14);
+        stroke(0);
+        strokeWeight(1);
+        for(let i = 1; i < curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].roundSize; i++){
+            line(width - 530 + 93 + (281 * (i / curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].roundSize)), 83, width - 530 + 93 + (281 * (i / curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].roundSize)), 97);
+        }
+    }
+    else{
+        image(manaBarImg, width - 530 + 93, 83, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14);
+        stroke(0);
+        strokeWeight(1);
+        for(let i = 1; i < curPlayer.statBlock.stats.mmp/curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].manaCost; i++){
+            line(width - 530 + 93 + (281 * (i / (curPlayer.statBlock.stats.mmp/curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].manaCost))), 83, width - 530 + 93 + (281 * (i / (curPlayer.statBlock.stats.mmp/curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].manaCost))), 97);
+        }
+    }
 
     let raceName = races[curPlayer.race];
     image(raceImages[raceName].portrait, width - 30 - 115 + 6 + 7, 7, 98, 98);
@@ -2232,12 +2249,16 @@ function renderPlayerCardUI() {
     fill(255, 0, 0);
     stroke(255, 0, 0);
     text("HP:", width - 530 + 6 + 30, 70);
-    // fill(0,255,255);
-    // stroke(0,255,255);
-    // text("MP:", width-530+6+30, 100);
-    fill(255, 255, 0);
-    stroke(255, 255, 0);
-    text("AMMO:", width - 530 + 6 + 15, 100);
+    if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].manaCost == 0 && curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Ranged"){
+        fill(255, 255, 0);
+        stroke(255, 255, 0);
+        text("AMMO:", width - 530 + 6 + 15, 100);
+    }
+    else{
+        fill(0,255,255);
+        stroke(0,255,255);
+        text("Mana:", width-530+6+30, 100);
+    }
     //fill with team color
     fill(teamColors[curPlayer.color].r, teamColors[curPlayer.color].g, teamColors[curPlayer.color].b);
     stroke(teamColors[curPlayer.color].r, teamColors[curPlayer.color].g, teamColors[curPlayer.color].b);

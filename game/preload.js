@@ -28,6 +28,7 @@ function preload() {
     dirtBagOpenImg = loadImage('images/ui/dirtbagopen.png');
     hpBarImg = loadImage('images/ui/healthbar.png');
     manaBarImg = loadImage('images/ui/manabar.png');
+    ammoBarImg = loadImage('images/ui/ammobar.png');
     edgeBloodImg = loadImage('images/ui/edgeblood.png');
     hammerImg = loadImage("images/ui/hammer.png");
     Ximage = loadImage("images/ui/x.png");
