@@ -252,7 +252,9 @@ function socketSetup(){
                 if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.objName == chunk.objects[i].objName){
                     chunk.objects[i].invBlock.items = data.items;
                     if(curPlayer != undefined){
-                        if(curPlayer.otherInv.invBlock.invId == chunk.objects[i].invBlock.invId) updateSwapItemLists(chunk.objects[i].invBlock);
+                        if(curPlayer.otherInv != undefined){
+                            if(curPlayer.otherInv.invBlock.invId == chunk.objects[i].invBlock.invId) updateSwapItemLists(chunk.objects[i].invBlock);
+                        }
                     }
                 }
             }

@@ -575,11 +575,13 @@ class InvObj extends Placeable{
         if(this.objName == "ItemBag"){
             if(Object.keys(this.invBlock.items).length <= 0){
                 this.hp = 0;
-                if(curPlayer.otherInv.invBlock.invId == this.invBlock.invId){
-                    if(gameState == "swap_inv"){
-                        gameState = "playing";
-                        swapInvDiv.hide();
-                        spaceBarDiv.hide();
+                if(curPlayer.otherInv != undefined){
+                    if(curPlayer.otherInv.invBlock.invId == this.invBlock.invId){
+                        if(gameState == "swap_inv"){
+                            gameState = "playing";
+                            swapInvDiv.hide();
+                            spaceBarDiv.hide();
+                        }
                     }
                 }
             }

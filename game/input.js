@@ -17,9 +17,14 @@ function keyReleased() {
         player_status_container.hide();
         craftDiv.hide();
         teamPickDiv.hide();
+        curPlayer.otherInv = undefined;
         buildMode = false;
        
         renderGhost = false;
+        if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Seed"){
+            ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
+            renderGhost = true;
+        }
         
     }
     if(gameState == "playing"){
@@ -164,6 +169,10 @@ function keyReleased() {
             gameState = "playing";
             invDiv.hide();
             spaceBarDiv.hide();
+            if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Seed"){
+                ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
+                renderGhost = true;
+            }
         }
         if(keyCode == Controls_Crafting_code){ //c
             gameState = "crafting";
@@ -248,6 +257,7 @@ function keyReleased() {
             gameState = "playing";
             swapInvDiv.hide();
             spaceBarDiv.hide();
+            curPlayer.otherInv = undefined;
         }
         if(keyCode == 16){ //Shift
             updateSpaceBarDiv();
@@ -657,6 +667,7 @@ function mouseWheel(event) {
         }
         else{
             ghostBuild = createObject(buildOptions[curPlayer.invBlock.selectedHotBar].objName, 0, 0, 0, curPlayer.color, curPlayer.id, curPlayer.name);
+            renderBuildOptions();
         }
         mouseWheelMoved = false
         updateSpaceBarDiv();
