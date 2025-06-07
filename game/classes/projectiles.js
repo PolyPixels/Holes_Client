@@ -100,7 +100,9 @@ class SimpleProjectile{
                             testMap.chunks[chunkPos.x+","+chunkPos.y].soundObjs.push(temp);
                             socket.emit("new_sound", {sound: "hit.ogg", cPos: chunkPos, pos:{x: chunk.objects[j].pos.x, y: chunk.objects[j].pos.y}, id: temp.id});
 
-                            damageObj(chunk, chunk.objects[j], this.damage);
+                            if(this.ownerName != chunk.objects[j].ownerName){
+                                damageObj(chunk, chunk.objects[j], this.damage);
+                            }
                         }
                     }
                     else{
@@ -113,7 +115,9 @@ class SimpleProjectile{
                         testMap.chunks[chunkPos.x+","+chunkPos.y].soundObjs.push(temp);
                         socket.emit("new_sound", {sound: "hit.ogg", cPos: chunkPos, pos:{x: chunk.objects[j].pos.x, y: chunk.objects[j].pos.y}, id: temp.id});
 
-                        damageObj(chunk, chunk.objects[j], this.damage);
+                        if(this.ownerName != chunk.objects[j].ownerName){
+                            damageObj(chunk, chunk.objects[j], this.damage);
+                        }
                     }
                 }
             }

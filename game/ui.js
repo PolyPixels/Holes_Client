@@ -1131,7 +1131,7 @@ function updatePlayerCount() {
     const playerCount = Object.keys(players).length + 1;
 
     const arrow = isChatOpen ? "▼" : "▲";
-    toggleChatButton.html(`Chat (Players: ${playerCount}) ${arrow}`);
+    if(toggleChatButton != undefined) toggleChatButton.html(`Chat (Players: ${playerCount}) ${arrow}`);
 
 }
 
@@ -1884,7 +1884,7 @@ function defineBuildUI() {
     buildDiv = createDiv();
     buildDiv.class("container");
     buildDiv.style("position", "absolute");
-    buildDiv.style("top", "70%");
+    buildDiv.style("bottom", "28%");
     buildDiv.style("left", "90%");
     buildDiv.style("transform", "translate(-50%, -50%)");
     buildDiv.style("display", "none");
@@ -1904,9 +1904,10 @@ function defineBuildUI() {
 function renderBuildOptions() {
     buildDiv.html('');
 
-    console.log(buildOptions[curPlayer.invBlock.selectedHotBar],curPlayer.invBlock.selectedHotBar)
+    //console.log(buildOptions[curPlayer.invBlock.selectedHotBar].objName);
     let option = buildOptions[curPlayer.invBlock.selectedHotBar];
     if (!option) return;
+    
 
     // Option name
     const nameDiv = createDiv(`Build: ${option.objName}`);

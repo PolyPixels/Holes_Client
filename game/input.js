@@ -17,9 +17,14 @@ function keyReleased() {
         player_status_container.hide();
         craftDiv.hide();
         teamPickDiv.hide();
+        curPlayer.otherInv = undefined;
         buildMode = false;
        
         renderGhost = false;
+        if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Seed"){
+            ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
+            renderGhost = true;
+        }
         
     }
     if(gameState == "playing"){
@@ -96,13 +101,15 @@ function keyReleased() {
 
             for(let i = 0; i < chunk.objects.length; i++){
                 if(chunk.objects[i].type == "InvObj" || (chunk.objects[i].type == "Plant" && chunk.objects[i].stage == (objImgs[chunk.objects[i].imgNum].length-1)) || chunk.objects[i].objName == "Door"){
-                    if(closest == undefined){
-                        closest = chunk.objects[i];
-                        closestDist = mouseVec.dist(closest.pos);
-                    }
-                    else if (mouseVec.dist(chunk.objects[i].pos) < closestDist){
-                        closest = chunk.objects[i];
-                        closestDist = mouseVec.dist(closest.pos);
+                    if(chunk.objects[i].pos.dist(curPlayer.pos) < 4*TILESIZE){
+                        if(closest == undefined){
+                            closest = chunk.objects[i];
+                            closestDist = mouseVec.dist(closest.pos);
+                        }
+                        else if (mouseVec.dist(chunk.objects[i].pos) < closestDist){
+                            closest = chunk.objects[i];
+                            closestDist = mouseVec.dist(closest.pos);
+                        }
                     }
                 }
             }
@@ -162,6 +169,10 @@ function keyReleased() {
             gameState = "playing";
             invDiv.hide();
             spaceBarDiv.hide();
+            if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Seed"){
+                ghostBuild = createObject(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].plantName, 0, 0, 0, curPlayer.color, " ", " ");
+                renderGhost = true;
+            }
         }
         if(keyCode == Controls_Crafting_code){ //c
             gameState = "crafting";
@@ -246,6 +257,7 @@ function keyReleased() {
             gameState = "playing";
             swapInvDiv.hide();
             spaceBarDiv.hide();
+            curPlayer.otherInv = undefined;
         }
         if(keyCode == 16){ //Shift
             updateSpaceBarDiv();
@@ -655,6 +667,7 @@ function mouseWheel(event) {
         }
         else{
             ghostBuild = createObject(buildOptions[curPlayer.invBlock.selectedHotBar].objName, 0, 0, 0, curPlayer.color, curPlayer.id, curPlayer.name);
+            renderBuildOptions();
         }
         mouseWheelMoved = false
         updateSpaceBarDiv();
