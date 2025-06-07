@@ -2216,7 +2216,7 @@ function renderPlayerCardUI() {
 
     image(hpBarImg, width - 530 + 93, 52, 281 * (curPlayer.statBlock.stats.hp / curPlayer.statBlock.stats.mhp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.hp / curPlayer.statBlock.stats.mhp), 14);
     let heldItem = curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]];
-    if(buildMode){
+    if(buildMode || curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] == ""){
         image(manaBarImg, width - 530 + 93, 83, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14);
     }
     else if(heldItem.manaCost == 0 && heldItem.type == "Ranged"){
