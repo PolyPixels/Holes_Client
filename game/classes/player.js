@@ -300,7 +300,7 @@ class Player {
         // Prepare text
         textSize(16);
         textAlign(CENTER, CENTER);
-        let nameText = this.name;
+        let nameText = this.name + " lvl_" + this.statBlock.level;
 
         // Measure text width to draw a background rectangle around it
         let textW = textWidth(nameText) + 10;  // some padding
