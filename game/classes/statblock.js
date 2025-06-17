@@ -103,8 +103,9 @@ class StatBlock{
 setXP(amount) {
     this.xp += amount;
 
-    while (this.xp >= this.xpNeeded) {
-        this.xp -= this.xpNeeded;
+    if (this.xp >= this.xpNeeded) {
+        console.log("level up")
+        this.xp =0;
         this.level++;
         this.xpNeeded = Math.floor(this.xpNeeded * 1.5);
 
@@ -116,6 +117,8 @@ setXP(amount) {
             }
         }
     }
+
+    console.log("my xp currently", this.xp, "xp required", this.xpNeeded)
 }
 
 
