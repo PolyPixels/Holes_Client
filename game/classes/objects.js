@@ -816,9 +816,8 @@ function expOrbUpdate() {
             cost: objDic[this.objName].cost
         });
     }
-
     // Pickup if very close
-    if (distToPlayer < (this.size.w + this.size.h) / 4) {
+    if ((distToPlayer < (this.size.w + this.size.h) / 4) && curPlayer.statBlock.stats.hp > 0) {
         this.hp = 0;
         curPlayer.statBlock.setXP(this.size.h)
 

@@ -26,7 +26,7 @@ function updateResponsiveDesign() {
     dirtBagUI.pos = createVector(width - 180 - 10, height - 186 - 10);
 
     timerDiv.position(width / 2 - 50, 10);
-    
+
 }
 
 function hideRaceSelect() {
@@ -659,7 +659,7 @@ function setupUI() {
     defineKeyBindingUI();
 
     timerDiv = createDiv("⏳ 15:00");
-    timerDiv.position(width/2 - 250, 10); // adjust as needed
+    timerDiv.position(width / 2 - 250, 10); // adjust as needed
     timerDiv.style("font-size", "32px");
     timerDiv.style("color", "white");
     timerDiv.style("text-align", "center");
@@ -950,7 +950,7 @@ function renderChatUI() {
     chatInput.style("background-color", "#222");
     chatInput.style("margin-right", "5px");
     chatInput.mousePressed(() => {
-        lastGameState = gameState+"";
+        lastGameState = gameState + "";
         gameState = "chating";
     });
     chatInput.elt.addEventListener("keydown", (event) => {
@@ -1096,13 +1096,13 @@ function startGame() {
     gameState = "playing";
     hideRaceSelect();
 
-    if(localStorage.getItem("tut_seen") == "true") {
+    if (localStorage.getItem("tut_seen") == "true") {
 
         tutorialDiv.hide();
-    }else {
+    } else {
 
         tutorialDiv.show();
-        localStorage.setItem("tut_seen","true")
+        localStorage.setItem("tut_seen", "true")
     }
 
     // Clear a small area around the player (example logic)
@@ -1131,7 +1131,7 @@ function updatePlayerCount() {
     const playerCount = Object.keys(players).length + 1;
 
     const arrow = isChatOpen ? "▼" : "▲";
-    if(toggleChatButton != undefined) toggleChatButton.html(`Chat (Players: ${playerCount}) ${arrow}`);
+    if (toggleChatButton != undefined) toggleChatButton.html(`Chat (Players: ${playerCount}) ${arrow}`);
 
 }
 
@@ -1226,49 +1226,49 @@ function addChatMessage(chatMsg) {
 }
 
 var spaceBarDiv;
-function defineSpaceBarUI(){
+function defineSpaceBarUI() {
     // Spacebar Hotkey Div
     spaceBarDiv = createDiv("");
     spaceBarDiv.class("spacebar-hotkey");
     spaceBarDiv.html("Hotkey: Space");
 
     spaceBarDiv.mousePressed(() => {
-        if(gameState == "inventory"){
+        if (gameState == "inventory") {
             curPlayer.invBlock.hotbarItem(curPlayer.invBlock.curItem, curPlayer.invBlock.selectedHotBar);
         }
-        else if (gameState == "swap_inv"){
-            if(keyIsDown(16)){
-                if(curPlayer.invBlock.curItem != ""){
+        else if (gameState == "swap_inv") {
+            if (keyIsDown(16)) {
+                if (curPlayer.invBlock.curItem != "") {
                     curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount, false);
                     curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem, curPlayer.invBlock.items[curPlayer.invBlock.curItem].amount);
-    
+
                     curPlayer.otherInv.invBlock.curItem = curPlayer.invBlock.curItem;
                     curPlayer.invBlock.curItem = "";
                 }
-                else if(curPlayer.otherInv.invBlock.curItem != ""){
+                else if (curPlayer.otherInv.invBlock.curItem != "") {
                     curPlayer.invBlock.addItem(curPlayer.otherInv.invBlock.curItem, curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem].amount, true);
                     curPlayer.otherInv.invBlock.decreaseAmount(curPlayer.otherInv.invBlock.curItem, curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem].amount);
-    
+
                     curPlayer.invBlock.curItem = curPlayer.otherInv.invBlock.curItem;
                     curPlayer.otherInv.invBlock.curItem = "";
                 }
             }
-            else{
-                if(curPlayer.invBlock.curItem != ""){
+            else {
+                if (curPlayer.invBlock.curItem != "") {
                     //console.log(curPlayer.otherInv);
                     curPlayer.otherInv.invBlock.addItem(curPlayer.invBlock.curItem, 1, false);
-                    curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem,1);
-    
-                    if(curPlayer.invBlock.items[curPlayer.invBlock.curItem] == undefined){
+                    curPlayer.invBlock.decreaseAmount(curPlayer.invBlock.curItem, 1);
+
+                    if (curPlayer.invBlock.items[curPlayer.invBlock.curItem] == undefined) {
                         curPlayer.otherInv.invBlock.curItem = curPlayer.invBlock.curItem;
                         curPlayer.invBlock.curItem = "";
                     }
                 }
-                else if(curPlayer.otherInv.invBlock.curItem != ""){
+                else if (curPlayer.otherInv.invBlock.curItem != "") {
                     curPlayer.invBlock.addItem(curPlayer.otherInv.invBlock.curItem, 1, true);
                     curPlayer.otherInv.invBlock.decreaseAmount(curPlayer.otherInv.invBlock.curItem, 1);
-    
-                    if(curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem] == undefined){
+
+                    if (curPlayer.otherInv.invBlock.items[curPlayer.otherInv.invBlock.curItem] == undefined) {
                         curPlayer.invBlock.curItem = curPlayer.otherInv.invBlock.curItem;
                         curPlayer.otherInv.invBlock.curItem = "";
                     }
@@ -1283,9 +1283,9 @@ function defineSpaceBarUI(){
 }
 
 function updateSpaceBarDiv() {
-    if(curPlayer == undefined) return;
-    
-    if(gameState == "inventory"){
+    if (curPlayer == undefined) return;
+
+    if (gameState == "inventory") {
         if (curPlayer.invBlock.curItem == "") return;
         if (itemDic[curPlayer.invBlock.curItem].type == "Simple") {
             spaceBarDiv.hide();
@@ -1303,23 +1303,23 @@ function updateSpaceBarDiv() {
             spaceBarDiv.html(msg);
         }
     }
-    else if (gameState == "swap_inv"){
+    else if (gameState == "swap_inv") {
         spaceBarDiv.show();
         spaceBarDiv.style("bottom", "9%");
         let msg = "";
-        if(keyIsDown(16)){
-            if(curPlayer.invBlock.curItem != ""){
+        if (keyIsDown(16)) {
+            if (curPlayer.invBlock.curItem != "") {
                 msg = "(SpaceBar) - move all to other inv";
             }
-            else if(curPlayer.otherInv.invBlock.curItem != ""){
+            else if (curPlayer.otherInv.invBlock.curItem != "") {
                 msg = "(SpaceBar) - move all to your inv";
             }
         }
-        else{
-            if(curPlayer.invBlock.curItem != ""){
+        else {
+            if (curPlayer.invBlock.curItem != "") {
                 msg = "(SpaceBar) - move to other inv";
             }
-            else if(curPlayer.otherInv.invBlock.curItem != ""){
+            else if (curPlayer.otherInv.invBlock.curItem != "") {
                 msg = "(SpaceBar) - move to your inv";
             }
         }
@@ -1506,7 +1506,7 @@ function updateItemList() {
         itemInfoDiv.style("justify-content", "space-between");
         itemInfoDiv.parent(itemDiv);
 
-                // Add item icon (responsive, pixelated)
+        // Add item icon (responsive, pixelated)
         let imgNum = curPlayer.invBlock.items[itemName].imgNum;
         let itemImg = itemImgPaths[imgNum][0];
         let imgDiv = createDiv();
@@ -1549,7 +1549,7 @@ function updatecurItemDiv() {
         let curItemNone = createP("No Selected Item");
         curItemNone.parent(curItemDiv);
         curItemNone.class("inventory-title");
-        
+
         applyStyle(curItemNone, {
             paddingTop: "7%",
             textDecoration: "none"
@@ -1733,7 +1733,7 @@ function renderDirtBagUI() {
     dirtBagUI.pos.add(dirtBagUI.vel);
 
     let dirtBagOpen = true;
-    if(buildMode){
+    if (buildMode) {
         dirtBagOpen = true;
     }
     else if (curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] == "") {
@@ -1907,7 +1907,7 @@ function renderBuildOptions() {
     //console.log(buildOptions[curPlayer.invBlock.selectedHotBar].objName);
     let option = buildOptions[curPlayer.invBlock.selectedHotBar];
     if (!option) return;
-    
+
 
     // Option name
     const nameDiv = createDiv(`Build: ${option.objName}`);
@@ -2216,40 +2216,40 @@ function renderPlayerCardUI() {
 
     image(hpBarImg, width - 530 + 93, 52, 281 * (curPlayer.statBlock.stats.hp / curPlayer.statBlock.stats.mhp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.hp / curPlayer.statBlock.stats.mhp), 14);
     let heldItem = curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]];
-    if(buildMode || curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] == ""){
+    if (buildMode || curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] == "") {
         image(manaBarImg, width - 530 + 93, 83, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14);
     }
-    else if(heldItem.manaCost == 0 && heldItem.type == "Ranged"){
+    else if (heldItem.manaCost == 0 && heldItem.type == "Ranged") {
         //render ammo bar
         let ammoBarLength;
-        if(heldItem.reloadBool){
-            ammoBarLength = (heldItem.reloadSpeed-curPlayer.invBlock.useTimer) / heldItem.reloadSpeed;
-            if(curPlayer.invBlock.useTimer <= 0){
+        if (heldItem.reloadBool) {
+            ammoBarLength = (heldItem.reloadSpeed - curPlayer.invBlock.useTimer) / heldItem.reloadSpeed;
+            if (curPlayer.invBlock.useTimer <= 0) {
                 heldItem.reloadBool = false;
             }
         }
-        else if(curPlayer.invBlock.items[heldItem.ammoName] == undefined){
+        else if (curPlayer.invBlock.items[heldItem.ammoName] == undefined) {
             ammoBarLength = 0.000000000001;
         }
-        else if(curPlayer.invBlock.items[heldItem.ammoName].amount < heldItem.bulletsLeft){
+        else if (curPlayer.invBlock.items[heldItem.ammoName].amount < heldItem.bulletsLeft) {
             ammoBarLength = curPlayer.invBlock.items[heldItem.ammoName].amount / heldItem.roundSize;
         }
-        else{
+        else {
             ammoBarLength = (heldItem.bulletsLeft / heldItem.roundSize);
         }
         image(ammoBarImg, width - 530 + 93, 83, 281 * ammoBarLength, 14, 0, 0, 281 * ammoBarLength, 14);
         stroke(0);
         strokeWeight(1);
-        for(let i = 1; i < heldItem.roundSize; i++){
+        for (let i = 1; i < heldItem.roundSize; i++) {
             line(width - 530 + 93 + (281 * (i / heldItem.roundSize)), 83, width - 530 + 93 + (281 * (i / heldItem.roundSize)), 97);
         }
     }
-    else{
+    else {
         image(manaBarImg, width - 530 + 93, 83, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14, 0, 0, 281 * (curPlayer.statBlock.stats.mp / curPlayer.statBlock.stats.mmp), 14);
         stroke(0);
         strokeWeight(1);
-        for(let i = 1; i < curPlayer.statBlock.stats.mmp/heldItem.manaCost; i++){
-            line(width - 530 + 93 + (281 * (i / (curPlayer.statBlock.stats.mmp/heldItem.manaCost))), 83, width - 530 + 93 + (281 * (i / (curPlayer.statBlock.stats.mmp/heldItem.manaCost))), 97);
+        for (let i = 1; i < curPlayer.statBlock.stats.mmp / heldItem.manaCost; i++) {
+            line(width - 530 + 93 + (281 * (i / (curPlayer.statBlock.stats.mmp / heldItem.manaCost))), 83, width - 530 + 93 + (281 * (i / (curPlayer.statBlock.stats.mmp / heldItem.manaCost))), 97);
         }
     }
 
@@ -2259,29 +2259,33 @@ function renderPlayerCardUI() {
     textFont(gameUIFont);
     textSize(20);
     strokeWeight(1);
+
+    // Label: lvl
     fill(134);
     stroke(134);
     text("lvl", width - 530 + 6 + 10 + 10, 35);
+
+    // Level number
     fill(0, 255, 0);
     stroke(0, 255, 0);
-    text(curPlayer.statBlock.level, width - 530 + 6 + 30 + 10 + 5, 35);
-    fill(255, 0, 0);
-    stroke(255, 0, 0);
+    text(curPlayer.statBlock.level + "   " + `${curPlayer.statBlock.xp} / ${curPlayer.statBlock.xpNeeded} XP`, width - 530 + 6 + 30 + 10 + 5, 35);
+
+
     text("HP:", width - 530 + 6 + 30, 70);
-    if(buildMode){
-        fill(0,255,255);
-        stroke(0,255,255);
-        text("Mana:", width-530+6+30, 100);
+    if (buildMode) {
+        fill(0, 255, 255);
+        stroke(0, 255, 255);
+        text("Mana:", width - 530 + 6 + 30, 100);
     }
-    else if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].manaCost == 0 && curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Ranged"){
+    else if (curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]]?.manaCost == 0 && curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Ranged") {
         fill(255, 255, 0);
         stroke(255, 255, 0);
         text("AMMO:", width - 530 + 6 + 15, 100);
     }
-    else{
-        fill(0,255,255);
-        stroke(0,255,255);
-        text("Mana:", width-530+6+30, 100);
+    else {
+        fill(0, 255, 255);
+        stroke(0, 255, 255);
+        text("Mana:", width - 530 + 6 + 30, 100);
     }
     //fill with team color
     fill(teamColors[curPlayer.color].r, teamColors[curPlayer.color].g, teamColors[curPlayer.color].b);
@@ -2491,11 +2495,11 @@ function updateSwapItemLists(otherInv) {
         itemDiv.style("cursor", "pointer");
         itemDiv.parent(itemListDivLeft);
         itemDiv.mousePressed(() => {
-            console.log( curPlayer.invBlock.curItem)
+            console.log(curPlayer.invBlock.curItem)
             curPlayer.invBlock.curItem = itemName;
             otherInv.curItem = "";
-            
-            console.log( curPlayer.invBlock.curItem)
+
+            console.log(curPlayer.invBlock.curItem)
             updateSwapItemLists(otherInv);
             updatecurSwapItemDiv(otherInv);
         });
@@ -2509,7 +2513,7 @@ function updateSwapItemLists(otherInv) {
         itemInfoDiv.parent(itemDiv);
 
         let imgNum = curPlayer.invBlock.items[itemName].imgNum;
-        let itemImg =itemImgPaths[imgNum][0];
+        let itemImg = itemImgPaths[imgNum][0];
         let imgDiv = createDiv();
         imgDiv.style('width', '32px');
         imgDiv.style('height', '32px');
@@ -2532,10 +2536,10 @@ function updateSwapItemLists(otherInv) {
         let itemAmount = createP(curPlayer.invBlock.items[itemName].amount);
         itemAmount.style("font-size", "20px");
         itemAmount.style("color", "white");
-        
+
         itemAmount.parent(itemInfoDiv);
 
-        
+
     }
 
     itemListDivRight.html("");
@@ -2553,14 +2557,14 @@ function updateSwapItemLists(otherInv) {
         if (otherInv.curItem == itemName) itemDiv.style("font-style", "italic");
         itemDiv.style("cursor", "pointer");
         itemDiv.parent(itemListDivRight);
-        
+
         itemDiv.mousePressed(() => {
-            console.log("before",  otherInv.curItem)
+            console.log("before", otherInv.curItem)
             curPlayer.invBlock.curItem = "";
             otherInv.curItem = itemName;
             updateSwapItemLists(otherInv);
             updatecurSwapItemDiv(otherInv);
-            console.log("after ",otherInv.curItem)
+            console.log("after ", otherInv.curItem)
         });
 
         let itemInfoDiv = createDiv();
@@ -2572,7 +2576,7 @@ function updateSwapItemLists(otherInv) {
         itemInfoDiv.parent(itemDiv);
 
         let imgNum = otherInv.items[itemName].imgNum;
-        let itemImg =itemImgPaths[imgNum][0];
+        let itemImg = itemImgPaths[imgNum][0];
         let imgDiv = createDiv();
         imgDiv.style('width', '32px');
         imgDiv.style('height', '32px');
@@ -3021,7 +3025,7 @@ function updateCraftList() {
         itemInfoDiv.style("justify-content", "space-between");
         itemInfoDiv.parent(itemDiv);
         //console.log(craftOptions)
-                // Add item icon (responsive, pixelated)
+        // Add item icon (responsive, pixelated)
         let itemImg = arr[i].image;
         let imgDiv = createDiv();
         imgDiv.style('width', '2.2em');  // Responsive size
@@ -3186,11 +3190,11 @@ function updatecurCraftItemDiv() {
 
         let itemNameDiv;
         let itemAmountDiv;
-        if(i == 0){
+        if (i == 0) {
             itemNameDiv = createDiv("Output:");
             itemAmountDiv = createDiv(itemDic[curPlayer.invBlock.curItem].cost[0]);
         }
-        else{
+        else {
             itemNameDiv = createDiv(itemDic[curPlayer.invBlock.curItem].cost[i][0] + ":");
             itemAmountDiv = createDiv(itemDic[curPlayer.invBlock.curItem].cost[i][1]);
         }
@@ -3447,16 +3451,16 @@ function setupTutorialPages(pageHolder) {
     // --- Page 2 ---
     let page2 = createDiv().parent(pageHolder);
     createP("Controls:").parent(page2).style("margin-bottom", "10px");
-    
+
     keyToVisualKey(Controls_Up_key);
     keyToVisualKey(Controls_Left_key);
     keyToVisualKey(Controls_Down_key);
     keyToVisualKey(Controls_Right_key);
 
-    addControlStep(page2, ""+Controls_Up_key+Controls_Left_key+Controls_Down_key+Controls_Right_key, "Move around");
+    addControlStep(page2, "" + Controls_Up_key + Controls_Left_key + Controls_Down_key + Controls_Right_key, "Move around");
     addControlStep(page2, "Left/Right Click", "Use item");
     addControlStep(page2, Controls_Interact_key, "Interact");
-    addControlStep(page2, Controls_MoveHotBarLeft_key + "&" + Controls_MoveHotBarRight_key +" / Mouse Wheel", "Switch Hotbar slot");
+    addControlStep(page2, Controls_MoveHotBarLeft_key + "&" + Controls_MoveHotBarRight_key + " / Mouse Wheel", "Switch Hotbar slot");
     addControlStep(page2, Controls_Build_key, "Build menu");
     addControlStep(page2, "ESC", "Pause");
     addControlStep(page2, "TAB", "Leaderboard");
@@ -3502,7 +3506,7 @@ function updatePageNumber() {
 var popups = [];
 
 class Popup {
-    constructor(img, text, lifespan, x, y){
+    constructor(img, text, lifespan, x, y) {
         this.img = img;
         this.txt = text;
         this.lifespan = lifespan;
@@ -3512,10 +3516,10 @@ class Popup {
         this.h = 50;
     }
 
-    render(i){
-        if(this.lifespan <= 0){
+    render(i) {
+        if (this.lifespan <= 0) {
             this.h -= 5;
-            if(this.h <= 0){
+            if (this.h <= 0) {
                 this.deleteTag = true;
                 return;
             }
@@ -3524,8 +3528,8 @@ class Popup {
         this.lifespan -= 1;
 
         this.yOffset = 0;
-        for(let j = 0; j < i; j++){
-            if(this.pos.x == popups[j].pos.x && (this.pos.y + this.yOffset) == (popups[j].pos.y + popups[j].yOffset)){
+        for (let j = 0; j < i; j++) {
+            if (this.pos.x == popups[j].pos.x && (this.pos.y + this.yOffset) == (popups[j].pos.y + popups[j].yOffset)) {
                 this.yOffset = popups[j].yOffset + popups[j].h;
             }
         }
@@ -3538,24 +3542,24 @@ class Popup {
         stroke(255);
         strokeWeight(2);
         rect(this.pos.x, this.pos.y + this.yOffset - (50 - this.h), 50 + 5 + textWidth(this.txt), 50, 10);
-        
+
         fill(255);
         noStroke();
         textAlign(CENTER, CENTER);
-        text(this.txt, this.pos.x + 50 - 5 + textWidth(this.txt)/2, this.pos.y + 25 + this.yOffset - (50 - this.h));
+        text(this.txt, this.pos.x + 50 - 5 + textWidth(this.txt) / 2, this.pos.y + 25 + this.yOffset - (50 - this.h));
 
         image(this.img, this.pos.x, this.pos.y + this.yOffset - (50 - this.h), 50, 50);
         pop();
     }
 }
 
-function renderPopups(){
-    for(let i = 0; i < popups.length; i++){
+function renderPopups() {
+    for (let i = 0; i < popups.length; i++) {
         popups[i].render(i);
     }
     //loop through popups backwards so we can remove them
-    for(let i = popups.length-1; i >= 0; i--){
-        if(popups[i].deleteTag){
+    for (let i = popups.length - 1; i >= 0; i--) {
+        if (popups[i].deleteTag) {
             popups.splice(i, 1);
         }
     }
@@ -3563,7 +3567,7 @@ function renderPopups(){
 
 var bindingDiv;
 
-function defineKeyBindingUI(){
+function defineKeyBindingUI() {
     //make div to hold the key binding UI
     bindingDiv = createDiv();
     bindingDiv.style("background-color", "var(--color-ui-dark)");
@@ -3625,7 +3629,7 @@ function defineKeyBindingUI(){
     Controls_Up.style("font-size", "20px");
     Controls_Up.style("color", "white");
     Controls_Up.parent(namesDiv);
-    
+
     Controls_Left = createP("Move Left:");
     Controls_Left.style("padding", "10px 5px");
     Controls_Left.style("margin", "0px")
@@ -3633,7 +3637,7 @@ function defineKeyBindingUI(){
     Controls_Left.style("font-size", "20px");
     Controls_Left.style("color", "white");
     Controls_Left.parent(namesDiv);
-    
+
     Controls_Down = createP("Move Down:");
     Controls_Down.style("padding", "10px 5px");
     Controls_Down.style("margin", "0px");
@@ -3726,7 +3730,7 @@ function defineKeyBindingUI(){
     //Controls_Up.style("border","none");
     Controls_Up_button = createButton(keyToVisualKey(Controls_Up_key));
     Controls_Up_button.mousePressed(() => {
-        if(control_set == 0){
+        if (control_set == 0) {
             control_set = 1;
             key = Controls_Up_key;
             lastKey = key;
@@ -3739,7 +3743,7 @@ function defineKeyBindingUI(){
 
     Controls_Left_button = createButton(keyToVisualKey(Controls_Left_key));
     Controls_Left_button.mousePressed(() => {
-        if(control_set == 0){
+        if (control_set == 0) {
             control_set = 2;
             key = Controls_Left_key;
             lastKey = key;
@@ -3752,7 +3756,7 @@ function defineKeyBindingUI(){
 
     Controls_Down_button = createButton(keyToVisualKey(Controls_Down_key));
     Controls_Down_button.mousePressed(() => {
-        if(control_set == 0){
+        if (control_set == 0) {
             control_set = 3;
             key = Controls_Down_key;
             lastKey = key;
@@ -3765,7 +3769,7 @@ function defineKeyBindingUI(){
 
     Controls_Right_button = createButton(keyToVisualKey(Controls_Right_key));
     Controls_Right_button.mousePressed(() => {
-        if(control_set == 0){
+        if (control_set == 0) {
             control_set = 4;
             key = Controls_Right_key;
             lastKey = key;
@@ -3778,7 +3782,7 @@ function defineKeyBindingUI(){
 
     Controls_Interact_button = createButton(keyToVisualKey(Controls_Interact_key));
     Controls_Interact_button.mousePressed(() => {
-        if(control_set == 0){
+        if (control_set == 0) {
             control_set = 5;
             key = Controls_Interact_key;
             lastKey = key;
@@ -3788,10 +3792,10 @@ function defineKeyBindingUI(){
     Controls_Interact_button.style('min-width', '90px');
     Controls_Interact_button.style("cursor", "pointer");
     Controls_Interact_button.parent(keysDiv);
-    
+
     Controls_Inventory_button = createButton(keyToVisualKey(Controls_Inventory_key));
     Controls_Inventory_button.mousePressed(() => {
-        if(control_set == 0){
+        if (control_set == 0) {
             control_set = 6;
             key = Controls_Inventory_key;
             lastKey = key;
@@ -3804,7 +3808,7 @@ function defineKeyBindingUI(){
 
     Controls_Crafting_button = createButton(keyToVisualKey(Controls_Crafting_key));
     Controls_Crafting_button.mousePressed(() => {
-        if(control_set == 0){
+        if (control_set == 0) {
             control_set = 7;
             key = Controls_Crafting_key;
             lastKey = key;
@@ -3817,7 +3821,7 @@ function defineKeyBindingUI(){
 
     Controls_Pause_button = createButton(keyToVisualKey(Controls_Pause_key));
     Controls_Pause_button.mousePressed(() => {
-        if(control_set == 0){
+        if (control_set == 0) {
             control_set = 8;
             key = Controls_Pause_key;
             lastKey = key;
@@ -3830,7 +3834,7 @@ function defineKeyBindingUI(){
 
     Controls_MoveHotBarRight_button = createButton(keyToVisualKey(Controls_MoveHotBarRight_key));
     Controls_MoveHotBarRight_button.mousePressed(() => {
-        if(control_set == 0){
+        if (control_set == 0) {
             control_set = 9;
             key = Controls_MoveHotBarRight_key;
             lastKey = key;
@@ -3843,7 +3847,7 @@ function defineKeyBindingUI(){
 
     Controls_MoveHotBarLeft_button = createButton(keyToVisualKey(Controls_MoveHotBarLeft_key));
     Controls_MoveHotBarLeft_button.mousePressed(() => {
-        if(control_set == 0){
+        if (control_set == 0) {
             control_set = 10;
             key = Controls_MoveHotBarLeft_key;
             lastKey = key;
@@ -3856,7 +3860,7 @@ function defineKeyBindingUI(){
 
     Controls_Build_button = createButton(keyToVisualKey(Controls_Build_key));
     Controls_Build_button.mousePressed(() => {
-        if(control_set == 0){
+        if (control_set == 0) {
             control_set = 11;
             key = Controls_Build_key;
             lastKey = key;
@@ -3869,7 +3873,7 @@ function defineKeyBindingUI(){
 
     Controls_Space_button = createButton(keyToVisualKey(Controls_Space_key));
     Controls_Space_button.mousePressed(() => {
-        if(control_set == 0){
+        if (control_set == 0) {
             control_set = 12;
             key = Controls_Space_key;
             lastKey = key;
@@ -3881,12 +3885,12 @@ function defineKeyBindingUI(){
     Controls_Space_button.parent(keysDiv);
 }
 
-function keyToVisualKey(key){
-    if(key == " "){key = "Space";}
-    if(key == "ArrowUp"){key = "↑";}
-    if(key == "ArrowLeft"){key = "←";}
-    if(key == "ArrowDown"){key = "↓";}
-    if(key == "ArrowRight"){key = "→";}
+function keyToVisualKey(key) {
+    if (key == " ") { key = "Space"; }
+    if (key == "ArrowUp") { key = "↑"; }
+    if (key == "ArrowLeft") { key = "←"; }
+    if (key == "ArrowDown") { key = "↓"; }
+    if (key == "ArrowRight") { key = "→"; }
 
     return key;
 }

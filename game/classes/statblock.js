@@ -96,7 +96,7 @@ class StatBlock{
         this.race = race;
         this.stats = JSON.parse(JSON.stringify(BASE_STATS[this.race]));
         if(health != undefined) this.stats.hp = health;
-        this.level = 0;
+        this.level = 1;
         this.xp = 0;
         this.xpNeeded = 10;
     }
@@ -105,7 +105,6 @@ setXP(amount) {
 
     if (this.xp >= this.xpNeeded) {
         console.log("level up")
-        this.xp =0;
         this.level++;
         this.xpNeeded = Math.floor(this.xpNeeded * 1.5);
 
@@ -116,6 +115,7 @@ setXP(amount) {
                 this.stats[key] += growth[key];
             }
         }
+        this.xp =0;
     }
 
     console.log("my xp currently", this.xp, "xp required", this.xpNeeded)
