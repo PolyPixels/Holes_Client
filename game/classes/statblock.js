@@ -3,7 +3,7 @@ const BASE_STATS = [
         "name": "gnome",
         "hp": 100,
         "mhp": 100,
-        "regen": .2,
+        "regen": 0.2,
         "attack": 2,
         "magic": 1,
         "mp": 100,
@@ -16,13 +16,24 @@ const BASE_STATS = [
         "Fear": 1,
         "powerLevel": 1,
         "handDigSpeed": 0.05,
-        "runningSpeed": 1
+        "runningSpeed": 1,
+        "growth": {
+            "hp": 10,
+            "mhp": 10,
+            "attack": 2,
+            "magic": 0.5,
+            "regen": 0.05,
+            "mp": 1,
+            "mmp": 1,
+            "magicResistance": 0.2,
+            "luck": 1
+        }
     },
     {
         "name": "aylah",
         "hp": 100,
         "mhp": 100,
-        "regen": .1,
+        "regen": 0.1,
         "attack": 1,
         "magic": 5,
         "mp": 150,
@@ -35,13 +46,24 @@ const BASE_STATS = [
         "Fear": 1,
         "powerLevel": 1,
         "handDigSpeed": 0.07,
-        "runningSpeed": 1
+        "runningSpeed": 1,
+        "growth": {
+            "hp": 5,
+            "mhp": 5,
+            "attack": 0.5,
+            "magic": 2,
+            "regen": 0.02,
+            "mp": 20,
+            "mmp": 20,
+            "magicResistance": 0.5,
+            "luck": 0.5
+        }
     },
     {
         "name": "skizzard",
         "hp": 100,
         "mhp": 100,
-        "regen": .5,
+        "regen": 0.5,
         "attack": 1,
         "magic": 1,
         "mp": 100,
@@ -54,9 +76,21 @@ const BASE_STATS = [
         "Fear": 2,
         "powerLevel": 1,
         "handDigSpeed": 0.08,
-        "runningSpeed": 1
+        "runningSpeed": 1,
+        "growth": {
+            "hp": 8,
+            "mhp": 8,
+            "attack": 0.5,
+            "magic": 0.5,
+            "regen": 0.05,
+            "mp": 10,
+            "mmp": 10,
+            "magicResistance": 0.1,
+            "luck": 0.5
+        }
     }
-]
+];
+
 class StatBlock{
     constructor(race, health){
         this.race = race;
@@ -66,6 +100,25 @@ class StatBlock{
         this.xp = 0;
         this.xpNeeded = 10;
     }
+setXP(amount) {
+    this.xp += amount;
+
+    while (this.xp >= this.xpNeeded) {
+        this.xp -= this.xpNeeded;
+        this.level++;
+        this.xpNeeded = Math.floor(this.xpNeeded * 1.5);
+
+        // Apply growth per level
+        const growth = BASE_STATS[this.race].growth;
+        for (let key in growth) {
+            if (this.stats[key] !== undefined) {
+                this.stats[key] += growth[key];
+            }
+        }
+    }
+}
+
+
 
     heal(amount) {
         this.stats.hp = this.stats.hp + amount;

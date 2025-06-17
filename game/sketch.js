@@ -143,7 +143,6 @@ function draw() {
     // image as background
 
     background(dirtFloorImg)
-
     if(gameState == "initial") {
         //console.log("restart");
 

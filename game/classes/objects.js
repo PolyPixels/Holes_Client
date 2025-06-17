@@ -783,6 +783,76 @@ function definePlant(name,imgNames,cost,width,height,health,growthRate,itemDrop)
 }
 
 
+function expOrbUpdate() {
+    // Up/down motion setup
+    if (this.baseY === undefined) {
+        this.baseY = this.pos.y;
+        this.moveDir = 1; // 1 = up, -1 = down
+    }
+
+    // Up/down bobbing motion
+    this.pos.y += this.moveDir * 0.5;
+    if (this.pos.y > this.baseY + 2) this.moveDir = -1;
+    if (this.pos.y < this.baseY - 2) this.moveDir = 1;
+
+    // Add attraction toward player if close enough
+    let distToPlayer = this.pos.dist(curPlayer.pos);
+    if (distToPlayer < 100) { // attraction range
+        let attraction = curPlayer.pos.copy().sub(this.pos);
+        attraction.setMag(map(distToPlayer, 0, 100, 2, 0)); // stronger when closer
+        this.pos.add(attraction);
+    }
+
+    // Self-delete if HP zero
+    if (this.hp <= 0) {
+        this.deleteTag = true;
+        let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
+        socket.emit("delete_obj", {
+            cx: chunkPos.x,
+            cy: chunkPos.y,
+            objName: this.objName,
+            pos: { x: this.pos.x, y: this.pos.y },
+            z: this.z,
+            cost: objDic[this.objName].cost
+        });
+    }
+
+    // Pickup if very close
+    if (distToPlayer < (this.size.w + this.size.h) / 4) {
+        this.hp = 0;
+        curPlayer.statBlock.setXP(this.size.h)
+
+    }
+
+    // ✅ p5 render override
+    this.customRender = () => {
+        push();
+        translate(
+            -camera.pos.x + (width/2) + this.pos.x,
+            -camera.pos.y + (height/2) + this.pos.y
+        );
+        noStroke();
+        fill(0, 200, 255, 180);
+        ellipse(0, 0, this.size.w, this.size.h);
+        pop();
+    };
+}
+
+
+defineCustomObj(
+    "ExpOrb",         // Name
+    ["exp_orb"],      // Images (make sure this file exists)
+    [["dirt", 1]],    // Cost to place, if relevant
+    32,               // Width
+    32,               // Height
+    3,                // Z level: decorations
+    100,              // Health
+    expOrbUpdate,     // Update function
+    false,            // canRotate
+    false             // inBuildList
+);
+
+
 /**
  * Creates a new lookup in objDic for an object of type CustomObj
  * @returns {CustomObj} not an actual CustomObj but all info needed for one

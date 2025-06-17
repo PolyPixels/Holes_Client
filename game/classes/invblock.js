@@ -83,27 +83,46 @@ class InvBlock{
         itemBag.invBlock.addItem(item, amount, false);
         this.decreaseAmount(item, amount);
     }
-
-    dropAll(){
-        //spawn in an item bag
-        let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 0, "", "");
-        let keys = Object.keys(this.items);
-        for(let i = 0; i < keys.length; i++){
-            let item = this.items[keys[i]];
-            if(item.amount > 0){
-                itemBag.invBlock.addItem(keys[i], item.amount, false);
-                this.decreaseAmount(keys[i], item.amount);
-            }
+dropAll() {
+    let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 0, "", "");
+    let keys = Object.keys(this.items);
+    for (let i = 0; i < keys.length; i++) {
+        let item = this.items[keys[i]];
+        if (item.amount > 0) {
+            itemBag.invBlock.addItem(keys[i], item.amount, false);
+            this.decreaseAmount(keys[i], item.amount);
         }
-        let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
-        testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(itemBag);
-        testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
-        socket.emit("new_object", {
-            cx: chunkPos.x, 
-            cy: chunkPos.y, 
-            obj: itemBag
-        });
     }
+    let chunkPos = testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y);
+    testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(itemBag);
+
+    testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
+
+    socket.emit("new_object", {
+        cx: chunkPos.x, 
+        cy: chunkPos.y, 
+        obj: itemBag
+    });
+
+    let expOrb = createObject(
+        "ExpOrb",                         // name
+        curPlayer.pos.x + random(-10,10), // x (add slight offset)
+        curPlayer.pos.y + random(-10,10), // y (add slight offset)
+        0,                                 // rot
+        0,                                 // color/team
+        `xp_orb_${Date.now()}`,            // unique id
+        curPlayer.name                     // owner (optional)
+    );
+    testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(expOrb);
+    testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
+
+    socket.emit("new_object", {
+        cx: chunkPos.x,
+        cy: chunkPos.y,
+        obj: expOrb
+    });
+}
+
 
     getItemStats(item){
         if(this.items[item] != undefined){
