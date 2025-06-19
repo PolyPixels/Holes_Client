@@ -245,10 +245,12 @@ class Ranged extends SimpleItem{
                         if(this.ammoName != "mana") curPlayer.invBlock.decreaseAmount(this.ammoName, 1);
                         else curPlayer.statBlock.stats.mp -= this.manaCost;
                         curPlayer.invBlock.useTimer = this.fireRate;
-                        this.durability -= 1;
-                        if(this.durability <= 0){
-                            this.durability = this.maxDurability;
-                            curPlayer.invBlock.decreaseAmount(this.itemName, 1);
+                        if(this.ammoName != this.itemName){
+                            this.durability -= 1;
+                            if(this.durability <= 0){
+                                this.durability = this.maxDurability;
+                                curPlayer.invBlock.decreaseAmount(this.itemName, 1);
+                            }
                         }
                         if(this.bulletsLeft <= 0){
                             if(curPlayer.invBlock.items[this.ammoName] != undefined){
