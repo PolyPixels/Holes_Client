@@ -7,13 +7,20 @@ function checkName() {
     }
 }
 
-//used while loading race images, in preload.js
 function flipImage(img) {
-    noSmooth();
-    let flippedImg = createGraphics(img.width, img.height);
-    flippedImg.scale(-1, 1);
-    flippedImg.image(img, -img.width, 0);
-    return flippedImg;
+  // Create an off-screen graphics buffer
+  let flippedImg = createGraphics(img.width, img.height);
+  
+  // Disable smoothing for the buffer itself
+  flippedImg.noSmooth();
+  
+  // Flip horizontally
+  flippedImg.push();
+  flippedImg.scale(-1, 1);
+  flippedImg.image(img, -img.width, 0);
+  flippedImg.pop();
+  
+  return flippedImg;
 }
 
 //used in objects.js and items.js
