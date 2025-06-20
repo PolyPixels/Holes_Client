@@ -3279,6 +3279,7 @@ function defineDeathUI() {
         });
 
         giveDefaultItems();
+        curPlayer.invBlock.useTimer = 10;
 
         gameState = "playing";
         deathDiv.hide();
