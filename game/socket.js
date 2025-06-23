@@ -343,6 +343,12 @@ function socketSetup(){
             if(temp.objName == "Door"){
                 temp.alpha = data.objects[i].alpha;
             }
+            if(temp.objName == "ExpOrb"){
+                temp.id = data.objects[i].id;
+            }
+            if(temp.objName == "Dirt Bin"){
+                temp.mhp = data.objects[i].mhp;
+            }
             temp.hp = data.objects[i].hp;
 
             testMap.chunks[data.x+","+data.y].objects.push(temp);

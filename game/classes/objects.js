@@ -190,8 +190,186 @@ function bombUpdate(){
 defineCustomObj("PlacedBomb", ['bomb1','bomb2'], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, false);
 defineCustomObj("DirtBomb", ['dirtbomb'], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, false);
 
-function dirtBinUpdate(){}
+function dirtBinUpdate(){
+    if(this.hp <= 0){
+        this.deleteTag = true;
+        let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+        socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, cost: objDic[this.objName].cost});
+    }
+
+    // If the player is holding a shovel or an empty hand
+    if (curPlayer == undefined) return; // No player to interact with
+    //console.log(curPlayer);
+    if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Shovel" || curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] == "") {
+        //convert mouse cords to world cords
+        let mouseVec = createVector(mouseX + camera.pos.x - (width / 2), mouseY + camera.pos.y - (height / 2));
+        // check if the mouse is over the dirt bin
+        if (mouseVec.dist(this.pos) < (this.size.w + this.size.h) / 4) {
+            // If the player clicks, add dirt to the bin
+            if (mouseIsPressed && mouseButton === RIGHT) {
+                // Check if the player has dirt in their inventory
+                if (dirtInv > 0) {
+                    dirtInv -= 1;
+                    
+                    this.hp += 1;
+                    socket.emit("update_obj", {
+                        cx: testMap.globalToChunk(this.pos.x, this.pos.y).x,
+                        cy: testMap.globalToChunk(this.pos.x, this.pos.y).y,
+                        objName: this.objName,
+                        pos: {x: this.pos.x, y: this.pos.y},
+                        z: this.z,
+                        update_name: "hp",
+                        update_value: this.hp
+                    });
+
+                    if (this.hp > this.mhp){
+                        this.mhp = this.hp;
+                        socket.emit("update_obj", {
+                            cx: testMap.globalToChunk(this.pos.x, this.pos.y).x,
+                            cy: testMap.globalToChunk(this.pos.x, this.pos.y).y,
+                            objName: this.objName,
+                            pos: {x: this.pos.x, y: this.pos.y},
+                            z: this.z,
+                            update_name: "mhp",
+                            update_value: this.mhp
+                        });
+                    }
+                }
+            }
+            if (mouseIsPressed && mouseButton === LEFT) {
+                if (dirtInv < maxDirtInv && this.hp > 1) {
+                    dirtInv += 1;
+                    
+                    this.hp -= 1;
+                    socket.emit("update_obj", {
+                        cx: testMap.globalToChunk(this.pos.x, this.pos.y).x,
+                        cy: testMap.globalToChunk(this.pos.x, this.pos.y).y,
+                        objName: this.objName,
+                        pos: {x: this.pos.x, y: this.pos.y},
+                        z: this.z,
+                        update_name: "hp",
+                        update_value: this.hp
+                    });
+                }
+            }
+        }
+    }
+}
 defineCustomObj("Dirt Bin", ['dirt_bin'], [["Log", 3]], 16*4, 16*4, 2, 200, dirtBinUpdate, false, true);
+
+function expOrbUpdate() {
+    // Up/down motion setup
+    if (this.baseY === undefined) {
+        this.baseY = this.pos.y;
+        this.moveDir = 1; // 1 = up, -1 = down
+    }
+
+    // Up/down bobbing motion
+    this.pos.y += this.moveDir * 0.5;
+    if (this.pos.y > this.baseY + 2) this.moveDir = -1;
+    if (this.pos.y < this.baseY - 2) this.moveDir = 1;
+
+    //find closest player
+    let closestDist = Infinity;
+    let closestPlayer = null;
+    let keys = Object.keys(players);
+    for (let i = 0; i < keys.length; i++) {
+        let player = players[keys[i]];
+        if (player.statBlock.stats.hp > 0) { // only consider players with HP
+            let dist = this.pos.dist(player.pos);
+            if (dist < closestDist) {
+                closestDist = dist;
+                closestPlayer = player;
+            }
+        }
+    }
+    if(curPlayer != undefined){
+        let dist = this.pos.dist(curPlayer.pos);
+        if (dist < closestDist) {
+            closestDist = dist;
+            closestPlayer = curPlayer;
+        }
+    }
+
+    // If a player is close enough, attract the orb towards them
+    if (closestDist < 100) { // attraction range
+        let attraction = closestPlayer.pos.copy().sub(this.pos);
+        attraction.setMag(map(closestDist, 0, 100, 2, 0)); // stronger when closer
+        this.pos.add(attraction);
+        //tell the server to update the position of the orb
+        let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
+        socket.emit("update_obj", {
+            cx: chunkPos.x, cy: chunkPos.y,
+            objName: this.objName,
+            pos: {x: this.pos.x, y: this.pos.y},
+            z: this.z,
+            id: this.id,
+            update_name: "hp",
+            update_value: this.hp
+        });
+    }
+
+    // Pickup if very close to current player
+    if (curPlayer === undefined) return; // No player to interact with
+    let distToPlayer = this.pos.dist(curPlayer.pos);
+    if ((distToPlayer < (this.size.w + this.size.h) / 4) && curPlayer.statBlock.stats.hp > 0) {
+        this.hp = 0;
+
+        let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
+        socket.emit("update_obj", {
+            cx: chunkPos.x, cy: chunkPos.y,
+            objName: this.objName,
+            pos: {x: this.pos.x, y: this.pos.y},
+            z: this.z,
+            id: this.id,
+            update_name: "hp",
+            update_value: this.hp
+        });
+
+        curPlayer.statBlock.setXP(this.size.h);
+    }
+
+    // Self-delete if HP zero
+    if (this.hp <= 0) {
+        this.deleteTag = true;
+        let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
+        socket.emit("delete_obj", {
+            cx: chunkPos.x,
+            cy: chunkPos.y,
+            objName: this.objName,
+            pos: { x: this.pos.x, y: this.pos.y },
+            z: this.z,
+            cost: objDic[this.objName].cost
+        });
+    }
+
+    // ✅ p5 render override
+    this.customRender = () => {
+        push();
+        translate(
+            -camera.pos.x + (width/2) + this.pos.x,
+            -camera.pos.y + (height/2) + this.pos.y
+        );
+        noStroke();
+        fill(0, 200, 255, 180);
+        ellipse(0, 0, this.size.w, this.size.h);
+        pop();
+    };
+}
+
+
+defineCustomObj(
+    "ExpOrb",         // Name
+    ["exp_orb"],      // Images (make sure this file exists)
+    [["dirt", 1]],    // Cost to place, if relevant
+    32,               // Width
+    32,               // Height
+    3,                // Z level: decorations
+    100,              // Health
+    expOrbUpdate,     // Update function
+    false,            // canRotate
+    false             // inBuildList
+);
 
 var teamColors = [
     {r: 128, g: 128, b: 128}, //Gray - No Team
@@ -781,122 +959,6 @@ function definePlant(name,imgNames,cost,width,height,health,growthRate,itemDrop)
     objDic[name].gr = growthRate;
     objDic[name].itemDrop = itemDrop;
 }
-
-
-function expOrbUpdate() {
-    // Up/down motion setup
-    if (this.baseY === undefined) {
-        this.baseY = this.pos.y;
-        this.moveDir = 1; // 1 = up, -1 = down
-    }
-
-    // Up/down bobbing motion
-    this.pos.y += this.moveDir * 0.5;
-    if (this.pos.y > this.baseY + 2) this.moveDir = -1;
-    if (this.pos.y < this.baseY - 2) this.moveDir = 1;
-
-    //find closest player
-    let closestDist = Infinity;
-    let closestPlayer = null;
-    let keys = Object.keys(players);
-    for (let i = 0; i < keys.length; i++) {
-        let player = players[keys[i]];
-        if (player.statBlock.stats.hp > 0) { // only consider players with HP
-            let dist = this.pos.dist(player.pos);
-            if (dist < closestDist) {
-                closestDist = dist;
-                closestPlayer = player;
-            }
-        }
-    }
-    if(curPlayer != undefined){
-        let dist = this.pos.dist(curPlayer.pos);
-        if (dist < closestDist) {
-            closestDist = dist;
-            closestPlayer = curPlayer;
-        }
-    }
-
-    // If a player is close enough, attract the orb towards them
-    if (closestDist < 100) { // attraction range
-        let attraction = closestPlayer.pos.copy().sub(this.pos);
-        attraction.setMag(map(closestDist, 0, 100, 2, 0)); // stronger when closer
-        this.pos.add(attraction);
-        //tell the server to update the position of the orb
-        let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
-        socket.emit("update_obj", {
-            cx: chunkPos.x, cy: chunkPos.y,
-            objName: this.objName,
-            pos: {x: this.pos.x, y: this.pos.y},
-            z: this.z,
-            id: this.id,
-            update_name: "hp",
-            update_value: this.hp
-        });
-    }
-
-    // Pickup if very close to current player
-    if (curPlayer === undefined) return; // No player to interact with
-    let distToPlayer = this.pos.dist(curPlayer.pos);
-    if ((distToPlayer < (this.size.w + this.size.h) / 4) && curPlayer.statBlock.stats.hp > 0) {
-        this.hp = 0;
-
-        let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
-        socket.emit("update_obj", {
-            cx: chunkPos.x, cy: chunkPos.y,
-            objName: this.objName,
-            pos: {x: this.pos.x, y: this.pos.y},
-            z: this.z,
-            id: this.id,
-            update_name: "hp",
-            update_value: this.hp
-        });
-
-        curPlayer.statBlock.setXP(this.size.h);
-    }
-
-    // Self-delete if HP zero
-    if (this.hp <= 0) {
-        this.deleteTag = true;
-        let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
-        socket.emit("delete_obj", {
-            cx: chunkPos.x,
-            cy: chunkPos.y,
-            objName: this.objName,
-            pos: { x: this.pos.x, y: this.pos.y },
-            z: this.z,
-            cost: objDic[this.objName].cost
-        });
-    }
-
-    // ✅ p5 render override
-    this.customRender = () => {
-        push();
-        translate(
-            -camera.pos.x + (width/2) + this.pos.x,
-            -camera.pos.y + (height/2) + this.pos.y
-        );
-        noStroke();
-        fill(0, 200, 255, 180);
-        ellipse(0, 0, this.size.w, this.size.h);
-        pop();
-    };
-}
-
-
-defineCustomObj(
-    "ExpOrb",         // Name
-    ["exp_orb"],      // Images (make sure this file exists)
-    [["dirt", 1]],    // Cost to place, if relevant
-    32,               // Width
-    32,               // Height
-    3,                // Z level: decorations
-    100,              // Health
-    expOrbUpdate,     // Update function
-    false,            // canRotate
-    false             // inBuildList
-);
-
 
 /**
  * Creates a new lookup in objDic for an object of type CustomObj
