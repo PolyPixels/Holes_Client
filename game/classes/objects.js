@@ -795,12 +795,64 @@ function expOrbUpdate() {
     if (this.pos.y > this.baseY + 2) this.moveDir = -1;
     if (this.pos.y < this.baseY - 2) this.moveDir = 1;
 
-    // Add attraction toward player if close enough
-    let distToPlayer = this.pos.dist(curPlayer.pos);
-    if (distToPlayer < 100) { // attraction range
-        let attraction = curPlayer.pos.copy().sub(this.pos);
-        attraction.setMag(map(distToPlayer, 0, 100, 2, 0)); // stronger when closer
+    //find closest player
+    let closestDist = Infinity;
+    let closestPlayer = null;
+    let keys = Object.keys(players);
+    for (let i = 0; i < keys.length; i++) {
+        let player = players[keys[i]];
+        if (player.statBlock.stats.hp > 0) { // only consider players with HP
+            let dist = this.pos.dist(player.pos);
+            if (dist < closestDist) {
+                closestDist = dist;
+                closestPlayer = player;
+            }
+        }
+    }
+    if(curPlayer != undefined){
+        let dist = this.pos.dist(curPlayer.pos);
+        if (dist < closestDist) {
+            closestDist = dist;
+            closestPlayer = curPlayer;
+        }
+    }
+
+    // If a player is close enough, attract the orb towards them
+    if (closestDist < 100) { // attraction range
+        let attraction = closestPlayer.pos.copy().sub(this.pos);
+        attraction.setMag(map(closestDist, 0, 100, 2, 0)); // stronger when closer
         this.pos.add(attraction);
+        //tell the server to update the position of the orb
+        let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
+        socket.emit("update_obj", {
+            cx: chunkPos.x, cy: chunkPos.y,
+            objName: this.objName,
+            pos: {x: this.pos.x, y: this.pos.y},
+            z: this.z,
+            id: this.id,
+            update_name: "hp",
+            update_value: this.hp
+        });
+    }
+
+    // Pickup if very close to current player
+    if (curPlayer === undefined) return; // No player to interact with
+    let distToPlayer = this.pos.dist(curPlayer.pos);
+    if ((distToPlayer < (this.size.w + this.size.h) / 4) && curPlayer.statBlock.stats.hp > 0) {
+        this.hp = 0;
+
+        let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
+        socket.emit("update_obj", {
+            cx: chunkPos.x, cy: chunkPos.y,
+            objName: this.objName,
+            pos: {x: this.pos.x, y: this.pos.y},
+            z: this.z,
+            id: this.id,
+            update_name: "hp",
+            update_value: this.hp
+        });
+
+        curPlayer.statBlock.setXP(this.size.h);
     }
 
     // Self-delete if HP zero
@@ -815,12 +867,6 @@ function expOrbUpdate() {
             z: this.z,
             cost: objDic[this.objName].cost
         });
-    }
-    // Pickup if very close
-    if ((distToPlayer < (this.size.w + this.size.h) / 4) && curPlayer.statBlock.stats.hp > 0) {
-        this.hp = 0;
-        curPlayer.statBlock.setXP(this.size.h)
-
     }
 
     // ✅ p5 render override

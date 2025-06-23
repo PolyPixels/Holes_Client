@@ -37,6 +37,11 @@ function socketSetup(){
                 playerData.race,
                 playerData.name
             );
+
+            if(data.players[keys[i]].statBlock.level != 1){
+                players[keys[i]].statBlock.level = data.players[keys[i]].statBlock.level;
+                players[keys[i]].statBlock.stats = data.players[keys[i]].statBlock.stats;
+            }
         }
     });
 
@@ -83,6 +88,9 @@ function socketSetup(){
             for(let i=0; i<data.update_names.length; i++){
                 if(data.update_names[i].includes("stats")){
                     players[data.id].statBlock.stats[data.update_names[i].split("stats.")[1]] = data.update_values[i];
+                }
+                else if(data.update_names[i].includes("statBlock")){
+                    players[data.id].statBlock[data.update_names[i].split("statBlock.")[1]] = data.update_values[i];
                 }
                 else{
                     players[data.id][data.update_names[i]] = data.update_values[i];
@@ -218,6 +226,9 @@ function socketSetup(){
                     temp.invBlock.addItem(keys[i], data.obj.invBlock.items[keys[i]].amount, false);
                 }
             }
+            if(temp.objName == "ExpOrb"){
+                temp.id = data.obj.id;
+            }
             chunk.objects.push(temp);
             chunk.objects.sort((a,b) => a.z - b.z);
         }
@@ -238,8 +249,17 @@ function socketSetup(){
         let chunk = testMap.chunks[data.cx+","+data.cy];
         if(chunk != undefined){
             for(let i = chunk.objects.length-1; i >= 0; i--){
-                if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.objName == chunk.objects[i].objName){
-                    chunk.objects[i][data.update_name] = data.update_value;
+                if(data.objName == "ExpOrb"){
+                    if(data.z == chunk.objects[i].z && data.id == chunk.objects[i].id){
+                        chunk.objects[i][data.update_name] = data.update_value;
+                        chunk.objects[i].pos.x = data.pos.x;
+                        chunk.objects[i].pos.y = data.pos.y;
+                    }
+                }
+                else{
+                    if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.objName == chunk.objects[i].objName){
+                        chunk.objects[i][data.update_name] = data.update_value;
+                    }
                 }
             }
         }

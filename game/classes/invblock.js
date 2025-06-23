@@ -113,6 +113,7 @@ dropAll() {
         `xp_orb_${Date.now()}`,            // unique id
         curPlayer.name                     // owner (optional)
     );
+    expOrb.id = random(1000000);
     testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(expOrb);
     testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
 

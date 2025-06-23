@@ -106,6 +106,15 @@ setXP(amount) {
     if (this.xp >= this.xpNeeded) {
         console.log("level up")
         this.level++;
+
+        socket.emit("update_player", {
+            id: curPlayer.id,
+            pos: curPlayer.pos,
+            holding: curPlayer.holding,
+            update_names: ["statBlock.level"],
+            update_values: [curPlayer.statBlock.level]
+        });
+
         this.xpNeeded = Math.floor(this.xpNeeded * 1.5);
 
         // Apply growth per level
@@ -113,9 +122,17 @@ setXP(amount) {
         for (let key in growth) {
             if (this.stats[key] !== undefined) {
                 this.stats[key] += growth[key];
+
+                socket.emit("update_player", {
+                    id: curPlayer.id,
+                    pos: curPlayer.pos,
+                    holding: curPlayer.holding,
+                    update_names: ["stats." + key],
+                    update_values: [curPlayer.statBlock.stats[key]]
+                });
             }
         }
-        this.xp =0;
+        this.xp = 0;
     }
 
     console.log("my xp currently", this.xp, "xp required", this.xpNeeded)
