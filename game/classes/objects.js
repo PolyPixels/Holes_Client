@@ -197,6 +197,10 @@ function dirtBinUpdate(){
         socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, cost: objDic[this.objName].cost});
     }
 
+    if(this.mhp == 1){
+        this.mhp = maxDirtInv*3;
+    }
+
     // If the player is holding a shovel or an empty hand
     if (curPlayer == undefined) return; // No player to interact with
     //console.log(curPlayer);
@@ -208,7 +212,7 @@ function dirtBinUpdate(){
             // If the player clicks, add dirt to the bin
             if (mouseIsPressed && mouseButton === RIGHT) {
                 // Check if the player has dirt in their inventory
-                if (dirtInv > 0) {
+                if (dirtInv > 0 && this.hp < this.mhp) {
                     dirtInv -= 1;
                     
                     this.hp += 1;
@@ -221,19 +225,6 @@ function dirtBinUpdate(){
                         update_name: "hp",
                         update_value: this.hp
                     });
-
-                    if (this.hp > this.mhp){
-                        this.mhp = this.hp;
-                        socket.emit("update_obj", {
-                            cx: testMap.globalToChunk(this.pos.x, this.pos.y).x,
-                            cy: testMap.globalToChunk(this.pos.x, this.pos.y).y,
-                            objName: this.objName,
-                            pos: {x: this.pos.x, y: this.pos.y},
-                            z: this.z,
-                            update_name: "mhp",
-                            update_value: this.mhp
-                        });
-                    }
                 }
             }
             if (mouseIsPressed && mouseButton === LEFT) {
@@ -255,7 +246,7 @@ function dirtBinUpdate(){
         }
     }
 }
-defineCustomObj("Dirt Bin", ['dirt_bin'], [["Log", 3]], 16*4, 16*4, 2, 200, dirtBinUpdate, false, true);
+defineCustomObj("Dirt Bin", ['dirt_bin'], [["Log", 3]], 16*4, 16*4, 2, 1, dirtBinUpdate, false, true);
 
 function expOrbUpdate() {
     // Up/down motion setup
