@@ -428,6 +428,22 @@ function blurActiveElement() {
     }
 }
 
+function handleMovement(dx, dy) {
+  // Existing movement logic
+  player.pos.x += dx * moveSpeed;
+  player.pos.y += dy * moveSpeed;
+
+  // Clear dirt after moving
+  clearDirtAroundPlayer();
+
+  // Sync position with server
+  socket.emit('update_pos', {
+    id: curPlayer.id,
+    pos: player.pos,
+    holding: curPlayer.holding
+  });
+}
+
 function mouseReleased(){
 
     if(gameState == "chating"){
