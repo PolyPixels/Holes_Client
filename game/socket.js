@@ -120,6 +120,26 @@ function socketSetup(){
             }
         }
     });
+
+    socket.on("UPDATE_IRON_NODE", (data) => {
+        if(testMap.chunks[data.chunkPos] != undefined){
+            if(data.amt > 0){
+                if (testMap.chunks[data.chunkPos].iron_data[data.index] > 0) testMap.chunks[data.chunkPos].iron_data[data.index] -= data.amt;
+                if (testMap.chunks[data.chunkPos].iron_data[data.index] < 0.3 && testMap.chunks[data.chunkPos].iron_data[data.index] !== -1){
+                    testMap.chunks[data.chunkPos].iron_data[data.index] = 0;
+                }
+            }
+            else{
+                if (testMap.chunks[data.chunkPos].iron_data[data.index] < 1.3 && testMap.chunks[data.chunkPos].iron_data[data.index] !== -1){
+                    testMap.chunks[data.chunkPos].iron_data[data.index] -= data.amt;
+                }
+                if (testMap.chunks[data.chunkPos].iron_data[data.index] > 1.3){
+                    testMap.chunks[data.chunkPos].iron_data[data.index] = 1.3;
+                }
+            }
+        }
+    });
+
     socket.on("UPDATE_NODES", (data) => {
         //console.log("update nodes", data);
         let chunk = testMap.getChunk(data.cx, data.cy);

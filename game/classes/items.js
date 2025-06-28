@@ -17,6 +17,7 @@ var craftOptions = [];
 defineShovel("Basic Shovel", ["shovel1"], [1,["Log",1],["Rock",1]], 1, 100, 0.12, 3, 1, "A basic shovel for digging dirt",true);
 defineShovel("Better Shovel", ["shovel2"], [1,["Log",1],["Gem",1]], 1, 100, 0.18, 3, 1, "A better shovel for digging dirt",true);
 defineShovel("God Shovel", ["shovel3"], [1,["Rock",2],["Philosopher's Stone",1]], 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt",true);
+defineShovel("Pickaxe", ["pickaxe"], [1,["Log",2],["Rock",3]], 1, 100, 0.2, 3, 1, "A basic pickaxe for mining iron",true);
 
 defineMelee("Mush Knife", ["mushroom_knife"], [1,["Mushroom",1],["Rock",1],["Mushroom Fiber",1]], 1, 100, 25, 5, 50, 60, 90, 30, false, "A basic knife",true);
 defineMelee("Basic Sword", ["sword1"], [1,["Log",1],["Rock",3],["Mushroom Fiber",2]], 1, 100, 25, 5, 50, 60, 90, 30, false, "A basic sword for slashing",true);
@@ -37,6 +38,8 @@ defineRanged("CrossBow", ["crossbow"], [1,["Log", 5], ["Rock", 1]], 1, 100, 5, "
 defineRanged("TriSling", ["trisling"], [1,["Better SlingShot", 3]], 1, 100, 5, "Rock", "Rock", 3, 30, 60, false, "A handful of slingshots",true);
 
 defineSimpleItem("Rock", ["rock"], [], 1, "A rock for your slingshot",false);
+defineSimpleItem("Raw Metal", ["metal_ore"], [], 1, "A cluster of metal, still needs to be heated",false);
+defineSimpleItem("Metal", ["metal_scrap"], [], 1, "Some metalic scraps, good enough for crafting",false);
 defineSimpleItem("Gem", ["gem"], [], 1, "A pretty gem",false);
 defineSimpleItem("Black Gem", ["black_gem"], [], 1, "An explosive gem",false);
 defineSimpleItem("Philosopher's Stone", ["philosopher_stone"], [], 1, "A gem with immense power flowing out of it",false);
@@ -126,6 +129,10 @@ class Shovel extends SimpleItem{
     }
 
     use(x,y,mouseButton){
+        if(this.itemName == "Pickaxe"){
+            playerMine(x, y, this.digSpeed);
+            return;
+        }
         //doesnt wait for useTimer, because it is a continuous action
         if(mouseButton == LEFT){ //dig dirt
             if (dirtInv < maxDirtInv - this.digSpeed) playerDig(x, y, this.digSpeed);
