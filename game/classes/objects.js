@@ -204,6 +204,8 @@ function dirtBinUpdate(){
     // If the player is holding a shovel or an empty hand
     if (curPlayer == undefined) return; // No player to interact with
     //console.log(curPlayer);
+    if(buildMode) return;
+
     if(curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] == "" || curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].type == "Shovel") {
         //convert mouse cords to world cords
         let mouseVec = createVector(mouseX + camera.pos.x - (width / 2), mouseY + camera.pos.y - (height / 2));
