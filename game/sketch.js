@@ -194,6 +194,42 @@ function draw() {
                 if(ghostBuild.canRotate & wantRotate){
                     ghostBuild.rot = ghostBuild.pos.copy().sub(curPlayer.pos).heading();
                 }
+
+                //build snapping
+                if(ghostBuild.objName == "Wall" || ghostBuild.objName == "Floor" || ghostBuild.objName == "Door" || ghostBuild.objName == "Thin Wall"){
+                    let chunkPos = testMap.globalToChunk(ghostBuild.pos.x,ghostBuild.pos.y);
+                    let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
+                    for(let i = 0; i < chunk.objects.length; i++){
+                        if(chunk.objects[i].pos.dist(ghostBuild.pos) < 5+(chunk.objects[i].size.w + ghostBuild.size.h)/2){
+                            if(chunk.objects[i].objName == "Wall" || chunk.objects[i].objName == "Floor" || chunk.objects[i].objName == "Door" || chunk.objects[i].objName == "Thin Wall"){
+                                let wall = chunk.objects[i];
+
+                                let relX = (mouseX + camera.pos.x - width / 2) - wall.pos.x;
+                                let relY = (mouseY + camera.pos.y - height / 2) - wall.pos.y;
+
+                                let rad = -radians(wall.rot);
+                                let rotX = relX * Math.cos(rad) - relY * Math.sin(rad);
+                                let rotY = relX * Math.sin(rad) + relY * Math.cos(rad);
+
+                                let snapSize = 128;
+                                if(ghostBuild.objName == "Door" || ghostBuild.objName == "Thin Wall"){
+                                    snapSize = 32;
+                                }
+
+                                let snappedX = round(rotX / snapSize) * snapSize;
+                                let snappedY = round(rotY / snapSize) * snapSize;
+
+                                let finalX = snappedX * Math.cos(-rad) - snappedY * Math.sin(-rad);
+                                let finalY = snappedX * Math.sin(-rad) + snappedY * Math.cos(-rad);
+
+                                ghostBuild.pos.x = wall.pos.x + finalX;
+                                ghostBuild.pos.y = wall.pos.y + finalY;
+
+                                ghostBuild.rot = round((ghostBuild.rot - wall.rot) / 90) * 90 + wall.rot;
+                            }
+                        }
+                    }
+                }
                 ghostBuild.ghostRender(createVector(ghostBuild.pos.x,ghostBuild.pos.y).dist(curPlayer.pos) < 200);
             }
 
