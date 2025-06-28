@@ -485,9 +485,9 @@ class Placeable{
         for(let j = 0; j < chunk.objects.length; j++){
             if(this.z == chunk.objects[j].z){
                 let d = chunk.objects[j].pos.dist(this.pos);
-                if(d < (chunk.objects[j].size.w+chunk.objects[j].size.h)/4 + (this.size.w+this.size.h)/4 - 10){
+                if(d < (chunk.objects[j].size.w+chunk.objects[j].size.h)/4 + (this.size.w+this.size.h)/4 - 10 - (this.objName == "Door" || this.objName == "Thin Wall" ? 12 : 0) - (chunk.objects[j].objName == "Door" || chunk.objects[j].objName == "Thin Wall" ? 12 : 0)){
                     this.openBool = false;
-                    touchingObjs.push({pos: chunk.objects[j].pos, size: chunk.objects[j].size});
+                    touchingObjs.push({objName: chunk.objects[j].objName, pos: chunk.objects[j].pos, size: chunk.objects[j].size});
                 }
             }
         }

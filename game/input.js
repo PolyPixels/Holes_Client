@@ -545,7 +545,7 @@ function continousMouseInput(){ //ran once every frame, good for anything like d
                     let chunkPos = testMap.globalToChunk(x,y);
                     let chunk = testMap.chunks[chunkPos.x + "," + chunkPos.y];
                     for(let i = 0; i < chunk.objects.length; i++){
-                        if(createVector(x,y).dist(chunk.objects[i].pos) < (chunk.objects[i].size.w+chunk.objects[i].size.h)/2){
+                        if(createVector(x,y).dist(chunk.objects[i].pos) < (chunk.objects[i].size.w+chunk.objects[i].size.h)/4){
                             if((chunk.objects[i].color == 0 && chunk.objects[i].ownerName == curPlayer.name) || (chunk.objects[i].color != 0 && chunk.objects[i].color == curPlayer.color)){ //only team members and you can delete your objects
                                 socket.emit("delete_obj", {
                                     cx: chunkPos.x, cy: chunkPos.y, 
