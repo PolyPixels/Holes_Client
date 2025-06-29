@@ -39,6 +39,9 @@ function preload() {
         let temp = [];
         for(let j = 0; j < objImgPaths[i].length; j++){
             temp.push(loadImage(objImgPaths[i][j]));
+            if(objImgPaths[i][j].includes(".gif")){
+                temp[temp.length - 1].play();
+            }
         }
         objImgs.push(temp);
     }

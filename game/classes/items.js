@@ -39,7 +39,7 @@ defineRanged("TriSling", ["trisling"], [1,["Better SlingShot", 3]], 1, 100, 5, "
 
 defineSimpleItem("Rock", ["rock"], [], 1, "A rock for your slingshot",false);
 defineSimpleItem("Raw Metal", ["metal_ore"], [], 1, "A cluster of metal, still needs to be heated",false);
-defineSimpleItem("Metal", ["metal_scrap"], [], 1, "Some metalic scraps, good enough for crafting",false);
+defineSimpleItem("Metal", ["metal_scrap"], [1,["Raw Metal", 1]], 1, "Some metalic scraps, good enough for crafting",false);
 defineSimpleItem("Gem", ["gem"], [], 1, "A pretty gem",false);
 defineSimpleItem("Black Gem", ["black_gem"], [], 1, "An explosive gem",false);
 defineSimpleItem("Philosopher's Stone", ["philosopher_stone"], [], 1, "A gem with immense power flowing out of it",false);
@@ -51,9 +51,29 @@ defineFood("Apple", ["apple"], [], 1, 100, 10, 0, "A juicy apple",false);
 defineFood("Bad Apple", ["bad_apple"], [], 1, 100, 5, 5, "Looks like this apple would bite back",false);
 defineFood("Mushroom", ["images/structures/mushroom1"], [], 1, 100, 5, 10, "A tasty mushroom",false);
 
+defineSeed("Red Acorn", ["acorn_apple"], [1,["Apple", 1]], 1, "AppleTree", 0.5, "Will grow into an apple tree",true);
+defineSeed("Acorn", ["acorn"], [2,["Log", 1],["Mushroom Fiber",1]], 1, "Tree", 0.5, "Will grow into a tree",true);
 defineSeed("Mushroom Seed", ["mushroom_spores"], [1,["Mushroom", 1]], 1, "Mushroom", 0.5, "Some mushroom spores",true);
 defineSimpleItem("Mushroom Fiber", ["mushroom_fiber"], [3,["Mushroom",1]], 1, "A stringy component of many tools",true);
 
+function compassUse(x,y,mouseButton){}
+defineCustomItem("Compass", ["compass"], [1,["Log", 1],["Tech", 1]], 1, 1, "A compass that points to the nearest player", compassUse, true);
+
+function mapUse(x,y,mouseButton){}
+defineCustomItem("Map", ["map"], [1,["Log", 1],["Tech", 1]], 1, 1, "A map that shows the world around you", mapUse, true);
+
+function teleportReceiverUse(x,y,mouseButton){
+    if(gameState == "playing"){
+        if(curPlayer.invBlock.useTimer <= 0){
+            gameState = "teleport";
+            knownPortals = [];
+            socket.emit("get_portals", {cPos: testMap.globalToChunk(curPlayer.pos.x, curPlayer.pos.y)});
+
+            curPlayer.invBlock.useTimer = 10;
+        }
+    }
+}
+defineCustomItem("Teleport Receiver", ["teleport_receiver"], [1,["Log", 1],["Tech", 1]], 1, 1, "A teleport receiver that teleports you to any portals with X chunks", teleportReceiverUse, true);
 
 
 class SimpleItem{
@@ -737,4 +757,23 @@ function defineSeed(name, imgPaths, cost, weight, plantName, chance, desc, inCra
     
     itemDic[name].plantName = plantName;
     itemDic[name].chance = chance;
+}
+
+/**
+ * Creates a new lookup in itemDic for an object of type CustomItem
+ * @returns {CustomItem} not an actual CustomItem but all info needed for one
+ * @param {string} name the name of the object
+ * @param {Array} imgPaths an array of paths for any images this item will use
+ * @param {Array} cost an array of things this item needs to be placed, can take in the names of items, or dirt, followed by how much ex. [["rock", 5],["dirt", 20]]
+ * @param {number} weight how much the item weighs
+ * @param {int} durability how many uses the item has left
+ * @param {string} desc the description of the item
+ * @param {function} useFunc the function that will be called when the item is used
+ * @param {boolean} inCraftList is this item craftable?
+*/
+function defineCustomItem(name, imgPaths, cost, weight, durability, desc, useFunc, inCraftList){
+    defineItemSuper("CustomItem", name, imgPaths, cost, weight, durability, desc, inCraftList);
+    checkParams([arguments[6]],[getParamNames(defineFood)[6]],["function"]);
+
+    itemDic[name].use = useFunc;
 }

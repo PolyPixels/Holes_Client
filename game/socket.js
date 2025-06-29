@@ -384,6 +384,10 @@ function socketSetup(){
         }
     });
 
+    socket.on("GIVE_PORTALS", (data) => {
+        knownPortals = data.portals;
+    });
+
     // Listen for a broadcasted new chat message from the server
     socket.on("NEW_CHAT_MESSAGE", (data) => {
         //console.log("message data ",data)

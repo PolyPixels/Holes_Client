@@ -69,8 +69,8 @@ function turretUpdate(){
 defineCustomObj("Turret", ['turret11','turret0','turret1','turret2','turret3','turret4','turret5','turret6','turret7','turret8','turret9','turret10','turret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
 definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 50, 60, "edible_mushroom");
 
-definePlaceable("AppleTree", ['apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 0, 80, false, false);
-definePlaceable("Tree", ['tree'], [["Log", 4]], 120, 120, 0, 80, false, false);
+definePlant("AppleTree", ['tree_smallest','tree_smaller','apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 80, 150, "Apple");
+definePlant("Tree", ['tree_smallest','tree_smaller','tree'], [["Log", 4]], 120, 120, 80, 120, "Tree");
 
 defineInvObj("Chest", ['chest'], [['Log', 5]], 14*4, 15*4, 100, 100, false, true);
 defineInvObj("ItemBag", ['item_bag1'], [], 12*3, 13*3, 100, 100, false, false);
@@ -363,6 +363,16 @@ defineCustomObj(
     false,            // canRotate
     false             // inBuildList
 );
+
+definePlaceable("Campfire", ['campfire.gif'], [["Log", 2]], 16*4, 16*4, 1, 100, false, true);
+definePlaceable("Portal", ['portal.gif'], [["Gem", 5]], 128+64, 128+64, 2, 100, false, true);
+
+function signUpdate() {
+    //check ownership
+    //if owner then open sign editor
+    //if not then just render what the sign says
+}
+defineCustomObj("Sign", ['sign'], [["Log", 3]], 64, 64, 3, 100, signUpdate, false, true);
 
 var teamColors = [
     {r: 128, g: 128, b: 128}, //Gray - No Team

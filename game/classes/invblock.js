@@ -269,8 +269,8 @@ dropAll() {
         }
         else{
             for (let i = 0; i < slots.length; i++) {
-              if (slots[i] < 0) slots[i] = 11 + slots[i];
-              if (slots[i] > 10) slots[i] = slots[i] - 11;
+                if (slots[i] < 0) slots[i] = buildOptions.length + slots[i];
+                if (slots[i] > buildOptions.length-1) slots[i] = slots[i] - buildOptions.length;
             }
             for (let i = 0; i < slots.length; i++) {
                 let slotIndex = slots[i];

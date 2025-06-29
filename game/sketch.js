@@ -390,6 +390,45 @@ function draw() {
         renderDirtBagUI();
         renderPopups();
     }
+    if(gameState == "teleport"){
+        if (curPlayer.invBlock.useTimer > 0) curPlayer.invBlock.useTimer--;
+
+        push();
+        background(0, 0, 0, 255);
+
+        stroke(255);
+        strokeWeight(5);
+        fill(255, 0, 0);
+        for(let i = 0; i < knownPortals.length; i++){
+            let x = knownPortals[i].pos.x - curPlayer.pos.x;
+            let y = knownPortals[i].pos.y - curPlayer.pos.y;
+            x = x/(5*CHUNKSIZE*TILESIZE);
+            y = y/(5*CHUNKSIZE*TILESIZE);
+            x = x * width/2;
+            y = y * height/2;
+            x = x + width/2;
+            y = y + height/2;
+            circle(x,y, 50);
+        }
+
+        fill(0,255,0);
+        circle(width/2, height/2, 50);
+
+        fill(100);
+        rect(width-50, 0, 50, 50);
+
+        fill(255);
+        noStroke();
+        textAlign(LEFT, TOP);
+        textSize(30);
+        textFont(gameUIFont);
+        text("Found Portals: " + knownPortals.length, 10, 10);
+        
+        textAlign(CENTER, CENTER);
+        text("X", width-25, 25);
+
+        pop();
+    }
 
     continousKeyBoardInput();
     continousMouseInput();

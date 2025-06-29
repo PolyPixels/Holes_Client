@@ -437,6 +437,40 @@ function mouseReleased(){
             gameState = lastGameState;
         }
     }
+    if(gameState == "teleport"){
+        if(curPlayer.invBlock.useTimer <= 0){
+            //if you click on a portals circle, teleport to that portal
+            for(let i=0; i<knownPortals.length; i++){
+                let x = knownPortals[i].pos.x - curPlayer.pos.x;
+                let y = knownPortals[i].pos.y - curPlayer.pos.y;
+                x = x/(5*CHUNKSIZE*TILESIZE);
+                y = y/(5*CHUNKSIZE*TILESIZE);
+                x = x * width/2;
+                y = y * height/2;
+                x = x + width/2;
+                y = y + height/2;
+                if(mouseX > x-30 && mouseX < x+30 && mouseY > y-30 && mouseY < y+30){
+                    //teleport to the portal
+                    curPlayer.pos.x = knownPortals[i].pos.x;
+                    curPlayer.pos.y = knownPortals[i].pos.y + 128;
+                    
+                    socket.emit("update_pos", {
+                        id: curPlayer.id,
+                        pos: curPlayer.pos,
+                        holding: curPlayer.holding
+                    });
+                    
+                    gameState = "playing";
+                    curPlayer.invBlock.useTimer = 10;
+                }
+            }
+
+            if(mouseX > width - 50 && mouseX < width && mouseY > 0 && mouseY < 50){
+                gameState = "playing";
+                curPlayer.invBlock.useTimer = 10;
+            }
+        }
+    }
     if(gameState != "playing") return;
 
     if(mouseButton === LEFT){
@@ -645,8 +679,8 @@ function mouseWheel(event) {
             if(slot > 4) slot = 0;
         }
         else{
-            if(slot < 0) slot = 10;
-            if(slot > 10) slot = 0;
+            if(slot < 0) slot = buildOptions.length-1;
+            if(slot > buildOptions.length-1) slot = 0;
         }
         curPlayer.invBlock.selectedHotBar = slot;
         curPlayer.invBlock.animationTimer = hotBarOffset;
