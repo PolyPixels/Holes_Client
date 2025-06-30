@@ -643,7 +643,7 @@ class Plant extends Placeable{
                 }
                 else{
                     //try to spread
-                    if(random() < 0.1){
+                    if(random() < 0.2){
                         let spreadPos = createVector(this.pos.x + random(-100, 100), this.pos.y + random(-100, 100));
                         let chunkPos = testMap.globalToChunk(spreadPos.x,spreadPos.y);
                         if(testMap.chunks[chunkPos.x+","+chunkPos.y] != undefined){
