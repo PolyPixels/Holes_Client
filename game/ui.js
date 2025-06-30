@@ -2969,6 +2969,23 @@ function updateCraftList() {
     craftListDiv.html("");
     //create a div for each item in the inventory
     let arr = JSON.parse(JSON.stringify(craftOptions));
+
+    //if close to campfire add "Metal" to the craftOptions
+    for(let i = 0; i < testMap.chunks[getPlayerChunk()].objects.length; i++){
+        if(testMap.chunks[getPlayerChunk()].objects[i].objName == "Campfire"){
+            if(curPlayer.pos.dist(testMap.chunks[getPlayerChunk()].objects[i].pos) < 100){
+                arr.push({
+                    type: "SimpleItem", 
+                    itemName: "Metal", 
+                    image: "images/items/metal_scrap.png", 
+                    cost: [1,["Raw Metal", 1]]
+                });
+            }
+        }
+    }
+
+    console.log(arr);
+
     arr = arr.filter((item) => {
         if (curPlayer.invBlock.curTag == "All") {
             return true;
