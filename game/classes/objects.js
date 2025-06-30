@@ -531,7 +531,7 @@ class Placeable{
             for (let i = 0; i < collisionChecks.length; i++) {
                 let check = collisionChecks[i];
                 if (check.val == -1) this.openBool = false;
-                if (check.val > 0) {
+                if (check.val > 0 || check.iron_val > 0) {
                     this.openBool = false;
                 }
             }
@@ -574,7 +574,8 @@ class Placeable{
             y: (y + 0.5) * TILESIZE,
             cx: chunkPos.x,
             cy: chunkPos.y,
-            val: testMap.chunks[chunkPos.x+","+chunkPos.y].data[x + (y / CHUNKSIZE)]
+            val: testMap.chunks[chunkPos.x+","+chunkPos.y].data[x + (y / CHUNKSIZE)],
+            iron_val: testMap.chunks[chunkPos.x+","+chunkPos.y].iron_data[x + (y / CHUNKSIZE)]
         };
         
     }
@@ -650,7 +651,7 @@ class Plant extends Placeable{
                             
                             let index = floor((spreadPos.x - (chunkPos.x * CHUNKSIZE * TILESIZE)) / TILESIZE) + (floor((spreadPos.y - (chunkPos.y * CHUNKSIZE * TILESIZE)) / TILESIZE) / CHUNKSIZE);
                             if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] == undefined) {console.log("undefined data")}
-                            if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] == 0){
+                            if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] == 0 && testMap.chunks[chunkPos.x+","+chunkPos.y].iron_data[index] == 0){
                                 let newPlant = createObject(this.objName, spreadPos.x, spreadPos.y, 0, this.color, this.id, this.ownerName);
                                 testMap.chunks[chunkPos.x+","+chunkPos.y].objects.push(newPlant);
                                 socket.emit("new_object", {

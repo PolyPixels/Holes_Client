@@ -162,6 +162,8 @@ class Player {
         return {
             val: testMap.chunks[chunkPos.x + "," + chunkPos.y].data[x + (y / CHUNKSIZE)],
             val2: testMap.chunks[chunkPos2.x + "," + chunkPos2.y].data[x2 + (y2 / CHUNKSIZE)],
+            iron_val: testMap.chunks[chunkPos.x + "," + chunkPos.y].iron_data[x + (y / CHUNKSIZE)],
+            iron_val2: testMap.chunks[chunkPos2.x + "," + chunkPos2.y].iron_data[x2 + (y2 / CHUNKSIZE)],
             x: (midpoint.x + (chunkPos2.x * CHUNKSIZE)) * TILESIZE,
             y: (midpoint.y + (chunkPos2.y * CHUNKSIZE)) * TILESIZE,
             dir: direction
@@ -252,7 +254,7 @@ class Player {
         for (let i = 0; i < collisionChecks.length; i++) {
             let check = collisionChecks[i];
             if (check.val == -1) this.pos = oldPos;
-            if (check.val2 > 0) {
+            if (check.val2 > 0 || check.iron_val2 > 0) {
                 if (check.dir == "up" || check.dir == "down") {
                     if (createVector(check.x, this.pos.y).dist(createVector(check.x, check.y)) < TILESIZE) this.pos.y = oldPos.y;
                 }
