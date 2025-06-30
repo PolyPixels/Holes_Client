@@ -62,6 +62,25 @@ class Map{
                     text((chunkPos.x + xOff)+","+(chunkPos.y + yOff), ((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.pos.x+(width/2)+5, ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.pos.y+(height/2)+20);
                     pop();
                 }
+                if(curPlayer != undefined){
+                    if(curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar] != ""){
+                        if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]] != undefined){
+                            if(curPlayer.invBlock.items[curPlayer.invBlock.hotbar[curPlayer.invBlock.selectedHotBar]].itemName == "Map"){
+                                push();
+                                noFill();
+                                stroke(255,0,0);
+                                strokeWeight(2);
+                                rect(((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.pos.x+(width/2), ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.pos.y+(height/2), CHUNKSIZE*TILESIZE, CHUNKSIZE*TILESIZE);
+                                fill(255);
+                                noStroke();
+                                textSize(15);
+                                text((chunkPos.x + xOff)+","+(-1*(chunkPos.y + yOff)), ((chunkPos.x+xOff)*CHUNKSIZE*TILESIZE)-camera.pos.x+(width/2)+5, ((chunkPos.y+yOff)*CHUNKSIZE*TILESIZE)-camera.pos.y+(height/2)+20);
+                                pop();
+                            }
+                        }
+                    }
+                }
+                
             }
         }
 

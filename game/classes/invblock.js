@@ -266,6 +266,10 @@ dropAll() {
                     }
                 }
             }
+
+            if(this.items[this.hotbar[this.selectedHotBar]].itemName == "Compass"){
+                //COMPASS
+            }
         }
         else{
             for (let i = 0; i < slots.length; i++) {
