@@ -137,19 +137,21 @@ function bombUpdate(){
             });
         }
 
-        //dig dirt in a radius around the bomb
-        // for(let y=-100; y<100; y++){
-        //     for(let x=-100; x<100; x++){
-        //         dig(this.pos.x+x, this.pos.y+y, 1, false);
-        //     }
-        // }
         socket.emit("update_nodes", {
             cx: testMap.globalToChunk(this.pos.x,this.pos.y).x,
             cy: testMap.globalToChunk(this.pos.x,this.pos.y).y,
             pos: {x: this.pos.x, y: this.pos.y},
             radius: 5,
             amt: 1
-        })
+        });
+
+        socket.emit("update_iron_nodes", {
+            cx: testMap.globalToChunk(this.pos.x,this.pos.y).x,
+            cy: testMap.globalToChunk(this.pos.x,this.pos.y).y,
+            pos: {x: this.pos.x, y: this.pos.y},
+            radius: 5,
+            amt: 1
+        });
 
         // Bomb hurts all objects nearby
         let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
