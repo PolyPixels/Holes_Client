@@ -267,8 +267,10 @@ dropAll() {
                 }
             }
 
-            if(this.items[this.hotbar[this.selectedHotBar]].itemName == "Compass"){
-                //COMPASS
+            if(this.hotbar[this.selectedHotBar] != ""){
+                if(this.items[this.hotbar[this.selectedHotBar]].itemName == "Compass"){
+                    //COMPASS
+                }
             }
         }
         else{

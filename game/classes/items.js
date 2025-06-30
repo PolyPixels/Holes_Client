@@ -25,6 +25,7 @@ defineMelee("Better Sword", ["sword2"], [1,["Log",2],["Rock",2],["Gem",5],["Mush
 defineMelee("Gem Sword", ["gem_sword"], [1,["Gem",3],["Philosopher's Stone",1],["Black Gem",2],["Tech",4]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A godly sword for slashing",true);
 defineMelee("Evil Apple on Stick", ["evil_apple_on_stick"], [1,["Bad Apple",1],["Log",1]], 1, 100, 10, 5, 100, 60, 20, 10, false, "Now it'll bite your opponets",true);
 defineMelee("Scythe", ["scythe"], [1,["Log",2],["Rock",4],["Mushroom Fiber",1]], 1, 100, 25, 5, 50, 150, 150, 120, false, "Just gotta make sure they are on the blade",true);
+defineMelee("God's Scythe", ["scythe"], [1,["Log",2],["Rock",4],["Mushroom Fiber",1]], 1, 100, 200, 0, 100, 150, 150, 10, false, "Just gotta make sure they are on the blade",true);
 
 defineRanged("Basic SlingShot", ["sling"], [1,["Mushroom", 2]], 1, 100, 5, "Rock", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
 defineRanged("Better SlingShot", ["sling"], [1,["Mushroom", 2], ["Gem", 1]], 1, 100, 5, "Rock", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);

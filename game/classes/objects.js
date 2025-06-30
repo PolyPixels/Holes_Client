@@ -643,11 +643,14 @@ class Plant extends Placeable{
                 }
                 else{
                     //try to spread
-                    if(random() < 0.2){
+                    if(random() < 0.1){
                         let spreadPos = createVector(this.pos.x + random(-100, 100), this.pos.y + random(-100, 100));
                         let chunkPos = testMap.globalToChunk(spreadPos.x,spreadPos.y);
                         if(testMap.chunks[chunkPos.x+","+chunkPos.y] != undefined){
-                            if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[testMap.globalToChunk(spreadPos.x,spreadPos.y).x + (testMap.globalToChunk(spreadPos.x,spreadPos.y).y / CHUNKSIZE)] == 0){
+                            
+                            let index = floor((spreadPos.x - (chunkPos.x * CHUNKSIZE * TILESIZE)) / TILESIZE) + (floor((spreadPos.y - (chunkPos.y * CHUNKSIZE * TILESIZE)) / TILESIZE) / CHUNKSIZE);
+                            if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] == undefined) {console.log("undefined data")}
+                            if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] == 0){
                                 let newPlant = createObject(this.objName, spreadPos.x, spreadPos.y, 0, this.color, this.id, this.ownerName);
                                 testMap.chunks[chunkPos.x+","+chunkPos.y].objects.push(newPlant);
                                 socket.emit("new_object", {
