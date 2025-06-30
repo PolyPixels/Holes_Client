@@ -23,8 +23,8 @@ definePlaceable("Wall", ['wall11','wall0','wall1','wall2','wall3','wall4','wall5
 definePlaceable("Thin Wall", ['thin_wall11','thin_wall0','thin_wall1','thin_wall2','thin_wall3','thin_wall4','thin_wall5','thin_wall6','thin_wall7','thin_wall8','thin_wall9','thin_wall10'], [["dirt", 40]], 64, 128, 2, 150, true, true);
 definePlaceable("Door", ['door11','door0','door1','door2','door3','door4','door5','door6','door7','door8','door9','door10'], [["dirt", 40], ["Log", 1]], 64, 128, 2, 150, true, true);
 definePlaceable("Floor", ['floor11','floor0','floor1','floor2','floor3','floor4','floor5','floor6','floor7','floor8','floor9','floor10'], [["dirt", 30]], 128, 128, 0, 100, true, true);
-definePlaceable("Rug", ['rug11','rug0','rug1','rug2','rug3','rug4','rug5','rug6','rug7','rug8','rug9','rug10'], [["dirt", 30]], 128, 128, 1, 100, true, true);
-definePlaceable("Mug", ['mug'], [["dirt", 10]], 32, 32, 3, 100, false, true);
+definePlaceable("Rug", ['rug11','rug0','rug1','rug2','rug3','rug4','rug5','rug6','rug7','rug8','rug9','rug10'], [["Mushroom Fiber", 6]], 128, 128, 1, 100, true, true);
+definePlaceable("Mug", ['mug'], [["Rock", 1]], 32, 32, 3, 100, false, true);
 defineTrap("BearTrap", ['beartrap1'], [["Rock", 5]], 68, 48, 100, 50, 50, false, 15, true);
 defineTrap("LandMine", ['mine1'], [["Rock", 2], ["Bomb", 1]], 52, 36, 100, 40, 40, false, 10, true);
 
@@ -189,7 +189,7 @@ function bombUpdate(){
         socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
     }
 }
-defineCustomObj("PlacedBomb", ['bomb1','bomb2'], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, false);
+defineCustomObj("PlacedBomb", ['bomb1','bomb2'], [], 15*4, 13*4, 1, 200, bombUpdate, false, false);
 defineCustomObj("DirtBomb", ['dirtbomb'], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, false);
 
 function dirtBinUpdate(){
@@ -356,7 +356,7 @@ function expOrbUpdate() {
 defineCustomObj(
     "ExpOrb",         // Name
     ["exp_orb"],      // Images (make sure this file exists)
-    [["dirt", 1]],    // Cost to place, if relevant
+    [],    // Cost to place, if relevant
     32,               // Width
     32,               // Height
     3,                // Z level: decorations
@@ -367,7 +367,7 @@ defineCustomObj(
 );
 
 definePlaceable("Campfire", ['campfire.gif'], [["Log", 2]], 16*4, 16*4, 1, 100, false, true);
-definePlaceable("Portal", ['portal.gif'], [["Gem", 5]], 128+64, 128+64, 2, 100, false, true);
+definePlaceable("Portal", ['portal.gif'], [["Philosopher's Stone", 3],["Tech",2],["Metal",3]], 128+64, 128+64, 2, 100, false, true);
 
 function signUpdate() {
     //check ownership
