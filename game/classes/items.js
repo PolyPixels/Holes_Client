@@ -75,6 +75,15 @@ function teleportReceiverUse(x,y,mouseButton){
 }
 defineCustomItem("Teleport Receiver", ["teleport_receiver"], [1,["Log", 1],["Tech", 1]], 1, 1, "A teleport receiver that teleports you to any portals with X chunks", teleportReceiverUse, true);
 
+function dirtBagUpgradeUse(x,y,mouseButton){
+    if(curPlayer.invBlock.useTimer <= 0){
+        maxDirtInv += 150;
+        curPlayer.invBlock.decreaseAmount("Dirt Bag Upgrade", 1);
+        curPlayer.invBlock.useTimer = 30;
+    }
+}
+defineCustomItem("Dirt Bag Upgrade", ["dirt_bag_upgrade"], [1,["Mushroom Fibers", 10],["Philosopher's Stone", 1]], 1, 1, "+150 to dirt bag size", dirtBagUpgradeUse, true);
+
 
 class SimpleItem{
     constructor(itemName, weight, durability, imgNum, desc){
