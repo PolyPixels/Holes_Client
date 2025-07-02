@@ -10,8 +10,12 @@ function getIsChatting() {
 
 function keyReleased() {
     if(keyCode == 27 && gameState != "pause" && gameState != "initial" && gameState != "race_selection"){ //ESC
-        gameState = "playing";
-        pauseDiv.hide();
+        if(gameState != "settings") {
+            gameState = "playing";
+            pauseDiv.hide();
+        }else {
+            toggleSettings()
+        }
         invDiv.hide();
         spaceBarDiv.hide();
         player_status_container.hide();
