@@ -1998,22 +1998,38 @@ function definePauseUI() {
     sliderContainer.style("margin", "20px 0");
 
     // Label
-    let volumeLabel = createElement("label", "Volume:");
+    // Effects volume label with speaker emoji
+    let volumeLabel = createElement("label", "🔊 Volume:");
     volumeLabel.parent(sliderContainer);
     volumeLabel.style("font-size", "16px");
     volumeLabel.style("margin-right", "10px");
 
+    // Music volume label with musical note emoji
+    let musicVolLabel = createElement("label", "🎵 Music:");
+    musicVolLabel.parent(sliderContainer);
+    musicVolLabel.style("font-size", "16px");
+    musicVolLabel.style("margin-right", "10px");
 
-
-    // p5 slider
-    volumeSlider = createSlider(0, 100, 50)
+    // Your sliders
+    volumeSlider = createSlider(0, 100, 50);
     volumeSlider.style("width", "150px");
-    volumeSlider.parent(sliderContainer)
+    volumeSlider.parent(sliderContainer);
+
+    musicVolumeSlider = createSlider(0, 100, 50);
+    musicVolumeSlider.style("width", "150px");
+    musicVolumeSlider.parent(sliderContainer);
+
+
 
     // Retrieve saved volume from localStorage
     const savedVolume = localStorage.getItem("volume");
     if (savedVolume) {
         volumeSlider.value(savedVolume);
+    }
+
+    const savedMusicVolume = localStorage.getItem("musicVolume");
+    if (savedVolume) {
+        musicVolumeSlider.value(savedMusicVolume);
     }
 
     keyBind_Button = createButton("Key Bindings");
@@ -2068,17 +2084,18 @@ function definePauseUI() {
         console.log(volumeSlider.value())
         localStorage.setItem("volume", volumeSlider.value());
 
+        localStorage.setItem("musicVolume", musicVolumeSlider.value());
+
         // Update the volume of all sounds
         let keys = Object.keys(soundDic);
         for (let i = 0; i < keys.length; i++) {
             for (let j = 1; j < soundDic[keys[i]].sounds.length; j++) {
                 soundDic[keys[i]].sounds[j].setVolume((j / 20) * soundDic[keys[i]].volume * (volumeSlider.value() / 100));
             }
-        }   
+        }
 
-        if(MusicPlayer){
+        if (MusicPlayer) {
             MusicPlayer.setVolume()
-            localStorage.setItem("volume", volumeSlider.value());
         }
 
         // Save the key bindings to localStorage
@@ -2174,7 +2191,7 @@ function toggleSettings() {
     } else {
         // Show settings iframe and set game state to "settings"
         oldState = gameState;  // Store the current game state
-        settingsContainer.style('display', 'block');  // Show the iframe
+        settingsContainer.style('display', 'flex');  // Show the iframe
         gameState = "settings";  // Set game state to settings
     }
 }
@@ -2977,14 +2994,14 @@ function updateCraftList() {
     let arr = JSON.parse(JSON.stringify(craftOptions));
 
     //if close to campfire add "Metal" to the craftOptions
-    for(let i = 0; i < testMap.chunks[getPlayerChunk()].objects.length; i++){
-        if(testMap.chunks[getPlayerChunk()].objects[i].objName == "Campfire"){
-            if(curPlayer.pos.dist(testMap.chunks[getPlayerChunk()].objects[i].pos) < 100){
+    for (let i = 0; i < testMap.chunks[getPlayerChunk()].objects.length; i++) {
+        if (testMap.chunks[getPlayerChunk()].objects[i].objName == "Campfire") {
+            if (curPlayer.pos.dist(testMap.chunks[getPlayerChunk()].objects[i].pos) < 100) {
                 arr.push({
-                    type: "SimpleItem", 
-                    itemName: "Metal", 
-                    image: "images/items/metal_scrap.png", 
-                    cost: [1,["Raw Metal", 1]]
+                    type: "SimpleItem",
+                    itemName: "Metal",
+                    image: "images/items/metal_scrap.png",
+                    cost: [1, ["Raw Metal", 1]]
                 });
             }
         }

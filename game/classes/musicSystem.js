@@ -46,14 +46,11 @@ class MusicSystem {
    */
 setVolume() {
   // 1) pull from storage, parse as float, default to 0.5 if missing/invalid
-  const raw = localStorage.getItem("volume");
+  const raw = localStorage.getItem("musicVolume");
   const v   = isNaN(parseFloat(raw)) ? 0.5 : parseFloat(raw);
 
   // 2) constrain between 0.0 and 1.0
   this.volume = constrain(v, 0, 1);
-
-  // 3) persist the (possibly clamped) value
-  localStorage.setItem("volume", this.volume);
 
   // 4) apply to main + all tracks
   [this.mainTheme, ...this.otherTracks].forEach(t => {
