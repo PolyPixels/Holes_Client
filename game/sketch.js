@@ -12,6 +12,7 @@ var dirtBagUI = {};
 var Debuging = false;
 
 
+
 function setup() {
     // Create a responsive canvas
     let cnv = createCanvas(innerWidth - 10, innerHeight - 8);
@@ -74,6 +75,8 @@ function setup() {
             soundDic[keys[i]].sounds[j].setVolume((j/20)*soundDic[keys[i]].volume * (volumeSlider.value()/100));
         }
     }
+
+
 }
 
 function moveCamera(){
@@ -150,16 +153,22 @@ function draw() {
         //unless they have some form of updates that I didn't see
         renderServerBrowser();
         renderLinks();
+
+        MusicPlayer.playMainTheme()
     }
     else if (gameState === "race_selection") {
         //! Why call these in draw if they only need to be called once? (wouldn't it be better to add them to the transitional buttons?)
         //unless they have some form of updates that I didn't see
+
         drawSelection();
         renderLinks();
     }
     
     if (gameState === "playing") {
         timerDiv.show()
+
+        MusicPlayer.playRandom()
+
         //! Why call these in draw if they only need to be called once?
         hideRaceSelect();
         hideLinks();

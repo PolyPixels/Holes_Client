@@ -2065,6 +2065,7 @@ function definePauseUI() {
     // Save button logic
     saveButton.mousePressed(() => {
         // Save volume setting to localStorage
+        console.log(volumeSlider.value())
         localStorage.setItem("volume", volumeSlider.value());
 
         // Update the volume of all sounds
@@ -2073,6 +2074,11 @@ function definePauseUI() {
             for (let j = 1; j < soundDic[keys[i]].sounds.length; j++) {
                 soundDic[keys[i]].sounds[j].setVolume((j / 20) * soundDic[keys[i]].volume * (volumeSlider.value() / 100));
             }
+        }   
+
+        if(MusicPlayer){
+            MusicPlayer.setVolume()
+            localStorage.setItem("volume", volumeSlider.value());
         }
 
         // Save the key bindings to localStorage
