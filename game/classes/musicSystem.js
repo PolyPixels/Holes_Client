@@ -23,9 +23,9 @@ class MusicSystem {
   }
 
   constructor(mainTheme, otherTracks) {
-    this.mainTheme   = mainTheme;
+    this.mainTheme = mainTheme;
     this.otherTracks = otherTracks;
-    this.current     = null;
+    this.current = null;
 
     // load saved volume or default
     const saved = parseFloat(localStorage.getItem("volume"));
@@ -45,20 +45,16 @@ class MusicSystem {
    * the one currently playing).
    */
 setVolume() {
-  // 1) pull from storage, parse as float, default to 0.5 if missing/invalid
   const raw = localStorage.getItem("musicVolume");
-  const v   = isNaN(parseFloat(raw)) ? 0.5 : parseFloat(raw);
-
-  // 2) constrain between 0.0 and 1.0
-  this.volume = constrain(v, 0, 1);
-
-  // 4) apply to main + all tracks
+  const v100 = isNaN(parseFloat(raw)) ? 50 : parseFloat(raw);
+  this.volume = constrain(v100 / 100, 0, 1);
   [this.mainTheme, ...this.otherTracks].forEach(t => {
     if (t && typeof t.setVolume === 'function') {
       t.setVolume(this.volume);
     }
   });
 }
+
 
 
   async playMainTheme() {
@@ -86,7 +82,7 @@ setVolume() {
    */
   playRandom(chanceEmpty = 0) {
     // already playing one of the others?
-    if ( this.otherTracks.includes(this.current) && this.current.isPlaying() ) {
+    if (this.otherTracks.includes(this.current) && this.current.isPlaying()) {
       return;
     }
 

@@ -1970,12 +1970,9 @@ function keyCodeToHuman(keyCode) {
 
 
 function definePauseUI() {
-
-    // Create a container div for the settings
     settingsContainer = createDiv();
     settingsContainer.class("container");
     settingsContainer.style("position", "absolute");
-    // Style the container (similar to your CSS)
     settingsContainer.style("font-family", "Arial, sans-serif");
     settingsContainer.style("margin", "0 auto");
     settingsContainer.style("width", "300px");
@@ -1986,55 +1983,67 @@ function definePauseUI() {
     settingsContainer.style("display", "none");
     settingsContainer.style("flex-direction", "column");
     settingsContainer.style("align-items", "center");
-    settingsContainer.style("z-index", "998")
+    settingsContainer.style("z-index", "998");
 
-    // Title
     let title = createElement("h2", "Settings");
     title.parent(settingsContainer);
 
-    // Create slider container
-    let sliderContainer = createDiv();
-    sliderContainer.parent(settingsContainer);
-    sliderContainer.style("margin", "20px 0");
+    let sliderContainer = createDiv()
+        .parent(settingsContainer)
+        .style("display", "flex")
+        .style("flex-direction", "column")
+        .style("gap", "15px")
+        .style("margin", "20px 0");
 
-    // Label
-    // Effects volume label with speaker emoji
-    let volumeLabel = createElement("label", "🔊 Volume:");
-    volumeLabel.parent(sliderContainer);
-    volumeLabel.style("font-size", "16px");
-    volumeLabel.style("margin-right", "10px");
+    let effectsRow = createDiv()
+        .parent(sliderContainer)
+        .style("display", "flex")
+        .style("align-items", "center");
 
-    // Music volume label with musical note emoji
-    let musicVolLabel = createElement("label", "🎵 Music:");
-    musicVolLabel.parent(sliderContainer);
-    musicVolLabel.style("font-size", "16px");
-    musicVolLabel.style("margin-right", "10px");
+    let savedVolume = parseInt(localStorage.getItem("volume")) || 50;
+    let volumeLabel = createElement("label", "🔊 Volume:")
+        .parent(effectsRow)
+        .style("font-size", "16px")
+        .style("margin-right", "10px");
 
-    // Your sliders
-    volumeSlider = createSlider(0, 100, 50);
-    volumeSlider.style("width", "150px");
-    volumeSlider.parent(sliderContainer);
+    volumeSlider = createSlider(0, 100, savedVolume)
+        .parent(effectsRow)
+        .style("width", "150px");
 
-    musicVolumeSlider = createSlider(0, 100, 50);
-    musicVolumeSlider.style("width", "150px");
-    musicVolumeSlider.parent(sliderContainer);
+    volumeSlider.input(() => {
+        let v = volumeSlider.value();
+        localStorage.setItem("volume", v);
+        Object.values(soundDic).forEach(entry => {
+            entry.sounds.slice(1).forEach((s, idx) => {
+                s.setVolume(((idx + 1) / 20) * entry.volume * (v / 100));
+            });
+        });
+    });
 
+    let musicRow = createDiv()
+        .parent(sliderContainer)
+        .style("display", "flex")
+        .style("align-items", "center");
 
+    let savedMusic = parseInt(localStorage.getItem("musicVolume")) || 50;
+    let musicVolLabel = createElement("label", "🎵 Music:")
+        .parent(musicRow)
+        .style("font-size", "16px")
+        .style("margin-right", "10px");
 
-    // Retrieve saved volume from localStorage
-    const savedVolume = localStorage.getItem("volume");
-    if (savedVolume) {
-        volumeSlider.value(savedVolume);
-    }
+    musicVolumeSlider = createSlider(0, 100, savedMusic)
+        .parent(musicRow)
+        .style("width", "150px");
 
-    const savedMusicVolume = localStorage.getItem("musicVolume");
-    if (savedVolume) {
-        musicVolumeSlider.value(savedMusicVolume);
-    }
+    musicVolumeSlider.input(() => {
+        let mv = musicVolumeSlider.value();
+        localStorage.setItem("musicVolume", mv);
+        if (MusicPlayer) MusicPlayer.setVolume();
+    });
 
     keyBind_Button = createButton("Key Bindings");
     keyBind_Button.parent(sliderContainer);
-    keyBind_Button.class("button"); // For your reference, you can define .button in CSS if desired
+    keyBind_Button.class("button");
     keyBind_Button.style("padding", "10px");
     keyBind_Button.style("margin-top", "20px");
     keyBind_Button.style("background-color", "#444");
@@ -2050,7 +2059,7 @@ function definePauseUI() {
 
     removeData_button = createButton("Remove Data");
     removeData_button.parent(sliderContainer);
-    removeData_button.class("button"); // For your reference, you can define .button in CSS if desired
+    removeData_button.class("button");
     removeData_button.style("padding", "10px");
     removeData_button.style("margin-top", "20px");
     removeData_button.style("background-color", "#444");
@@ -2058,17 +2067,12 @@ function definePauseUI() {
     removeData_button.style("color", "white");
     removeData_button.style("border-radius", "5px");
     removeData_button.style("cursor", "pointer");
-
     removeData_button.mousePressed(() => {
-        // Save volume setting to localStorage
-        localStorage.clear()
+        localStorage.clear();
     });
 
-    removeData_button.parent(sliderContainer)
-
-    // Save button
     saveButton = createButton("Save");
-    saveButton.class("button"); // For your reference, you can define .button in CSS if desired
+    saveButton.class("button");
     saveButton.style("padding", "10px");
     saveButton.style("margin-top", "20px");
     saveButton.style("background-color", "#444");
@@ -2076,61 +2080,48 @@ function definePauseUI() {
     saveButton.style("color", "white");
     saveButton.style("border-radius", "5px");
     saveButton.style("cursor", "pointer");
-
     saveButton.parent(settingsContainer);
-    // Save button logic
     saveButton.mousePressed(() => {
-        // Save volume setting to localStorage
-        console.log(volumeSlider.value())
         localStorage.setItem("volume", volumeSlider.value());
-
         localStorage.setItem("musicVolume", musicVolumeSlider.value());
-
-        // Update the volume of all sounds
-        let keys = Object.keys(soundDic);
-        for (let i = 0; i < keys.length; i++) {
-            for (let j = 1; j < soundDic[keys[i]].sounds.length; j++) {
-                soundDic[keys[i]].sounds[j].setVolume((j / 20) * soundDic[keys[i]].volume * (volumeSlider.value() / 100));
-            }
-        }
-
-        if (MusicPlayer) {
-            MusicPlayer.setVolume()
-        }
-
-        // Save the key bindings to localStorage
-        let keyBindings = {};
-        keyBindings.upCode = Controls_move_Up_code;
-        keyBindings.upKey = Controls_Up_key;
-        keyBindings.leftCode = Controls_move_Left_code;
-        keyBindings.leftKey = Controls_Left_key;
-        keyBindings.downCode = Controls_move_Down_code;
-        keyBindings.downKey = Controls_Down_key;
-        keyBindings.rightCode = Controls_move_Right_code;
-        keyBindings.rightKey = Controls_Right_key;
-        keyBindings.interactCode = Controls_Interact_code;
-        keyBindings.interactKey = Controls_Interact_key;
-        keyBindings.invCode = Controls_Inventory_code;
-        keyBindings.invKey = Controls_Inventory_key;
-        keyBindings.craftCode = Controls_Crafting_code;
-        keyBindings.craftKey = Controls_Crafting_key;
-        keyBindings.pauseCode = Controls_Pause_code;
-        keyBindings.pauseKey = Controls_Pause_key;
-        keyBindings.moveHotBarRightCode = Controls_MoveHotBarRight_code;
-        keyBindings.moveHotBarRightKey = Controls_MoveHotBarRight_key;
-        keyBindings.moveHotBarLeftCode = Controls_MoveHotBarLeft_code;
-        keyBindings.moveHotBarLeftKey = Controls_MoveHotBarLeft_key;
-        keyBindings.buildCode = Controls_Build_code;
-        keyBindings.buildKey = Controls_Build_key;
-        keyBindings.spaceCode = Controls_Space_code;
-        keyBindings.spaceKey = Controls_Space_key;
+        Object.keys(soundDic).forEach(key => {
+            soundDic[key].sounds.slice(1).forEach((s, idx) => {
+                s.setVolume(((idx + 1) / 20) * soundDic[key].volume * (volumeSlider.value() / 100));
+            });
+        });
+        if (MusicPlayer) MusicPlayer.setVolume();
+        let keyBindings = {
+            upCode: Controls_move_Up_code,
+            upKey: Controls_Up_key,
+            leftCode: Controls_move_Left_code,
+            leftKey: Controls_Left_key,
+            downCode: Controls_move_Down_code,
+            downKey: Controls_Down_key,
+            rightCode: Controls_move_Right_code,
+            rightKey: Controls_Right_key,
+            interactCode: Controls_Interact_code,
+            interactKey: Controls_Interact_key,
+            invCode: Controls_Inventory_code,
+            invKey: Controls_Inventory_key,
+            craftCode: Controls_Crafting_code,
+            craftKey: Controls_Crafting_key,
+            pauseCode: Controls_Pause_code,
+            pauseKey: Controls_Pause_key,
+            moveHotBarRightCode: Controls_MoveHotBarRight_code,
+            moveHotBarRightKey: Controls_MoveHotBarRight_key,
+            moveHotBarLeftCode: Controls_MoveHotBarLeft_code,
+            moveHotBarLeftKey: Controls_MoveHotBarLeft_key,
+            buildCode: Controls_Build_code,
+            buildKey: Controls_Build_key,
+            spaceCode: Controls_Space_code,
+            spaceKey: Controls_Space_key
+        };
         localStorage.setItem("keyBindings", JSON.stringify(keyBindings));
-
-        toggleSettings()
+        toggleSettings();
     });
 
     pauseDiv = createDiv();
-    pauseDiv.class("container")
+    pauseDiv.class("container");
     pauseDiv.style("position", "absolute");
     pauseDiv.style("top", "50%");
     pauseDiv.style("left", "50%");
@@ -2145,7 +2136,6 @@ function definePauseUI() {
     pauseDiv.style("border-radius", "10px");
     pauseDiv.style("text-align", "center");
     pauseDiv.style("padding", "20px");
-
 
     let pauseTitle = createP("Paused");
     pauseTitle.style("font-size", "28px");
@@ -2174,6 +2164,7 @@ function definePauseUI() {
     });
     serverSelectButton.parent(pauseDiv);
 }
+
 
 
 
