@@ -895,6 +895,8 @@ function renderChatUI() {
     chatContainer.style("left", "0dvw");
     chatContainer.style("z-index", "10");
     chatContainer.style("min-width", "10dvw");
+
+    chatContainer.style("max-width", "30dvw");
     chatContainer.style("background", "rgba(34, 34, 34, 0.8)"); // Semi-transparent dark background
     chatContainer.style("padding", "10px");
     chatContainer.style("border-radius", "8px");
@@ -960,9 +962,6 @@ function renderChatUI() {
         }
     });
 
-    // ─────────────────────────────────────────────────────────
-    // Send Button
-    // ─────────────────────────────────────────────────────────
 
     chatSendButton = createButton("Send");
     chatSendButton.style("padding", "8px 14px");
@@ -979,9 +978,6 @@ function renderChatUI() {
         gameState = lastGameState;
     });
 
-    // ─────────────────────────────────────────────────────────
-    // Input Container (holds input + button)
-    // ─────────────────────────────────────────────────────────
 
     inputContainer = createDiv();
     inputContainer.style("display", "flex");
