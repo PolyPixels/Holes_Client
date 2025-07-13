@@ -67,10 +67,10 @@ function turretUpdate(){
     }
 }
 defineCustomObj("Turret", ['turret11','turret0','turret1','turret2','turret3','turret4','turret5','turret6','turret7','turret8','turret9','turret10','turret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
-definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 50, 60, "edible_mushroom");
+definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 50, 120, "edible_mushroom");
 
-definePlant("AppleTree", ['tree_smallest','tree_smaller','apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 80, 150, "Apple");
-definePlant("Tree", ['tree_smallest','tree_smaller','tree'], [["Log", 4]], 120, 120, 80, 120, "Tree");
+definePlant("AppleTree", ['tree_smallest','tree_smaller','apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 80, 300, "Apple");
+definePlant("Tree", ['tree_smallest','tree_smaller','tree'], [["Log", 4]], 120, 120, 80, 240, "Tree");
 
 defineInvObj("Chest", ['chest'], [['Log', 5]], 14*4, 15*4, 100, 100, false, true);
 defineInvObj("ItemBag", ['item_bag1'], [], 12*3, 13*3, 100, 100, false, false);
@@ -646,7 +646,7 @@ class Plant extends Placeable{
                 }
                 else{
                     //try to spread
-                    if(random() < 0.1){
+                    if(random() < 0.2){
                         let spreadPos = createVector(this.pos.x + random(-100, 100), this.pos.y + random(-100, 100));
                         let chunkPos = testMap.globalToChunk(spreadPos.x,spreadPos.y);
                         if(testMap.chunks[chunkPos.x+","+chunkPos.y] != undefined){
