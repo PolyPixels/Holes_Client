@@ -3484,7 +3484,7 @@ function setupTutorialPages(pageHolder) {
     keyToVisualKey(Controls_Left_key);
     keyToVisualKey(Controls_Down_key);
     keyToVisualKey(Controls_Right_key);
-
+    console.log(Controls_Up_key, Controls_Left_key)
     addControlStep(page2, "" + Controls_Up_key + Controls_Left_key + Controls_Down_key + Controls_Right_key, "Move around");
     addControlStep(page2, "Left/Right Click", "Use item");
     addControlStep(page2, Controls_Interact_key, "Interact");
@@ -3519,7 +3519,7 @@ function addTutorialStep(parent, imgPath, text) {
 }
 
 function addControlStep(parent, control, description) {
-    keyToVisualKey(control);
+    let key =keyToVisualKey(control);
     let line = createP(key + " - " + description).parent(parent);
     applyStyle(line, {
         marginBottom: "5px",
