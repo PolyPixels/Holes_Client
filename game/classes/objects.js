@@ -8,6 +8,7 @@ Z heights:
 
 var buildOptions = []; //for ui, but defined here cause obj defines need it
 var objImgPaths = [];
+var objImgCords = [];
 
 /*
 Obj Dic is a full dictanary of every object that can exist, falling into one of these types:
@@ -19,14 +20,18 @@ Obj Dic is a full dictanary of every object that can exist, falling into one of 
 */
 
 var objDic = {};
-definePlaceable("Wall", ['wall11','wall0','wall1','wall2','wall3','wall4','wall5','wall6','wall7','wall8','wall9','wall10'], [["dirt", 50]], 128, 128, 2, 200, true, true);
-definePlaceable("Thin Wall", ['thin_wall11','thin_wall0','thin_wall1','thin_wall2','thin_wall3','thin_wall4','thin_wall5','thin_wall6','thin_wall7','thin_wall8','thin_wall9','thin_wall10'], [["dirt", 40]], 64, 128, 2, 150, true, true);
-definePlaceable("Door", ['door11','door0','door1','door2','door3','door4','door5','door6','door7','door8','door9','door10'], [["dirt", 40], ["Log", 1]], 64, 128, 2, 150, true, true);
-definePlaceable("Floor", ['floor11','floor0','floor1','floor2','floor3','floor4','floor5','floor6','floor7','floor8','floor9','floor10'], [["dirt", 30]], 128, 128, 0, 100, true, true);
-definePlaceable("Rug", ['rug11','rug0','rug1','rug2','rug3','rug4','rug5','rug6','rug7','rug8','rug9','rug10'], [["Mushroom Fiber", 6]], 128, 128, 1, 100, true, true);
-definePlaceable("Mug", ['mug'], [["Rock", 1]], 32, 32, 3, 100, false, true);
-defineTrap("BearTrap", ['beartrap1'], [["Rock", 5]], 68, 48, 100, 50, 50, false, 15, true);
-defineTrap("LandMine", ['mine1'], [["Rock", 2], ["Bomb", 1]], 52, 36, 100, 40, 40, false, 10, true);
+
+definePlaceable("Campfire", ['campfire.gif'], [["Log", 2]], 16*4, 16*4, 1, 100, false, true);
+definePlaceable("Portal", ['portal.gif'], [["Philosopher's Stone", 3],["Tech",2],["Metal",3]], 128+64, 128+64, 2, 100, false, true);
+
+definePlaceable("Wall", [[352,32,32,32],[0,32,32,32],[32,32,32,32],[64,32,32,32],[96,32,32,32],[128,32,32,32],[160,32,32,32],[192,32,32,32],[224,32,32,32],[256,32,32,32],[288,32,32,32],[320,32,32,32]], [["dirt", 50]], 128, 128, 2, 200, true, true);
+definePlaceable("Thin Wall", [[368,64,16,32],[16,64,16,32],[48,64,16,32],[80,64,16,32],[112,64,16,32],[144,64,16,32],[176,64,16,32],[208,64,16,32],[240,64,16,32],[272,64,16,32],[304,64,16,32],[336,64,16,32]], [["dirt", 40]], 64, 128, 2, 150, true, true);
+definePlaceable("Door", [[352,64,16,32],[0,64,16,32],[32,64,16,32],[64,64,16,32],[96,64,16,32],[128,64,16,32],[160,64,16,32],[192,64,16,32],[224,64,16,32],[256,64,16,32],[288,64,16,32],[320,64,16,32]], [["dirt", 40], ["Log", 1]], 64, 128, 2, 150, true, true);
+definePlaceable("Floor", [[352,0,32,32],[0,0,32,32],[32,0,32,32],[64,0,32,32],[96,0,32,32],[128,0,32,32],[160,0,32,32],[192,0,32,32],[224,0,32,32],[256,0,32,32],[288,0,32,32],[320,0,32,32]], [["dirt", 30]], 128, 128, 0, 100, true, true);
+definePlaceable("Rug", [[352,128,32,32],[0,128,32,32],[32,128,32,32],[64,128,32,32],[96,128,32,32],[128,128,32,32],[160,128,32,32],[192,128,32,32],[224,128,32,32],[256,128,32,32],[288,128,32,32],[320,128,32,32]], [["Mushroom Fiber", 6]], 128, 128, 1, 100, true, true);
+definePlaceable("Mug", [[385,112,8,8]], [["Rock", 1]], 32, 32, 3, 100, false, true);
+defineTrap("BearTrap", [[384,64,17,12]], [["Rock", 5]], 68, 48, 100, 50, 50, false, 15, true);
+defineTrap("LandMine", [[431,68,13,9]], [["Rock", 2], ["Bomb", 1]], 52, 36, 100, 40, 40, false, 10, true);
 
 function turretUpdate(){
     if(this.hp <= 0){
@@ -66,14 +71,14 @@ function turretUpdate(){
         socket.emit("update_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, update_name: "rot", update_value: this.rot});
     }
 }
-defineCustomObj("Turret", ['turret11','turret0','turret1','turret2','turret3','turret4','turret5','turret6','turret7','turret8','turret9','turret10','turret11'], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
-definePlant("Mushroom", ['mushroom3','mushroom2','mushroom1'], [["Mushroom", 1]], 60, 60, 50, 120, "edible_mushroom");
+defineCustomObj("Turret", [[352,96,32,32],[0,96,32,32],[32,96,32,32],[64,96,32,32],[96,96,32,32],[128,96,32,32],[160,96,32,32],[192,96,32,32],[224,96,32,32],[256,96,32,32],[288,96,32,32],[320,96,32,32]], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
+definePlant("Mushroom", [[392,49,16,16],[424,49,16,16],[460,48,16,16]], [["Mushroom", 1]], 60, 60, 50, 120, "edible_mushroom");
 
-definePlant("AppleTree", ['tree_smallest','tree_smaller','apple_tree'], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 80, 300, "Apple");
-definePlant("Tree", ['tree_smallest','tree_smaller','tree'], [["Log", 4]], 120, 120, 80, 240, "Tree");
+definePlant("AppleTree", [[384,0,34,34],[418,0,34,34],[486,0,34,34]], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 80, 300, "Apple");
+definePlant("Tree", [[384,0,34,34],[418,0,34,34],[452,0,34,34]], [["Log", 4]], 120, 120, 80, 240, "Tree");
 
-defineInvObj("Chest", ['chest'], [['Log', 5]], 14*4, 15*4, 100, 100, false, true);
-defineInvObj("ItemBag", ['item_bag1'], [], 12*3, 13*3, 100, 100, false, false);
+defineInvObj("Chest", [[384,96,14,15]], [['Log', 5]], 14*4, 15*4, 100, 100, false, true);
+defineInvObj("ItemBag", [[414,96,15,15]], [], 12*3, 13*3, 100, 100, false, false);
 
 function bombUpdate(){
     //Fuse go down
@@ -189,8 +194,8 @@ function bombUpdate(){
         socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z});
     }
 }
-defineCustomObj("PlacedBomb", ['bomb1','bomb2'], [], 15*4, 13*4, 1, 200, bombUpdate, false, false);
-defineCustomObj("DirtBomb", ['dirtbomb'], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, false);
+defineCustomObj("PlacedBomb", [[453,69,15,13],[416,64,15,13]], [], 15*4, 13*4, 1, 200, bombUpdate, false, false);
+defineCustomObj("DirtBomb", [[473,69,15,13]], [["dirt", 20]], 15*4, 13*4, 1, 200, bombUpdate, false, false);
 
 function dirtBinUpdate(){
     if(this.hp <= 0){
@@ -250,7 +255,7 @@ function dirtBinUpdate(){
         }
     }
 }
-defineCustomObj("Dirt Bin", ['dirt_bin'], [["Log", 3]], 16*4, 16*4, 2, 1, dirtBinUpdate, false, true);
+defineCustomObj("Dirt Bin", [[399,96,15,15]], [["Log", 3]], 16*4, 16*4, 2, 1, dirtBinUpdate, false, true);
 
 function expOrbUpdate() {
     // Up/down motion setup
@@ -355,7 +360,7 @@ function expOrbUpdate() {
 
 defineCustomObj(
     "ExpOrb",         // Name
-    ["exp_orb"],      // Images (make sure this file exists)
+    [[385,130,9,9]],      // Images (make sure this file exists)
     [],    // Cost to place, if relevant
     32,               // Width
     32,               // Height
@@ -366,15 +371,12 @@ defineCustomObj(
     false             // inBuildList
 );
 
-definePlaceable("Campfire", ['campfire.gif'], [["Log", 2]], 16*4, 16*4, 1, 100, false, true);
-definePlaceable("Portal", ['portal.gif'], [["Philosopher's Stone", 3],["Tech",2],["Metal",3]], 128+64, 128+64, 2, 100, false, true);
-
 function signUpdate() {
     //check ownership
     //if owner then open sign editor
     //if not then just render what the sign says
 }
-defineCustomObj("Sign", ['sign'], [["Log", 3]], 64, 64, 3, 100, signUpdate, false, true);
+defineCustomObj("Sign", [[398,111,15,18]], [["Log", 3]], 64, 64, 3, 100, signUpdate, false, true);
 
 var teamColors = [
     {r: 128, g: 128, b: 128}, //Gray - No Team
@@ -843,19 +845,29 @@ function createObject(name, x, y, rot, color, id, ownerName){
 }
 
 //the most common parts of a define, so we don't have to keep editing all the defines
-function defineObjSuper(type,name,imgPaths,cost,width,height,zLevel,health,canRotate,inBuildList){
+function defineObjSuper(type,name,imgSrc,cost,width,height,zLevel,health,canRotate,inBuildList){
     checkParams(arguments, getParamNames(defineObjSuper), ["string","string","object","object","int","int","int","int","boolean","boolean"]);
 
-    for(let i = 0; i < imgPaths.length; i++){
-        if(!imgPaths[i].includes("images")){
-            imgPaths[i] = "images/structures/" + imgPaths[i];
+    let cords = [];
+    let paths = [];
+    for(let i = 0; i < imgSrc.length; i++){
+        if(Number.isInteger(imgSrc[i][0])){ //assume cords were given
+            cords.push(imgSrc[i]);
         }
-        if(!imgPaths[i].includes(".")){
-            imgPaths[i] = imgPaths[i] + ".png";
+        else{ //assume path was given
+            if(!imgSrc[i].includes("images")){
+                imgSrc[i] = "images/structures/" + imgSrc[i];
+            }
+            if(!imgSrc[i].includes(".")){
+                imgSrc[i] = imgSrc[i] + ".png";
+            }
+            paths.push(imgSrc[i]);
+            cords.push([-1,-1]); //add a dummy cord for this image
         }
     }
-    objImgPaths.push(imgPaths);
-    let imgNum = objImgPaths.length - 1;
+    if(cords.length != 0) objImgCords.push(cords);
+    if(paths.length != 0) objImgPaths.push(paths);
+    let imgNum = objImgCords.length - 1;
     
     objDic[name] = {
         type: type,
@@ -870,7 +882,7 @@ function defineObjSuper(type,name,imgPaths,cost,width,height,zLevel,health,canRo
     };
 
     if(inBuildList){
-        buildOptions.push({ objName: name, key: 49+(buildOptions.length), images: imgPaths, images2: imgNum, cost: cost});
+        buildOptions.push({ objName: name, key: 49+(buildOptions.length), images2: imgNum, cost: cost});
     }
 }
 

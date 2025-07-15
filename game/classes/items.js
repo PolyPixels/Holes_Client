@@ -11,57 +11,58 @@ Item Dic is a full dictanary of every item that can exist, falling into one of t
 */
 
 var itemImgPaths = [];
+var itemImgCords = [];
 var itemDic = {};
 var craftOptions = [];
 
-defineShovel("Basic Shovel", ["shovel1"], [1,["Log",1],["Rock",1]], 1, 100, 0.12, 3, 1, "A basic shovel for digging dirt",true);
-defineShovel("Better Shovel", ["shovel2"], [1,["Log",1],["Gem",2]], 1, 100, 0.18, 3, 1, "A better shovel for digging dirt",true);
-defineShovel("God Shovel", ["shovel3"], [1,["Rock",2],["Philosopher's Stone",2]], 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt",true);
-defineShovel("Pickaxe", ["pickaxe"], [1,["Log",2],["Rock",3]], 1, 100, 0.2, 3, 1, "A basic pickaxe for mining iron",true);
+defineShovel("Basic Shovel", [[4,4]], [1,["Log",1],["Rock",1]], 1, 100, 0.12, 3, 1, "A basic shovel for digging dirt",true);
+defineShovel("Better Shovel", [[5,4]], [1,["Log",1],["Gem",2]], 1, 100, 0.18, 3, 1, "A better shovel for digging dirt",true);
+defineShovel("God Shovel", [[6,4]], [1,["Rock",2],["Philosopher's Stone",2]], 1, 100, 0.3, 3, 1, "A godly shovel for digging dirt",true);
+defineShovel("Pickaxe", [[1,4]], [1,["Log",2],["Rock",3]], 1, 100, 0.2, 3, 1, "A basic pickaxe for mining iron",true);
 
-defineMelee("Mush Knife", ["mushroom_knife"], [1,["Mushroom",1],["Rock",1],["Mushroom Fiber",1]], 1, 100, 25, 5, 50, 60, 90, 30, false, "A basic knife",true);
-defineMelee("Basic Sword", ["sword1"], [1,["Log",1],["Rock",3],["Mushroom Fiber",2]], 1, 100, 25, 5, 50, 60, 90, 30, false, "A basic sword for slashing",true);
-defineMelee("Better Sword", ["sword2"], [1,["Log",2],["Rock",2],["Gem",5],["Mushroom Fiber", 3]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A better sword for slashing",true);
-defineMelee("Gem Sword", ["gem_sword"], [1,["Gem",3],["Philosopher's Stone",1],["Black Gem",2],["Tech",4]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A godly sword for slashing",true);
-defineMelee("Evil Apple on Stick", ["evil_apple_on_stick"], [1,["Bad Apple",1],["Log",1]], 1, 100, 10, 5, 100, 60, 20, 10, false, "Now it'll bite your opponets",true);
-defineMelee("Scythe", ["scythe"], [1,["Log",2],["Rock",4],["Mushroom Fiber",1]], 1, 100, 25, 5, 50, 150, 150, 120, false, "Just gotta make sure they are on the blade",true);
-defineMelee("God's Scythe", ["scythe"], [], 1, 100, 200, 0, 100, 60, 150, 10, false, "Just gotta make sure they are on the blade",false);
+defineMelee("Mush Knife", [[4,3]], [1,["Mushroom",1],["Rock",1],["Mushroom Fiber",1]], 1, 100, 25, 5, 50, 60, 90, 30, false, "A basic knife",true);
+defineMelee("Basic Sword", [[1,5]], [1,["Log",1],["Rock",3],["Mushroom Fiber",2]], 1, 100, 25, 5, 50, 60, 90, 30, false, "A basic sword for slashing",true);
+defineMelee("Better Sword", [[2,5]], [1,["Log",2],["Rock",2],["Gem",5],["Mushroom Fiber", 3]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A better sword for slashing",true);
+defineMelee("Gem Sword", [[2,2]], [1,["Gem",3],["Philosopher's Stone",1],["Black Gem",2],["Tech",4]], 1, 100, 10, 5, 50, 60, 90, 10, false, "A godly sword for slashing",true);
+defineMelee("Evil Apple on Stick", [[5,1]], [1,["Bad Apple",1],["Log",1]], 1, 100, 10, 5, 100, 60, 20, 10, false, "Now it'll bite your opponets",true);
+defineMelee("Scythe", [[3,4]], [1,["Log",2],["Rock",4],["Mushroom Fiber",1]], 1, 100, 25, 5, 50, 150, 150, 120, false, "Just gotta make sure they are on the blade",true);
+defineMelee("God's Scythe", [[3,4]], [], 1, 100, 200, 0, 100, 60, 150, 10, false, "Just gotta make sure they are on the blade",false);
 
-defineRanged("Basic SlingShot", ["sling"], [1,["Mushroom", 2]], 1, 100, 5, "Rock", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
-defineRanged("Better SlingShot", ["sling"], [1,["Mushroom", 2], ["Gem", 1]], 1, 100, 5, "Rock", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);
-defineRanged("Dirt Ball", ["dirtball"], [1,["Dirt", 5]], 1, 1, 5, "Dirt", "Dirt Ball", 10, 10, 60, false, "A ball of dirt to push people around",true);
-defineRanged("Bomb", ["images/structures/bomb1"], [1,["Rock", 2], ["Black Gem", 2]], 1, 1, 5, "Bomb", "Bomb", 10, 10, 60, false, "A bomb you can throw",true);
-defineRanged("DirtBomb", ["images/structures/dirtbomb"], [1,["Dirt", 5], ["Bomb", 1]], 1, 1, 5, "Dirt Bomb", "DirtBomb", 10, 10, 60, false, "A bomb that just makes dirt",true);
-defineRanged("Fire Staff", ["fire_staff"], [1,["Log", 3],["Black Gem", 1],["Philosopher's Stone",1]], 1, 100, 5, "Fire Ball", "mana25", 20, 10, 60, true, "A staff that shoots fire",true);
-defineRanged("Laser Gun", ["laser_gun"], [1,["Metal",3],["Rock",2], ["Tech", 2]], 1, 100, 5, "Laser", "mana15", 10, 10, 60, false, "A gun that shoots lasers",true);
-defineRanged("Bow", ["bow"], [1,["Log", 5],["Mushroom Fiber", 2]], 1, 100, 5, "Arrow", "Arrow", 3, 3, 30, false, "A bow",true);
-defineRanged("CrossBow", ["crossbow"], [1,["Log", 5], ["Rock", 1],["Mushroom Fiber", 1]], 1, 100, 5, "Arrow", "Arrow", 15, 10, 60, false, "A Cross bow",true);
-defineRanged("TriSling", ["trisling"], [1,["Better SlingShot", 3]], 1, 100, 5, "Rock", "Rock", 3, 30, 60, false, "A handful of slingshots",true);
+defineRanged("Basic SlingShot", [[0,5]], [1,["Mushroom", 2]], 1, 100, 5, "Rock", "Rock", 10, 10, 60, false, "A basic slingshot for shooting",true);
+defineRanged("Better SlingShot", [[0,5]], [1,["Mushroom", 2], ["Gem", 1]], 1, 100, 5, "Rock", "Rock", 10, 10, 60, false, "A better slingshot for shooting",true);
+defineRanged("Dirt Ball", [[4,1]], [1,["Dirt", 5]], 1, 1, 5, "Dirt", "Dirt Ball", 10, 10, 60, false, "A ball of dirt to push people around",true);
+defineRanged("Bomb", [[451,66]], [1,["Rock", 2], ["Black Gem", 2]], 1, 1, 5, "Bomb", "Bomb", 10, 10, 60, false, "A bomb you can throw",true);
+defineRanged("DirtBomb", [[471,66]], [1,["Dirt", 5], ["Bomb", 1]], 1, 1, 5, "Dirt Bomb", "DirtBomb", 10, 10, 60, false, "A bomb that just makes dirt",true);
+defineRanged("Fire Staff", [[6,1]], [1,["Log", 3],["Black Gem", 1],["Philosopher's Stone",1]], 1, 100, 5, "Fire Ball", "mana25", 20, 10, 60, true, "A staff that shoots fire",true);
+defineRanged("Laser Gun", [[5,2]], [1,["Metal",3],["Rock",2], ["Tech", 2]], 1, 100, 5, "Laser", "mana15", 10, 10, 60, false, "A gun that shoots lasers",true);
+defineRanged("Bow", [[6,0]], [1,["Log", 5],["Mushroom Fiber", 2]], 1, 100, 5, "Arrow", "Arrow", 3, 3, 30, false, "A bow",true);
+defineRanged("CrossBow", [[2,1]], [1,["Log", 5], ["Rock", 1],["Mushroom Fiber", 1]], 1, 100, 5, "Arrow", "Arrow", 15, 10, 60, false, "A Cross bow",true);
+defineRanged("TriSling", [[4,5]], [1,["Better SlingShot", 3]], 1, 100, 5, "Rock", "Rock", 3, 30, 60, false, "A handful of slingshots",true);
 
-defineSimpleItem("Rock", ["rock"], [], 1, "A rock for your slingshot",false);
-defineSimpleItem("Raw Metal", ["metal_ore"], [], 1, "A cluster of metal, still needs to be heated",false);
-defineSimpleItem("Metal", ["metal_scrap"], [1,["Raw Metal", 1]], 1, "Some metalic scraps, good enough for crafting",false);
-defineSimpleItem("Gem", ["gem"], [], 1, "A pretty gem",false);
-defineSimpleItem("Black Gem", ["black_gem"], [], 1, "An explosive gem",false);
-defineSimpleItem("Philosopher's Stone", ["philosopher_stone"], [], 1, "A gem with immense power flowing out of it",false);
-defineSimpleItem("Log", ["log"], [], 1, "A wooden log",false);
-defineSimpleItem("Tech", ["circuit"], [1,["Metal",1],["Gem",1]], 1, "Some piece of technology",true);
-defineSimpleItem("Arrow", ["arrow"], [2,["Log", 1], ["Rock", 1]], 1, "An arrow",true);
+defineSimpleItem("Rock", [[2,4]], [], 1, "A rock for your slingshot",false);
+defineSimpleItem("Raw Metal", [[1,3]], [], 1, "A cluster of metal, still needs to be heated",false);
+defineSimpleItem("Metal", [[2,3]], [1,["Raw Metal", 1]], 1, "Some metalic scraps, good enough for crafting",false);
+defineSimpleItem("Gem", [[1,2]], [], 1, "A pretty gem",false);
+defineSimpleItem("Black Gem", [[5,0]], [], 1, "An explosive gem",false);
+defineSimpleItem("Philosopher's Stone", [[0,4]], [], 1, "A gem with immense power flowing out of it",false);
+defineSimpleItem("Log", [[6,2]], [], 1, "A wooden log",false);
+defineSimpleItem("Tech", [[0,1]], [1,["Metal",1],["Gem",1]], 1, "Some piece of technology",true);
+defineSimpleItem("Arrow", [[3,0]], [2,["Log", 1], ["Rock", 1]], 1, "An arrow",true);
 
-defineFood("Apple", ["apple"], [], 1, 100, 10, 0, "A juicy apple",false);
-defineFood("Bad Apple", ["bad_apple"], [], 1, 100, 5, 5, "Looks like this apple would bite back",false);
-defineFood("Mushroom", ["images/structures/mushroom1"], [], 1, 100, 5, 10, "A tasty mushroom",false);
+defineFood("Apple", [[2,0]], [], 1, 100, 10, 0, "A juicy apple",false);
+defineFood("Bad Apple", [[4,0]], [], 1, 100, 5, 5, "Looks like this apple would bite back",false);
+defineFood("Mushroom", [[458,47]], [], 1, 100, 5, 10, "A tasty mushroom",false);
 
-defineSeed("Red Acorn", ["acorn_apple"], [1,["Apple", 1]], 1, "AppleTree", 0.5, "Will grow into an apple tree",true);
-defineSeed("Acorn", ["acorn"], [2,["Log", 1],["Mushroom Fiber",2]], 1, "Tree", 0.5, "Will grow into a tree",true);
-defineSeed("Mushroom Seed", ["mushroom_spores"], [1,["Mushroom", 1]], 1, "Mushroom", 0.5, "Some mushroom spores",true);
-defineSimpleItem("Mushroom Fiber", ["mushroom_fiber"], [3,["Mushroom",1]], 1, "A stringy component of many tools",true);
+defineSeed("Red Acorn", [[1,0]], [1,["Apple", 1]], 1, "AppleTree", 0.5, "Will grow into an apple tree",true);
+defineSeed("Acorn", [[0,0]], [2,["Log", 1],["Mushroom Fiber",2]], 1, "Tree", 0.5, "Will grow into a tree",true);
+defineSeed("Mushroom Seed", [[5,3]], [1,["Mushroom", 1]], 1, "Mushroom", 0.5, "Some mushroom spores",true);
+defineSimpleItem("Mushroom Fiber", [[3,3]], [3,["Mushroom",1]], 1, "A stringy component of many tools",true);
 
 function compassUse(x,y,mouseButton){}
-defineCustomItem("Compass", ["compass"], [1,["Metal", 1],["Tech", 1]], 1, 1, "A compass that points to the nearest player", compassUse, true);
+defineCustomItem("Compass", [[1,1]], [1,["Metal", 1],["Tech", 1]], 1, 1, "A compass that points to the nearest player", compassUse, true);
 
 function mapUse(x,y,mouseButton){}
-defineCustomItem("Map", ["map"], [1,["Mushroom Fiber", 3],["Gem", 1]], 1, 1, "A map that shows the world around you", mapUse, true);
+defineCustomItem("Map", [[0,3]], [1,["Mushroom Fiber", 3],["Gem", 1]], 1, 1, "A map that shows the world around you", mapUse, true);
 
 function teleportReceiverUse(x,y,mouseButton){
     if(gameState == "playing"){
@@ -74,7 +75,7 @@ function teleportReceiverUse(x,y,mouseButton){
         }
     }
 }
-defineCustomItem("Teleport Receiver", ["teleport_receiver"], [1,["Metal", 1],["Tech", 2],["Philosoper's Stone",1]], 1, 1, "A teleport receiver that teleports you to any portals with X chunks", teleportReceiverUse, true);
+defineCustomItem("Teleport Receiver", [[3,5]], [1,["Metal", 1],["Tech", 2],["Philosoper's Stone",1]], 1, 1, "A teleport receiver that teleports you to any portals with X chunks", teleportReceiverUse, true);
 
 function dirtBagUpgradeUse(x,y,mouseButton){
     if(curPlayer.invBlock.useTimer <= 0){
@@ -83,7 +84,7 @@ function dirtBagUpgradeUse(x,y,mouseButton){
         curPlayer.invBlock.useTimer = 30;
     }
 }
-defineCustomItem("Dirt Bag Upgrade", ["dirt_bag_upgrade"], [1,["Mushroom Fiber", 7],["Philosopher's Stone", 1]], 1, 1, "+150 to dirt bag size", dirtBagUpgradeUse, true);
+defineCustomItem("Dirt Bag Upgrade", [[3,1]], [1,["Mushroom Fiber", 7],["Philosopher's Stone", 1]], 1, 1, "+150 to dirt bag size", dirtBagUpgradeUse, true);
 
 
 class SimpleItem{
@@ -517,19 +518,31 @@ function createItem(name){
 }
 
 //the most common parts of a define, so we don't have to keep editing all the defines
-function defineItemSuper(type,name,imgPaths,cost,weight,durability,desc,inCraftList){
+function defineItemSuper(type,name,imgSrc,cost,weight,durability,desc,inCraftList){
     checkParams(arguments, getParamNames(defineItemSuper), ["string","string","object","object","number","int","string","boolean"]);
 
-    for(let i = 0; i < imgPaths.length; i++){
-        if(!imgPaths[i].includes("images")){
-            imgPaths[i] = "images/items/" + imgPaths[i];
+    let imgNum = 0;
+    for(let i = 0; i < imgSrc.length; i++){
+        if(Number.isInteger(imgSrc[i][0])){ //assume cords were given
+            if(imgSrc[i][0] < 10){ //if the first number is less than 10 assume this is from the item part of the atlas
+                imgSrc[i][0] = imgSrc[i][0]*20;
+                imgSrc[i][1] = 160 + (imgSrc[i][1]*20);
+            }
+            itemImgCords.push(imgSrc);
         }
-        if(!imgPaths[i].includes(".")){
-            imgPaths[i] = imgPaths[i] + ".png";
+        else{ //assume path was given
+            if(!imgSrc[i].includes("images")){
+                imgSrc[i] = "images/items/" + imgSrc[i];
+            }
+            if(!imgSrc[i].includes(".")){
+                imgSrc[i] = imgSrc[i] + ".png";
+            }
+            itemImgPaths.push(imgSrc[i]);
+            itemImgCords.push([-1,-1]); //add a dummy cord for this image
         }
+        imgNum = itemImgCords.length - 1;
     }
-    itemImgPaths.push(imgPaths);
-    let imgNum = itemImgPaths.length - 1;
+    
     
     itemDic[name] = {
         type: type,
@@ -542,7 +555,7 @@ function defineItemSuper(type,name,imgPaths,cost,weight,durability,desc,inCraftL
     };
 
     if(inCraftList){
-        craftOptions.push({type: type, itemName: name, image: imgPaths[0], cost: cost});
+        craftOptions.push({type: type, itemName: name, imgNum: imgNum, cost: cost});
     }
 }
 

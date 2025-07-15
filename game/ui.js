@@ -638,14 +638,6 @@ function setupUI() {
     // (Socket setup and raceImages flipping omitted for brevity)
     // ----------------------------
 
-    // Flip right images to create left images
-    for (let raceName in raceImages) {
-        raceImages[raceName].left = [];
-        for (let i = 0; i < raceImages[raceName].right.length; i++) {
-            raceImages[raceName].left[i] = flipImage(raceImages[raceName].right[i]);
-        }
-    }
-
     defineSpaceBarUI();
     defineInvUI();
     definePauseUI();
@@ -1504,7 +1496,7 @@ function updateItemList() {
 
         // Add item icon (responsive, pixelated)
         let imgNum = curPlayer.invBlock.items[itemName].imgNum;
-        let itemImg = itemImgPaths[imgNum][0];
+        //let itemImg = itemImgPaths[imgNum][0];
         let imgDiv = createDiv();
         imgDiv.style('width', '2.2em');  // Responsive size
         imgDiv.style('height', '2.2em');
@@ -1515,7 +1507,7 @@ function updateItemList() {
         imgDiv.style('align-items', 'center');
         imgDiv.parent(itemInfoDiv);
 
-        let imgEl = createImg(itemImg, '');
+        let imgEl = createImg(itemImgs[imgNum][0].canvas.toDataURL(), '');
         imgEl.style('width', '100%');
         imgEl.style('height', '100%');
         imgEl.style('image-rendering', 'pixelated');
@@ -1569,7 +1561,7 @@ function updatecurItemDiv() {
 
     itemImgDiv.src = ""
     //console.log(itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0]);
-    itemImgDiv.style("background-image", "url(" + itemImgPaths[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0] + ")");
+    itemImgDiv.style("background-image", "url('" + itemImgs[curPlayer.invBlock.items[curPlayer.invBlock.curItem].imgNum][0].canvas.toDataURL() + "')");
     itemImgDiv.style("background-size", "contain");
     itemImgDiv.style("background-repeat", "no-repeat");
     itemImgDiv.style("background-position", "center");
@@ -2523,7 +2515,7 @@ function updateSwapItemLists(otherInv) {
         itemInfoDiv.parent(itemDiv);
 
         let imgNum = curPlayer.invBlock.items[itemName].imgNum;
-        let itemImg = itemImgPaths[imgNum][0];
+        //let itemImg = itemImgPaths[imgNum][0];
         let imgDiv = createDiv();
         imgDiv.style('width', '32px');
         imgDiv.style('height', '32px');
@@ -2532,7 +2524,7 @@ function updateSwapItemLists(otherInv) {
         imgDiv.style('align-items', 'center');
         imgDiv.parent(itemInfoDiv);
 
-        let imgEl = createImg(itemImg, '');
+        let imgEl = createImg(itemImgs[imgNum][0].canvas.toDataURL(), '');
         imgEl.style('width', '32px');
         imgEl.style('height', '32px');
         imgEl.style('image-rendering', 'pixelated'); // For that crispy pixel look
@@ -2586,7 +2578,7 @@ function updateSwapItemLists(otherInv) {
         itemInfoDiv.parent(itemDiv);
 
         let imgNum = otherInv.items[itemName].imgNum;
-        let itemImg = itemImgPaths[imgNum][0];
+        //let itemImg = itemImgPaths[imgNum][0];
         let imgDiv = createDiv();
         imgDiv.style('width', '32px');
         imgDiv.style('height', '32px');
@@ -2595,7 +2587,7 @@ function updateSwapItemLists(otherInv) {
         imgDiv.style('align-items', 'center');
         imgDiv.parent(itemInfoDiv);
 
-        let imgEl = createImg(itemImg, '');
+        let imgEl = createImg(itemImgs[imgNum][0].canvas.toDataURL(), '');
         imgEl.style('width', '32px');
         imgEl.style('height', '32px');
         imgEl.style('image-rendering', 'pixelated'); // For that crispy pixel look
@@ -2649,7 +2641,7 @@ function updatecurSwapItemDiv(otherInv) {
     itemImgDiv.style("width", "50%");
     itemImgDiv.style("border", "2px solid black");
     itemImgDiv.style("border-radius", "10px");
-    itemImgDiv.style("background-image", "url(" + itemImgPaths[curSwapItem.imgNum][0] + ")");
+    itemImgDiv.style("background-image", "url('" + itemImgs[curSwapItem.imgNum][0].canvas.toDataURL() + "')");
     itemImgDiv.style("background-size", "contain");
     itemImgDiv.style("background-repeat", "no-repeat");
     itemImgDiv.style("background-position", "center");
@@ -2994,7 +2986,7 @@ function updateCraftList() {
         }
     }
 
-    console.log(arr);
+    //console.log(arr);
 
     arr = arr.filter((item) => {
         if (curPlayer.invBlock.curTag == "All") {
@@ -3053,7 +3045,7 @@ function updateCraftList() {
         itemInfoDiv.parent(itemDiv);
         //console.log(craftOptions)
         // Add item icon (responsive, pixelated)
-        let itemImg = arr[i].image;
+        //let itemImg = arr[i].image;
         let imgDiv = createDiv();
         imgDiv.style('width', '2.2em');  // Responsive size
         imgDiv.style('height', '2.2em');
@@ -3064,7 +3056,7 @@ function updateCraftList() {
         imgDiv.style('align-items', 'center');
         imgDiv.parent(itemInfoDiv);
 
-        let imgEl = createImg(itemImg, '');
+        let imgEl = createImg(itemImgs[arr[i].imgNum][0].canvas.toDataURL(), '');
         imgEl.style('width', '100%');
         imgEl.style('height', '100%');
         imgEl.style('image-rendering', 'pixelated');
@@ -3112,8 +3104,8 @@ function updatecurCraftItemDiv() {
     itemImgDiv.style("height", "100%");
     itemImgDiv.style("border", "2px solid black");
     itemImgDiv.style("border-radius", "10px");
-    //console.log(itemImgPaths[itemDic[curPlayer.invBlock.curItem].img][0]);
-    itemImgDiv.style("background-image", "url(" + itemImgPaths[itemDic[curPlayer.invBlock.curItem].img][0] + ")");
+    //console.log(itemDic[curPlayer.invBlock.curItem].img);
+    itemImgDiv.style("background-image", "url('" + itemImgs[itemDic[curPlayer.invBlock.curItem].img][0].canvas.toDataURL() + "')");
     itemImgDiv.style("background-size", "contain");
     itemImgDiv.style("background-repeat", "no-repeat");
     itemImgDiv.style("background-position", "center");

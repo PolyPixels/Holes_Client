@@ -57,6 +57,8 @@ function setup() {
         Controls_Space_key = keyBindings.spaceKey;
     }
 
+    seperateAtlas();
+
     setupUI();
 
     camera.pos = createVector(0, 0);

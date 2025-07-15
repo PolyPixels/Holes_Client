@@ -334,7 +334,7 @@ class Player {
         }
 
         // Draw the character's image
-        image(imageToRender, this.pos.x - 2 * TILESIZE, this.pos.y - 2 * TILESIZE, 4 * TILESIZE, 4 * TILESIZE, 0, 0, 29, 29); // Adjust size as needed
+        image(imageToRender, this.pos.x - 33.2, this.pos.y - 44.2, 66.2, 88.3, 0, 0, 29, 29); // Adjust size as needed
 
         this.renderHealthBar(); // Render health bar
         pop();

@@ -11,6 +11,8 @@ var edgeBloodImg;
 var objImgs = [];
 var itemImgs = [];
 var dirtBagShakeSound;
+var itemAtlas;
+var fullAtlas;
 
 var MusicPlayer;
 function preload() {
@@ -39,6 +41,7 @@ function preload() {
     for(let i = 0; i < objImgPaths.length; i++){
         let temp = [];
         for(let j = 0; j < objImgPaths[i].length; j++){
+            //console.log(objImgPaths[i][j])
             temp.push(loadImage(objImgPaths[i][j]));
             if(objImgPaths[i][j].includes(".gif")){
                 temp[temp.length - 1].play();
@@ -52,24 +55,15 @@ function preload() {
         let temp = [];
         for(let j = 0; j < itemImgPaths[i].length; j++){
             temp.push(loadImage(itemImgPaths[i][j]));
+            if(itemImgPaths[i][j].includes(".gif")){
+                temp[temp.length - 1].play();
+            }
         }
         itemImgs.push(temp);
     }
 
-    //Projectile imgs still using the old method
-    rockImg = loadImage("images/items/rock.png");
-    dirtBallImg = loadImage("images/items/dirtball.png");
-    fireBallImg = loadImage("images/items/fireball.png");
-    laserImg = loadImage("images/items/laser.png");
-    arrowImage = loadImage("images/items/arrow.png");
-
-    projImgs = [
-        [rockImg],
-        [dirtBallImg],
-        [fireBallImg],
-        [laserImg],
-        [arrowImage]
-    ];
+    itemAtlas = loadImage("images/items/item_atlas.png");
+    fullAtlas = loadImage("images/full_atlas.png");
 
     playerCardImg = loadImage('images/ui/playercard.png');
 
@@ -156,27 +150,92 @@ function loadRaceImages() {
         // 5 is standing with shovel
         // 6, 7, 8 are walking with shovel
 
-
-        raceImages[raceName].front[0] = loadRaceFrame(`${raceName}/${raceName}_front_stand.png`);
-        raceImages[raceName].back[0] = loadRaceFrame(`${raceName}/${raceName}_back_stand.png`);
-        raceImages[raceName].right[0] = loadRaceFrame(`${raceName}/${raceName}_side_stand.png`);
+        //raceImages[raceName].front[0] = loadRaceFrame(`${raceName}/${raceName}_front_stand.png`);
+        //raceImages[raceName].back[0] = loadRaceFrame(`${raceName}/${raceName}_back_stand.png`);
+        //raceImages[raceName].right[0] = loadRaceFrame(`${raceName}/${raceName}_side_stand.png`);
 
         // Load images for each direction
-        for (let i = 1; i < 4; i++) {
+        //for (let i = 1; i < 4; i++) {
             // Front images
-            raceImages[raceName].front[i] = loadRaceFrame(`${raceName}/${raceName}_front_walk${i}.png`);
+            //raceImages[raceName].front[i] = loadRaceFrame(`${raceName}/${raceName}_front_walk${i}.png`);
     
             // Back images
-            raceImages[raceName].back[i] = loadRaceFrame(`${raceName}/${raceName}_back_walk${i}.png`);
+            //raceImages[raceName].back[i] = loadRaceFrame(`${raceName}/${raceName}_back_walk${i}.png`);
     
             // Right images
-            raceImages[raceName].right[i] = loadRaceFrame(`${raceName}/${raceName}_side_walk${i}.png`);
-        }
+           // raceImages[raceName].right[i] = loadRaceFrame(`${raceName}/${raceName}_side_walk${i}.png`);
+        //}
 
-        raceImages[raceName].front[4] = loadRaceFrame(`${raceName}/place/${raceName}_front_place.png`);
-        raceImages[raceName].back[4] = loadRaceFrame(`${raceName}/place/${raceName}_back_place.png`);
-        raceImages[raceName].right[4] = loadRaceFrame(`${raceName}/place/${raceName}_side_place.png`);
+        //raceImages[raceName].front[4] = loadRaceFrame(`${raceName}/place/${raceName}_front_place.png`);
+        //raceImages[raceName].back[4] = loadRaceFrame(`${raceName}/place/${raceName}_back_place.png`);
+        //raceImages[raceName].right[4] = loadRaceFrame(`${raceName}/place/${raceName}_side_place.png`);
 
         //raceImages[raceName].right[4] = loadRaceFrame(`${raceName}/shovel/${raceName}_side_stand_shovel.png`);
     }
+}
+
+
+function seperateAtlas(){
+    //get the characters from the atlas
+    for (let raceIndex = 0; raceIndex < races.length; raceIndex++) {
+        let raceName = races[raceIndex];
+
+        raceAtlasHeight = [201, 161, 181];
+        raceImages[raceName].front[0] = fullAtlas.get(200, raceAtlasHeight[raceIndex], 15, 20);
+        raceImages[raceName].back[0] = fullAtlas.get(140, raceAtlasHeight[raceIndex], 15, 20);
+        raceImages[raceName].right[0] = fullAtlas.get(260, raceAtlasHeight[raceIndex], 15, 20);
+        for(let i = 1; i < 4; i++){
+            raceImages[raceName].front[i] = fullAtlas.get(200 + (i * 15), raceAtlasHeight[raceIndex], 15, 20);
+            raceImages[raceName].back[i] = fullAtlas.get(140 + (i * 15), raceAtlasHeight[raceIndex], 15, 20);
+            raceImages[raceName].right[i] = fullAtlas.get(260 + (i * 15), raceAtlasHeight[raceIndex], 15, 20);
+        }
+        raceImages[raceName].front[4] = fullAtlas.get(335, raceAtlasHeight[raceIndex], 15, 20);
+        raceImages[raceName].back[4] = fullAtlas.get(320, raceAtlasHeight[raceIndex], 15, 20);
+        raceImages[raceName].right[4] = fullAtlas.get(350, raceAtlasHeight[raceIndex], 15, 20);
+    }
+
+    // Flip right images to create left images
+    for (let raceName in raceImages) {
+        raceImages[raceName].left = [];
+        for (let i = 0; i < raceImages[raceName].right.length; i++) {
+            raceImages[raceName].left[i] = flipImage(raceImages[raceName].right[i]);
+        }
+    }
+
+    //get the items from the atlas
+    for(let i = 0; i < itemImgCords.length; i++){
+        let temp = [];
+        for(let j = 0; j < itemImgCords[i].length; j++){
+            if(itemImgCords[i][j][0] != -1 && itemImgCords[i][j][1] != -1){
+                temp.push(fullAtlas.get(itemImgCords[i][j][0], itemImgCords[i][j][1], 20, 20));
+            }
+        }
+        itemImgs.push(temp);
+    }
+
+    //get the objects from the atlas
+    for(let i = 0; i < objImgCords.length; i++){
+        let temp = [];
+        for(let j = 0; j < objImgCords[i].length; j++){
+            if(objImgCords[i][j][0] != -1 && objImgCords[i][j][1] != -1){
+                temp.push(fullAtlas.get(objImgCords[i][j][0], objImgCords[i][j][1], objImgCords[i][j][2], objImgCords[i][j][3]));
+            }
+        }
+        if(temp.length != 0) objImgs.push(temp);
+    }
+
+    //get the projectiles from the atlas
+    rockImg = fullAtlas.get(2*20, 160 + 4*20, 20, 20);
+    dirtBallImg = fullAtlas.get(4*20, 160 + 1*20, 20, 20);
+    fireBallImg = fullAtlas.get(0*20, 160 + 2*20, 20, 20);
+    laserImg = fullAtlas.get(4*20, 160 + 2*20, 20, 20);
+    arrowImage = fullAtlas.get(3*20, 160 + 0*20, 20, 20);
+
+    projImgs = [
+        [rockImg],
+        [dirtBallImg],
+        [fireBallImg],
+        [laserImg],
+        [arrowImage]
+    ];
 }
