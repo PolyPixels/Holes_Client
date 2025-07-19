@@ -6,6 +6,8 @@ var dirtFloorImg;
 var dirtBagImg;
 var dirtBagOpenImg;
 var hpBarImg;
+var portalImg;
+var portalBackground;
 var manaBarImg;
 var edgeBloodImg;
 var objImgs = [];
@@ -36,6 +38,8 @@ function preload() {
     edgeBloodImg = loadImage('images/ui/edgeblood.png');
     hammerImg = loadImage("images/ui/hammer.png");
     Ximage = loadImage("images/ui/x.png");
+    portalImg = loadImage("images/ui/portal_icon.png");
+    portalBackground = loadImage("images/ui/portal_background.png");
 
     //load obj imgs
     for(let i = 0; i < objImgPaths.length; i++){

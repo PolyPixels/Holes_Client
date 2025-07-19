@@ -427,11 +427,18 @@ function draw() {
         if (curPlayer.invBlock.useTimer > 0) curPlayer.invBlock.useTimer--;
 
         push();
-        background(0, 0, 0, 255);
+        translate(width/2, height/2);
+        imageMode(CENTER, CENTER);
+        rotate(-0.75*frameCount);
+        image(portalBackground, 0, 0, 2500, 2500);
+        translate(-width/2, -height/2);
+        pop();
+        
+        push();
 
         stroke(255);
-        strokeWeight(5);
-        fill(255, 0, 0);
+        strokeWeight(3);
+        fill("#FF8080");
         for(let i = 0; i < knownPortals.length; i++){
             let x = knownPortals[i].pos.x - curPlayer.pos.x;
             let y = knownPortals[i].pos.y - curPlayer.pos.y;
@@ -441,10 +448,24 @@ function draw() {
             y = y * height/2;
             x = x + width/2;
             y = y + height/2;
-            circle(x,y, 50);
+            if(createVector(x, y).dist(createVector(mouseX, mouseY)) < 50){
+                circle(x, y, 50);
+            }
+            image(portalImg, x-24, y-30, 48, 60);
         }
+        
+        fill("#70443C");
+        circle(width/2, height/2, 50);
 
-        fill(0,255,0);
+        push();
+        beginClip();
+        fill(255);
+        circle(width/2, height/2, 50);
+        endClip();
+        image(raceImages[races[curPlayer.race]].portrait, (width/2)-25, (height/2)-25, 50, 50);
+        pop();
+
+        noFill();
         circle(width/2, height/2, 50);
 
         fill(100);
