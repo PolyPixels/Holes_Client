@@ -419,8 +419,8 @@ function signUpdate() {
         //if owner then open sign editor
         if(mouseIsPressed){
             if(
-                (chunk.objects[i].color != 0 && chunk.objects[i].color == curPlayer.color) ||
-                (chunk.objects[i].ownerName == curPlayer.name && chunk.objects[i].color == 0)
+                (this.color != 0 && this.color == curPlayer.color) ||
+                (this.ownerName == curPlayer.name && this.color == 0)
             ){
                 gameState = "Editing Sign";
                 curPlayer.sign = this;
