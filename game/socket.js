@@ -336,6 +336,9 @@ function socketSetup(){
             if(temp.objName == "ExpOrb"){
                 temp.id = data.obj.id;
             }
+            if(temp.objName == "Sign"){
+                temp.txt = data.obj.txt;
+            }
             chunk.objects.push(temp);
             chunk.objects.sort((a,b) => a.z - b.z);
         }
@@ -455,6 +458,9 @@ function socketSetup(){
             }
             if(temp.objName == "Dirt Bin"){
                 temp.mhp = data.objects[i].mhp;
+            }
+            if(temp.objName == "Sign"){
+                temp.txt = data.objects[i].txt;
             }
             temp.hp = data.objects[i].hp;
 

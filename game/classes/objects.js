@@ -372,9 +372,92 @@ defineCustomObj(
 );
 
 function signUpdate() {
-    //check ownership
-    //if owner then open sign editor
-    //if not then just render what the sign says
+    if(this.txt == undefined) this.txt = [];
+    if(this.txt == undefined) this.txt = [
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘███┘┘┘┘┘┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘█████┘┘┘┘┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘███████████████┘┘┘┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘██████████████████┘┘┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘███████████████████┘██┘┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘██████████████┘┘███┘┘┘┘┘┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘██████████┘███┘┘┘█┘┘┘┘┘┘┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘██████┘┘┘┘┘███┘┘┘┘┘┘┘┘┘┘┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘██┘┘┘┘██████┘┘┘┘┘████┘┘┘┘┘┘┘┘┘┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘████┘┘┘██████┘┘┘┘┘████┘┘┘┘┘┘┘┘┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘█████┘███████┘┘┘┘┘████┘┘┘┘┘┘┘┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘███████┘██████┘┘┘┘┘┘┘███┘┘┘┘┘┘┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘█████████████┘┘┘┘┘┘┘┘████┘┘┘┘┘┘",
+        "┘┘┘┘██████┘┘┘┘████████████┘┘┘┘┘┘┘┘┘██┘┘┘┘┘┘┘",
+        "┘┘██████████┘┘┘███████████┘█████┘┘┘██┘┘┘┘┘┘┘",
+        "┘████┘┘┘┘┘███┘┘┘██████████████████████┘┘┘┘┘┘",
+        "███┘┘┘┘┘┘┘┘███┘┘┘█████████████████████┘┘┘┘┘┘",
+        "██┘┘┘█████┘┘███┘█████████████████████┘┘┘┘┘┘┘",
+        "██┘┘█████████████████████████████████┘┘┘┘┘┘┘",
+        "██┘┘█████████████████████████████████████┘┘┘",
+        "███┘┘┘██┘┘┘███┘┘██████████████████┘██┘┘████┘",
+        "████┘┘┘┘┘┘████┘┘┘████████████████┘┘██┘┘┘┘┘██",
+        "┘████████████┘┘┘██┘██████████┘┘┘┘┘┘██┘┘┘┘┘┘┘",
+        "┘┘┘┘███████┘┘┘┘┘┘┘┘┘┘████████┘┘┘┘┘┘██┘┘┘┘┘┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘███┘┘┘┘┘███████┘┘┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘█┘┘┘┘███████████┘┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘███┘┘██┘┘┘███┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘███┘┘┘██┘┘┘┘███",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘██┘┘┘┘████┘┘┘██",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘███┘┘██████┘┘┘██",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘██┘┘┘█████┘┘┘██",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘██┘┘┘┘███┘┘┘┘██",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘███┘┘┘┘┘┘┘┘┘██┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘████┘┘┘┘┘████┘",
+        "┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘┘█████████┘┘┘"
+
+    ];
+
+    let mouseVec = createVector(mouseX + camera.pos.x - (width / 2), mouseY + camera.pos.y - (height / 2));
+    // check if the mouse is over the sign
+    if (mouseVec.dist(this.pos) < (this.size.w + this.size.h) / 4) {
+        //check ownership
+        //if owner then open sign editor
+        if(mouseIsPressed){
+            if(
+                (chunk.objects[i].color != 0 && chunk.objects[i].color == curPlayer.color) ||
+                (chunk.objects[i].ownerName == curPlayer.name && chunk.objects[i].color == 0)
+            ){
+                gameState = "Editing Sign";
+                curPlayer.sign = this;
+                updateSignUI(this.txt);
+                signDiv.show();
+            }
+        }
+        
+        //if not then just render what the sign says
+        let centerY = -64-((this.txt.length-1)*6);
+        let sizeX = 60;
+        for(let i=0; i<this.txt.length; i++){
+            if(textWidth(this.txt[i])+15 > sizeX){
+                sizeX = textWidth(this.txt[i])+15;
+            }
+        }
+        let sizeY = 40 + ((this.txt.length-1)*12);
+        push();
+        translate(this.pos.x - camera.pos.x + (width / 2), this.pos.y - camera.pos.y + (height/2))
+        fill(255);
+        stroke(0);
+        strokeWeight(3);
+        ellipse(0, centerY, sizeX, sizeY);
+        triangle(-10, centerY+(sizeY/2)-5, 10, centerY+(sizeY/2)-5, 0, -32);
+        noStroke();
+        ellipse(0, centerY, sizeX-3, sizeY-3);
+
+        fill(0);
+        strokeWeight(1);
+        textAlign(CENTER, CENTER);
+        for(let i=0; i<this.txt.length; i++){
+            text(this.txt[i], 0, centerY - ((this.txt.length/2 - (i+0.5))*12));
+        }
+        
+        pop();
+    }
+    
 }
 defineCustomObj("Sign", [[398,111,15,18]], [["Log", 3]], 64, 64, 3, 100, signUpdate, false, true);
 

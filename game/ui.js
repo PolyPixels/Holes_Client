@@ -649,6 +649,7 @@ function setupUI() {
     defineDeathUI();
     defineTutorialUI();
     defineKeyBindingUI();
+    defineSignUI();
 
     timerDiv = createDiv("⏳ 15:00");
     timerDiv.position(width / 2 - 250, 10); // adjust as needed
@@ -3913,4 +3914,125 @@ function keyToVisualKey(key) {
     if (key == "ArrowRight") { key = "→"; }
 
     return key;
+}
+
+var signDiv;
+var signTextDiv;
+
+function defineSignUI(){
+    signDiv = createDiv();
+    signDiv.class("container");
+    applyStyle(signDiv, {
+        position: "absolute",
+        top: "45%",
+        left: "55%",
+        transform: "translate(-50%, -50%)",
+        display: "none",
+        height: "70%",
+        width: "50%",
+        padding: "13px"
+    });
+
+    let topBar = createDiv().parent(signDiv);
+
+    applyStyle(topBar, {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    });
+
+    let title = createP("Sign Editor").parent(topBar);
+    title.class("inventory-title");
+
+    // Close Button
+    let closeButton = createButton("X").parent(topBar);
+    closeButton.class("close-button"); // Style it in CSS
+    applyStyle(closeButton, {
+        marginLeft: "auto",  // Pushes it to the right
+        position: "absolute",
+        fontSize: "18px",
+        right: "0",
+        color: "white",
+        cursor: "pointer",
+        background: "none",
+        border: "none",
+    });
+
+    closeButton.mousePressed(() => {
+        gameState = "playing"
+        curPlayer.invBlock.useTimer = 10;
+
+        //grab the text from the txt inputs
+        for(let i=0; i<signTextDiv.elt.children.length; i++){
+            curPlayer.sign.txt[i] = signTextDiv.elt.children[i].value;
+        }
+        //send across server
+        let chunkPos = testMap.globalToChunk(curPlayer.sign.pos.x,curPlayer.sign.pos.y);
+        socket.emit("update_obj", {
+            cx: chunkPos.x, 
+            cy: chunkPos.y, 
+            objName: curPlayer.sign.objName, 
+            pos: {x: curPlayer.sign.pos.x, y: curPlayer.sign.pos.y}, 
+            z: curPlayer.sign.z, 
+            update_name: "txt", 
+            update_value: curPlayer.sign.txt
+        });
+        curPlayer.sign = undefined;
+
+        signDiv.hide(); // Hides the inventory when clicked
+    });
+
+    signTextDiv = createDiv();
+    signTextDiv.id("Sign Text Div");
+    signTextDiv.style("display", "flex");
+    signTextDiv.style("flex-direction", "column");
+    signTextDiv.style("margin", "10px");
+    signTextDiv.style("overflow-y", "scroll");
+    signTextDiv.style("height", "89%");
+    signTextDiv.parent(signDiv);
+
+    updateSignUI([]);
+
+    let bottomBar = createDiv().parent(signDiv);
+    applyStyle(bottomBar, {
+        display: "flex",
+        width: "100%",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center"
+    });
+
+    addLineButton = createButton("+");
+    addLineButton.parent(bottomBar);
+    addLineButton.mousePressed(() => {
+        txtInput = createInput("");
+        txtInput.style("padding", "3px");
+        txtInput.style("border-radius", "5px");
+        txtInput.style("text-align", "center");
+        txtInput.style("color", "#fff");
+        txtInput.style("background-color", "#222");
+        txtInput.parent(signTextDiv);
+    });
+}
+
+function updateSignUI(txt){
+    signTextDiv.html("");
+    for(let i=0; i<txt.length; i++){
+        txtInput = createInput(txt[i]);
+        txtInput.style("padding", "3px");
+        txtInput.style("border-radius", "5px");
+        txtInput.style("text-align", "center");
+        txtInput.style("color", "#fff");
+        txtInput.style("background-color", "#222");
+        txtInput.parent(signTextDiv);
+    }
+    if(txt.length == 0){
+        txtInput = createInput("");
+        txtInput.style("padding", "3px");
+        txtInput.style("border-radius", "5px");
+        txtInput.style("text-align", "center");
+        txtInput.style("color", "#fff");
+        txtInput.style("background-color", "#222");
+        txtInput.parent(signTextDiv);
+    }
 }

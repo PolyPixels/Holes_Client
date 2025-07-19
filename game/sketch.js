@@ -384,7 +384,7 @@ function draw() {
         renderDirtBagUI();
         renderPopups();
     }
-    if (gameState === "chating" || gameState === "inventory" || gameState === "crafting" || gameState === "swap_inv" || gameState === "pause" || gameState =="player_status" || gameState == "team_select" || gameState == "dead") {
+    if (gameState === "chating" || gameState === "inventory" || gameState === "crafting" || gameState === "swap_inv" || gameState === "pause" || gameState =="player_status" || gameState == "team_select" || gameState == "dead" || gameState == "Editing Sign") {
         //render the game in the background
 
         renderTimeUI()
