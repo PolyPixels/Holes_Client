@@ -5,6 +5,7 @@ class Map{
     constructor(){
         this.chunks = {}; //referance with a string "x,y"     {ex. chunks["0,0"]}
         this.chunkBools = {}; //same referance, just used so you dont ask for the same chunk tons of times undefined if never asked for, false if asked, true if loaded
+        this.brains = []; //a list of npc brains (might move this to chunk later)
     }
 
     getChunk(x,y){
@@ -28,6 +29,12 @@ class Map{
             for(let xOff = -1; xOff < 2; xOff++){
                 let chunk = this.getChunk(chunkPos.x + xOff,chunkPos.y + yOff);
                 if(chunk != undefined) chunk.update();
+            }
+        }
+        for(let i=this.brains.length-1; i>=0; i--){
+            this.brains[i].update();
+            if(this.brains[i].deleteTag){
+                this.brains.splice(i, 1);
             }
         }
     }
@@ -84,6 +91,11 @@ class Map{
             }
         }
 
+        if(Debuging){
+            for(let i=this.brains.length-1; i>=0; i--){
+                this.brains[i].debugRender();
+            }
+        }
     }
 }
 

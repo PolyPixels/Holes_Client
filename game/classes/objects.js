@@ -164,10 +164,12 @@ function bombUpdate(){
         if(chunk != undefined){
             for(let i=0; i<chunk.objects.length; i++){
                 if(chunk.objects[i].pos.dist(this.pos) < 33+(6*(this.size.w+this.size.h)/4)){
-                    if(chunk.objects[i].type == "Placeable" || chunk.objects[i].type == "Trap" || chunk.objects[i].objName == "Turret"){
+                    if(chunk.objects[i].type == "Placeable" || chunk.objects[i].type == "Trap" || chunk.objects[i].objName == "Turret" || chunk.objects[i].type == "Entity"){
                         chunk.objects[i].hp -= ((33+(6*(this.size.w+this.size.h)/4))-chunk.objects[i].pos.dist(this.pos))/2;
                         chunk.objects[i].shake = {intensity: 10, length: 5};
                         
+                        scareBrain(chunk.objects[i].brainID, this);
+
                         //tell the server to update the object
                         socket.emit("update_obj", {
                             cx: chunkPos.x, cy: chunkPos.y,
@@ -460,6 +462,8 @@ function signUpdate() {
     
 }
 defineCustomObj("Sign", [[398,111,15,18]], [["Log", 3]], 64, 64, 3, 100, signUpdate, false, true);
+
+defineEntity("Ant",[[141,224,17,13],[159,224,17,13]],[["Tech",1]], 17*2, 13*2, 100, 10, 50, 60, 90, 5);
 
 var teamColors = [
     {r: 128, g: 128, b: 128}, //Gray - No Team
@@ -890,6 +894,70 @@ class InvObj extends Placeable{
     }
 }
 
+class Entity extends Placeable{
+    constructor(objName,x,y,w,h,rot,z,color,health,imgNum,id,ownerName,projName){
+        super(objName,x,y,w,h,rot,z,color,health,imgNum,id,ownerName,false);
+        this.projName = projName;
+        
+        this.animationFrame = 0;
+        this.currentFrame = 0;
+
+        testMap.brains.push(new Brain(200));
+        testMap.brains[testMap.brains.length-1].giveBody(this);
+    }
+
+    update(){
+        if(this.hp <= 0){
+            this.deleteTag = true;
+            let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
+            socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, cost: objDic[this.objName].cost});
+            
+            for(let i=testMap.brains.length-1; i>=0; i--){
+                if(testMap.brains[i].id == this.brainID){
+                    testMap.brains[i].deleteTag = true;
+                }
+            }
+        }
+    }
+
+    render(t){
+        push();
+        if(this.shake.length > 0){
+            if(this.offVel.mag() < 1){
+                this.offVel.x = this.shake.intensity;
+            }
+            this.offVel.setMag(this.offVel.mag()+this.shake.intensity);
+            if(this.offVel.mag() > this.shake.intensity*5){
+                this.offVel.setMag(this.shake.intensity*5);
+            }
+            this.offVel.rotate(random(0, 360));
+            this.shake.length -= 1;
+        }
+        else{
+            this.shake.intensity = 0;
+            this.offVel.x = -1*this.offset.x;
+            this.offVel.y = -1*this.offset.y;
+            this.offVel.setMag(this.offVel.mag()/10);
+        }
+        this.offset.add(this.offVel);
+
+        translate(-camera.pos.x+(width/2)+this.pos.x+this.offset.x, -camera.pos.y+(height/2)+this.pos.y+this.offset.y);
+        rotate(this.rot);
+        if(t == "green") tint(100, 200, 100, 100);
+        if(t == "red") tint(200, 100, 100, 100);
+        if(this.alpha < 255) tint(255, this.alpha);
+        image(objImgs[this.imgNum][floor(this.currentFrame)], -this.size.w/2,-this.size.h/2, this.size.w, this.size.h);
+        pop();
+
+        if(this.hp < this.mhp){
+            this.renderHealthBar();
+        }
+
+        this.animationFrame += (1 / 7);
+        this.currentFrame = (this.animationFrame) % 2;
+    }
+}
+
 class CustomObj extends Placeable{
     constructor(objName,x,y,w,h,rot,z,color,health,imgNum,id,ownerName,update,canRotate){
         super(objName,x,y,w,h,rot,z,color,health,imgNum,id,ownerName,canRotate);
@@ -920,6 +988,9 @@ function createObject(name, x, y, rot, color, id, ownerName){
         }
         else if(objDic[name].type == "Custom"){
             return new CustomObj(name, x, y, objDic[name].w, objDic[name].h, rot, objDic[name].z, color, objDic[name].hp, objDic[name].img, id, ownerName, objDic[name].update, objDic[name].canRotate);
+        }
+        else if(objDic[name].type == "Entity"){
+            return new Entity(name, x, y, objDic[name].w, objDic[name].h, rot, objDic[name].z, color, objDic[name].hp, objDic[name].img, id, ownerName, objDic[name].projName);
         }
         else{
             throw new Error(`Object type: ${objDic[name].type}, does not exist.`);
@@ -1062,6 +1133,21 @@ function definePlant(name,imgNames,cost,width,height,health,growthRate,itemDrop)
     
     objDic[name].gr = growthRate;
     objDic[name].itemDrop = itemDrop;
+}
+
+function defineEntity(name,imgNames,cost,width,height,health,damage,range,safeRange,angle,knockback){
+    defineObjSuper("Entity",name,imgNames,cost,width,height,2,health,false,false);
+
+    let paramNames = getParamNames(defineEntity);
+    checkParams(
+        [arguments[6],arguments[7],arguments[8],arguments[9],arguments[10]], 
+        [paramNames[6],paramNames[7],paramNames[8],paramNames[9],paramNames[10]], 
+        ["number","number","number","number","number"]
+    );
+
+    objDic[name].projName = name+" Slash"
+
+    defineMeleeProjectile(name+" Slash", 0, range, safeRange, angle, damage, knockback, 0.5);
 }
 
 /**

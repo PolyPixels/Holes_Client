@@ -9,6 +9,7 @@ defineFlightPath("FollowMouse", "(mouseX-lpX+camera.pos.x-(width/2))*p", "(mouse
 
 class FlightPath{
     constructor(sx,sy,a,eqX, eqY, calcRes, repeate = true){
+        this.origin = createVector(sx,sy); //where the origonal path started
         this.s = createVector(sx,sy); //start of the path
         this.eqX = eqX;     //equation for x movement
         this.eqY = eqY;     //equation for y movement

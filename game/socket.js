@@ -339,6 +339,21 @@ function socketSetup(){
             if(temp.objName == "Sign"){
                 temp.txt = data.obj.txt;
             }
+            if(data.obj.brainID != undefined){
+                temp.brainID = data.obj.brainID;
+
+                let found = false;
+                for(let j=0; j<testMap.brains.length; j++){
+                    if(testMap.brains[j].id == temp.brainID){
+                        found = true;
+                    }
+                }
+                if(!found){
+                    let tempBrain = new Brain(200);
+                    tempBrain.id = temp.brainID;
+                    tempBrain.giveBody(temp);
+                }
+            }
             chunk.objects.push(temp);
             chunk.objects.sort((a,b) => a.z - b.z);
         }
@@ -361,6 +376,13 @@ function socketSetup(){
             for(let i = chunk.objects.length-1; i >= 0; i--){
                 if(data.objName == "ExpOrb"){
                     if(data.z == chunk.objects[i].z && data.id == chunk.objects[i].id){
+                        chunk.objects[i][data.update_name] = data.update_value;
+                        chunk.objects[i].pos.x = data.pos.x;
+                        chunk.objects[i].pos.y = data.pos.y;
+                    }
+                }
+                else if(data.brainID != undefined){
+                    if(data.z == chunk.objects[i].z && data.brainID == chunk.objects[i].brainID){
                         chunk.objects[i][data.update_name] = data.update_value;
                         chunk.objects[i].pos.x = data.pos.x;
                         chunk.objects[i].pos.y = data.pos.y;
@@ -462,6 +484,21 @@ function socketSetup(){
             if(temp.objName == "Sign"){
                 temp.txt = data.objects[i].txt;
             }
+            if(data.objects[i].brainID != undefined){
+                temp.brainID = data.objects[i].brainID;
+
+                let found = false;
+                for(let j=0; j<testMap.brains.length; j++){
+                    if(testMap.brains[j].id == temp.brainID){
+                        found = true;
+                    }
+                }
+                if(!found){
+                    let tempBrain = new Brain(200);
+                    tempBrain.id = temp.brainID;
+                    tempBrain.giveBody(temp);
+                }
+            }
             temp.hp = data.objects[i].hp;
 
             testMap.chunks[data.x+","+data.y].objects.push(temp);
@@ -507,6 +544,14 @@ function socketSetup(){
                         }
                     }
                 }
+            }
+        }
+    });
+
+    socket.on("WANDER_TARGET", (data) => {
+        for(let i=0; i<testMap.brains.length; i++){
+            if(data.id == testMap.brains[i].id){
+                testMap.brains[i].target = createVector(data.target.x, data.target.y);
             }
         }
     })

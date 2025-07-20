@@ -62,7 +62,7 @@ setVolume() {
     const ctx = getAudioContext();
     if (ctx.state !== 'running') {
       await ctx.resume();      // resume if suspended
-      console.log("AudioContext resumed");
+      //console.log("AudioContext resumed");
     }
 
     // 2) now do your usual once-per-state logic

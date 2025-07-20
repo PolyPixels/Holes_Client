@@ -102,6 +102,8 @@ class SimpleProjectile{
 
                             if(this.ownerName != chunk.objects[j].ownerName){
                                 damageObj(chunk, chunk.objects[j], this.damage);
+
+                                scareBrain(chunk.objects[j].brainID, this);
                             }
                         }
                     }
@@ -117,6 +119,8 @@ class SimpleProjectile{
 
                         if(this.ownerName != chunk.objects[j].ownerName){
                             damageObj(chunk, chunk.objects[j], this.damage);
+
+                            scareBrain(chunk.objects[j].brainID, this);
                         }
                     }
                 }
@@ -236,6 +240,8 @@ class MeleeProjectile extends SimpleProjectile{
                     socket.emit("new_sound", {sound: "hit.ogg", cPos: {x: chunk.cx, y: chunk.cy}, pos:{x: chunk.objects[j].pos.x, y: chunk.objects[j].pos.y}, id: temp.id});
                     damageObj(chunk, chunk.objects[j], this.damage);
                     
+                    scareBrain(chunk.objects[j].brainID, this);
+
                     this.deleteTag = true;
                     socket.emit("delete_proj", this);
                 }
