@@ -28,7 +28,7 @@ class MusicSystem {
     this.current = null;
 
     // load saved volume or default
-    const saved = parseFloat(localStorage.getItem("volume"));
+    const saved = parseFloat(localStorage.getItem("musicVolume"));
     this.volume = isNaN(saved) ? 0.5 : saved;
 
     // apply to all tracks so setVolume() can be called once
