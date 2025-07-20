@@ -12,6 +12,7 @@ var dirtBagUI = {};
 var Debuging = false;
 
 
+var MusicPlayer;
 
 function setup() {
     // Create a responsive canvas
@@ -22,6 +23,17 @@ function setup() {
     background(220);
     angleMode(DEGREES);
 
+
+
+    // tell p5 which formats to expect
+    soundFormats('wav');
+
+    // loadSound paths are relative to your sketch.html
+    const mainTheme = loadSound('audio/music/bgtheme.wav');
+    const battle    = loadSound('audio/music/battletheme.wav');
+    const ambiance  = loadSound('audio/music/WorkingAmbianceSample.wav');
+    
+    MusicPlayer = new MusicSystem(mainTheme, [battle, ambiance]);
     // Prevent right-click context menu on p5.js canvases
     const canvases = document.getElementsByClassName("p5Canvas");
     for (let element of canvases) {

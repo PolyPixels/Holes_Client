@@ -16,7 +16,6 @@ var dirtBagShakeSound;
 var itemAtlas;
 var fullAtlas;
 
-var MusicPlayer;
 function preload() {
     // Load the default image
     //loadDefaultImage();
@@ -74,15 +73,6 @@ function preload() {
     gameUIFont = loadFont('CalibrationGothicNbpLatin-rYmy.ttf');
     //console.log("font:", gameUIFont);
 
-    // tell p5 which formats to expect
-    soundFormats('wav');
-
-    // loadSound paths are relative to your sketch.html
-    const mainTheme = loadSound('audio/music/bgtheme.wav');
-    const battle    = loadSound('audio/music/battletheme.wav');
-    const ambiance  = loadSound('audio/music/WorkingAmbianceSample.wav');
-    
-    MusicPlayer = new MusicSystem(mainTheme, [battle, ambiance]);
     //load sounds
     let keys = Object.keys(soundDic);
     for(let i = 0; i < keys.length; i++){
