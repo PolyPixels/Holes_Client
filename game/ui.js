@@ -3004,7 +3004,7 @@ function updateCraftList() {
             }
         }
         else if (curPlayer.invBlock.curTag == "Equipment") {
-            if (item.type == "Equipment") {
+            if (item.type == "Equipment" || item.itemName == "Teleport Receiver" || item.itemName == "Dirt Bag Upgrade" || item.itemName == "Compass" || item.itemName == "Map") {
                 return true;
             }
         }
