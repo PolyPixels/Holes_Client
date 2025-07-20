@@ -29,8 +29,11 @@ class MusicSystem {
 
     // load saved volume or default
     const saved = parseFloat(localStorage.getItem("musicVolume"));
+    console.log(saved, isNaN(saved))
     this.volume = isNaN(saved) ? 0.5 : saved;
 
+    const v100 = isNaN(parseFloat(this.volume)) ? 50 : parseFloat(this.volume);
+    this.volume = constrain(v100 / 100, 0, 1);
     // apply to all tracks so setVolume() can be called once
     [this.mainTheme, ...this.otherTracks].forEach(t => t.setVolume(this.volume));
   }
