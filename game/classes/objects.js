@@ -22,7 +22,7 @@ Obj Dic is a full dictanary of every object that can exist, falling into one of 
 var objDic = {};
 
 definePlaceable("Campfire", ['campfire.gif'], [["Log", 2]], 16*4, 16*4, 1, 100, false, true);
-definePlaceable("Portal", ['portal.gif'], [["Philosopher's Stone", 1],["Tech",2],["Metal",3]], 128+64, 128+64, 2, 100, false, true);
+definePlaceable("Portal", ['portal.gif'], [["Philosopher's Stone", 1],["Tech",2],["Metal",3]], 128+64, 128+64, 3, 100, false, true);
 
 definePlaceable("Wall", [[352,32,32,32],[0,32,32,32],[32,32,32,32],[64,32,32,32],[96,32,32,32],[128,32,32,32],[160,32,32,32],[192,32,32,32],[224,32,32,32],[256,32,32,32],[288,32,32,32],[320,32,32,32]], [["dirt", 50]], 128, 128, 2, 200, true, true);
 definePlaceable("Thin Wall", [[368,64,16,32],[16,64,16,32],[48,64,16,32],[80,64,16,32],[112,64,16,32],[144,64,16,32],[176,64,16,32],[208,64,16,32],[240,64,16,32],[272,64,16,32],[304,64,16,32],[336,64,16,32]], [["dirt", 40]], 64, 128, 2, 150, true, true);
@@ -37,7 +37,13 @@ function turretUpdate(){
     if(this.hp <= 0){
         this.deleteTag = true;
         let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
-        socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, cost: objDic[this.objName].cost});
+        socket.emit("delete_obj", {
+            cx: chunkPos.x, cy: chunkPos.y, 
+            objName: this.objName, 
+            pos: {x: this.pos.x, y: this.pos.y}, 
+            z: this.z, 
+            cost: objDic[this.objName].cost
+        });
     }
     if(curPlayer.name != this.ownerName){
         this.rot = curPlayer.pos.copy().sub(this.pos).heading();
@@ -71,7 +77,7 @@ function turretUpdate(){
         socket.emit("update_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, update_name: "rot", update_value: this.rot});
     }
 }
-defineCustomObj("Turret", [[352,96,32,32],[0,96,32,32],[32,96,32,32],[64,96,32,32],[96,96,32,32],[128,96,32,32],[160,96,32,32],[192,96,32,32],[224,96,32,32],[256,96,32,32],[288,96,32,32],[320,96,32,32]], [["dirt", 20], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
+defineCustomObj("Turret", [[352,96,32,32],[0,96,32,32],[32,96,32,32],[64,96,32,32],[96,96,32,32],[128,96,32,32],[160,96,32,32],[192,96,32,32],[224,96,32,32],[256,96,32,32],[288,96,32,32],[320,96,32,32]], [["Metal", 3], ["Tech", 1], ["Rock", 5]], 60, 60, 2, 100, turretUpdate, true, true);
 definePlant("Mushroom", [[392,49,16,16],[424,49,16,16],[460,48,16,16]], [["Mushroom", 1]], 60, 60, 50, 120, "edible_mushroom");
 
 definePlant("AppleTree", [[384,0,34,34],[418,0,34,34],[486,0,34,34]], [["Apple", 1], ["Log", 2], ["Bad Apple", 1]], 120, 120, 80, 300, "Apple");
@@ -929,7 +935,7 @@ class Entity extends Placeable{
             this.deleteTag = true;
             let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
             let cost = objDic[this.objName].cost
-            if(random() < 0.3){
+            if(random() < 0.5){
                 cost.push(["Philosopher's Stone", 1]);
             }
             socket.emit("delete_obj", {
