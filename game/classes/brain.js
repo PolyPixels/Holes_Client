@@ -201,6 +201,7 @@ class Brain {
 
         let newChunkPos = testMap.globalToChunk(this.obj.pos.x, this.obj.pos.y);
         if(oldChunkPos.x != newChunkPos.x || oldChunkPos.y != newChunkPos.y){
+            let oldHp = this.obj.hp+0;
             this.obj.deleteTag = true;
             socket.emit("delete_obj", {
                 cx: oldChunkPos.x, 
@@ -211,6 +212,7 @@ class Brain {
             });
 
             let temp = createObject("Ant", this.obj.pos.x, this.obj.pos.y, 0, this.obj.color, this.obj.id, this.obj.ownerName, this.id);
+            temp.hp = oldHp;
 
             let newChunk = testMap.chunks[newChunkPos.x+","+newChunkPos.y];
             if(newChunk != undefined){
