@@ -419,7 +419,7 @@ function signUpdate() {
     if (mouseVec.dist(this.pos) < (this.size.w + this.size.h) / 4) {
         //check ownership
         //if owner then open sign editor
-        if(mouseIsPressed){
+        if(mouseIsPressed && mouseButton == LEFT){
             if(
                 (this.color != 0 && this.color == curPlayer.color) ||
                 (this.ownerName == curPlayer.name && this.color == 0)
@@ -895,15 +895,33 @@ class InvObj extends Placeable{
 }
 
 class Entity extends Placeable{
-    constructor(objName,x,y,w,h,rot,z,color,health,imgNum,id,ownerName,projName){
+    constructor(objName,x,y,w,h,rot,z,color,health,imgNum,id,ownerName,projName,brainID){
         super(objName,x,y,w,h,rot,z,color,health,imgNum,id,ownerName,false);
         this.projName = projName;
         
         this.animationFrame = 0;
         this.currentFrame = 0;
 
-        testMap.brains.push(new Brain(200));
-        testMap.brains[testMap.brains.length-1].giveBody(this);
+        if(brainID == -1){
+            testMap.brains.push(new Brain(200));
+            testMap.brains[testMap.brains.length-1].giveBody(this);
+        }
+        else{
+            this.brainID = brainID;
+            let found = false;
+            for(let i=0; i<testMap.brains.length; i++){
+                if(brainID == testMap.brains[i].id){
+                    testMap.brains[i].obj = this;
+                    found = true;
+                }
+            }
+
+            if(!found){
+                testMap.brains.push(new Brain(200));
+                testMap.brains[testMap.brains.length-1].id = brainID;
+                testMap.brains[testMap.brains.length-1].obj = this;
+            }
+        }
     }
 
     update(){
@@ -969,7 +987,7 @@ class CustomObj extends Placeable{
     //define your own update
 }
 
-function createObject(name, x, y, rot, color, id, ownerName){
+function createObject(name, x, y, rot, color, id, ownerName, brainID){
     if(objDic[name] == undefined){
         throw new Error(`Object with name: ${name}, does not exist`);
     }
@@ -990,7 +1008,7 @@ function createObject(name, x, y, rot, color, id, ownerName){
             return new CustomObj(name, x, y, objDic[name].w, objDic[name].h, rot, objDic[name].z, color, objDic[name].hp, objDic[name].img, id, ownerName, objDic[name].update, objDic[name].canRotate);
         }
         else if(objDic[name].type == "Entity"){
-            return new Entity(name, x, y, objDic[name].w, objDic[name].h, rot, objDic[name].z, color, objDic[name].hp, objDic[name].img, id, ownerName, objDic[name].projName);
+            return new Entity(name, x, y, objDic[name].w, objDic[name].h, rot, objDic[name].z, color, objDic[name].hp, objDic[name].img, id, ownerName, objDic[name].projName, brainID);
         }
         else{
             throw new Error(`Object type: ${objDic[name].type}, does not exist.`);

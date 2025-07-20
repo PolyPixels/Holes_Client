@@ -12,6 +12,8 @@ class Brain {
 
     update(){
         if(this.obj != null){
+            if(this.obj.deleteTag) return;
+
             this.stateTimer ++;
             if(this.state == "Wander"){
                 this.wander();
@@ -199,19 +201,21 @@ class Brain {
                 cy: oldChunkPos.y, 
                 objName: this.obj.objName, 
                 pos: {x: this.obj.pos.x, y: this.obj.pos.y}, 
-                z: this.obj.z, 
-                cost: objDic[this.obj.objName].cost
+                z: this.obj.z
             });
 
-            let temp = createObject("Ant", this.obj.pos.x, this.obj.pos.y, 0, this.obj.color, this.obj.id, this.obj.ownerName);
-            temp.brainID = this.id;
-            testMap.chunks[newChunkPos.x+","+newChunkPos.y].objects.push(temp);
-            socket.emit("new_object", {
-                cx: newChunkPos.x, 
-                cy: newChunkPos.y, 
-                obj: temp
-            })
-            this.obj = temp;
+            let temp = createObject("Ant", this.obj.pos.x, this.obj.pos.y, 0, this.obj.color, this.obj.id, this.obj.ownerName, this.id);
+
+            let newChunk = testMap.chunks[newChunkPos.x+","+newChunkPos.y];
+            if(newChunk != undefined){
+                testMap.chunks[newChunkPos.x+","+newChunkPos.y].objects.push(temp);
+                socket.emit("new_object", {
+                    cx: newChunkPos.x, 
+                    cy: newChunkPos.y, 
+                    obj: temp
+                })
+                this.obj = temp;
+            }
         }
     }
 

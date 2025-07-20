@@ -324,7 +324,7 @@ function socketSetup(){
     socket.on("NEW_OBJECT", (data) => {
         let chunk = testMap.chunks[data.cx+","+data.cy];
         if(chunk != undefined){
-            let temp = createObject(data.obj.objName, data.obj.pos.x, data.obj.pos.y, data.obj.rot, data.obj.color, data.obj.id, data.obj.ownerName);
+            let temp = createObject(data.obj.objName, data.obj.pos.x, data.obj.pos.y, data.obj.rot, data.obj.color, data.obj.id, data.obj.ownerName, data.obj.brainID);
 
             if(temp.type == "InvObj"){
                 temp.invBlock.invId = data.obj.invBlock.invId;
@@ -338,21 +338,6 @@ function socketSetup(){
             }
             if(temp.objName == "Sign"){
                 temp.txt = data.obj.txt;
-            }
-            if(data.obj.brainID != undefined){
-                temp.brainID = data.obj.brainID;
-
-                let found = false;
-                for(let j=0; j<testMap.brains.length; j++){
-                    if(testMap.brains[j].id == temp.brainID){
-                        found = true;
-                    }
-                }
-                if(!found){
-                    let tempBrain = new Brain(200);
-                    tempBrain.id = temp.brainID;
-                    tempBrain.giveBody(temp);
-                }
             }
             chunk.objects.push(temp);
             chunk.objects.sort((a,b) => a.z - b.z);
@@ -453,7 +438,7 @@ function socketSetup(){
         for(let i=0; i<keys.length; i++) testMap.chunks[data.x+","+data.y].iron_data[keys[i]] = data.iron_data[keys[i]];
         testMap.chunkBools[data.x+","+data.y] = true;
         for(let i=0; i<data.objects.length; i++){
-            let temp = createObject(data.objects[i].objName, data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color, data.objects[i].id, data.objects[i].ownerName);
+            let temp = createObject(data.objects[i].objName, data.objects[i].pos.x, data.objects[i].pos.y, data.objects[i].rot, data.objects[i].color, data.objects[i].id, data.objects[i].ownerName, data.objects[i].brainID);
             
             //fix some obj properties
             if(temp.type == "InvObj"){
@@ -483,21 +468,6 @@ function socketSetup(){
             }
             if(temp.objName == "Sign"){
                 temp.txt = data.objects[i].txt;
-            }
-            if(data.objects[i].brainID != undefined){
-                temp.brainID = data.objects[i].brainID;
-
-                let found = false;
-                for(let j=0; j<testMap.brains.length; j++){
-                    if(testMap.brains[j].id == temp.brainID){
-                        found = true;
-                    }
-                }
-                if(!found){
-                    let tempBrain = new Brain(200);
-                    tempBrain.id = temp.brainID;
-                    tempBrain.giveBody(temp);
-                }
             }
             temp.hp = data.objects[i].hp;
 
