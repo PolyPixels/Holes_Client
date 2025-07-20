@@ -22,7 +22,7 @@ Obj Dic is a full dictanary of every object that can exist, falling into one of 
 var objDic = {};
 
 definePlaceable("Campfire", ['campfire.gif'], [["Log", 2]], 16*4, 16*4, 1, 100, false, true);
-definePlaceable("Portal", ['portal.gif'], [["Philosopher's Stone", 3],["Tech",2],["Metal",3]], 128+64, 128+64, 2, 100, false, true);
+definePlaceable("Portal", ['portal.gif'], [["Philosopher's Stone", 1],["Tech",2],["Metal",3]], 128+64, 128+64, 2, 100, false, true);
 
 definePlaceable("Wall", [[352,32,32,32],[0,32,32,32],[32,32,32,32],[64,32,32,32],[96,32,32,32],[128,32,32,32],[160,32,32,32],[192,32,32,32],[224,32,32,32],[256,32,32,32],[288,32,32,32],[320,32,32,32]], [["dirt", 50]], 128, 128, 2, 200, true, true);
 definePlaceable("Thin Wall", [[368,64,16,32],[16,64,16,32],[48,64,16,32],[80,64,16,32],[112,64,16,32],[144,64,16,32],[176,64,16,32],[208,64,16,32],[240,64,16,32],[272,64,16,32],[304,64,16,32],[336,64,16,32]], [["dirt", 40]], 64, 128, 2, 150, true, true);
