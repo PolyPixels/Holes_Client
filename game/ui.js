@@ -2980,7 +2980,7 @@ function updateCraftList() {
                 arr.push({
                     type: "SimpleItem",
                     itemName: "Metal",
-                    image: "images/items/metal_scrap.png",
+                    imgNum: 23,
                     cost: [1, ["Raw Metal", 1]]
                 });
             }
