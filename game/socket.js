@@ -482,6 +482,22 @@ function socketSetup(){
                 testMap.chunks[data.x+","+data.y].projectiles.push(temp);
             }
         }
+        
+        for(let i=0; i<testMap.brains.length; i++){
+            if(testMap.brains[i].obj == null){
+                if(
+                    testMap.brains[i].target.x > data.x * CHUNKSIZE * TILESIZE &&
+                    testMap.brains[i].target.x < (data.x+1) * CHUNKSIZE * TILESIZE &&
+                    testMap.brains[i].target.y > data.y * CHUNKSIZE * TILESIZE &&
+                    testMap.brains[i].target.y < (data.y+1) * CHUNKSIZE * TILESIZE
+                ){
+                    let temp = createObject("Ant", testMap.brains[i].target.x, testMap.brains[i].target.y, 0, 0, "", "Server", testMap.brains[i].id);
+                    testMap.chunks[data.x+","+data.y].objects.push(temp);
+                    testMap.chunks[data.x+","+data.y].objects.sort((a,b) => a.pos.y - b.pos.y);
+                    testMap.chunks[data.x+","+data.y].objects.sort((a,b) => a.z - b.z);
+                }
+            }
+        }
     });
 
     socket.on("GIVE_PORTALS", (data) => {

@@ -928,7 +928,17 @@ class Entity extends Placeable{
         if(this.hp <= 0){
             this.deleteTag = true;
             let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
-            socket.emit("delete_obj", {cx: chunkPos.x, cy: chunkPos.y, objName: this.objName, pos: {x: this.pos.x, y: this.pos.y}, z: this.z, cost: objDic[this.objName].cost});
+            let cost = objDic[this.objName].cost
+            if(random() < 0.3){
+                cost.push(["Philosopher's Stone", 1]);
+            }
+            socket.emit("delete_obj", {
+                cx: chunkPos.x, cy: chunkPos.y, 
+                objName: this.objName, 
+                pos: {x: this.pos.x, y: this.pos.y}, 
+                z: this.z, 
+                cost: cost
+            });
             
             for(let i=testMap.brains.length-1; i>=0; i--){
                 if(testMap.brains[i].id == this.brainID){
