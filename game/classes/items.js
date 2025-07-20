@@ -75,7 +75,7 @@ function teleportReceiverUse(x,y,mouseButton){
         }
     }
 }
-defineCustomItem("Teleport Receiver", [[3,5]], [1,["Metal", 1],["Tech", 2],["Philosoper's Stone",1]], 1, 1, "A teleport receiver that teleports you to any portals with X chunks", teleportReceiverUse, true);
+defineCustomItem("Teleport Receiver", [[3,5]], [1,["Metal", 1],["Tech", 2],["Philosopher's Stone",1]], 1, 1, "A teleport receiver that teleports you to any portals with X chunks", teleportReceiverUse, true);
 
 function dirtBagUpgradeUse(x,y,mouseButton){
     if(curPlayer.invBlock.useTimer <= 0){
