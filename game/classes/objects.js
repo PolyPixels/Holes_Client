@@ -333,8 +333,8 @@ function expOrbUpdate() {
             update_name: "hp",
             update_value: this.hp
         });
-
-        curPlayer.statBlock.setXP(this.size.h);
+        console.log(this.size.h, "exp orb size ")
+        curPlayer.statBlock.setXP(this.size.h/2);
     }
 
     // Self-delete if HP zero

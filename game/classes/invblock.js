@@ -83,7 +83,8 @@ class InvBlock{
         itemBag.invBlock.addItem(item, amount, false);
         this.decreaseAmount(item, amount);
     }
-dropAll() {
+    
+    dropAll() {
     let itemBag = createObject("ItemBag", curPlayer.pos.x, curPlayer.pos.y, 0, 0, "", "");
     let keys = Object.keys(this.items);
     for (let i = 0; i < keys.length; i++) {
