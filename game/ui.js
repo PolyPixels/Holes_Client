@@ -2973,6 +2973,12 @@ function updateCraftList() {
                 imgNum: 23,
                 cost: [1, ["Raw Metal", 1]]
             });
+            arr.push({
+                type: "Food",
+                itemName: "Roasted Tail",
+                imgNum: 35,
+                cost: [1, ["Skizzard Tail", 1]]
+            });
         }
     }
 
@@ -3124,6 +3130,7 @@ function updatecurCraftItemDiv() {
 
     let itemCostDiv = createDiv().parent(curCraftItemDiv);
     itemCostDiv.style("width", "100%");
+    itemCostDiv.style("height", "69%");
 
     let craftButton = createButton("Craft").parent(itemCostDiv);
     applyStyle(craftButton, {
