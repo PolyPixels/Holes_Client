@@ -1098,6 +1098,7 @@ function startGame() {
     for (let y = -5; y < 5; y++) {
         for (let x = -5; x < 5; x++) {
             dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1, false);
+            mine(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1, false);
         }
     }
 }
@@ -3307,6 +3308,7 @@ function defineDeathUI() {
         for (let y = -5; y < 5; y++) {
             for (let x = -5; x < 5; x++) {
                 dig(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1, false);
+                mine(curPlayer.pos.x + x * TILESIZE, curPlayer.pos.y + y * TILESIZE, 1, false);
             }
         }
 
