@@ -22,6 +22,12 @@ function socketSetup(){
         );
         updatePlayerCount();
 
+        if(data.statBlock.level != 1){
+            players[data.id].statBlock.level = data.statBlock.level;
+            players[data.id].statBlock.stats = data.statBlock.stats;
+        }
+
+
         //console.log("New player added: " + data.id);
     });
 
@@ -64,6 +70,31 @@ function socketSetup(){
             //console.log("New ID received: " + data.id);
         }
         
+    });
+
+    socket.on("change_name", (data) => {
+        curPlayer.name = data
+    });
+
+    socket.on('REMOVE_PLAYER', (data) => {
+        console.log("Removing player: " + data);
+        players[data] = {};
+        delete players[data];
+        updatePlayerCount();
+    });
+
+    socket.on('PLAYERS_CHECK', (data) => {
+        if(data.ids.length != Object.keys(players).length+1){
+            let keys = Object.keys(players);
+            for(let i= 0; i < keys.length; i++){
+                if(!data.ids.includes(keys[i])){
+                    console.log("Removing player: " + keys[i]);
+                    players[keys[i]] = {};
+                    delete players[keys[i]];
+                }
+            }
+            updatePlayerCount();
+        }
     });
 
     socket.on('UPDATE_ALL_POS', (data) => {
@@ -327,17 +358,6 @@ function socketSetup(){
 
             }
         }
-    });
-
-    socket.on("change_name", (data) => {
-        curPlayer.name = data
-    });
-
-    socket.on('REMOVE_PLAYER', (data) => {
-        console.log("Removing player: " + data);
-        players[data] = {};
-        delete players[data];
-        updatePlayerCount();
     });
 
     socket.on("NEW_OBJECT", (data) => {

@@ -184,7 +184,7 @@ function draw() {
         timerDiv.show()
 
         MusicPlayer.playRandom()
-        console.log(MusicPlayer, "music !")
+        //console.log(MusicPlayer, "music !")
 
         //! Why call these in draw if they only need to be called once?
         hideRaceSelect();
