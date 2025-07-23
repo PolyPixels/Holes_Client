@@ -333,7 +333,7 @@ function expOrbUpdate() {
             update_name: "hp",
             update_value: this.hp
         });
-        console.log(this.size.h, "exp orb size ")
+        //console.log(this.size.h, "exp orb size ")
         curPlayer.statBlock.setXP(this.size.h/2);
     }
 
@@ -747,7 +747,7 @@ class Plant extends Placeable{
                         if(testMap.chunks[chunkPos.x+","+chunkPos.y] != undefined){
                             
                             let index = floor((spreadPos.x - (chunkPos.x * CHUNKSIZE * TILESIZE)) / TILESIZE) + (floor((spreadPos.y - (chunkPos.y * CHUNKSIZE * TILESIZE)) / TILESIZE) / CHUNKSIZE);
-                            if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] == undefined) {console.log("undefined data")}
+                            //if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] == undefined) {console.log("undefined data")}
                             if(testMap.chunks[chunkPos.x+","+chunkPos.y].data[index] == 0 && testMap.chunks[chunkPos.x+","+chunkPos.y].iron_data[index] == 0){
                                 let newPlant = createObject(this.objName, spreadPos.x, spreadPos.y, 0, this.color, this.id, this.ownerName);
                                 testMap.chunks[chunkPos.x+","+chunkPos.y].objects.push(newPlant);
@@ -819,7 +819,7 @@ class Trap extends Placeable{
         super.update();
         //!make this handle multiple players
         if(curPlayer.color != this.color || this.color == 0){ //not on the same team as the trap, or the trap belongs to no team
-            if(this.id != curPlayer.id && this.ownerName != curPlayer.name){ //aka if you didnt make this trap
+            if(this.ownerName != curPlayer.name){ //aka if you didnt make this trap
                 if(this.pos.dist(curPlayer.pos) < this.triggerRadius){
                     let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
                     //play hit noise and tell server
@@ -876,7 +876,7 @@ class InvObj extends Placeable{
 
     useInv(){
         if(this.locked){ //when locked only owner can open
-            if(curPlayer.name == this.ownerName && curPlayer.id == this.id){
+            if(curPlayer.name == this.ownerName){
                 gameState = "swap_inv";
                 curPlayer.otherInv = this;
                 curPlayer.invBlock.curItem = "";

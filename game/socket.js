@@ -21,6 +21,8 @@ function socketSetup(){
             data.name
         );
         updatePlayerCount();
+
+        //console.log("New player added: " + data.id);
     });
 
     socket.on('OLD_DATA', (data) => {
@@ -46,7 +48,22 @@ function socketSetup(){
     });
 
     socket.on('YOUR_ID', (data) => {
-        curID = data.id;
+        if(curID != null){
+            //console.log("Your ID is already set to: " + curPlayer.id);
+            //console.log("New ID received: " + data.id);
+            //Reconnection
+            curPlayer.id = data.id;
+            socket.emit("player_reconnected", {
+                player: curPlayer,
+                oldID: curID
+            });
+            curID = data.id;
+        }
+        else{
+            curID = data.id;
+            //console.log("New ID received: " + data.id);
+        }
+        
     });
 
     socket.on('UPDATE_ALL_POS', (data) => {
@@ -317,8 +334,10 @@ function socketSetup(){
     });
 
     socket.on('REMOVE_PLAYER', (data) => {
+        console.log("Removing player: " + data);
+        players[data] = {};
         delete players[data];
-        updatePlayerCount()
+        updatePlayerCount();
     });
 
     socket.on("NEW_OBJECT", (data) => {

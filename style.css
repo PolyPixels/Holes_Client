@@ -421,14 +421,14 @@ tag-bar:hover {
 .item-list {
   flex: 1;
   overflow-y: auto;
-  height: 65vh;
+  height: 60vh;
 }
 
 .item-details {
   flex: 1;
   border-left: 2px solid black;
   overflow-y: clip;
-  height: 65vh;
+  height: 60vh;
 }
 
 @media (max-width: 768px) {

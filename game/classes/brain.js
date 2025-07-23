@@ -174,6 +174,7 @@ class Brain {
     }
 
     canSee(x,y){
+        if(this.obj == null) return false;
         //check if there are any objects imbetween this.obj and x,y
         return createVector(x,y).dist(this.obj.pos) < this.vision;
     }

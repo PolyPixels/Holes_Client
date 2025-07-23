@@ -52,6 +52,9 @@ defineSimpleItem("Arrow", [[3,0]], [2,["Log", 1], ["Rock", 1]], 1, "An arrow",tr
 defineFood("Apple", [[2,0]], [], 1, 100, 10, 0, "A juicy apple",false);
 defineFood("Bad Apple", [[4,0]], [], 1, 100, 5, 5, "Looks like this apple would bite back",false);
 defineFood("Mushroom", [[458,47]], [], 1, 100, 5, 10, "A tasty mushroom",false);
+defineFood("Salad", [[5,5]], [1,["Mushroom",1],["Apple",1],["Log",1]], 1, 100, 20, 10, "A salad",true);
+defineFood("Skizzard Tail", [[6,5]], [], 1, 100, 5, 5, "A raw tail",false);
+defineFood("Roasted Tail", [[7,5]], [1,["Skizzard Tail", 1]], 1, 100, 30, 15, "A roasted tail",false);
 
 defineSeed("Red Acorn", [[1,0]], [1,["Apple", 1]], 1, "AppleTree", 0.5, "Will grow into an apple tree",true);
 defineSeed("Acorn", [[0,0]], [2,["Log", 1],["Mushroom Fiber",2]], 1, "Tree", 0.5, "Will grow into a tree",true);
