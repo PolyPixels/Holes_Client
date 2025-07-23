@@ -29,7 +29,7 @@ class MusicSystem {
 
     // load saved volume or default
     const saved = parseFloat(localStorage.getItem("musicVolume"));
-    console.log(saved, isNaN(saved))
+    //console.log(saved, isNaN(saved))
     this.volume = isNaN(saved) ? 0.5 : saved;
 
     const v100 = isNaN(parseFloat(this.volume)) ? 50 : parseFloat(this.volume);

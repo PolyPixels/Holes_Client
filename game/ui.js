@@ -567,7 +567,7 @@ function hideServerBrowser() {
     let serverBrowserContainer = document.getElementById("serverBrowserContainer"); // Adjust selector accordingly
     if (serverBrowserContainer) {
         serverBrowserContainer.remove(); // Remove the element
-        console.log("Server browser container removed."); // Debugging output
+        //console.log("Server browser container removed."); // Debugging output
     } else {
         console.warn("Server browser container not found.");
     }
@@ -1823,7 +1823,7 @@ function togglePlayerStatusTable() {
                 tableWrapper.style("overflow-y", "auto");
                 tableWrapper.style("max-height", "70%");
                 tableWrapper.style("margin-top", "10px");
-                console.log(players)
+                //console.log(players)
                 let table = createElement("table").parent(tableWrapper);
                 table.style("width", "100%");
                 table.style("color", "white");
@@ -2498,11 +2498,11 @@ function updateSwapItemLists(otherInv) {
         itemDiv.style("cursor", "pointer");
         itemDiv.parent(itemListDivLeft);
         itemDiv.mousePressed(() => {
-            console.log(curPlayer.invBlock.curItem)
+            //console.log(curPlayer.invBlock.curItem)
             curPlayer.invBlock.curItem = itemName;
             otherInv.curItem = "";
 
-            console.log(curPlayer.invBlock.curItem)
+            //console.log(curPlayer.invBlock.curItem)
             updateSwapItemLists(otherInv);
             updatecurSwapItemDiv(otherInv);
         });
@@ -2562,12 +2562,12 @@ function updateSwapItemLists(otherInv) {
         itemDiv.parent(itemListDivRight);
 
         itemDiv.mousePressed(() => {
-            console.log("before", otherInv.curItem)
+            //console.log("before", otherInv.curItem)
             curPlayer.invBlock.curItem = "";
             otherInv.curItem = itemName;
             updateSwapItemLists(otherInv);
             updatecurSwapItemDiv(otherInv);
-            console.log("after ", otherInv.curItem)
+            //console.log("after ", otherInv.curItem)
         });
 
         let itemInfoDiv = createDiv();
@@ -3504,7 +3504,7 @@ function setupTutorialPages(pageHolder) {
     keyToVisualKey(Controls_Left_key);
     keyToVisualKey(Controls_Down_key);
     keyToVisualKey(Controls_Right_key);
-    console.log(Controls_Up_key, Controls_Left_key)
+    //console.log(Controls_Up_key, Controls_Left_key)
     addControlStep(page2, "" + Controls_Up_key + Controls_Left_key + Controls_Down_key + Controls_Right_key, "Move around");
     addControlStep(page2, "Left/Right Click", "Use item");
     addControlStep(page2, Controls_Interact_key, "Interact");
