@@ -32,8 +32,10 @@ function setup() {
     const mainTheme = loadSound('audio/music/bgtheme.wav');
     const battle    = loadSound('audio/music/battletheme.wav');
     const ambiance  = loadSound('audio/music/WorkingAmbianceSample.wav');
+
+    const battle2    = loadSound('audio/music/Skizzard_Wizard.wav');
     
-    MusicPlayer = new MusicSystem(mainTheme, [battle, ambiance]);
+    MusicPlayer = new MusicSystem(mainTheme, [battle, ambiance,battle2]);
     // Prevent right-click context menu on p5.js canvases
     const canvases = document.getElementsByClassName("p5Canvas");
     for (let element of canvases) {
@@ -182,6 +184,7 @@ function draw() {
         timerDiv.show()
 
         MusicPlayer.playRandom()
+        console.log(MusicPlayer, "music !")
 
         //! Why call these in draw if they only need to be called once?
         hideRaceSelect();

@@ -99,7 +99,7 @@ setVolume() {
     this._stopCurrent();
     const idx = floor(random(this.otherTracks.length));
     this.current = this.otherTracks[idx];
-    this.current.setLoop(true);
+    this.current.setLoop(false);
     this.current.setVolume(this.volume);
     this.current.play();
   }
