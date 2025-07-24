@@ -298,11 +298,11 @@ function expOrbUpdate() {
             closestPlayer = curPlayer;
         }
     }
-
+    
     // If a player is close enough, attract the orb towards them
-    if (closestDist < 100) { // attraction range
+    if (closestDist < 200) { // attraction range
         let attraction = closestPlayer.pos.copy().sub(this.pos);
-        attraction.setMag(map(closestDist, 0, 100, 2, 0)); // stronger when closer
+        attraction.setMag(map(closestDist, 0, 200, 2, 0)*(deltaTime/30)); // stronger when closer
         this.pos.add(attraction);
         //tell the server to update the position of the orb
         let chunkPos = testMap.globalToChunk(this.pos.x, this.pos.y);
@@ -934,7 +934,27 @@ class Entity extends Placeable{
         if(this.hp <= 0){
             this.deleteTag = true;
             let chunkPos = testMap.globalToChunk(this.pos.x,this.pos.y);
-            let cost = objDic[this.objName].cost
+
+            let expOrb = createObject(
+                "ExpOrb",                         // name
+                this.pos.x + random(-10,10), // x (add slight offset)
+                this.pos.y + random(-10,10), // y (add slight offset)
+                0,                                 // rot
+                0,                                 // color/team
+                `xp_orb_${Date.now()}`,            // unique id
+                this.name                     // owner (optional)
+            );
+            expOrb.id = random(1000000);
+            testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.push(expOrb);
+            testMap.chunks[chunkPos.x + "," + chunkPos.y].objects.sort((a,b) => a.z - b.z);
+
+            socket.emit("new_object", {
+                cx: chunkPos.x,
+                cy: chunkPos.y,
+                obj: expOrb
+            });
+
+            let cost = objDic[this.objName].cost;
             if(random() < 0.5){
                 cost.push(["Philosopher's Stone", 1]);
             }

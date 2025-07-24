@@ -20,18 +20,6 @@ class Brain {
                 if (this.findTarget()){
                     this.stateTimer = 0;
                     this.state = "Chasing";
-
-                    let chunkPos = testMap.globalToChunk(this.obj.pos.x, this.obj.pos.y);
-                    socket.emit("update_obj", {
-                        cx: chunkPos.x, cy: chunkPos.y,
-                        objName: this.obj.objName,
-                        pos: {x: this.obj.pos.x, y: this.obj.pos.y},
-                        z: this.obj.z,
-                        id: this.obj.id,
-                        brainID: this.id,
-                        update_name: "hp",
-                        update_value: this.obj.hp
-                    });
                 }
             }
             if(this.state == "Chasing"){
@@ -41,18 +29,6 @@ class Brain {
                     this.state = "Wander";
                     this.target = null;
                     this.targetEntity = null;
-
-                    let chunkPos = testMap.globalToChunk(this.obj.pos.x, this.obj.pos.y);
-                    socket.emit("update_obj", {
-                        cx: chunkPos.x, cy: chunkPos.y,
-                        objName: this.obj.objName,
-                        pos: {x: this.obj.pos.x, y: this.obj.pos.y},
-                        z: this.obj.z,
-                        id: this.obj.id,
-                        brainID: this.id,
-                        update_name: "hp",
-                        update_value: this.obj.hp
-                    });
                 }
             }
             if(this.state == "Space"){
@@ -94,16 +70,6 @@ class Brain {
             this.stateTimer = 0;
             this.state = "Space";
 
-            socket.emit("update_obj", {
-                cx: chunkPos.x, cy: chunkPos.y,
-                objName: this.obj.objName,
-                pos: {x: this.obj.pos.x, y: this.obj.pos.y},
-                z: this.obj.z,
-                id: this.obj.id,
-                brainID: this.id,
-                update_name: "hp",
-                update_value: this.obj.hp
-            });
         }
     }
 
@@ -127,18 +93,6 @@ class Brain {
             this.target = this.targetEntity.pos;
             this.stateTimer = 0;
             this.state = "Chasing";
-
-            let chunkPos = testMap.globalToChunk(this.obj.pos.x, this.obj.pos.y);
-            socket.emit("update_obj", {
-                cx: chunkPos.x, cy: chunkPos.y,
-                objName: this.obj.objName,
-                pos: {x: this.obj.pos.x, y: this.obj.pos.y},
-                z: this.obj.z,
-                id: this.obj.id,
-                brainID: this.id,
-                update_name: "hp",
-                update_value: this.obj.hp
-            });
         }
     }
 
@@ -187,7 +141,7 @@ class Brain {
         if(testMap.chunks[oldChunkPos.x+","+oldChunkPos.y].data[xTile + (yTile / CHUNKSIZE)] > 0){
             speed = speed/2;
         }
-        this.obj.pos.add(createVector(x,y).sub(this.obj.pos).setMag(speed));
+        this.obj.pos.add(createVector(x,y).sub(this.obj.pos).setMag(speed*(deltaTime/30)));
 
         socket.emit("update_obj", {
             cx: oldChunkPos.x, cy: oldChunkPos.y,
@@ -204,12 +158,14 @@ class Brain {
         if(oldChunkPos.x != newChunkPos.x || oldChunkPos.y != newChunkPos.y){
             let oldHp = this.obj.hp+0;
             this.obj.deleteTag = true;
+            //console.log("trying to delete obj from brainID: ", this.id);
             socket.emit("delete_obj", {
                 cx: oldChunkPos.x, 
                 cy: oldChunkPos.y, 
                 objName: this.obj.objName, 
                 pos: {x: this.obj.pos.x, y: this.obj.pos.y}, 
-                z: this.obj.z
+                z: this.obj.z,
+                brainID: this.id
             });
 
             let temp = createObject("Ant", this.obj.pos.x, this.obj.pos.y, 0, this.obj.color, this.obj.id, this.obj.ownerName, this.id);
