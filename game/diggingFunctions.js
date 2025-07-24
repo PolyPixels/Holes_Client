@@ -81,6 +81,62 @@ function playerDig(x,y, amount){
     }
 }
 
+function clearDirtAroundPlayer() {
+    if (Date.now() - lastDirtClearTime < DIRT_CLEAR_COOLDOWN) return;
+    lastDirtClearTime = Date.now();
+    const px = Math.floor(player.pos.x);
+    const py = Math.floor(player.pos.y) - 1; // Check below player
+
+    // Calculate chunk coordinates
+    const cx = Math.floor(px / CHUNKSIZE);
+    const cy = Math.floor(py / CHUNKSIZE);
+    const chunkKey = `${cx},${cy}`;
+
+    // Only proceed if chunk exists
+    if (!testMap.chunks[chunkKey]) return;
+
+    // Calculate local position within chunk
+    const lx = px % CHUNKSIZE;
+    const ly = py % CHUNKSIZE;
+
+    // Clear 3x3 area (adjust radius as needed)
+    for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+        const checkX = lx + dx;
+        const checkY = ly + dy;
+
+        // Skip if out of bounds
+        if (checkX < 0 || checkX >= CHUNKSIZE || checkY < 0 || checkY >= CHUNKSIZE) continue;
+
+        const index = checkX + (checkY * CHUNKSIZE);
+
+        // After setting block to air:
+        if (typeof spawnParticle === 'function') {
+        spawnParticle({
+            x: px + dx,
+            y: py + dy,
+            texture: 'dirt_particle.png',
+            lifetime: 1.0
+        });
+        }
+
+        // Check if block is dirt (assuming 1 = dirt)
+        if (testMap.chunks[chunkKey].data[index] === 1) {
+            // Update locally
+            testMap.chunks[chunkKey].data[index] = 0;
+            
+            // Sync with server
+            socket.emit("update_node", {
+            chunkPos: chunkKey,
+            index: index,
+            val: 0,
+            amt: 1 // Full removal
+            });
+        }
+        }
+    }
+}
+
 function dig(x, y, amt, playerDiging, rayStart) {
     x = floor(x / TILESIZE);
     y = floor(y / TILESIZE);
