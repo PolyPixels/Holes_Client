@@ -34,7 +34,7 @@ class SimpleProjectile{
     }
 
     update(){
-        this.flightPath.update(this.speed);
+        this.flightPath.update(this.speed*(deltaTime/30));
         this.pos = this.flightPath.calc(this.flightPath.p);
 
         //move projectiles between chunks

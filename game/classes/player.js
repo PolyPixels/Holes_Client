@@ -182,19 +182,19 @@ class Player {
         this.moving = (this.holding.w || this.holding.a || this.holding.s || this.holding.d);
 
         if (this.holding.w) {
-            this.vel.y += -BASE_SPEED * this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
+            this.vel.y += -BASE_SPEED * this.statBlock.stats.runningSpeed*(deltaTime/30); //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'up';
         }
         if (this.holding.a) {
-            this.vel.x += -BASE_SPEED * this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
+            this.vel.x += -BASE_SPEED * this.statBlock.stats.runningSpeed*(deltaTime/30); //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'left';
         }
         if (this.holding.s) {
-            this.vel.y += BASE_SPEED * this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
+            this.vel.y += BASE_SPEED * this.statBlock.stats.runningSpeed*(deltaTime/30); //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'down';
         }
         if (this.holding.d) {
-            this.vel.x += BASE_SPEED * this.statBlock.stats.runningSpeed; //*(2*deltaTime/frameRate()) removed while frameRate() is low
+            this.vel.x += BASE_SPEED * this.statBlock.stats.runningSpeed*(deltaTime/30); //*(2*deltaTime/frameRate()) removed while frameRate() is low
             this.direction = 'right';
         }
 

@@ -384,11 +384,24 @@ function socketSetup(){
     });
 
     socket.on("DELETE_OBJ", (data) => {
+        //console.log(data);
         let chunk = testMap.chunks[data.cx+","+data.cy];
         if(chunk != undefined){
             for(let i = chunk.objects.length-1; i >= 0; i--){
-                if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.objName == chunk.objects[i].objName){
-                    chunk.objects[i].deleteTag = true;
+                if(data.objName == "ExpOrb"){
+                    if(data.z == chunk.objects[i].z && data.id == chunk.objects[i].id){
+                        chunk.objects[i].deleteTag = true;
+                    }
+                }
+                else if(data.brainID != undefined){
+                    if(data.z == chunk.objects[i].z && data.brainID == chunk.objects[i].brainID){
+                        chunk.objects[i].deleteTag = true;
+                    }
+                }
+                else{
+                    if(data.pos.x == chunk.objects[i].pos.x && data.pos.y == chunk.objects[i].pos.y && data.z == chunk.objects[i].z && data.objName == chunk.objects[i].objName){
+                        chunk.objects[i].deleteTag = true;
+                    }
                 }
             }
         }
