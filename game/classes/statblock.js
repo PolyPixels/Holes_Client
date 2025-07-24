@@ -112,7 +112,7 @@ class StatBlock{
 
             this.xpNeeded = Math.floor(this.xpNeeded * 1.5);
             this.level++;
-
+            this.xp =0
             socket.emit("update_player", {
                 id: curPlayer.id,
                 pos: curPlayer.pos,
