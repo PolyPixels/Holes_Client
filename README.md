@@ -111,5 +111,7 @@ We have an official **Discord server** for *Holes: Martyrs of Dirt* where you ca
 ---
 
 Thank you for taking the time to read this README and for your interest in contributing to **Holes: Martyrs of Dirt**. We’re excited to collaborate with fellow developers and players to make the game even better. Every suggestion, issue, and pull request helps us improve. So, happy coding – and happy digging! ⛏️
+<img width="1235" height="975" alt="image" src="https://github.com/user-attachments/assets/27dd463a-8b0c-435a-956b-28b751444279" />
 
 *– The Holes: Martyrs of Dirt Team*
+
